@@ -68,6 +68,7 @@
             background: white; border-radius: 8px;
             max-height: 200px; overflow-y: auto; z-index: 1500;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            margin-top: 5px;
         }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
 
@@ -90,14 +91,19 @@
             justify-content: center; align-items: center;
         }
         #reader { width: 90%; max-width: 400px; border-radius: 12px; overflow: hidden; border: 2px solid white; }
+        
+        .entregado-row { background-color: #f0fdf4 !important; }
+        .entregado-text { text-decoration: line-through; color: #94a3b8; }
     </style>
 </head>
 <body>
 
     <div id="loading">
         <div class="spinner-grow text-primary" role="status"></div>
-        <p class="mt-3 fw-bold">Conectando a la Nube...</p>
-        <button class="btn btn-sm btn-link mt-3 text-decoration-none" onclick="document.getElementById('loading').style.display='none'">Omitir espera</button>
+        <p class="mt-3 fw-bold">Conectando a Yautepec...</p>
+        <button id="btn-bypass" class="btn btn-sm btn-outline-secondary mt-3 d-none" onclick="document.getElementById('loading').style.display='none'">
+            Omitir espera y entrar
+        </button>
     </div>
 
     <!-- Scanner -->
@@ -116,14 +122,14 @@
         <div id="tab-venta" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
-                    <label class="small fw-bold text-muted">TIENDA</label>
-                    <input type="text" id="in-tienda" class="form-control" placeholder="Origen..." autocomplete="off">
+                    <label class="small fw-bold text-muted">TIENDA (ORIGEN)</label>
+                    <input type="text" id="in-tienda" class="form-control" placeholder="Nombre de la tienda..." autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
 
-                <div class="mb-3 search-wrapper">
+                <div class="mb-3 search-container">
                     <label class="small fw-bold text-muted">CLIENTE</label>
-                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre..." autocomplete="off">
+                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre del cliente..." autocomplete="off">
                     <div id="sug-cliente" class="sug-box d-none"></div>
                 </div>
 
@@ -131,9 +137,9 @@
                     <div class="col-8 search-wrapper">
                         <div class="d-flex justify-content-between">
                             <label class="small fw-bold text-muted">PRODUCTO</label>
-                            <i class="fas fa-barcode text-accent" onclick="startScanner()"></i>
+                            <i class="fas fa-barcode text-primary" onclick="startScanner()"></i>
                         </div>
-                        <input type="text" id="in-producto" class="form-control" placeholder="Buscar..." autocomplete="off">
+                        <input type="text" id="in-producto" class="form-control" placeholder="Buscar producto..." autocomplete="off">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-4">
@@ -144,35 +150,36 @@
 
                 <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">COSTO U.</label>
+                        <label class="small fw-bold text-muted">COSTO UNIT.</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00">
                     </div>
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">VENTA U.</label>
+                        <label class="small fw-bold text-muted">PRECIO VENTA</label>
                         <input type="number" id="in-precio" class="form-control" placeholder="0.00">
                     </div>
                 </div>
 
                 <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow">
-                    <i class="fas fa-save me-2"></i>GUARDAR VENTA
+                    <i class="fas fa-save me-2"></i>GUARDAR REGISTRO
                 </button>
             </div>
         </div>
 
         <!-- ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
-            <h6 class="fw-bold mb-3 text-muted">ENTREGAS DE HOY</h6>
+            <h6 class="fw-bold mb-3 text-muted">PENDIENTES DE HOY</h6>
             <div id="lista-entregas"></div>
+            <div id="empty-entregas" class="text-center py-5 opacity-50 d-none">
+                <i class="fas fa-truck fa-3x mb-3"></i>
+                <p>No hay entregas registradas hoy</p>
+            </div>
         </div>
 
-        <!-- INFORMES -->
+        <!-- HISTORIAL -->
         <div id="tab-informes" class="tab-content">
+            <h6 class="fw-bold mb-3 text-muted">HISTORIAL RECIENTE</h6>
             <div class="card-custom p-0 overflow-hidden">
-                <div class="bg-light p-2 border-bottom d-flex gap-2 overflow-auto">
-                    <button class="btn btn-sm btn-dark" onclick="renderReport('sales')">Ventas</button>
-                    <button class="btn btn-sm btn-outline-dark" onclick="renderReport('products')">Catálogo</button>
-                </div>
-                <div class="table-responsive" style="max-height: 400px;">
+                <div class="table-responsive">
                     <table class="table table-sm align-middle mb-0">
                         <tbody id="report-body"></tbody>
                     </table>
@@ -181,7 +188,7 @@
         </div>
     </div>
 
-    <!-- Ticket Render -->
+    <!-- Ticket Render (Invisible) -->
     <div id="ticket-render">
         <div class="text-center border-bottom pb-2 mb-2">
             <h5 class="fw-bold m-0">YAUTE RÁPIDAS</h5>
@@ -193,6 +200,7 @@
         <div class="border-top mt-2 pt-2 d-flex justify-content-between">
             <b>TOTAL:</b> <b id="tick-total"></b>
         </div>
+        <p class="text-center mt-3 small opacity-75">¡Gracias por su preferencia!</p>
     </div>
 
     <nav class="bottom-nav">
@@ -218,19 +226,29 @@
         const appId = "yaute-master-v1";
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        
+        // Optimización para Google Sites/GitHub: Long Polling
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let state = { clients: [], products: [], stores: [], sales: [] };
-        let userAuth = null;
+        let catalogs = { clients: [], products: [], stores: [], sales: [] };
+        let isAuth = false;
         let html5QrCode = null;
 
+        // Mostrar botón de bypass tras 5 segundos
+        setTimeout(() => {
+            if (!isAuth) document.getElementById('btn-bypass').classList.remove('d-none');
+        }, 5000);
+
         // AUTH
-        signInAnonymously(auth);
+        signInAnonymously(auth).catch(() => {
+            document.getElementById('status-label').innerText = "Error conexión";
+        });
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                userAuth = user;
+                isAuth = true;
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('status-label').innerText = "Online";
+                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
                 startSync();
             }
         });
@@ -238,9 +256,9 @@
         const startSync = () => {
             const sync = (name) => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (s) => {
-                    state[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    catalogs[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderAll();
-                });
+                }, (err) => console.error("Sync error:", err));
             };
             ['clients', 'products', 'stores', 'sales'].forEach(sync);
         };
@@ -254,14 +272,18 @@
 
         const renderAll = () => {
             renderEntregas();
-            renderReport('sales');
+            renderHistorial();
         };
 
         const renderEntregas = () => {
             const hoy = new Date().toLocaleDateString();
-            const vHoy = state.sales.filter(v => v.fechaStr === hoy);
+            const vHoy = catalogs.sales.filter(s => s.fechaStr === hoy);
             const list = document.getElementById('lista-entregas');
+            const empty = document.getElementById('empty-entregas');
             
+            if (vHoy.length === 0) { list.innerHTML = ""; empty.classList.remove('d-none'); return; }
+            empty.classList.add('d-none');
+
             // Agrupar por cliente
             const grouped = vHoy.reduce((acc, v) => {
                 if(!acc[v.cliente]) acc[v.cliente] = {total: 0, items: []};
@@ -270,51 +292,60 @@
                 return acc;
             }, {});
 
-            list.innerHTML = Object.keys(grouped).map(cli => `
-                <div class="card-custom mb-2">
-                    <div class="d-flex justify-content-between mb-2">
+            list.innerHTML = Object.keys(grouped).map(cli => {
+                const compras = grouped[cli].items;
+                const todasEntregadas = compras.every(i => i.entregado);
+                return `
+                <div class="card-custom mb-3 ${todasEntregadas ? 'entregado-row opacity-75' : ''}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="fw-bold">${cli}</span>
-                        <i class="fas fa-file-image text-primary" onclick="genTicket('${cli}')"></i>
+                        <button class="btn btn-sm btn-outline-dark" onclick="genTicket('${cli}')">
+                            <i class="fas fa-file-image"></i> Ticket
+                        </button>
                     </div>
-                    ${grouped[cli].items.map(i => `
-                        <div class="d-flex justify-content-between small border-bottom py-1">
-                            <span class="${i.entregado ? 'text-decoration-line-through text-muted' : ''}">${i.cantidad}x ${i.producto}</span>
-                            <input type="checkbox" ${i.entregado ? 'checked' : ''} onclick="toggleEnt('${i.id}', ${i.entregado})">
-                        </div>
-                    `).join('')}
-                    <div class="text-end fw-bold text-success mt-2">Total: $${grouped[cli].total.toFixed(2)}</div>
-                </div>
-            `).join('') || '<p class="text-center py-4 opacity-50">Sin registros hoy</p>';
+                    <div class="small">
+                        ${compras.map(i => `
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="${i.entregado ? 'entregado-text' : ''}">${i.cantidad}x ${i.producto}</span>
+                                <input type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="text-end fw-bold text-success border-top pt-2 mt-2">
+                        Total: $${grouped[cli].total.toFixed(2)}
+                    </div>
+                </div>`;
+            }).join('');
         };
 
         window.toggleEnt = async (id, val) => {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
         };
 
-        window.renderReport = (view) => {
+        const renderHistorial = () => {
             const body = document.getElementById('report-body');
-            if(view === 'sales') {
-                const sorted = [...state.sales].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
-                body.innerHTML = sorted.map(s => `
-                    <tr>
-                        <td class="ps-3"><div class="fw-bold">${s.producto}</div><small class="text-muted">${s.cliente}</small></td>
-                        <td class="text-end fw-bold">$${s.total.toFixed(2)}</td>
-                        <td class="text-center"><i class="fas fa-trash text-muted" onclick="del('sales', '${s.id}')"></i></td>
-                    </tr>
-                `).join('');
-            } else {
-                body.innerHTML = state.products.map(p => `
-                    <tr>
-                        <td class="ps-3"><b>${p.nombre}</b></td>
-                        <td class="text-end">$${p.pVenta.toFixed(2)}</td>
-                        <td class="text-center"><i class="fas fa-trash text-muted" onclick="del('products', '${p.id}')"></i></td>
-                    </tr>
-                `).join('');
-            }
+            const sorted = [...catalogs.sales].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
+            body.innerHTML = sorted.map(s => {
+                const d = s.fecha?.toDate ? s.fecha.toDate() : new Date();
+                const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `
+                <tr>
+                    <td class="ps-3 py-3">
+                        <div class="fw-bold">${s.producto}</div>
+                        <div class="text-muted small">${s.cliente} • ${time}</div>
+                    </td>
+                    <td class="text-end fw-bold text-primary">$${s.total.toFixed(2)}</td>
+                    <td class="text-center">
+                        <i class="fas fa-trash text-muted" onclick="delSale('${s.id}')"></i>
+                    </td>
+                </tr>`;
+            }).join('');
         };
 
-        window.del = async (col, id) => {
-            if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
+        window.delSale = async (id) => {
+            if(confirm("¿Eliminar registro?")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id));
+            }
         };
 
         document.getElementById('btn-save').onclick = async () => {
@@ -328,25 +359,29 @@
                 precio: parseFloat(document.getElementById('in-precio').value) || 0
             };
 
-            if(!data.cliente || !data.producto || data.precio <= 0) return alert("Faltan datos");
+            if(!data.cliente || !data.producto || data.precio <= 0) return alert("Faltan datos obligatorios");
 
-            btn.disabled = true; btn.innerText = "GUARDANDO...";
-            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>GUARDANDO...';
+
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
-                    ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(),
-                    fechaStr: new Date().toLocaleDateString(), entregado: false
+                    ...data,
+                    total: data.cantidad * data.precio,
+                    fecha: serverTimestamp(),
+                    fechaStr: new Date().toLocaleDateString(),
+                    entregado: false
                 });
 
-                // Auto catálogos
+                // Actualizar Catálogos automáticos
                 const check = (col, val) => {
-                    if(!state[col].some(i => i.nombre.toLowerCase() === val.toLowerCase())) {
+                    if(!catalogs[col].some(i => i.nombre.toLowerCase() === val.toLowerCase())) {
                         addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
                     }
                 };
                 check('clients', data.cliente);
                 check('stores', data.tienda);
-                if(!state.products.some(p => p.nombre.toLowerCase() === data.producto.toLowerCase())) {
+                if(!catalogs.products.some(p => p.nombre.toLowerCase() === data.producto.toLowerCase())) {
                     addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
                         nombre: data.producto, pCosto: data.costo, pVenta: data.precio, barcode: ""
                     });
@@ -356,19 +391,19 @@
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-cantidad').value = "1";
-            } catch(e) { alert("Error"); }
-            finally { btn.disabled = false; btn.innerText = "GUARDAR VENTA"; }
+            } catch(e) { alert("Error de conexión"); }
+            finally { btn.disabled = false; btn.innerText = "GUARDAR REGISTRO"; }
         };
 
         window.genTicket = async (cli) => {
             const hoy = new Date().toLocaleDateString();
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
+            const items = catalogs.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
             document.getElementById('tick-fecha').innerText = new Date().toLocaleString();
             document.getElementById('tick-cliente').innerText = cli;
             let total = 0;
             document.getElementById('tick-items').innerHTML = items.map(i => {
                 total += i.total;
-                return `<div class="d-flex justify-content-between small"><span>${i.cantidad}x ${i.producto}</span><span>$${i.total.toFixed(2)}</span></div>`;
+                return `<div class="d-flex justify-content-between"><span>${i.cantidad}x ${i.producto}</span><span>$${i.total.toFixed(2)}</span></div>`;
             }).join('');
             document.getElementById('tick-total').innerText = `$${total.toFixed(2)}`;
 
@@ -381,15 +416,15 @@
         window.startScanner = async () => {
             document.getElementById('scanner-overlay').style.display = 'flex';
             html5QrCode = new Html5Qrcode("reader");
-            await html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (code) => {
+            await html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (code) => {
                 stopScanner();
-                const p = state.products.find(x => x.barcode === code);
+                const p = catalogs.products.find(x => x.barcode === code);
                 if(p) {
                     document.getElementById('in-producto').value = p.nombre;
-                    document.getElementById('in-costo').value = p.pCosto;
-                    document.getElementById('in-precio').value = p.pVenta;
+                    document.getElementById('in-costo').value = p.pCosto || 0;
+                    document.getElementById('in-precio').value = p.pVenta || 0;
                 } else {
-                    alert("Nuevo: " + code);
+                    alert("Nuevo producto: " + code);
                 }
             });
         };
@@ -399,25 +434,25 @@
             document.getElementById('scanner-overlay').style.display = 'none';
         };
 
-        const setupAuto = (id, sugId, list) => {
+        const setupAuto = (id, sugId, listKey) => {
             const input = document.getElementById(id);
             const sug = document.getElementById(sugId);
             input.oninput = () => {
                 const val = input.value.toLowerCase().trim();
                 if(!val) { sug.classList.add('d-none'); return; }
-                const m = state[list].filter(i => i.nombre.toLowerCase().includes(val)).slice(0, 5);
-                sug.innerHTML = m.map(i => `<div class="sug-item" data-v="${i.nombre}">${i.nombre}</div>`).join('');
-                sug.classList.toggle('d-none', m.length === 0);
+                const matches = catalogs[listKey].filter(i => (i.nombre || '').toLowerCase().includes(val)).slice(0, 5);
+                sug.innerHTML = matches.map(m => `<div class="sug-item" data-v="${m.nombre}">${m.nombre}</div>`).join('');
+                sug.classList.toggle('d-none', matches.length === 0);
             };
             sug.onclick = (e) => {
                 const v = e.target.dataset.v;
                 if(v) {
                     input.value = v; sug.classList.add('d-none');
-                    if(list === 'products') {
-                        const p = state.products.find(x => x.nombre === v);
+                    if(listKey === 'products') {
+                        const p = catalogs.products.find(x => x.nombre === v);
                         if(p) {
-                            document.getElementById('in-costo').value = p.pCosto;
-                            document.getElementById('in-precio').value = p.pVenta;
+                            document.getElementById('in-costo').value = p.pCosto || 0;
+                            document.getElementById('in-precio').value = p.pVenta || 0;
                         }
                     }
                 }
