@@ -198,7 +198,7 @@
             <small id="t-fecha"></small>
         </div>
         <p style="font-size: 0.9rem; margin-bottom: 5px;"><b>CLIENTE:</b> <span id="t-cliente"></span></p>
-        <p style="font-size: 0.9rem;"><b>TIENDA:</b> <span id="t-tienda"></span></p>
+        <p style="font-size: 0.9rem; display: none;"><b>TIENDA:</b> <span id="t-tienda"></span></p>
         <div id="t-items" style="border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px; margin-top: 10px;"></div>
         <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem;">
             <span>TOTAL:</span>
@@ -218,7 +218,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE TU PROYECTO (Restaurada)
+        // CONFIGURACIÓN DE TU PROYECTO
         const firebaseConfig = {
             apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
             authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
@@ -436,3 +436,4 @@
     </script>
 </body>
 </html>
+
