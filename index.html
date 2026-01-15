@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yautepec v2.2</title>
+    <title>Ofertas Rápidas Yautepec</title>
     
-    <!-- Librerías Externas -->
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     
     <style>
         :root {
@@ -17,55 +15,56 @@
             --accent: #2563eb;
             --success: #10b981;
             --danger: #ef4444;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
         }
 
         body { 
             background-color: var(--bg); 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding-bottom: 85px;
+            font-family: system-ui, -apple-system, sans-serif;
+            padding-bottom: 80px;
             user-select: none;
-            overflow-x: hidden;
         }
 
         header {
             background: var(--primary);
             color: white; padding: 1.2rem; text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .card-custom {
             background: white; border-radius: 15px; padding: 20px;
-            margin-bottom: 15px; border: 1px solid #e2e8f0;
+            margin-bottom: 15px; border: none;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
+        /* Tabs */
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* Navegación Inferior */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around;
-            padding: 10px 0; border-top: 1px solid #e2e8f0; z-index: 2000;
+            background: white; display: flex; 
+            height: 70px; border-top: 1px solid #e2e8f0; z-index: 2000;
         }
 
         .tab-btn {
             background: none; border: none; color: #94a3b8;
-            font-size: 0.7rem; display: flex; flex-direction: column;
-            align-items: center; flex: 1; transition: 0.2s;
+            font-size: 0.8rem; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; flex: 1;
         }
-        .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
+        .tab-btn i { font-size: 1.5rem; margin-bottom: 2px; }
         .tab-btn.active { color: var(--accent); font-weight: bold; }
 
+        /* Autocomplete */
+        .search-wrapper { position: relative; }
         .sug-box {
             position: absolute; top: 100%; left: 0; right: 0;
             background: white; border-radius: 8px;
-            max-height: 200px; overflow-y: auto; z-index: 1500;
+            max-height: 180px; overflow-y: auto; z-index: 1500;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            margin-top: 5px;
         }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
 
@@ -76,139 +75,112 @@
         }
 
         #toast-msg {
-            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 3000; width: 90%; max-width: 400px; display: none;
+            border-radius: 12px; text-align: center; font-weight: 600;
         }
 
-        #scanner-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            z-index: 3000; display: none; flex-direction: column;
-            justify-content: center; align-items: center;
-        }
-        #reader { width: 90%; max-width: 400px; border-radius: 12px; overflow: hidden; }
+        .delete-btn { color: #cbd5e0; border: none; background: none; padding: 10px; }
+        .delete-btn:active { color: var(--danger); }
         
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .entregado-row { background-color: #f0fdf4 !important; border-left: 4px solid var(--success); }
+        .badge-cost { font-size: 0.65rem; color: #64748b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
     </style>
 </head>
 <body>
 
+    <!-- Pantalla de Carga -->
     <div id="loading">
-        <div class="spinner-grow text-primary" role="status"></div>
-        <p class="mt-3 fw-bold">Yaute Rápidas Cloud</p>
-        <button class="btn btn-sm btn-outline-secondary mt-3" onclick="document.getElementById('loading').style.display='none'">Entrar de todos modos</button>
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-3 fw-bold">Conectando a la nube...</p>
+        <button class="btn btn-sm btn-link mt-2 text-decoration-none" onclick="document.getElementById('loading').style.display='none'">Omitir carga</button>
     </div>
 
-    <!-- Mensajes de Sistema -->
+    <!-- Mensajes Flotantes -->
     <div id="toast-msg" class="alert shadow-lg"></div>
 
-    <!-- Scanner -->
-    <div id="scanner-overlay">
-        <div id="reader" class="mb-4"></div>
-        <button class="btn btn-danger px-5 fw-bold" onclick="stopScanner()">CERRAR ESCÁNER</button>
-    </div>
-
     <header>
-        <h5 class="m-0 fw-bold">Yaute Rápidas v2.2</h5>
-        <small id="status-label"><span class="status-dot bg-warning"></span>Conectando...</small>
+        <h5 class="m-0 fw-bold">Ofertas Rápidas Yautepec</h5>
+        <div id="status-label" class="small opacity-75 mt-1">
+            <span class="status-dot bg-warning"></span> Conectando...
+        </div>
     </header>
 
-    <div class="container py-3">
-        <!-- VENTA -->
+    <main class="container py-3">
+        
+        <!-- PESTAÑA VENTA -->
         <div id="tab-venta" class="tab-content active">
             <div class="card-custom">
-                <div class="mb-3 position-relative">
-                    <label class="small fw-bold text-muted">TIENDA (ORIGEN)</label>
-                    <input type="text" id="in-tienda" class="form-control" placeholder="Nombre..." autocomplete="off">
-                    <div id="sug-tienda" class="sug-box d-none"></div>
-                </div>
-
-                <div class="mb-3 position-relative">
-                    <label class="small fw-bold text-muted">CLIENTE</label>
-                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre..." autocomplete="off">
+                <div class="mb-3 search-wrapper">
+                    <label class="small fw-bold text-muted mb-1 text-uppercase">Cliente</label>
+                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre del cliente..." autocomplete="off">
                     <div id="sug-cliente" class="sug-box d-none"></div>
                 </div>
 
+                <div class="mb-3 search-wrapper">
+                    <label class="small fw-bold text-muted mb-1 text-uppercase">Tienda</label>
+                    <input type="text" id="in-tienda" class="form-control" placeholder="Tienda de origen..." autocomplete="off">
+                    <div id="sug-tienda" class="sug-box d-none"></div>
+                </div>
+
                 <div class="row g-2 mb-3">
-                    <div class="col-8 position-relative">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="small fw-bold text-muted mb-0">PRODUCTO</label>
-                            <button class="btn btn-sm p-0 text-primary" onclick="startScanner()"><i class="fas fa-barcode"></i> Escanear</button>
-                        </div>
-                        <input type="text" id="in-producto" class="form-control" placeholder="Buscar..." autocomplete="off">
+                    <div class="col-8 search-wrapper">
+                        <label class="small fw-bold text-muted mb-1 text-uppercase">Producto</label>
+                        <input type="text" id="in-producto" class="form-control" placeholder="¿Qué vendes?" autocomplete="off">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-4">
-                        <label class="small fw-bold text-muted">CANT.</label>
+                        <label class="small fw-bold text-muted mb-1 text-uppercase">Cant.</label>
                         <input type="number" id="in-cantidad" class="form-control text-center" value="1">
                     </div>
                 </div>
 
                 <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">COSTO U.</label>
+                        <label class="small fw-bold text-muted mb-1 text-uppercase">Costo U.</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00">
                     </div>
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">VENTA U.</label>
+                        <label class="small fw-bold text-muted mb-1 text-uppercase">Precio V.</label>
                         <input type="number" id="in-precio" class="form-control" placeholder="0.00">
                     </div>
                 </div>
 
-                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow">
+                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
                     <i class="fas fa-save me-2"></i>GUARDAR REGISTRO
                 </button>
             </div>
         </div>
 
-        <!-- ENTREGAS -->
-        <div id="tab-entregas" class="tab-content">
-            <h6 class="fw-bold mb-3 text-muted">REGISTROS DE HOY</h6>
-            <div id="lista-entregas"></div>
-            <div id="empty-entregas" class="text-center py-5 opacity-50 d-none">
-                <i class="fas fa-truck fa-3x mb-3"></i>
-                <p>Sin movimientos hoy</p>
+        <!-- PESTAÑA HISTORIAL -->
+        <div id="tab-historial" class="tab-content">
+            <h6 class="fw-bold mb-3 text-muted px-2">MOVIMIENTOS RECIENTES</h6>
+            <div id="lista-ventas">
+                <!-- Se llena con Firebase -->
+            </div>
+            <div id="empty-state" class="text-center py-5 opacity-25 d-none">
+                <i class="fas fa-receipt fa-3x mb-3"></i>
+                <p>Sin registros todavía</p>
             </div>
         </div>
 
-        <!-- HISTORIAL -->
-        <div id="tab-informes" class="tab-content">
-            <h6 class="fw-bold mb-3 text-muted">MOVIMIENTOS RECIENTES</h6>
-            <div class="card-custom p-0 overflow-hidden">
-                <div class="table-responsive">
-                    <table class="table table-sm align-middle mb-0">
-                        <tbody id="report-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ticket Render (Invisible) -->
-    <div id="ticket-render" style="position: fixed; left: -5000px; background: white; width: 300px; padding: 20px;">
-        <div style="text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px;">
-            <h3 style="margin: 0;">YAUTE RÁPIDAS</h3>
-            <small id="tick-fecha"></small>
-        </div>
-        <p><b>CLIENTE:</b> <span id="tick-cliente"></span></p>
-        <div id="tick-items" style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;"></div>
-        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px;">
-            <span>TOTAL:</span>
-            <span id="tick-total"></span>
-        </div>
-    </div>
+    </main>
 
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-edit"></i>Registro</button>
-        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Entregas</button>
-        <button class="tab-btn" onclick="showTab('informes', this)"><i class="fas fa-list-ul"></i>Historial</button>
+        <button class="tab-btn active" onclick="showTab('venta', this)">
+            <i class="fas fa-cart-plus"></i>Venta
+        </button>
+        <button class="tab-btn" onclick="showTab('historial', this)">
+            <i class="fas fa-history"></i>Historial
+        </button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, collection, doc, addDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // CONFIGURACIÓN FIJA
         const firebaseConfig = {
             apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
             authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
@@ -218,50 +190,52 @@
             appId: "1:81339635207:web:26d180f92224d9a036fca2"
         };
 
-        const appId = "yaute-master-v1";
+        const appId = "yaute-v1-shared";
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        
+        // Optimización para evitar bloqueos en Google Sites/GitHub
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let catalogs = { clients: [], products: [], stores: [], sales: [] };
-        let isAuth = false;
-        let html5QrCode = null;
+        let state = { clients: [], products: [], stores: [], sales: [] };
+        let isConnected = false;
 
-        // Función de aviso interno
+        // Gestión de mensajes
         window.msg = (text, type = 'success') => {
             const el = document.getElementById('toast-msg');
             el.className = `alert alert-${type === 'success' ? 'success' : 'danger'} shadow-lg`;
             el.innerText = text;
             el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
+            setTimeout(() => el.style.display = 'none', 3000);
         };
 
-        signInAnonymously(auth).catch(e => {
-            document.getElementById('status-label').innerHTML = '<span class="status-dot bg-danger"></span>Error de red';
-            window.msg("Error de conexión: Verifica internet.", "error");
-        });
-
+        // INICIO DE SESIÓN
+        signInAnonymously(auth).catch(() => window.msg("Error de conexión.", "danger"));
+        
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                isAuth = true;
+                isConnected = true;
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span>Conectado';
+                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
                 startSync();
+                syncOffline();
             }
         });
 
+        // SINCRONIZACIÓN EN TIEMPO REAL
         const startSync = () => {
             const sync = (name) => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (s) => {
-                    catalogs[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderAll();
+                    state[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (name === 'sales') renderHistorial();
                 }, (err) => {
-                    if(err.code === 'permission-denied') window.msg("Error de permisos en la nube.", "error");
+                    if(err.code === 'permission-denied') window.msg("Error de permisos.", "danger");
                 });
             };
             ['clients', 'products', 'stores', 'sales'].forEach(sync);
         };
 
+        // NAVEGACIÓN
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
@@ -269,199 +243,138 @@
             btn.classList.add('active');
         };
 
-        const renderAll = () => {
-            renderEntregas();
-            renderHistorial();
-        };
-
-        const renderEntregas = () => {
-            const hoy = new Date().toLocaleDateString();
-            const vHoy = catalogs.sales.filter(s => s.fechaStr === hoy);
-            const list = document.getElementById('lista-entregas');
-            const empty = document.getElementById('empty-entregas');
+        // RENDERIZADO DEL HISTORIAL
+        const renderHistorial = () => {
+            const list = document.getElementById('lista-ventas');
+            const empty = document.getElementById('empty-state');
+            const sorted = state.sales.sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
             
-            if (vHoy.length === 0) { list.innerHTML = ""; empty.classList.remove('d-none'); return; }
+            if (sorted.length === 0) { list.innerHTML = ""; empty.classList.remove('d-none'); return; }
             empty.classList.add('d-none');
 
-            const grouped = vHoy.reduce((acc, v) => {
-                const c = v.cliente || "S/N";
-                if(!acc[c]) acc[c] = {total: 0, items: []};
-                acc[c].total += (v.total || 0);
-                acc[c].items.push(v);
-                return acc;
-            }, {});
-
-            list.innerHTML = Object.keys(grouped).map(cli => {
-                const compras = grouped[cli].items;
-                const todasEntregadas = compras.every(i => i.entregado);
+            list.innerHTML = sorted.map(s => {
+                const d = s.fecha?.toDate ? s.fecha.toDate() : new Date();
+                const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const date = d.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
                 return `
-                <div class="card-custom mb-3 ${todasEntregadas ? 'entregado-row' : ''}">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-bold">${cli}</span>
-                        <button class="btn btn-sm btn-outline-dark" onclick="genTicket('${cli}')">Ticket</button>
+                <div class="card-custom d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-bold" style="font-size: 0.95rem;">${s.producto}</div>
+                        <div class="text-muted small">${s.cliente} • ${s.cantidad} pza</div>
+                        <div class="text-muted" style="font-size: 0.65rem;">${date} | ${time}</div>
                     </div>
-                    <div class="small">
-                        ${compras.map(i => `
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="${i.entregado ? 'text-decoration-line-through text-muted' : ''}">${i.cantidad}x ${i.producto}</span>
-                                <input type="checkbox" class="form-check-input" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})">
-                            </div>
-                        `).join('')}
+                    <div class="text-end">
+                        <div class="badge-cost mb-1">Costo: $${(s.costo || 0).toFixed(2)}</div>
+                        <div class="fw-bold text-primary">$${(s.total || 0).toFixed(2)}</div>
+                        <button class="delete-btn" onclick="window.del('${s.id}')"><i class="fas fa-trash-alt"></i></button>
                     </div>
-                    <div class="text-end fw-bold text-success border-top pt-2 mt-2">Total: $${grouped[cli].total.toFixed(2)}</div>
                 </div>`;
             }).join('');
         };
 
-        window.toggleEnt = async (id, val) => {
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
-            } catch(e) { window.msg("No se pudo actualizar.", "error"); }
-        };
-
-        const renderHistorial = () => {
-            const body = document.getElementById('report-body');
-            const sorted = [...catalogs.sales].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
-            body.innerHTML = sorted.map(s => {
-                const d = s.fecha?.toDate ? s.fecha.toDate() : new Date();
-                const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                return `
-                <tr>
-                    <td class="ps-3 py-3">
-                        <div class="fw-bold">${s.producto}</div>
-                        <div class="text-muted small">${s.cliente} • ${time}</div>
-                    </td>
-                    <td class="text-end fw-bold text-primary">$${(s.total || 0).toFixed(2)}</td>
-                    <td class="text-center"><i class="fas fa-trash text-muted" onclick="delSale('${s.id}')"></i></td>
-                </tr>`;
-            }).join('');
-        };
-
-        window.delSale = async (id) => {
-            if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id));
-        };
-
+        // GUARDADO DE VENTA
         document.getElementById('btn-save').onclick = async () => {
-            if(!isAuth) return window.msg("Esperando conexión...", "error");
-            
             const btn = document.getElementById('btn-save');
             const data = {
-                tienda: document.getElementById('in-tienda').value.trim(),
                 cliente: document.getElementById('in-cliente').value.trim(),
+                tienda: document.getElementById('in-tienda').value.trim(),
                 producto: document.getElementById('in-producto').value.trim(),
                 cantidad: parseInt(document.getElementById('in-cantidad').value) || 1,
                 costo: parseFloat(document.getElementById('in-costo').value) || 0,
                 precio: parseFloat(document.getElementById('in-precio').value) || 0
             };
 
-            if(!data.cliente || !data.producto || data.precio <= 0) return window.msg("Datos incompletos.", "error");
+            if (!data.cliente || !data.producto || data.precio <= 0) return window.msg("Completa los datos.", "danger");
 
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>GUARDANDO...';
 
-            // Seguro contra bloqueo (Timeout de 10s)
+            // Respaldo por si el internet falla (6 segundos)
             const timeout = setTimeout(() => {
-                if(btn.disabled) {
-                    btn.disabled = false;
-                    btn.innerText = "REINTENTAR";
-                    window.msg("Tiempo de espera agotado. Reintenta.", "error");
-                }
-            }, 10000);
+                const pending = JSON.parse(localStorage.getItem('yaute_pend') || '[]');
+                pending.push(data);
+                localStorage.setItem('yaute_pend', JSON.stringify(pending));
+                window.msg("Guardado localmente (sin internet).", "danger");
+                resetForm();
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR REGISTRO';
+            }, 6000);
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
-                    ...data,
-                    total: data.cantidad * data.precio,
-                    fecha: serverTimestamp(),
-                    fechaStr: new Date().toLocaleDateString(),
-                    entregado: false
+                    ...data, total: data.cantidad * data.precio, fecha: serverTimestamp()
                 });
 
-                // Catálogos
-                const check = (col, val) => {
-                    if(!catalogs[col].some(i => (i.nombre || "").toLowerCase() === val.toLowerCase())) {
-                        addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
+                // Auto catálogos
+                const check = (cat, val) => {
+                    if (!state[cat].some(i => (i.nombre || "").toLowerCase() === val.toLowerCase())) {
+                        addDoc(collection(db, 'artifacts', appId, 'public', 'data', cat), { nombre: val });
                     }
                 };
                 check('clients', data.cliente);
                 check('stores', data.tienda);
-                
-                document.getElementById('in-producto').value = "";
-                document.getElementById('in-costo').value = "";
-                document.getElementById('in-precio').value = "";
-                document.getElementById('in-cantidad').value = "1";
-                
-                window.msg("¡Venta guardada!");
-                btn.className = "btn btn-success w-100 py-3 fw-bold shadow";
-                setTimeout(() => {
-                    btn.className = "btn btn-primary w-100 py-3 fw-bold shadow";
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR REGISTRO';
-                }, 1000);
+                if(!state.products.some(p => (p.nombre || "").toLowerCase() === data.producto.toLowerCase())) {
+                    addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { 
+                        nombre: data.producto, pCosto: data.costo, pVenta: data.precio 
+                    });
+                }
 
-            } catch(e) {
-                window.msg("Error: " + e.code, "error");
+                clearTimeout(timeout);
+                window.msg("✅ Venta guardada.");
+                resetForm();
+            } catch (e) {
+                console.error(e);
+            } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR REGISTRO';
-            } finally {
-                clearTimeout(timeout);
             }
         };
 
-        window.genTicket = async (cli) => {
-            const hoy = new Date().toLocaleDateString();
-            const items = catalogs.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
-            document.getElementById('tick-fecha').innerText = new Date().toLocaleString();
-            document.getElementById('tick-cliente').innerText = cli;
-            let total = 0;
-            document.getElementById('tick-items').innerHTML = items.map(i => {
-                total += (i.total || 0);
-                return `<div style="display:flex; justify-content:space-between"><span>${i.cantidad}x ${i.producto}</span><span>$${(i.total || 0).toFixed(2)}</span></div>`;
-            }).join('');
-            document.getElementById('tick-total').innerText = `$${total.toFixed(2)}`;
-
-            const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
-            const link = document.createElement('a');
-            link.download = `Ticket_${cli}.png`;
-            link.href = canvas.toDataURL(); link.click();
+        const resetForm = () => {
+            document.getElementById('in-producto').value = "";
+            document.getElementById('in-costo').value = "";
+            document.getElementById('in-precio').value = "";
+            document.getElementById('in-cantidad').value = "1";
         };
 
-        window.startScanner = async () => {
-            document.getElementById('scanner-overlay').style.display = 'flex';
-            html5QrCode = new Html5Qrcode("reader");
-            await html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (code) => {
-                stopScanner();
-                const p = catalogs.products.find(x => x.barcode === code);
-                if(p) {
-                    document.getElementById('in-producto').value = p.nombre;
-                    document.getElementById('in-costo').value = p.pCosto || 0;
-                    document.getElementById('in-precio').value = p.pVenta || 0;
-                } else { window.msg("Nuevo código: " + code); }
-            });
+        window.del = async (id) => {
+            if (confirm("¿Eliminar registro?")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id));
+                window.msg("Eliminado.");
+            }
         };
 
-        window.stopScanner = async () => {
-            if(html5QrCode) await html5QrCode.stop();
-            document.getElementById('scanner-overlay').style.display = 'none';
+        const syncOffline = async () => {
+            const pending = JSON.parse(localStorage.getItem('yaute_pend') || '[]');
+            if (pending.length === 0 || !isConnected) return;
+            for (const item of pending) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
+                        ...item, total: item.cantidad * item.precio, fecha: serverTimestamp()
+                    });
+                } catch(e) {}
+            }
+            localStorage.setItem('yaute_pend', '[]');
         };
 
-        const setupAuto = (id, sugId, listKey) => {
-            const input = document.getElementById(id);
-            const sug = document.getElementById(sugId);
-            input.oninput = () => {
-                const val = input.value.toLowerCase().trim();
-                if(!val) { sug.classList.add('d-none'); return; }
-                const matches = catalogs[listKey].filter(i => (i.nombre || '').toLowerCase().includes(val)).slice(0, 5);
-                sug.innerHTML = matches.map(m => `<div class="sug-item" data-v="${m.nombre}">${m.nombre}</div>`).join('');
-                sug.classList.toggle('d-none', matches.length === 0);
+        // AUTO-COMPLETADO
+        const setupAuto = (id, boxId, key) => {
+            const inp = document.getElementById(id);
+            const box = document.getElementById(boxId);
+            inp.oninput = () => {
+                const val = inp.value.toLowerCase().trim();
+                if (!val) { box.classList.add('d-none'); return; }
+                const m = state[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
+                box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre}</div>`).join('');
+                box.classList.toggle('d-none', m.length === 0);
             };
-            sug.onclick = (e) => {
+            box.onclick = (e) => {
                 const v = e.target.dataset.v;
-                if(v) {
-                    input.value = v; sug.classList.add('d-none');
-                    if(listKey === 'products') {
-                        const p = catalogs.products.find(x => x.nombre === v);
-                        if(p) {
+                if (v) {
+                    inp.value = v; box.classList.add('d-none');
+                    if (key === 'products') {
+                        const p = state.products.find(x => x.nombre === v);
+                        if (p) {
                             document.getElementById('in-costo').value = p.pCosto || 0;
                             document.getElementById('in-precio').value = p.pVenta || 0;
                         }
@@ -470,9 +383,10 @@
             };
         };
 
-        setupAuto('in-tienda', 'sug-tienda', 'stores');
         setupAuto('in-cliente', 'sug-cliente', 'clients');
+        setupAuto('in-tienda', 'sug-tienda', 'stores');
         setupAuto('in-producto', 'sug-producto', 'products');
+
     </script>
 </body>
 </html>
