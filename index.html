@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yautepec</title>
+    <title>Yaute Rápidas Pro</title>
     
-    <!-- Bootstrap & Icons -->
+    <!-- Frameworks -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         :root {
@@ -15,58 +16,59 @@
             --accent: #2563eb;
             --success: #10b981;
             --danger: #ef4444;
-            --bg: #f1f5f9;
+            --bg: #f8fafc;
         }
 
         body { 
             background-color: var(--bg); 
-            font-family: system-ui, -apple-system, sans-serif;
-            padding-bottom: 80px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding-bottom: 90px;
             user-select: none;
         }
 
         header {
             background: var(--primary);
             color: white; padding: 1.2rem; text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             position: sticky; top: 0; z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .card-custom {
-            background: white; border-radius: 15px; padding: 20px;
-            margin-bottom: 15px; border: none;
+            background: white; border-radius: 16px; padding: 20px;
+            margin-bottom: 15px; border: 1px solid #e2e8f0;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
-        /* Tabs */
+        /* Pestañas */
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Navegación Inferior */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%;
-            background: white; display: flex; 
-            height: 70px; border-top: 1px solid #e2e8f0; z-index: 2000;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around;
+            padding: 10px 0; border-top: 1px solid #e2e8f0; z-index: 2000;
         }
 
         .tab-btn {
             background: none; border: none; color: #94a3b8;
-            font-size: 0.8rem; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; flex: 1;
+            font-size: 0.7rem; display: flex; flex-direction: column;
+            align-items: center; flex: 1;
         }
-        .tab-btn i { font-size: 1.5rem; margin-bottom: 2px; }
+        .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: bold; }
 
         /* Autocomplete */
         .search-wrapper { position: relative; }
         .sug-box {
             position: absolute; top: 100%; left: 0; right: 0;
-            background: white; border-radius: 8px;
-            max-height: 180px; overflow-y: auto; z-index: 1500;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            background: white; border-radius: 12px;
+            max-height: 200px; overflow-y: auto; z-index: 1500;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            margin-top: 5px;
         }
-        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
 
         #loading {
             position: fixed; inset: 0; background: white;
@@ -74,113 +76,133 @@
             justify-content: center; z-index: 9999;
         }
 
-        #toast-msg {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 3000; width: 90%; max-width: 400px; display: none;
-            border-radius: 12px; text-align: center; font-weight: 600;
-        }
-
-        .delete-btn { color: #cbd5e0; border: none; background: none; padding: 10px; }
-        .delete-btn:active { color: var(--danger); }
+        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .entregado-row { background-color: #f0fdf4 !important; border-left: 5px solid var(--success) !important; }
         
-        .badge-cost { font-size: 0.65rem; color: #64748b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
-        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; }
+        .sub-btn { 
+            background: white; border: 1px solid #e2e8f0; border-radius: 20px; 
+            padding: 6px 15px; font-size: 0.8rem; white-space: nowrap; 
+        }
+        .sub-btn.active { background: var(--primary); color: white; }
+
+        #ticket-render {
+            position: fixed; left: -5000px; width: 320px; background: white;
+            padding: 25px; color: black; font-family: 'Courier New', monospace;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla de Carga -->
     <div id="loading">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="mt-3 fw-bold">Conectando a la nube...</p>
-        <button class="btn btn-sm btn-link mt-2 text-decoration-none" onclick="document.getElementById('loading').style.display='none'">Omitir carga</button>
+        <div class="spinner-grow text-primary" role="status"></div>
+        <p class="mt-3 fw-bold">Yaute Rápidas Cloud</p>
     </div>
-
-    <!-- Mensajes Flotantes -->
-    <div id="toast-msg" class="alert shadow-lg"></div>
 
     <header>
         <h5 class="m-0 fw-bold">Ofertas Rápidas Yautepec</h5>
-        <div id="status-label" class="small opacity-75 mt-1">
-            <span class="status-dot bg-warning"></span> Conectando...
+        <div class="opacity-75 mt-1">
+            <small id="status-label"><span class="status-dot bg-warning"></span>Conectando...</small>
         </div>
     </header>
 
-    <main class="container py-3">
+    <div class="container py-3">
         
-        <!-- PESTAÑA VENTA -->
+        <!-- PESTAÑA: VENTA -->
         <div id="tab-venta" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
-                    <label class="small fw-bold text-muted mb-1 text-uppercase">Cliente</label>
+                    <label class="small fw-bold text-muted mb-1">TIENDA (ORIGEN)</label>
+                    <input type="text" id="in-tienda" class="form-control" placeholder="Nombre de tienda..." autocomplete="off">
+                    <div id="sug-tienda" class="sug-box d-none"></div>
+                </div>
+
+                <div class="mb-3 search-wrapper">
+                    <label class="small fw-bold text-muted mb-1">CLIENTE</label>
                     <input type="text" id="in-cliente" class="form-control" placeholder="Nombre del cliente..." autocomplete="off">
                     <div id="sug-cliente" class="sug-box d-none"></div>
                 </div>
 
-                <div class="mb-3 search-wrapper">
-                    <label class="small fw-bold text-muted mb-1 text-uppercase">Tienda</label>
-                    <input type="text" id="in-tienda" class="form-control" placeholder="Tienda de origen..." autocomplete="off">
-                    <div id="sug-tienda" class="sug-box d-none"></div>
-                </div>
-
                 <div class="row g-2 mb-3">
                     <div class="col-8 search-wrapper">
-                        <label class="small fw-bold text-muted mb-1 text-uppercase">Producto</label>
+                        <label class="small fw-bold text-muted mb-1">PRODUCTO</label>
                         <input type="text" id="in-producto" class="form-control" placeholder="¿Qué vendes?" autocomplete="off">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-4">
-                        <label class="small fw-bold text-muted mb-1 text-uppercase">Cant.</label>
+                        <label class="small fw-bold text-muted">CANT.</label>
                         <input type="number" id="in-cantidad" class="form-control text-center" value="1">
                     </div>
                 </div>
 
                 <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="small fw-bold text-muted mb-1 text-uppercase">Costo U.</label>
+                        <label class="small fw-bold text-muted">COSTO U.</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00">
                     </div>
                     <div class="col-6">
-                        <label class="small fw-bold text-muted mb-1 text-uppercase">Precio V.</label>
+                        <label class="small fw-bold text-muted">VENTA U.</label>
                         <input type="number" id="in-precio" class="form-control" placeholder="0.00">
                     </div>
                 </div>
 
-                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
-                    <i class="fas fa-save me-2"></i>GUARDAR REGISTRO
+                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow">
+                    <i class="fas fa-save me-2"></i>GUARDAR VENTA
                 </button>
             </div>
         </div>
 
-        <!-- PESTAÑA HISTORIAL -->
-        <div id="tab-historial" class="tab-content">
-            <h6 class="fw-bold mb-3 text-muted px-2">MOVIMIENTOS RECIENTES</h6>
-            <div id="lista-ventas">
-                <!-- Se llena con Firebase -->
+        <!-- PESTAÑA: ENTREGAS -->
+        <div id="tab-entregas" class="tab-content">
+            <h6 class="fw-bold text-muted mb-3 px-1">ENTREGAS DE HOY</h6>
+            <div id="lista-entregas"></div>
+        </div>
+
+        <!-- PESTAÑA: INFORMES -->
+        <div id="tab-informes" class="tab-content">
+            <div class="sub-nav mb-2">
+                <button class="sub-btn active" onclick="changeSubTab('historial', this)">Historial</button>
+                <button class="sub-btn" onclick="changeSubTab('products', this)">Catálogo</button>
+                <button class="sub-btn" onclick="changeSubTab('clients', this)">Clientes</button>
+                <button class="sub-btn" onclick="changeSubTab('stores', this)">Tiendas</button>
             </div>
-            <div id="empty-state" class="text-center py-5 opacity-25 d-none">
-                <i class="fas fa-receipt fa-3x mb-3"></i>
-                <p>Sin registros todavía</p>
+
+            <div id="sec-data" class="card-custom p-0 overflow-hidden">
+                <div class="table-responsive" style="max-height: 500px;">
+                    <table class="table table-sm align-middle mb-0">
+                        <tbody id="data-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-    </main>
+    </div>
+
+    <!-- Ticket (Invisible) -->
+    <div id="ticket-render">
+        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <h3 style="margin: 0;">YAUTE RÁPIDAS</h3>
+            <small id="t-fecha"></small>
+        </div>
+        <p><b>CLIENTE:</b> <span id="t-cliente"></span></p>
+        <div id="t-items" style="border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;"></div>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem;">
+            <span>TOTAL:</span>
+            <span id="t-total"></span>
+        </div>
+    </div>
 
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('venta', this)">
-            <i class="fas fa-cart-plus"></i>Venta
-        </button>
-        <button class="tab-btn" onclick="showTab('historial', this)">
-            <i class="fas fa-history"></i>Historial
-        </button>
+        <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-cash-register"></i>Venta</button>
+        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Hoy</button>
+        <button class="tab-btn" onclick="showTab('informes', this)"><i class="fas fa-list-ul"></i>Informes</button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeFirestore, collection, doc, addDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN FIJA
         const firebaseConfig = {
             apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
             authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
@@ -193,49 +215,31 @@
         const appId = "yaute-v1-shared";
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
-        // Optimización para evitar bloqueos en Google Sites/GitHub
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let state = { clients: [], products: [], stores: [], sales: [] };
-        let isConnected = false;
+        let catalogs = { clients: [], products: [], stores: [], sales: [] };
+        let currentSubTab = 'historial';
 
-        // Gestión de mensajes
-        window.msg = (text, type = 'success') => {
-            const el = document.getElementById('toast-msg');
-            el.className = `alert alert-${type === 'success' ? 'success' : 'danger'} shadow-lg`;
-            el.innerText = text;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 3000);
-        };
-
-        // INICIO DE SESIÓN
-        signInAnonymously(auth).catch(() => window.msg("Error de conexión.", "danger"));
+        signInAnonymously(auth);
         
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                isConnected = true;
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
                 startSync();
-                syncOffline();
             }
         });
 
-        // SINCRONIZACIÓN EN TIEMPO REAL
         const startSync = () => {
-            const sync = (name) => {
+            const syncCol = (name) => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (s) => {
-                    state[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    if (name === 'sales') renderHistorial();
-                }, (err) => {
-                    if(err.code === 'permission-denied') window.msg("Error de permisos.", "danger");
+                    catalogs[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderAll();
                 });
             };
-            ['clients', 'products', 'stores', 'sales'].forEach(sync);
+            ['clients', 'products', 'stores', 'sales'].forEach(syncCol);
         };
 
-        // NAVEGACIÓN
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
@@ -243,138 +247,164 @@
             btn.classList.add('active');
         };
 
-        // RENDERIZADO DEL HISTORIAL
-        const renderHistorial = () => {
-            const list = document.getElementById('lista-ventas');
-            const empty = document.getElementById('empty-state');
-            const sorted = state.sales.sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
-            
-            if (sorted.length === 0) { list.innerHTML = ""; empty.classList.remove('d-none'); return; }
-            empty.classList.add('d-none');
+        window.changeSubTab = (id, btn) => {
+            currentSubTab = id;
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderAll();
+        };
 
-            list.innerHTML = sorted.map(s => {
-                const d = s.fecha?.toDate ? s.fecha.toDate() : new Date();
-                const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const date = d.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
+        const renderAll = () => {
+            renderEntregas();
+            renderInformes();
+        };
+
+        const renderEntregas = () => {
+            const hoy = new Date().toLocaleDateString();
+            const vHoy = catalogs.sales.filter(s => s.fechaStr === hoy);
+            const list = document.getElementById('lista-entregas');
+            
+            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-4 text-muted">No hay ventas hoy</p>'; return; }
+
+            const grouped = vHoy.reduce((acc, v) => {
+                if(!acc[v.cliente]) acc[v.cliente] = {total: 0, items: []};
+                acc[v.cliente].total += (v.total || 0);
+                acc[v.cliente].items.push(v);
+                return acc;
+            }, {});
+
+            list.innerHTML = Object.keys(grouped).map(cli => {
+                const items = grouped[cli].items;
+                const todasEntregadas = items.every(i => i.entregado);
                 return `
-                <div class="card-custom d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="fw-bold" style="font-size: 0.95rem;">${s.producto}</div>
-                        <div class="text-muted small">${s.cliente} • ${s.cantidad} pza</div>
-                        <div class="text-muted" style="font-size: 0.65rem;">${date} | ${time}</div>
+                <div class="card-custom mb-3 ${todasEntregadas ? 'entregado-row opacity-75' : ''}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">${cli}</span>
+                        <button class="btn btn-sm btn-outline-dark" onclick="genTicket('${cli}')"><i class="fas fa-file-image"></i></button>
                     </div>
-                    <div class="text-end">
-                        <div class="badge-cost mb-1">Costo: $${(s.costo || 0).toFixed(2)}</div>
-                        <div class="fw-bold text-primary">$${(s.total || 0).toFixed(2)}</div>
-                        <button class="delete-btn" onclick="window.del('${s.id}')"><i class="fas fa-trash-alt"></i></button>
+                    <div class="small">
+                        ${items.map(i => `
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="${i.entregado ? 'text-decoration-line-through text-muted' : ''}">${i.cantidad}x ${i.producto}</span>
+                                <input type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})">
+                            </div>
+                        `).join('')}
                     </div>
+                    <div class="text-end fw-bold text-success border-top pt-2 mt-2">Total: $${grouped[cli].total.toFixed(2)}</div>
                 </div>`;
             }).join('');
         };
 
-        // GUARDADO DE VENTA
+        window.toggleEnt = async (id, val) => {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
+        };
+
+        const renderInformes = () => {
+            const body = document.getElementById('data-body');
+            if (currentSubTab === 'historial') {
+                const sorted = [...catalogs.sales].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
+                body.innerHTML = sorted.map(s => `
+                    <tr>
+                        <td class="ps-3 py-3"><b>${s.producto}</b><br><small class="text-muted">${s.cliente}</small></td>
+                        <td class="text-end fw-bold text-primary">$${(s.total || 0).toFixed(2)}</td>
+                        <td class="text-center px-2"><i class="fas fa-trash text-muted" onclick="del('sales', '${s.id}')"></i></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="3" class="text-center py-4">Vacío</td></tr>';
+            } else {
+                const list = catalogs[currentSubTab] || [];
+                body.innerHTML = list.map(item => `
+                    <tr>
+                        <td class="ps-3 py-3"><b>${item.nombre}</b></td>
+                        <td class="text-end">
+                            ${currentSubTab === 'products' ? `<span class="text-primary fw-bold">$${(item.pVenta || 0).toFixed(2)}</span>` : ''}
+                        </td>
+                        <td class="text-center px-2"><i class="fas fa-trash text-muted" onclick="del('${currentSubTab}', '${item.id}')"></i></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="3" class="text-center py-4">Vacío</td></tr>';
+            }
+        };
+
+        window.del = async (col, id) => {
+            if (confirm("¿Eliminar registro?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
+        };
+
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
-            const data = {
-                cliente: document.getElementById('in-cliente').value.trim(),
+            const v = {
                 tienda: document.getElementById('in-tienda').value.trim(),
+                cliente: document.getElementById('in-cliente').value.trim(),
                 producto: document.getElementById('in-producto').value.trim(),
                 cantidad: parseInt(document.getElementById('in-cantidad').value) || 1,
                 costo: parseFloat(document.getElementById('in-costo').value) || 0,
                 precio: parseFloat(document.getElementById('in-precio').value) || 0
             };
 
-            if (!data.cliente || !data.producto || data.precio <= 0) return window.msg("Completa los datos.", "danger");
+            if (!v.cliente || !v.producto || v.precio <= 0) return alert("Completa los datos");
 
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>GUARDANDO...';
-
-            // Respaldo por si el internet falla (6 segundos)
-            const timeout = setTimeout(() => {
-                const pending = JSON.parse(localStorage.getItem('yaute_pend') || '[]');
-                pending.push(data);
-                localStorage.setItem('yaute_pend', JSON.stringify(pending));
-                window.msg("Guardado localmente (sin internet).", "danger");
-                resetForm();
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR REGISTRO';
-            }, 6000);
+            btn.disabled = true; btn.innerText = "Guardando...";
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
-                    ...data, total: data.cantidad * data.precio, fecha: serverTimestamp()
+                    ...v, total: v.cantidad * v.precio, fecha: serverTimestamp(),
+                    fechaStr: new Date().toLocaleDateString(), entregado: false
                 });
 
-                // Auto catálogos
-                const check = (cat, val) => {
-                    if (!state[cat].some(i => (i.nombre || "").toLowerCase() === val.toLowerCase())) {
-                        addDoc(collection(db, 'artifacts', appId, 'public', 'data', cat), { nombre: val });
+                const check = (col, val) => {
+                    if(!catalogs[col].some(i => i.nombre.toLowerCase() === val.toLowerCase())) {
+                        addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
                     }
                 };
-                check('clients', data.cliente);
-                check('stores', data.tienda);
-                if(!state.products.some(p => (p.nombre || "").toLowerCase() === data.producto.toLowerCase())) {
-                    addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { 
-                        nombre: data.producto, pCosto: data.costo, pVenta: data.precio 
+                check('clients', v.cliente);
+                check('stores', v.tienda);
+                if(!catalogs.products.some(p => p.nombre.toLowerCase() === v.producto.toLowerCase())) {
+                    addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
+                        nombre: v.producto, pCosto: v.costo, pVenta: v.precio
                     });
                 }
 
-                clearTimeout(timeout);
-                window.msg("✅ Venta guardada.");
-                resetForm();
-            } catch (e) {
-                console.error(e);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR REGISTRO';
-            }
+                document.getElementById('in-producto').value = "";
+                document.getElementById('in-costo').value = "";
+                document.getElementById('in-precio').value = "";
+                document.getElementById('in-cantidad').value = "1";
+            } catch(e) { alert("Error al guardar"); }
+            finally { btn.disabled = false; btn.innerText = "GUARDAR VENTA"; }
         };
 
-        const resetForm = () => {
-            document.getElementById('in-producto').value = "";
-            document.getElementById('in-costo').value = "";
-            document.getElementById('in-precio').value = "";
-            document.getElementById('in-cantidad').value = "1";
+        window.genTicket = async (cli) => {
+            const hoy = new Date().toLocaleDateString();
+            const items = catalogs.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
+            document.getElementById('t-fecha').innerText = new Date().toLocaleString();
+            document.getElementById('t-cliente').innerText = cli;
+            let total = 0;
+            document.getElementById('t-items').innerHTML = items.map(i => {
+                total += i.total;
+                return `<div style="display:flex; justify-content:space-between"><span>${i.cantidad}x ${i.producto}</span><span>$${i.total.toFixed(2)}</span></div>`;
+            }).join('');
+            document.getElementById('t-total').innerText = `$${total.toFixed(2)}`;
+
+            const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
+            const link = document.createElement('a');
+            link.download = `Ticket_${cli}.png`;
+            link.href = canvas.toDataURL(); link.click();
         };
 
-        window.del = async (id) => {
-            if (confirm("¿Eliminar registro?")) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id));
-                window.msg("Eliminado.");
-            }
-        };
-
-        const syncOffline = async () => {
-            const pending = JSON.parse(localStorage.getItem('yaute_pend') || '[]');
-            if (pending.length === 0 || !isConnected) return;
-            for (const item of pending) {
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
-                        ...item, total: item.cantidad * item.precio, fecha: serverTimestamp()
-                    });
-                } catch(e) {}
-            }
-            localStorage.setItem('yaute_pend', '[]');
-        };
-
-        // AUTO-COMPLETADO
-        const setupAuto = (id, boxId, key) => {
+        const auto = (id, boxId, key) => {
             const inp = document.getElementById(id);
             const box = document.getElementById(boxId);
             inp.oninput = () => {
                 const val = inp.value.toLowerCase().trim();
-                if (!val) { box.classList.add('d-none'); return; }
-                const m = state[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
+                if(!val) { box.classList.add('d-none'); return; }
+                const m = catalogs[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
                 box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre}</div>`).join('');
                 box.classList.toggle('d-none', m.length === 0);
             };
             box.onclick = (e) => {
                 const v = e.target.dataset.v;
-                if (v) {
+                if(v) {
                     inp.value = v; box.classList.add('d-none');
-                    if (key === 'products') {
-                        const p = state.products.find(x => x.nombre === v);
-                        if (p) {
+                    if(key === 'products') {
+                        const p = catalogs.products.find(x => x.nombre === v);
+                        if(p) {
                             document.getElementById('in-costo').value = p.pCosto || 0;
                             document.getElementById('in-precio').value = p.pVenta || 0;
                         }
@@ -383,9 +413,9 @@
             };
         };
 
-        setupAuto('in-cliente', 'sug-cliente', 'clients');
-        setupAuto('in-tienda', 'sug-tienda', 'stores');
-        setupAuto('in-producto', 'sug-producto', 'products');
+        auto('in-tienda', 'sug-tienda', 'stores');
+        auto('in-cliente', 'sug-cliente', 'clients');
+        auto('in-producto', 'sug-producto', 'products');
 
     </script>
 </body>
