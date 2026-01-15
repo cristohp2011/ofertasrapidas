@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yautepec</title>
+    <title>Ofertas Rápidas Yautepec v2.2</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,6 +25,7 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             padding-bottom: 85px;
             user-select: none;
+            overflow-x: hidden;
         }
 
         header {
@@ -40,12 +41,10 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
-        /* Tabs */
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Navegación Inferior */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
@@ -61,8 +60,6 @@
         .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: bold; }
 
-        /* Autocomplete */
-        .search-wrapper { position: relative; }
         .sug-box {
             position: absolute; top: 100%; left: 0; right: 0;
             background: white; border-radius: 8px;
@@ -78,68 +75,67 @@
             justify-content: center; z-index: 9999;
         }
 
-        /* Ticket Invisible */
-        #ticket-render {
-            width: 320px; background: white; padding: 25px; color: black;
-            font-family: 'Courier New', monospace; position: fixed; left: -5000px;
+        #toast-msg {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            z-index: 3000; width: 90%; max-width: 400px; display: none;
         }
 
-        /* Scanner */
         #scanner-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             z-index: 3000; display: none; flex-direction: column;
             justify-content: center; align-items: center;
         }
-        #reader { width: 90%; max-width: 400px; border-radius: 12px; overflow: hidden; border: 2px solid white; }
+        #reader { width: 90%; max-width: 400px; border-radius: 12px; overflow: hidden; }
         
-        .entregado-row { background-color: #f0fdf4 !important; }
-        .entregado-text { text-decoration: line-through; color: #94a3b8; }
+        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .entregado-row { background-color: #f0fdf4 !important; border-left: 4px solid var(--success); }
     </style>
 </head>
 <body>
 
     <div id="loading">
         <div class="spinner-grow text-primary" role="status"></div>
-        <p class="mt-3 fw-bold">Conectando a Yautepec...</p>
-        <button id="btn-bypass" class="btn btn-sm btn-outline-secondary mt-3 d-none" onclick="document.getElementById('loading').style.display='none'">
-            Omitir espera y entrar
-        </button>
+        <p class="mt-3 fw-bold">Yaute Rápidas Cloud</p>
+        <button class="btn btn-sm btn-outline-secondary mt-3" onclick="document.getElementById('loading').style.display='none'">Entrar de todos modos</button>
     </div>
+
+    <!-- Mensajes de Sistema -->
+    <div id="toast-msg" class="alert shadow-lg"></div>
 
     <!-- Scanner -->
     <div id="scanner-overlay">
-        <div id="reader"></div>
-        <button class="btn btn-danger mt-4 px-5 fw-bold" onclick="stopScanner()">CERRAR</button>
+        <div id="reader" class="mb-4"></div>
+        <button class="btn btn-danger px-5 fw-bold" onclick="stopScanner()">CERRAR ESCÁNER</button>
     </div>
 
     <header>
-        <h5 class="m-0 fw-bold">Ofertas Rápidas Yautepec</h5>
-        <small id="status-label" class="opacity-75">Sincronizando...</small>
+        <h5 class="m-0 fw-bold">Yaute Rápidas v2.2</h5>
+        <small id="status-label"><span class="status-dot bg-warning"></span>Conectando...</small>
     </header>
 
     <div class="container py-3">
         <!-- VENTA -->
         <div id="tab-venta" class="tab-content active">
             <div class="card-custom">
-                <div class="mb-3 search-wrapper">
+                <div class="mb-3 position-relative">
                     <label class="small fw-bold text-muted">TIENDA (ORIGEN)</label>
-                    <input type="text" id="in-tienda" class="form-control" placeholder="Nombre de la tienda..." autocomplete="off">
+                    <input type="text" id="in-tienda" class="form-control" placeholder="Nombre..." autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
 
-                <div class="mb-3 search-container">
+                <div class="mb-3 position-relative">
                     <label class="small fw-bold text-muted">CLIENTE</label>
-                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre del cliente..." autocomplete="off">
+                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre..." autocomplete="off">
                     <div id="sug-cliente" class="sug-box d-none"></div>
                 </div>
 
                 <div class="row g-2 mb-3">
-                    <div class="col-8 search-wrapper">
-                        <div class="d-flex justify-content-between">
-                            <label class="small fw-bold text-muted">PRODUCTO</label>
-                            <i class="fas fa-barcode text-primary" onclick="startScanner()"></i>
+                    <div class="col-8 position-relative">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="small fw-bold text-muted mb-0">PRODUCTO</label>
+                            <button class="btn btn-sm p-0 text-primary" onclick="startScanner()"><i class="fas fa-barcode"></i> Escanear</button>
                         </div>
-                        <input type="text" id="in-producto" class="form-control" placeholder="Buscar producto..." autocomplete="off">
+                        <input type="text" id="in-producto" class="form-control" placeholder="Buscar..." autocomplete="off">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-4">
@@ -150,11 +146,11 @@
 
                 <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">COSTO UNIT.</label>
+                        <label class="small fw-bold text-muted">COSTO U.</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00">
                     </div>
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">PRECIO VENTA</label>
+                        <label class="small fw-bold text-muted">VENTA U.</label>
                         <input type="number" id="in-precio" class="form-control" placeholder="0.00">
                     </div>
                 </div>
@@ -167,17 +163,17 @@
 
         <!-- ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
-            <h6 class="fw-bold mb-3 text-muted">PENDIENTES DE HOY</h6>
+            <h6 class="fw-bold mb-3 text-muted">REGISTROS DE HOY</h6>
             <div id="lista-entregas"></div>
             <div id="empty-entregas" class="text-center py-5 opacity-50 d-none">
                 <i class="fas fa-truck fa-3x mb-3"></i>
-                <p>No hay entregas registradas hoy</p>
+                <p>Sin movimientos hoy</p>
             </div>
         </div>
 
         <!-- HISTORIAL -->
         <div id="tab-informes" class="tab-content">
-            <h6 class="fw-bold mb-3 text-muted">HISTORIAL RECIENTE</h6>
+            <h6 class="fw-bold mb-3 text-muted">MOVIMIENTOS RECIENTES</h6>
             <div class="card-custom p-0 overflow-hidden">
                 <div class="table-responsive">
                     <table class="table table-sm align-middle mb-0">
@@ -189,24 +185,23 @@
     </div>
 
     <!-- Ticket Render (Invisible) -->
-    <div id="ticket-render">
-        <div class="text-center border-bottom pb-2 mb-2">
-            <h5 class="fw-bold m-0">YAUTE RÁPIDAS</h5>
+    <div id="ticket-render" style="position: fixed; left: -5000px; background: white; width: 300px; padding: 20px;">
+        <div style="text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px;">
+            <h3 style="margin: 0;">YAUTE RÁPIDAS</h3>
             <small id="tick-fecha"></small>
         </div>
-        <p class="small mb-1"><b>CLIENTE:</b> <span id="tick-cliente"></span></p>
-        <div style="border-bottom: 1px dashed #000; margin: 8px 0;"></div>
-        <div id="tick-items"></div>
-        <div class="border-top mt-2 pt-2 d-flex justify-content-between">
-            <b>TOTAL:</b> <b id="tick-total"></b>
+        <p><b>CLIENTE:</b> <span id="tick-cliente"></span></p>
+        <div id="tick-items" style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;"></div>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px;">
+            <span>TOTAL:</span>
+            <span id="tick-total"></span>
         </div>
-        <p class="text-center mt-3 small opacity-75">¡Gracias por su preferencia!</p>
     </div>
 
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-cash-register"></i>Venta</button>
+        <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-edit"></i>Registro</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Entregas</button>
-        <button class="tab-btn" onclick="showTab('informes', this)"><i class="fas fa-history"></i>Historial</button>
+        <button class="tab-btn" onclick="showTab('informes', this)"><i class="fas fa-list-ul"></i>Historial</button>
     </nav>
 
     <script type="module">
@@ -226,29 +221,31 @@
         const appId = "yaute-master-v1";
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
-        // Optimización para Google Sites/GitHub: Long Polling
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let catalogs = { clients: [], products: [], stores: [], sales: [] };
         let isAuth = false;
         let html5QrCode = null;
 
-        // Mostrar botón de bypass tras 5 segundos
-        setTimeout(() => {
-            if (!isAuth) document.getElementById('btn-bypass').classList.remove('d-none');
-        }, 5000);
+        // Función de aviso interno
+        window.msg = (text, type = 'success') => {
+            const el = document.getElementById('toast-msg');
+            el.className = `alert alert-${type === 'success' ? 'success' : 'danger'} shadow-lg`;
+            el.innerText = text;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 4000);
+        };
 
-        // AUTH
-        signInAnonymously(auth).catch(() => {
-            document.getElementById('status-label').innerText = "Error conexión";
+        signInAnonymously(auth).catch(e => {
+            document.getElementById('status-label').innerHTML = '<span class="status-dot bg-danger"></span>Error de red';
+            window.msg("Error de conexión: Verifica internet.", "error");
         });
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 isAuth = true;
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
+                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span>Conectado';
                 startSync();
             }
         });
@@ -258,7 +255,9 @@
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (s) => {
                     catalogs[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderAll();
-                }, (err) => console.error("Sync error:", err));
+                }, (err) => {
+                    if(err.code === 'permission-denied') window.msg("Error de permisos en la nube.", "error");
+                });
             };
             ['clients', 'products', 'stores', 'sales'].forEach(sync);
         };
@@ -284,11 +283,11 @@
             if (vHoy.length === 0) { list.innerHTML = ""; empty.classList.remove('d-none'); return; }
             empty.classList.add('d-none');
 
-            // Agrupar por cliente
             const grouped = vHoy.reduce((acc, v) => {
-                if(!acc[v.cliente]) acc[v.cliente] = {total: 0, items: []};
-                acc[v.cliente].total += v.total;
-                acc[v.cliente].items.push(v);
+                const c = v.cliente || "S/N";
+                if(!acc[c]) acc[c] = {total: 0, items: []};
+                acc[c].total += (v.total || 0);
+                acc[c].items.push(v);
                 return acc;
             }, {});
 
@@ -296,30 +295,28 @@
                 const compras = grouped[cli].items;
                 const todasEntregadas = compras.every(i => i.entregado);
                 return `
-                <div class="card-custom mb-3 ${todasEntregadas ? 'entregado-row opacity-75' : ''}">
+                <div class="card-custom mb-3 ${todasEntregadas ? 'entregado-row' : ''}">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="fw-bold">${cli}</span>
-                        <button class="btn btn-sm btn-outline-dark" onclick="genTicket('${cli}')">
-                            <i class="fas fa-file-image"></i> Ticket
-                        </button>
+                        <button class="btn btn-sm btn-outline-dark" onclick="genTicket('${cli}')">Ticket</button>
                     </div>
                     <div class="small">
                         ${compras.map(i => `
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="${i.entregado ? 'entregado-text' : ''}">${i.cantidad}x ${i.producto}</span>
-                                <input type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})">
+                                <span class="${i.entregado ? 'text-decoration-line-through text-muted' : ''}">${i.cantidad}x ${i.producto}</span>
+                                <input type="checkbox" class="form-check-input" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})">
                             </div>
                         `).join('')}
                     </div>
-                    <div class="text-end fw-bold text-success border-top pt-2 mt-2">
-                        Total: $${grouped[cli].total.toFixed(2)}
-                    </div>
+                    <div class="text-end fw-bold text-success border-top pt-2 mt-2">Total: $${grouped[cli].total.toFixed(2)}</div>
                 </div>`;
             }).join('');
         };
 
         window.toggleEnt = async (id, val) => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
+            } catch(e) { window.msg("No se pudo actualizar.", "error"); }
         };
 
         const renderHistorial = () => {
@@ -334,21 +331,19 @@
                         <div class="fw-bold">${s.producto}</div>
                         <div class="text-muted small">${s.cliente} • ${time}</div>
                     </td>
-                    <td class="text-end fw-bold text-primary">$${s.total.toFixed(2)}</td>
-                    <td class="text-center">
-                        <i class="fas fa-trash text-muted" onclick="delSale('${s.id}')"></i>
-                    </td>
+                    <td class="text-end fw-bold text-primary">$${(s.total || 0).toFixed(2)}</td>
+                    <td class="text-center"><i class="fas fa-trash text-muted" onclick="delSale('${s.id}')"></i></td>
                 </tr>`;
             }).join('');
         };
 
         window.delSale = async (id) => {
-            if(confirm("¿Eliminar registro?")) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id));
-            }
+            if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id));
         };
 
         document.getElementById('btn-save').onclick = async () => {
+            if(!isAuth) return window.msg("Esperando conexión...", "error");
+            
             const btn = document.getElementById('btn-save');
             const data = {
                 tienda: document.getElementById('in-tienda').value.trim(),
@@ -359,10 +354,19 @@
                 precio: parseFloat(document.getElementById('in-precio').value) || 0
             };
 
-            if(!data.cliente || !data.producto || data.precio <= 0) return alert("Faltan datos obligatorios");
+            if(!data.cliente || !data.producto || data.precio <= 0) return window.msg("Datos incompletos.", "error");
 
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>GUARDANDO...';
+
+            // Seguro contra bloqueo (Timeout de 10s)
+            const timeout = setTimeout(() => {
+                if(btn.disabled) {
+                    btn.disabled = false;
+                    btn.innerText = "REINTENTAR";
+                    window.msg("Tiempo de espera agotado. Reintenta.", "error");
+                }
+            }, 10000);
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
@@ -373,26 +377,35 @@
                     entregado: false
                 });
 
-                // Actualizar Catálogos automáticos
+                // Catálogos
                 const check = (col, val) => {
-                    if(!catalogs[col].some(i => i.nombre.toLowerCase() === val.toLowerCase())) {
+                    if(!catalogs[col].some(i => (i.nombre || "").toLowerCase() === val.toLowerCase())) {
                         addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
                     }
                 };
                 check('clients', data.cliente);
                 check('stores', data.tienda);
-                if(!catalogs.products.some(p => p.nombre.toLowerCase() === data.producto.toLowerCase())) {
-                    addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
-                        nombre: data.producto, pCosto: data.costo, pVenta: data.precio, barcode: ""
-                    });
-                }
-
+                
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-cantidad').value = "1";
-            } catch(e) { alert("Error de conexión"); }
-            finally { btn.disabled = false; btn.innerText = "GUARDAR REGISTRO"; }
+                
+                window.msg("¡Venta guardada!");
+                btn.className = "btn btn-success w-100 py-3 fw-bold shadow";
+                setTimeout(() => {
+                    btn.className = "btn btn-primary w-100 py-3 fw-bold shadow";
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR REGISTRO';
+                }, 1000);
+
+            } catch(e) {
+                window.msg("Error: " + e.code, "error");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR REGISTRO';
+            } finally {
+                clearTimeout(timeout);
+            }
         };
 
         window.genTicket = async (cli) => {
@@ -402,8 +415,8 @@
             document.getElementById('tick-cliente').innerText = cli;
             let total = 0;
             document.getElementById('tick-items').innerHTML = items.map(i => {
-                total += i.total;
-                return `<div class="d-flex justify-content-between"><span>${i.cantidad}x ${i.producto}</span><span>$${i.total.toFixed(2)}</span></div>`;
+                total += (i.total || 0);
+                return `<div style="display:flex; justify-content:space-between"><span>${i.cantidad}x ${i.producto}</span><span>$${(i.total || 0).toFixed(2)}</span></div>`;
             }).join('');
             document.getElementById('tick-total').innerText = `$${total.toFixed(2)}`;
 
@@ -423,9 +436,7 @@
                     document.getElementById('in-producto').value = p.nombre;
                     document.getElementById('in-costo').value = p.pCosto || 0;
                     document.getElementById('in-precio').value = p.pVenta || 0;
-                } else {
-                    alert("Nuevo producto: " + code);
-                }
+                } else { window.msg("Nuevo código: " + code); }
             });
         };
 
