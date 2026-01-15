@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ofertas Rápidas Yautepec Pro</title>
     
-    <!-- Frameworks -->
+    <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     
     <style>
         :root {
@@ -35,8 +34,8 @@
         }
 
         .header-logo {
-            height: 45px;
-            margin-bottom: 5px;
+            height: 50px;
+            margin-bottom: 8px;
             object-fit: contain;
         }
 
@@ -46,37 +45,34 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
-        /* Toast / Notificación */
-        #custom-toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
+        /* Notificación Flotante */
+        #toast-alert {
+            position: fixed; top: 20px; left: 50%;
             transform: translateX(-50%);
             z-index: 10001;
             background: var(--success);
             color: white;
-            padding: 12px 24px;
+            padding: 12px 25px;
             border-radius: 50px;
             font-weight: bold;
             display: none;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            animation: slideDown 0.3s ease-out;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            animation: slideDown 0.4s ease;
         }
 
         @keyframes slideDown {
-            from { top: -50px; opacity: 0; }
-            to { top: 20px; opacity: 1; }
+            from { transform: translate(-50%, -100px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
         }
 
-        /* Pestañas */
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around;
+            background: white; display: flex; 
+            justify-content: space-around;
             padding: 10px 0; border-top: 1px solid #e2e8f0; z-index: 2000;
         }
 
@@ -94,12 +90,12 @@
             position: absolute; top: 100%; left: 0; right: 0;
             background: white; border-radius: 12px;
             max-height: 200px; overflow-y: auto; z-index: 1500;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             margin-top: 5px;
         }
         .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
 
-        #loading {
+        #loading-screen {
             position: fixed; inset: 0; background: white;
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; z-index: 9999;
@@ -108,66 +104,53 @@
         .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
         .entregado-row { background-color: #f0fdf4 !important; border-left: 5px solid var(--success) !important; }
         
-        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; }
-        .sub-btn { 
-            background: white; border: 1px solid #e2e8f0; border-radius: 20px; 
-            padding: 6px 15px; font-size: 0.8rem; white-space: nowrap; 
-        }
-        .sub-btn.active { background: var(--primary); color: white; }
-
-        /* Ticket (Invisible) */
+        /* Ticket */
         #ticket-render {
             position: fixed; left: -5000px; width: 320px; background: white;
             padding: 25px; color: black; font-family: 'Courier New', monospace;
         }
-
-        .ticket-logo {
-            width: 80px;
-            height: auto;
-            display: block;
-            margin: 0 auto 10px;
-        }
+        .ticket-logo { width: 100px; height: auto; display: block; margin: 0 auto 10px; }
     </style>
 </head>
 <body>
 
-    <div id="loading">
-        <div class="spinner-grow text-primary" role="status"></div>
-        <p class="mt-3 fw-bold">Yaute Rápidas Cloud</p>
+    <div id="loading-screen">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-3 fw-bold">Sincronizando Sistema Pro...</p>
     </div>
 
-    <!-- Notificación Toast -->
-    <div id="custom-toast"><i class="fas fa-check-circle me-2"></i> Venta guardada con éxito</div>
+    <!-- Mensaje de Éxito -->
+    <div id="toast-alert"><i class="fas fa-check-circle me-2"></i> Registro guardado correctamente</div>
 
     <header>
         <img src="logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
         <h5 class="m-0 fw-bold">Ofertas Rápidas Yautepec</h5>
         <div class="opacity-75 mt-1">
-            <small id="status-label"><span class="status-dot bg-warning"></span>Conectando...</small>
+            <small id="status-label"><span class="status-dot bg-warning"></span> Conectando...</small>
         </div>
     </header>
 
     <div class="container py-3">
         
-        <!-- PESTAÑA: VENTA -->
+        <!-- SECCIÓN: VENTA -->
         <div id="tab-venta" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
-                    <label class="small fw-bold text-muted mb-1">TIENDA (PERSISTENTE)</label>
-                    <input type="text" id="in-tienda" class="form-control" placeholder="Tienda..." autocomplete="off">
+                    <label class="small fw-bold text-muted mb-1">TIENDA (SE MANTIENE)</label>
+                    <input type="text" id="in-tienda" class="form-control" placeholder="Escribe la tienda..." autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
 
                 <div class="mb-3 search-wrapper">
                     <label class="small fw-bold text-muted mb-1">CLIENTE</label>
-                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre..." autocomplete="off">
+                    <input type="text" id="in-cliente" class="form-control" placeholder="Nombre del cliente..." autocomplete="off">
                     <div id="sug-cliente" class="sug-box d-none"></div>
                 </div>
 
                 <div class="row g-2 mb-3">
                     <div class="col-8 search-wrapper">
                         <label class="small fw-bold text-muted mb-1">PRODUCTO</label>
-                        <input type="text" id="in-producto" class="form-control" placeholder="¿Qué vendes?" autocomplete="off">
+                        <input type="text" id="in-producto" class="form-control" placeholder="¿Qué se vendió?">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-4">
@@ -193,81 +176,70 @@
             </div>
         </div>
 
-        <!-- PESTAÑA: ENTREGAS -->
+        <!-- SECCIÓN: ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
-            <h6 class="fw-bold text-muted mb-3 px-1">ENTREGAS DE HOY</h6>
+            <h6 class="fw-bold text-muted mb-3 px-1">CONTROL DE REPARTO</h6>
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- PESTAÑA: INFORMES -->
-        <div id="tab-informes" class="tab-content">
-            <div class="sub-nav mb-2">
-                <button class="sub-btn active" onclick="changeSubTab('historial', this)">Historial</button>
-                <button class="sub-btn" onclick="changeSubTab('products', this)">Catálogo</button>
-                <button class="sub-btn" onclick="changeSubTab('clients', this)">Clientes</button>
-                <button class="sub-btn" onclick="changeSubTab('stores', this)">Tiendas</button>
-            </div>
-
-            <div id="sec-data" class="card-custom p-0 overflow-hidden">
-                <div class="table-responsive" style="max-height: 500px;">
-                    <table class="table table-sm align-middle mb-0">
-                        <tbody id="data-body"></tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- SECCIÓN: HISTORIAL -->
+        <div id="tab-historial" class="tab-content">
+            <h6 class="fw-bold text-muted mb-3 px-1">ÚLTIMOS MOVIMIENTOS</h6>
+            <div id="historial-lista"></div>
         </div>
 
     </div>
 
-    <!-- Ticket (Invisible) -->
+    <!-- Ticket Invisible -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo" onerror="this.style.display='none'">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
-            <h3 style="margin: 0; font-size: 1.2rem;">OFERTAS RÁPIDAS YAUTEPEC</h3>
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: bold;">OFERTAS RÁPIDAS YAUTEPEC</h3>
             <small id="t-fecha"></small>
         </div>
-        <p style="font-size: 0.9rem;"><b>CLIENTE:</b> <span id="t-cliente"></span></p>
-        <div id="t-items" style="border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;"></div>
+        <p style="font-size: 0.9rem; margin-bottom: 5px;"><b>CLIENTE:</b> <span id="t-cliente"></span></p>
+        <p style="font-size: 0.9rem;"><b>TIENDA:</b> <span id="t-tienda"></span></p>
+        <div id="t-items" style="border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px; margin-top: 10px;"></div>
         <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem;">
             <span>TOTAL:</span>
             <span id="t-total"></span>
         </div>
-        <p style="text-align: center; margin-top: 20px; font-size: 0.7rem;">¡GRACIAS POR SU PREFERENCIA!</p>
+        <p style="text-align: center; margin-top: 20px; font-size: 0.7rem; letter-spacing: 1px;">¡GRACIAS POR SU PREFERENCIA!</p>
     </div>
 
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-cash-register"></i>Venta</button>
+        <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-plus-circle"></i>Venta</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Hoy</button>
-        <button class="tab-btn" onclick="showTab('informes', this)"><i class="fas fa-list-ul"></i>Informes</button>
+        <button class="tab-btn" onclick="showTab('historial', this)"><i class="fas fa-history"></i>Historial</button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config || '{}');
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-yaute';
-        
+        // CONFIGURACIÓN DE TU PROYECTO (Restaurada)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
+            authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
+            projectId: "ofertas-rapidas-yautepec",
+            storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app",
+            messagingSenderId: "81339635207",
+            appId: "1:81339635207:web:26d180f92224d9a036fca2"
+        };
+
+        const appId = "yaute-v1-shared";
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let catalogs = { clients: [], products: [], stores: [], sales: [] };
-        let currentSubTab = 'historial';
 
-        // Auth dinámico
-        const startAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        };
-
+        signInAnonymously(auth);
+        
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.getElementById('loading').style.display = 'none';
+                document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
                 startSync();
             }
@@ -283,7 +255,6 @@
             ['clients', 'products', 'stores', 'sales'].forEach(syncCol);
         };
 
-        // Navegación
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
@@ -291,16 +262,9 @@
             btn.classList.add('active');
         };
 
-        window.changeSubTab = (id, btn) => {
-            currentSubTab = id;
-            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderAll();
-        };
-
         const renderAll = () => {
             renderEntregas();
-            renderInformes();
+            renderHistorial();
         };
 
         const renderEntregas = () => {
@@ -308,33 +272,36 @@
             const vHoy = catalogs.sales.filter(s => s.fechaStr === hoy);
             const list = document.getElementById('lista-entregas');
             
-            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-4 text-muted">Sin movimientos hoy</p>'; return; }
+            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted opacity-50">Sin ventas registradas hoy</p>'; return; }
 
             const grouped = vHoy.reduce((acc, v) => {
-                if(!acc[v.cliente]) acc[v.cliente] = {total: 0, items: []};
-                acc[v.cliente].total += (v.total || 0);
-                acc[v.cliente].items.push(v);
+                const c = v.cliente || "Sin Nombre";
+                if(!acc[c]) acc[c] = {total: 0, items: []};
+                acc[c].total += (v.total || 0);
+                acc[c].items.push(v);
                 return acc;
             }, {});
 
             list.innerHTML = Object.keys(grouped).map(cli => {
                 const items = grouped[cli].items;
-                const todasEntregadas = items.every(i => i.entregado);
+                const totalEnt = items.every(i => i.entregado);
                 return `
-                <div class="card-custom mb-3 ${todasEntregadas ? 'entregado-row opacity-75' : ''}">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-bold">${cli}</span>
-                        <button class="btn btn-sm btn-outline-dark" onclick="genTicket('${cli}')"><i class="fas fa-file-image"></i> Ticket</button>
+                <div class="card-custom mb-3 ${totalEnt ? 'entregado-row opacity-75' : ''}">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold fs-6">${cli}</span>
+                        <button class="btn btn-sm btn-dark px-3 rounded-pill" onclick="genTicket('${cli}')"><i class="fas fa-file-invoice"></i> Ticket</button>
                     </div>
                     <div class="small">
                         ${items.map(i => `
-                            <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-1">
                                 <span class="${i.entregado ? 'text-decoration-line-through text-muted' : ''}">${i.cantidad}x ${i.producto}</span>
-                                <input type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})">
+                                </div>
                             </div>
                         `).join('')}
                     </div>
-                    <div class="text-end fw-bold text-success border-top pt-2 mt-2">Total: $${grouped[cli].total.toFixed(2)}</div>
+                    <div class="text-end fw-bold text-success pt-2">Total: $${grouped[cli].total.toFixed(2)}</div>
                 </div>`;
             }).join('');
         };
@@ -343,45 +310,31 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
         };
 
-        const renderInformes = () => {
-            const body = document.getElementById('data-body');
-            if (currentSubTab === 'historial') {
-                const sorted = [...catalogs.sales].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
-                body.innerHTML = sorted.map(s => `
-                    <tr>
-                        <td class="ps-3 py-3"><b>${s.producto}</b><br><small class="text-muted">${s.cliente}</small></td>
-                        <td class="text-end fw-bold text-primary">$${(s.total || 0).toFixed(2)}</td>
-                        <td class="text-center px-2"><i class="fas fa-trash text-muted" onclick="del('sales', '${s.id}')"></i></td>
-                    </tr>
-                `).join('') || '<tr><td colspan="3" class="text-center py-4">Vacío</td></tr>';
-            } else {
-                const list = catalogs[currentSubTab] || [];
-                body.innerHTML = list.map(item => `
-                    <tr>
-                        <td class="ps-3 py-3"><b>${item.nombre}</b></td>
-                        <td class="text-end">
-                            ${currentSubTab === 'products' ? `<span class="text-primary fw-bold">$${(item.pVenta || 0).toFixed(2)}</span>` : ''}
-                        </td>
-                        <td class="text-center px-2"><i class="fas fa-trash text-muted" onclick="del('${currentSubTab}', '${item.id}')"></i></td>
-                    </tr>
-                `).join('') || '<tr><td colspan="3" class="text-center py-4">Vacío</td></tr>';
-            }
+        const renderHistorial = () => {
+            const list = document.getElementById('historial-lista');
+            const sorted = [...catalogs.sales].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
+            
+            list.innerHTML = sorted.map(s => `
+                <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
+                    <div>
+                        <div class="fw-bold">${s.producto}</div>
+                        <div class="text-muted small">${s.cliente} • ${s.tienda || ''}</div>
+                    </div>
+                    <div class="text-end d-flex align-items-center">
+                        <span class="fw-bold text-primary me-3">$${(s.total || 0).toFixed(2)}</span>
+                        <i class="fas fa-trash text-danger opacity-25" onclick="del('sales', '${s.id}')"></i>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-center py-5 text-muted">Historial vacío</p>';
         };
 
         window.del = async (col, id) => {
-            if (confirm("¿Eliminar registro?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
-        };
-
-        // Mostrar Notificación
-        const showSuccess = () => {
-            const toast = document.getElementById('custom-toast');
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            if (confirm("¿Eliminar registro de forma permanente?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
         };
 
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
-            const v = {
+            const data = {
                 tienda: document.getElementById('in-tienda').value.trim(),
                 cliente: document.getElementById('in-cliente').value.trim(),
                 producto: document.getElementById('in-producto').value.trim(),
@@ -390,42 +343,44 @@
                 precio: parseFloat(document.getElementById('in-precio').value) || 0
             };
 
-            if (!v.cliente || !v.producto || v.precio <= 0) return alert("Faltan datos de cliente o producto");
+            if (!data.cliente || !data.producto || data.precio <= 0) return alert("Por favor completa los datos del cliente y producto");
 
-            btn.disabled = true; btn.innerText = "Guardando...";
+            btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
-                    ...v, total: v.cantidad * v.precio, fecha: serverTimestamp(),
+                    ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(),
                     fechaStr: new Date().toLocaleDateString(), entregado: false
                 });
 
                 // Auto catálogos
                 const check = (col, val) => {
-                    if(!catalogs[col].some(i => i.nombre.toLowerCase() === val.toLowerCase())) {
+                    if(!catalogs[col].some(i => (i.nombre || "").toLowerCase() === val.toLowerCase())) {
                         addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
                     }
                 };
-                check('clients', v.cliente);
-                check('stores', v.tienda);
+                check('clients', data.cliente);
+                check('stores', data.tienda);
                 
-                if(!catalogs.products.some(p => p.nombre.toLowerCase() === v.producto.toLowerCase())) {
+                if(!catalogs.products.some(p => (p.nombre || "").toLowerCase() === data.producto.toLowerCase())) {
                     addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
-                        nombre: v.producto, pCosto: v.costo, pVenta: v.precio
+                        nombre: data.producto, pCosto: data.costo, pVenta: data.precio
                     });
                 }
 
-                // Limpieza selectiva (La tienda persiste)
+                // Limpieza (Tienda persiste)
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-cantidad').value = "1";
                 
-                showSuccess();
+                const toast = document.getElementById('toast-alert');
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 3000);
 
-            } catch(e) { console.error(e); alert("Error al conectar con la base de datos"); }
-            finally { btn.disabled = false; btn.innerText = "GUARDAR VENTA"; }
+            } catch(e) { console.error(e); alert("Error de red: No se pudo conectar a la nube"); }
+            finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR VENTA'; }
         };
 
         window.genTicket = async (cli) => {
@@ -433,17 +388,20 @@
             const items = catalogs.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
             document.getElementById('t-fecha').innerText = new Date().toLocaleString();
             document.getElementById('t-cliente').innerText = cli;
+            document.getElementById('t-tienda').innerText = items[0].tienda || 'General';
             let total = 0;
             document.getElementById('t-items').innerHTML = items.map(i => {
                 total += i.total;
-                return `<div style="display:flex; justify-content:space-between"><span>${i.cantidad}x ${i.producto}</span><span>$${i.total.toFixed(2)}</span></div>`;
+                return `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>${i.cantidad}x ${i.producto}</span><span>$${i.total.toFixed(2)}</span></div>`;
             }).join('');
             document.getElementById('t-total').innerText = `$${total.toFixed(2)}`;
 
-            const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
-            const link = document.createElement('a');
-            link.download = `Ticket_${cli}.png`;
-            link.href = canvas.toDataURL(); link.click();
+            try {
+                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
+                const link = document.createElement('a');
+                link.download = `Ticket_${cli}_${Date.now()}.png`;
+                link.href = canvas.toDataURL("image/png"); link.click();
+            } catch(e) { alert("Error al generar la imagen del ticket"); }
         };
 
         const auto = (id, boxId, key) => {
@@ -474,8 +432,7 @@
         auto('in-tienda', 'sug-tienda', 'stores');
         auto('in-cliente', 'sug-cliente', 'clients');
         auto('in-producto', 'sug-producto', 'products');
-        
-        startAuth();
+
     </script>
 </body>
 </html>
