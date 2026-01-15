@@ -65,6 +65,13 @@
             to { transform: translate(-50%, 0); opacity: 1; }
         }
 
+        /* Modales de Edición */
+        #edit-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            z-index: 3000; display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -83,6 +90,18 @@
         }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: bold; }
+
+        /* Sub-pestañas Catálogos */
+        .sub-nav {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px;
+            scrollbar-width: none;
+        }
+        .sub-nav::-webkit-scrollbar { display: none; }
+        .sub-btn { 
+            background: white; border: 1px solid #e2e8f0; border-radius: 20px; 
+            padding: 6px 15px; font-size: 0.75rem; white-space: nowrap; color: #64748b;
+        }
+        .sub-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* Autocomplete */
         .search-wrapper { position: relative; }
@@ -110,17 +129,35 @@
             padding: 25px; color: black; font-family: 'Courier New', monospace;
         }
         .ticket-logo { width: 100px; height: auto; display: block; margin: 0 auto 10px; }
+        
+        .action-icon { padding: 8px; cursor: pointer; opacity: 0.6; transition: 0.2s; }
+        .action-icon:active { opacity: 1; transform: scale(1.1); }
+        .text-price { color: var(--accent); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status"></div>
-        <p class="mt-3 fw-bold">Sincronizando Sistema Pro...</p>
+        <p class="mt-3 fw-bold">Gestión Yaute Pro...</p>
     </div>
 
     <!-- Mensaje de Éxito -->
-    <div id="toast-alert"><i class="fas fa-check-circle me-2"></i> Registro guardado correctamente</div>
+    <div id="toast-alert"><i class="fas fa-check-circle me-2"></i> Operación exitosa</div>
+
+    <!-- Modal de Edición -->
+    <div id="edit-overlay">
+        <div class="card-custom m-3 w-100" style="max-width: 400px;">
+            <h5 id="edit-title" class="fw-bold mb-4">Editar Registro</h5>
+            <div id="edit-form-body">
+                <!-- Se llena dinámicamente -->
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-light flex-1 w-100 py-2" onclick="closeEdit()">Cancelar</button>
+                <button id="btn-save-edit" class="btn btn-primary flex-1 w-100 py-2">Guardar</button>
+            </div>
+        </div>
+    </div>
 
     <header>
         <img src="logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
@@ -132,12 +169,12 @@
 
     <div class="container py-3">
         
-        <!-- SECCIÓN: VENTA -->
+        <!-- PESTAÑA: VENTA -->
         <div id="tab-venta" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
                     <label class="small fw-bold text-muted mb-1">TIENDA (SE MANTIENE)</label>
-                    <input type="text" id="in-tienda" class="form-control" placeholder="Escribe la tienda..." autocomplete="off">
+                    <input type="text" id="in-tienda" class="form-control" placeholder="Nombre de tienda..." autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
 
@@ -150,7 +187,7 @@
                 <div class="row g-2 mb-3">
                     <div class="col-8 search-wrapper">
                         <label class="small fw-bold text-muted mb-1">PRODUCTO</label>
-                        <input type="text" id="in-producto" class="form-control" placeholder="¿Qué se vendió?">
+                        <input type="text" id="in-producto" class="form-control" placeholder="¿Qué vendiste?">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-4">
@@ -176,16 +213,24 @@
             </div>
         </div>
 
-        <!-- SECCIÓN: ENTREGAS -->
+        <!-- PESTAÑA: ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
-            <h6 class="fw-bold text-muted mb-3 px-1">CONTROL DE REPARTO</h6>
+            <h6 class="fw-bold text-muted mb-3 px-1">CONTROL DE REPARTO (HOY)</h6>
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- SECCIÓN: HISTORIAL -->
-        <div id="tab-historial" class="tab-content">
-            <h6 class="fw-bold text-muted mb-3 px-1">ÚLTIMOS MOVIMIENTOS</h6>
-            <div id="historial-lista"></div>
+        <!-- PESTAÑA: CATÁLOGOS -->
+        <div id="tab-catalogos" class="tab-content">
+            <div class="sub-nav">
+                <button class="sub-btn active" onclick="switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn" onclick="switchSubTab('products', this)">Productos</button>
+                <button class="sub-btn" onclick="switchSubTab('clients', this)">Clientes</button>
+                <button class="sub-btn" onclick="switchSubTab('stores', this)">Tiendas</button>
+            </div>
+            
+            <div id="lista-catalogos">
+                <!-- Se llena dinámicamente -->
+            </div>
         </div>
 
     </div>
@@ -210,7 +255,7 @@
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-plus-circle"></i>Venta</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Hoy</button>
-        <button class="tab-btn" onclick="showTab('historial', this)"><i class="fas fa-history"></i>Historial</button>
+        <button class="tab-btn" onclick="showTab('catalogos', this)"><i class="fas fa-boxes-stacked"></i>Catálogos</button>
     </nav>
 
     <script type="module">
@@ -218,7 +263,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE TU PROYECTO
         const firebaseConfig = {
             apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
             authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
@@ -233,7 +277,8 @@
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let catalogs = { clients: [], products: [], stores: [], sales: [] };
+        let state = { clients: [], products: [], stores: [], sales: [] };
+        let activeSubTab = 'sales';
 
         signInAnonymously(auth);
         
@@ -248,7 +293,7 @@
         const startSync = () => {
             const syncCol = (name) => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (s) => {
-                    catalogs[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    state[name] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderAll();
                 });
             };
@@ -262,14 +307,21 @@
             btn.classList.add('active');
         };
 
+        window.switchSubTab = (id, btn) => {
+            activeSubTab = id;
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderCatalogList();
+        };
+
         const renderAll = () => {
             renderEntregas();
-            renderHistorial();
+            renderCatalogList();
         };
 
         const renderEntregas = () => {
             const hoy = new Date().toLocaleDateString();
-            const vHoy = catalogs.sales.filter(s => s.fechaStr === hoy);
+            const vHoy = state.sales.filter(s => s.fechaStr === hoy);
             const list = document.getElementById('lista-entregas');
             
             if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted opacity-50">Sin ventas registradas hoy</p>'; return; }
@@ -310,26 +362,109 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
         };
 
-        const renderHistorial = () => {
-            const list = document.getElementById('historial-lista');
-            const sorted = [...catalogs.sales].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
-            
-            list.innerHTML = sorted.map(s => `
-                <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
-                    <div>
-                        <div class="fw-bold">${s.producto}</div>
-                        <div class="text-muted small">${s.cliente} • ${s.tienda || ''}</div>
+        const renderCatalogList = () => {
+            const list = document.getElementById('lista-catalogos');
+            const data = state[activeSubTab] || [];
+
+            if (activeSubTab === 'sales') {
+                const sorted = [...data].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
+                list.innerHTML = sorted.map(s => `
+                    <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
+                        <div>
+                            <div class="fw-bold">${s.producto}</div>
+                            <div class="text-muted small">${s.cliente} • ${s.tienda || ''}</div>
+                        </div>
+                        <div class="text-end d-flex align-items-center gap-2">
+                            <span class="text-price me-2">$${(s.total || 0).toFixed(2)}</span>
+                            <i class="fas fa-pen action-icon text-primary" onclick="openEdit('sales', '${s.id}')"></i>
+                            <i class="fas fa-trash action-icon text-danger" onclick="del('sales', '${s.id}')"></i>
+                        </div>
                     </div>
-                    <div class="text-end d-flex align-items-center">
-                        <span class="fw-bold text-primary me-3">$${(s.total || 0).toFixed(2)}</span>
-                        <i class="fas fa-trash text-danger opacity-25" onclick="del('sales', '${s.id}')"></i>
+                `).join('') || '<p class="text-center py-5 text-muted">Historial vacío</p>';
+            } else {
+                list.innerHTML = data.map(item => `
+                    <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
+                        <div>
+                            <div class="fw-bold">${item.nombre}</div>
+                            ${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto || 0} / V: $${item.pVenta || 0}</small>` : ''}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <i class="fas fa-pen action-icon text-primary" onclick="openEdit('${activeSubTab}', '${item.id}')"></i>
+                            <i class="fas fa-trash action-icon text-danger" onclick="del('${activeSubTab}', '${item.id}')"></i>
+                        </div>
                     </div>
-                </div>
-            `).join('') || '<p class="text-center py-5 text-muted">Historial vacío</p>';
+                `).join('') || '<p class="text-center py-5 text-muted">Catálogo vacío</p>';
+            }
         };
 
         window.del = async (col, id) => {
-            if (confirm("¿Eliminar registro de forma permanente?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
+            if (confirm("¿Eliminar de forma permanente?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
+        };
+
+        // LÓGICA DE EDICIÓN
+        let currentEdit = null;
+        window.openEdit = (col, id) => {
+            const item = state[col].find(x => x.id === id);
+            if(!item) return;
+            currentEdit = { col, id };
+            
+            const form = document.getElementById('edit-form-body');
+            document.getElementById('edit-title').innerText = `Editar ${col === 'sales' ? 'Venta' : col === 'products' ? 'Producto' : 'Nombre'}`;
+            
+            if(col === 'sales') {
+                form.innerHTML = `
+                    <label class="small fw-bold">Producto</label><input id="edit-val-1" class="form-control mb-2" value="${item.producto}">
+                    <label class="small fw-bold">Cliente</label><input id="edit-val-2" class="form-control mb-2" value="${item.cliente}">
+                    <label class="small fw-bold">Cantidad</label><input id="edit-val-3" type="number" class="form-control mb-2" value="${item.cantidad}">
+                    <label class="small fw-bold">Precio Unitario</label><input id="edit-val-4" type="number" class="form-control" value="${item.precio}">
+                `;
+            } else if(col === 'products') {
+                form.innerHTML = `
+                    <label class="small fw-bold">Nombre</label><input id="edit-val-1" class="form-control mb-2" value="${item.nombre}">
+                    <label class="small fw-bold">Costo</label><input id="edit-val-2" type="number" class="form-control mb-2" value="${item.pCosto || 0}">
+                    <label class="small fw-bold">Precio Venta</label><input id="edit-val-3" type="number" class="form-control" value="${item.pVenta || 0}">
+                `;
+            } else {
+                form.innerHTML = `<label class="small fw-bold">Nombre</label><input id="edit-val-1" class="form-control" value="${item.nombre}">`;
+            }
+            
+            document.getElementById('edit-overlay').style.display = 'flex';
+        };
+
+        window.closeEdit = () => {
+            document.getElementById('edit-overlay').style.display = 'none';
+        };
+
+        document.getElementById('btn-save-edit').onclick = async () => {
+            const { col, id } = currentEdit;
+            const updates = {};
+            
+            if(col === 'sales') {
+                const prod = document.getElementById('edit-val-1').value;
+                const cant = parseInt(document.getElementById('edit-val-3').value);
+                const prec = parseFloat(document.getElementById('edit-val-4').value);
+                Object.assign(updates, {
+                    producto: prod,
+                    cliente: document.getElementById('edit-val-2').value,
+                    cantidad: cant,
+                    precio: prec,
+                    total: cant * prec
+                });
+            } else if(col === 'products') {
+                Object.assign(updates, {
+                    nombre: document.getElementById('edit-val-1').value,
+                    pCosto: parseFloat(document.getElementById('edit-val-2').value),
+                    pVenta: parseFloat(document.getElementById('edit-val-3').value)
+                });
+            } else {
+                updates.nombre = document.getElementById('edit-val-1').value;
+            }
+            
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), updates);
+                showToast("Cambios guardados");
+                closeEdit();
+            } catch(e) { alert("Error al actualizar"); }
         };
 
         document.getElementById('btn-save').onclick = async () => {
@@ -343,7 +478,7 @@
                 precio: parseFloat(document.getElementById('in-precio').value) || 0
             };
 
-            if (!data.cliente || !data.producto || data.precio <= 0) return alert("Por favor completa los datos del cliente y producto");
+            if (!data.cliente || !data.producto || data.precio <= 0) return alert("Completa los datos");
 
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
 
@@ -353,42 +488,44 @@
                     fechaStr: new Date().toLocaleDateString(), entregado: false
                 });
 
-                // Auto catálogos
                 const check = (col, val) => {
-                    if(!catalogs[col].some(i => (i.nombre || "").toLowerCase() === val.toLowerCase())) {
+                    if(!state[col].some(i => (i.nombre || "").toLowerCase() === val.toLowerCase())) {
                         addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
                     }
                 };
                 check('clients', data.cliente);
                 check('stores', data.tienda);
                 
-                if(!catalogs.products.some(p => (p.nombre || "").toLowerCase() === data.producto.toLowerCase())) {
+                if(!state.products.some(p => (p.nombre || "").toLowerCase() === data.producto.toLowerCase())) {
                     addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
                         nombre: data.producto, pCosto: data.costo, pVenta: data.precio
                     });
                 }
 
-                // Limpieza (Tienda persiste)
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-cantidad').value = "1";
                 
-                const toast = document.getElementById('toast-alert');
-                toast.style.display = 'block';
-                setTimeout(() => toast.style.display = 'none', 3000);
+                showToast("Registro guardado");
 
-            } catch(e) { console.error(e); alert("Error de red: No se pudo conectar a la nube"); }
+            } catch(e) { console.error(e); alert("Error de red"); }
             finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-2"></i>GUARDAR VENTA'; }
+        };
+
+        const showToast = (msg) => {
+            const toast = document.getElementById('toast-alert');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
         };
 
         window.genTicket = async (cli) => {
             const hoy = new Date().toLocaleDateString();
-            const items = catalogs.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
+            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
             document.getElementById('t-fecha').innerText = new Date().toLocaleString();
             document.getElementById('t-cliente').innerText = cli;
-            document.getElementById('t-tienda').innerText = items[0].tienda || 'General';
             let total = 0;
             document.getElementById('t-items').innerHTML = items.map(i => {
                 total += i.total;
@@ -399,9 +536,9 @@
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
                 const link = document.createElement('a');
-                link.download = `Ticket_${cli}_${Date.now()}.png`;
+                link.download = `Ticket_${cli}.png`;
                 link.href = canvas.toDataURL("image/png"); link.click();
-            } catch(e) { alert("Error al generar la imagen del ticket"); }
+            } catch(e) { alert("Error al generar el ticket"); }
         };
 
         const auto = (id, boxId, key) => {
@@ -410,7 +547,7 @@
             inp.oninput = () => {
                 const val = inp.value.toLowerCase().trim();
                 if(!val) { box.classList.add('d-none'); return; }
-                const m = catalogs[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
+                const m = state[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
                 box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre}</div>`).join('');
                 box.classList.toggle('d-none', m.length === 0);
             };
@@ -419,7 +556,7 @@
                 if(v) {
                     inp.value = v; box.classList.add('d-none');
                     if(key === 'products') {
-                        const p = catalogs.products.find(x => x.nombre === v);
+                        const p = state.products.find(x => x.nombre === v);
                         if(p) {
                             document.getElementById('in-costo').value = p.pCosto || 0;
                             document.getElementById('in-precio').value = p.pVenta || 0;
@@ -436,4 +573,3 @@
     </script>
 </body>
 </html>
-
