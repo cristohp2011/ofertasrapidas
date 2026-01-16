@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v6.3</title>
+    <title>Yaute Rápidas Control Pro v6.6</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,6 +17,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --whatsapp: #25d366;
             --bg: #f8fafc;
             --card-radius: 20px;
         }
@@ -37,17 +38,14 @@
             border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
         }
 
-        /* Estilos del Logo */
         .app-logo {
             display: block;
-            height: 60px;
+            height: 75px;
             width: auto;
-            margin: 10px auto 0; /* Margen superior para separarlo del título */
+            margin: 10px auto 0;
             object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
-
-        .header-logo { height: 50px; margin-bottom: 10px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
 
         .card-custom {
             background: white; border-radius: var(--card-radius); padding: 22px;
@@ -113,19 +111,13 @@
         .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .entregado-row { background-color: #f0fdf4 !important; border-left: 6px solid var(--success) !important; }
         
-        /* Estilos del Ticket con Logo */
         #ticket-render { position: fixed; left: -10000px; width: 340px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
-        .ticket-logo { 
-            width: 100px; 
-            height: auto; 
-            display: block; 
-            margin: 0 auto 15px; 
-            object-fit: contain;
-        }
+        .ticket-logo { width: 120px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
         
         .action-btn { width: 38px; height: 38px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-edit { background: #eff6ff; color: var(--accent); }
         .btn-del { background: #fef2f2; color: var(--danger); }
+        .btn-wa-action { background: #dcfce7; color: var(--whatsapp); font-size: 1.1rem; }
         
         .badge-info-stat { background: #f1f5f9; color: #475569; padding: 8px 15px; border-radius: 12px; display: inline-block; width: 100%; text-align: center; margin-bottom: 15px; font-weight: 700; font-size: 0.8rem; }
         .btn-consultar { border-radius: 15px; font-weight: 700; padding: 10px 20px; }
@@ -141,12 +133,11 @@
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Sincronizando Yautepec...</p>
+        <p class="mt-3 fw-bold text-primary">Sincronizando Sistema Yaute...</p>
     </div>
 
     <div id="toast-alert"></div>
 
-    <!-- Modal Edición -->
     <div id="edit-overlay">
         <div class="card-custom w-100 shadow-lg" style="max-width: 450px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -162,9 +153,8 @@
     </div>
 
     <header>
-        <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.95rem;">OFERTAS RÁPIDAS YAUTEPEC</h5>
-        <!-- El Logo aparece después del título como se solicitó -->
-        <img src="logo.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
+        <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 1rem; letter-spacing: 1px;">OFERTAS RÁPIDAS YAUTEPEC</h5>
+        <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
         <div class="opacity-75 mt-2">
             <small id="status-label"><span class="status-dot bg-warning"></span> Conectando...</small>
         </div>
@@ -172,7 +162,7 @@
 
     <div class="container py-3">
         
-        <!-- OPERACIONES -->
+        <!-- PESTAÑA: OPERACIONES -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
@@ -180,12 +170,15 @@
                     <input type="text" id="in-tienda" class="form-control form-control-lg border-0 bg-light text-uppercase fw-bold text-primary" style="border-radius: 12px;" placeholder="ORIGEN..." autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
+
                 <div class="mb-3 search-wrapper">
                     <label class="small fw-bold text-muted mb-2 text-uppercase">Cliente</label>
                     <input type="text" id="in-cliente" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px;" placeholder="Nombre del cliente..." autocomplete="off">
                     <div id="sug-cliente" class="sug-box d-none"></div>
                 </div>
+
                 <hr class="my-4 opacity-25">
+
                 <div class="row g-3">
                     <div class="col-8 search-wrapper">
                         <label class="small fw-bold text-muted mb-2 text-uppercase">Producto</label>
@@ -205,13 +198,14 @@
                         <input type="number" id="in-precio" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px;" placeholder="0.00">
                     </div>
                 </div>
+
                 <button id="btn-save" class="btn btn-primary w-100 py-3 mt-4 fw-bold shadow-lg" style="border-radius: 15px; font-size: 1.1rem;">
                     <i class="fas fa-cash-register me-2"></i>GUARDAR VENTA
                 </button>
             </div>
         </div>
 
-        <!-- ENTREGAS -->
+        <!-- PESTAÑA: ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
             <div class="d-flex justify-content-between align-items-center mb-3 px-1">
                 <h6 class="fw-bold text-muted m-0 text-uppercase" style="font-size: 0.8rem;">Reparto Hoy</h6>
@@ -220,7 +214,7 @@
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- CONTROL -->
+        <!-- PESTAÑA: CONTROL -->
         <div id="tab-control" class="tab-content">
             <div class="sub-nav mb-2">
                 <button class="sub-btn active" onclick="window.switchSubTab('sales', this)">Ventas</button>
@@ -241,9 +235,9 @@
 
     </div>
 
-    <!-- Ticket Invisible con Logo -->
+    <!-- Ticket Workspace -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Logo" class="ticket-logo" onerror="this.style.display='none'">
+        <img src="logo.png" alt="Logo" class="ticket-logo" id="ticket-logo-img">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px;">
             <h3 style="margin: 0; font-size: 1.3rem; font-weight: 900;">OFERTAS RÁPIDAS</h3>
             <h4 style="margin: 0; font-size: 1rem; font-weight: 800;">YAUTEPEC</h4>
@@ -286,24 +280,26 @@
         let state = { clients: [], products: [], stores: [], sales: [] };
         let activeSubTab = 'sales';
 
+        // --- FECHAS MÉXICO ---
         const getLocalDateString = (date = new Date()) => date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
         const getISODateString = (date = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
 
-        const startAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (e) { await signInAnonymously(auth); }
+        const refreshLogos = () => {
+            const cacheBuster = "?t=" + new Date().getTime();
+            const mainLogo = document.getElementById('main-logo');
+            const ticketLogo = document.getElementById('ticket-logo-img');
+            if(mainLogo) mainLogo.src = "logo.png" + cacheBuster;
+            if(ticketLogo) ticketLogo.src = "logo.png" + cacheBuster;
         };
 
+        signInAnonymously(auth);
+        
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
                 document.getElementById('date-now').innerText = getLocalDateString();
+                refreshLogos();
                 startSync();
                 checkResetCycle();
                 window.switchSubTab('sales', document.querySelector('.sub-btn.active'));
@@ -348,7 +344,6 @@
                 document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             }
-            
             const wrapper = document.getElementById('filter-wrapper');
             if (id === 'sales' || id === 'totales' || id === 'ticketTienda') {
                 const todayISO = getISODateString();
@@ -364,9 +359,7 @@
                     <input type="date" id="cat-date" class="filter-input flex-fill" value="${todayISO}">
                     <button class="btn btn-primary btn-consultar px-3" onclick="window.renderCatalogList()">CONSULTAR</button>
                 </div>`;
-            } else {
-                wrapper.innerHTML = ""; 
-            }
+            } else { wrapper.innerHTML = ""; }
             window.renderCatalogList();
         };
 
@@ -383,8 +376,7 @@
             const grouped = vHoy.reduce((acc, v) => {
                 const c = v.cliente || "S/N";
                 if(!acc[c]) acc[c] = {total: 0, items: []};
-                acc[c].total += (v.total || 0);
-                acc[c].items.push(v);
+                acc[c].total += (v.total || 0); acc[c].items.push(v);
                 return acc;
             }, {});
             list.innerHTML = Object.keys(grouped).map(cli => {
@@ -393,7 +385,10 @@
                 return `<div class="card-custom mb-3 ${totalEnt ? 'entregado-row opacity-75' : ''}">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="fw-bold fs-6 text-uppercase">${cli}</span>
-                        <button class="btn btn-sm btn-dark rounded-pill px-3 shadow-sm" onclick="genTicket('${cli}')"><i class="fas fa-file-image me-1"></i> Ticket</button>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-dark rounded-pill px-2 shadow-sm" onclick="window.genTicket('${cli}', false)"><i class="fas fa-file-image"></i></button>
+                            <button class="btn btn-sm btn-success rounded-pill px-2 shadow-sm" onclick="window.genTicket('${cli}', true)"><i class="fab fa-whatsapp"></i></button>
+                        </div>
                     </div>
                     <div class="small">
                         ${items.map(i => `<div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
@@ -419,151 +414,78 @@
                 data = data.filter(s => s.fechaStr === filterDate);
                 const sorted = [...data].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
                 summary.innerHTML = `<div class="badge-info-stat shadow-sm">Movimientos del ${filterDate}</div>`;
-                list.innerHTML = sorted.map(s => `
-                    <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
-                        <div style="flex:1">
-                            <div class="fw-bold">${s.cantidad}x ${s.producto}</div>
-                            <div class="text-muted small text-uppercase">${s.tienda || 'GENERAL'} • ${s.cliente}</div>
-                        </div>
-                        <div class="text-end">
-                            <span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span>
-                            <button class="action-btn btn-del" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>
-                `).join('') || '<p class="text-center py-5 text-muted">Sin registros para esta fecha</p>';
-
+                list.innerHTML = sorted.map(s => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
+                    <div style="flex:1"><div class="fw-bold">${s.cantidad}x ${s.producto}</div><div class="text-muted small text-uppercase">${s.tienda || 'GENERAL'} • ${s.cliente}</div></div>
+                    <div class="text-end"><span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span><button class="action-btn btn-del" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button></div>
+                </div>`).join('') || '<p class="text-center py-5 text-muted">Sin registros</p>';
             } else if (activeSubTab === 'totales') {
                 const dailySales = state.sales.filter(s => s.fechaStr === filterDate);
                 const uniqueTiendas = [...new Set(dailySales.map(s => (s.tienda || 'GENERAL').toUpperCase()))].sort();
-                let dCosto = 0, dVenta = 0;
-                dailySales.forEach(s => { dCosto += ((s.costo || 0) * (s.cantidad || 0)); dVenta += (s.total || 0); });
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Balance: ${filterDate}</div>`;
-                list.innerHTML = `
-                <div class="total-dia-card shadow-lg">
-                    <div class="small opacity-75 text-uppercase fw-bold mb-1">Resumen General del Día</div>
-                    <div class="d-flex justify-content-between align-items-center mb-1"><span>Inversión:</span> <span class="fw-bold">$${dCosto.toFixed(2)}</span></div>
-                    <div class="d-flex justify-content-between align-items-center mb-1"><span>Venta Total:</span> <span class="fw-bold">$${dVenta.toFixed(2)}</span></div>
-                    <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top"><span>GANANCIA:</span> <span class="fw-bold text-success fs-5">$${(dVenta - dCosto).toFixed(2)}</span></div>
-                </div>` + uniqueTiendas.map(t => {
-                    const salesT = dailySales.filter(s => (s.tienda || 'GENERAL').toUpperCase() === t);
-                    let cT = 0, pT = 0;
-                    salesT.forEach(s => { cT += (s.costo * s.cantidad); pT += s.total; });
-                    return `<div class="card-custom mb-3 py-3">
-                        <h6 class="fw-bold border-bottom pb-2 mb-2 text-uppercase text-accent">${t}</h6>
-                        <div class="d-flex justify-content-between small"><span>Costos: $${cT.toFixed(2)}</span> <span>Ventas: $${pT.toFixed(2)}</span></div>
-                        <div class="text-end fw-bold text-success small">Utilidad: $${(pT - cT).toFixed(2)}</div>
-                    </div>`;
+                let dC = 0, dV = 0; dailySales.forEach(s => { dC += ((s.costo||0)*(s.cantidad||0)); dV += (s.total||0); });
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Balance del ${filterDate}</div>`;
+                list.innerHTML = `<div class="total-dia-card shadow-lg"><div class="small opacity-75 text-uppercase fw-bold mb-1">Resumen del Día</div><div class="d-flex justify-content-between mb-1"><span>Inversión:</span> <span>$${dC.toFixed(2)}</span></div><div class="d-flex justify-content-between mb-1"><span>Venta Total:</span> <span>$${dV.toFixed(2)}</span></div><div class="d-flex justify-content-between pt-2 mt-2 border-top"><span>GANANCIA:</span> <span class="fw-bold text-success fs-5">$${(dV - dC).toFixed(2)}</span></div></div>` + uniqueTiendas.map(t => {
+                    const salesT = dailySales.filter(s => (s.tienda||'GENERAL').toUpperCase() === t);
+                    let cT = 0, pT = 0; salesT.forEach(s => { cT += (s.costo*s.cantidad); pT += s.total; });
+                    return `<div class="card-custom mb-3 py-3"><h6 class="fw-bold border-bottom pb-2 mb-2 text-uppercase text-accent">${t}</h6><div class="d-flex justify-content-between small"><span>Costos: $${cT.toFixed(2)}</span> <span>Ventas: $${pT.toFixed(2)}</span></div><div class="text-end fw-bold text-success small">Utilidad: $${(pT-cT).toFixed(2)}</div></div>`;
                 }).join('');
-
             } else if (activeSubTab === 'ticketTienda') {
                 const store = (document.getElementById('filter-store')?.value || "").toUpperCase();
-                const items = state.sales.filter(s => (s.tienda || "").toUpperCase() === store && s.fechaStr === filterDate);
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Carga de ${store || '...'} - ${filterDate}</div>`;
-                list.innerHTML = items.length ? `
-                    <div class="card-custom">
-                        <table class="table-resumen">
-                            <thead><tr><th>Prod.</th><th>Cant.</th><th>Costo</th><th>Total</th></tr></thead>
-                            <tbody>${items.map(i => `<tr><td>${i.producto}</td><td>${i.cantidad}</td><td>$${i.costo}</td><td class="fw-bold">$${(i.costo*i.cantidad).toFixed(2)}</td></tr>`).join('')}</tbody>
-                        </table>
-                        <div class="text-end fw-bold mt-3 border-top pt-2 fs-5">COSTO TOTAL: $${items.reduce((a,b)=>a+(b.costo*b.cantidad),0).toFixed(2)}</div>
-                    </div>` : '<p class="text-center py-5 text-muted">Selecciona tienda y fecha</p>';
-
+                const items = state.sales.filter(s => (s.tienda||"").toUpperCase() === store && s.fechaStr === filterDate);
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Carga de ${store || '...'}</div>`;
+                list.innerHTML = items.length ? `<div class="card-custom"><table class="table-resumen"><thead><tr><th>Prod.</th><th>Cant.</th><th>Costo</th><th>Total</th></tr></thead><tbody>${items.map(i => `<tr><td>${i.producto}</td><td>${i.cantidad}</td><td>$${i.costo}</td><td class="fw-bold">$${(i.costo*i.cantidad).toFixed(2)}</td></tr>`).join('')}</tbody></table><div class="text-end fw-bold mt-3 border-top pt-2 fs-5">COSTO: $${items.reduce((a,b)=>a+(b.costo*b.cantidad),0).toFixed(2)}</div></div>` : '<p class="text-center py-5 text-muted">Selecciona tienda y fecha</p>';
             } else {
-                data.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || ""));
-                summary.innerHTML = "";
-                list.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
-                    <div style="flex:1">
-                        <div class="fw-bold text-uppercase">${item.nombre}</div>
-                        ${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto || 0} / V: $${item.pVenta || 0}</small>` : ''}
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button>
-                        <button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                </div>`).join('');
+                data.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
+                list.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div>${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0}</small>` : ''}</div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
             }
         };
 
         window.del = async (col, id, name) => {
             if (col !== 'sales') {
-                const linked = state.sales.some(s => {
-                    const k = col === 'products' ? 'producto' : (col === 'clients' ? 'cliente' : 'tienda');
-                    return (s[k] || "").toLowerCase() === name.toLowerCase();
-                });
-                if (linked) return showToast(`"${name}" tiene historial de ventas activo.`, 'danger');
+                const linked = state.sales.some(s => (s[col === 'products' ? 'producto' : (col === 'clients' ? 'cliente' : 'tienda')] || "").toLowerCase() === name.toLowerCase());
+                if (linked) return showToast(`"${name}" tiene historial activo.`, 'danger');
             }
-            if (confirm(`¿Eliminar "${name}" permanentemente?`)) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
-                showToast("Registro borrado", 'success');
-            }
+            if (confirm(`¿Eliminar permanentemente?`)) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); showToast("Borrado", 'success'); }
         };
 
         let curEdit = null;
         window.openEdit = (col, id) => {
-            const item = state[col].find(x => x.id === id);
-            if(!item) return;
-            curEdit = { col, id, oldName: item.nombre };
-            const form = document.getElementById('edit-form-body');
+            const item = state[col].find(x => x.id === id); if(!item) return;
+            curEdit = { col, id, oldName: item.nombre }; const form = document.getElementById('edit-form-body');
             document.getElementById('edit-title').innerText = `Editar ${col === 'products' ? 'Producto' : 'Registro'}`;
             if(col === 'products') {
-                form.innerHTML = `<div class="mb-3"><label class="small fw-bold text-muted">NOMBRE (SE GUARDARÁ EN MAYÚSCULAS)</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>
-                <div class="row g-2"><div class="col-6"><label class="small fw-bold text-muted">COSTO</label><input id="ev2" type="number" class="form-control" value="${item.pCosto}"></div>
-                <div class="col-6"><label class="small fw-bold text-muted">VENTA</label><input id="ev3" type="number" class="form-control" value="${item.pVenta}"></div></div>`;
-            } else { form.innerHTML = `<div class="mb-3"><label class="small fw-bold text-muted">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>`; }
+                form.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div><div class="row g-2"><div class="col-6"><label class="small fw-bold">COSTO</label><input id="ev2" type="number" class="form-control" value="${item.pCosto}"></div><div class="col-6"><label class="small fw-bold">VENTA</label><input id="ev3" type="number" class="form-control" value="${item.pVenta}"></div></div>`;
+            } else { form.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>`; }
             document.getElementById('edit-overlay').style.display = 'flex';
         };
 
         window.closeEdit = () => { document.getElementById('edit-overlay').style.display = 'none'; };
 
         document.getElementById('btn-save-edit').onclick = async () => {
-            const { col, id, oldName } = curEdit;
-            const newN = document.getElementById('ev1').value.trim().toUpperCase();
-            const up = { nombre: newN };
+            const { col, id, oldName } = curEdit; const newN = document.getElementById('ev1').value.trim().toUpperCase(); const up = { nombre: newN };
             if(col === 'products') {
-                up.pCosto = parseFloat(document.getElementById('ev2').value);
-                up.pVenta = parseFloat(document.getElementById('ev3').value);
-                state.sales.filter(s => (s.producto || "").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { producto: newN, precio: up.pVenta, total: sale.cantidad * up.pVenta, costo: up.pCosto });
-                });
+                up.pCosto = parseFloat(document.getElementById('ev2').value); up.pVenta = parseFloat(document.getElementById('ev3').value);
+                state.sales.filter(s => (s.producto||"").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { producto: newN, precio: up.pVenta, total: sale.cantidad*up.pVenta, costo: up.pCosto }); });
             } else if (col === 'stores') {
-                state.sales.filter(s => (s.tienda || "").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { tienda: newN });
-                });
+                state.sales.filter(s => (s.tienda||"").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { tienda: newN }); });
             } else if (col === 'clients') {
-                state.sales.filter(s => (s.cliente || "").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { cliente: newN });
-                });
+                state.sales.filter(s => (s.cliente||"").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { cliente: newN }); });
             }
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), up);
-            showToast("Actualizado correctamente", 'success');
-            closeEdit();
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), up); showToast("Actualizado", 'success'); closeEdit();
         };
 
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
-            const data = { 
-                tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), 
-                cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), 
-                producto: document.getElementById('in-producto').value.trim().toUpperCase(), 
-                cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, 
-                costo: parseFloat(document.getElementById('in-costo').value) || 0, 
-                precio: parseFloat(document.getElementById('in-precio').value) || 0 
-            };
-            if (!data.cliente || !data.producto) return alert("Faltan datos de cliente o producto");
+            const data = { tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), producto: document.getElementById('in-producto').value.trim().toUpperCase(), cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, costo: parseFloat(document.getElementById('in-costo').value) || 0, precio: parseFloat(document.getElementById('in-precio').value) || 0 };
+            if (!data.cliente || !data.producto) return alert("Faltan datos");
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(), fechaStr: getLocalDateString(), entregado: false });
-                const check = (c, val) => { 
-                    if(!state[c].some(i => (i.nombre||"").toUpperCase() === val.toUpperCase())) 
-                        addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: val }); 
-                };
+                const check = (c, val) => { if(!state[c].some(i => (i.nombre||"").toUpperCase() === val.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: val }); };
                 check('clients', data.cliente); check('stores', data.tienda);
-                if(!state.products.some(p => (p.nombre||"").toUpperCase() === data.producto.toUpperCase())) {
-                    addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
-                }
+                if(!state.products.some(p => (p.nombre||"").toUpperCase() === data.producto.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1";
                 showToast("¡Venta Guardada!", 'success');
-            } catch(e) { showToast("Error al guardar", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
+            } catch(e) { showToast("Error", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
         const showToast = (msg, type = 'success') => {
@@ -573,7 +495,8 @@
             toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
-        window.genTicket = async (cli) => {
+        // --- TICKET & WHATSAPP ---
+        window.genTicket = async (cli, isWA) => {
             const hoy = getLocalDateString();
             const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === hoy);
             document.getElementById('t-fecha').innerText = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
@@ -581,31 +504,39 @@
             let total = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { total += i.total; return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto.toUpperCase()}</span><span>$${i.total.toFixed(2)}</span></div>`; }).join('');
             document.getElementById('t-total').innerText = `$${total.toFixed(2)}`;
+
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
-                const link = document.createElement('a'); link.download = `Ticket_${cli}.png`; link.href = canvas.toDataURL("image/png"); link.click();
-            } catch(e) { alert("Error al generar imagen"); }
+                if (isWA) {
+                    canvas.toBlob(async (blob) => {
+                        const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Ticket Yaute Rápidas',
+                                text: 'Hola, aquí tienes tu ticket de compra. ¡Gracias por tu preferencia!'
+                            });
+                        } else { alert("Tu navegador no soporta compartir directamente."); }
+                    });
+                } else {
+                    const link = document.createElement('a'); link.download = `Ticket_${cli}.png`; link.href = canvas.toDataURL("image/png"); link.click();
+                }
+            } catch(e) { alert("Error al generar ticket."); }
         };
 
         const setupAutos = () => {
             const auto = (id, boxId, key) => {
-                const inp = document.getElementById(id);
-                const box = document.getElementById(boxId);
+                const inp = document.getElementById(id); const box = document.getElementById(boxId);
                 inp.oninput = () => {
-                    const val = inp.value.toLowerCase().trim();
-                    if(!val) { box.classList.add('d-none'); return; }
+                    const val = inp.value.toLowerCase().trim(); if(!val) { box.classList.add('d-none'); return; }
                     const m = state[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
                     box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre.toUpperCase()}</div>`).join('');
                     box.classList.toggle('d-none', m.length === 0);
                 };
                 box.onclick = (e) => {
-                    const v = e.target.dataset.v;
-                    if(v) {
+                    const v = e.target.dataset.v; if(v) {
                         inp.value = v.toUpperCase(); box.classList.add('d-none');
-                        if(key === 'products') {
-                            const p = state.products.find(x => (x.nombre||"").toLowerCase() === v.toLowerCase());
-                            if(p) { document.getElementById('in-costo').value = p.pCosto || 0; document.getElementById('in-precio').value = p.pVenta || 0; }
-                        }
+                        if(key === 'products') { const p = state.products.find(x => (x.nombre||"").toLowerCase() === v.toLowerCase()); if(p) { document.getElementById('in-costo').value = p.pCosto; document.getElementById('in-precio').value = p.pVenta; } }
                     }
                 };
             };
@@ -613,7 +544,6 @@
         };
 
         setupAutos();
-        startAuth();
     </script>
 </body>
 </html>
