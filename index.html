@@ -248,10 +248,10 @@
         <!-- PESTAÑA: CONTROL -->
         <div id="tab-control" class="tab-content">
             <div class="sub-nav mb-2">
-                <button class="sub-btn active" onclick="switchSubTab('sales', this)">Ventas</button>
-                <button class="sub-btn" onclick="switchSubTab('products', this)">Productos</button>
-                <button class="sub-btn" onclick="switchSubTab('clients', this)">Clientes</button>
-                <button class="sub-btn" onclick="switchSubTab('stores', this)">Tiendas</button>
+                <button class="sub-btn active" onclick="window.switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn" onclick="window.switchSubTab('products', this)">Productos</button>
+                <button class="sub-btn" onclick="window.switchSubTab('clients', this)">Clientes</button>
+                <button class="sub-btn" onclick="window.switchSubTab('stores', this)">Tiendas</button>
             </div>
 
             <div class="filter-container">
@@ -282,6 +282,7 @@
         <p style="text-align: center; margin-top: 35px; font-size: 0.8rem; border-top: 1px solid #eee; pt-3">¡GRACIAS POR SU PREFERENCIA!</p>
     </div>
 
+    <!-- Navegación Inferior -->
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Operaciones</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Entregas</button>
@@ -310,6 +311,7 @@
         let state = { clients: [], products: [], stores: [], sales: [] };
         let activeSubTab = 'sales';
 
+        // --- FUNCIONES DE FECHA (MÉXICO) ---
         const getLocalDateString = (date = new Date()) => {
             return date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
         };
@@ -318,6 +320,7 @@
             return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
         };
 
+        // --- INICIO APP ---
         signInAnonymously(auth);
         
         onAuthStateChanged(auth, (user) => {
@@ -326,7 +329,7 @@
                 document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
                 document.getElementById('date-now').innerText = getLocalDateString();
                 startSync();
-                switchSubTab('sales', document.querySelector('.sub-btn.active'));
+                window.switchSubTab('sales', document.querySelector('.sub-btn.active'));
             }
         });
 
@@ -340,6 +343,7 @@
             ['clients', 'products', 'stores', 'sales'].forEach(syncCol);
         };
 
+        // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
@@ -349,8 +353,10 @@
 
         window.switchSubTab = (id, btn) => {
             activeSubTab = id;
-            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if (btn) {
+                document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
             
             const wrapper = document.getElementById('filter-wrapper');
             if (id === 'sales') {
@@ -359,27 +365,28 @@
                     <label class="small fw-bold text-muted d-block mb-1">CONSULTAR FECHA</label>
                     <div class="d-flex gap-2">
                         <input type="date" id="cat-date" class="filter-input flex-fill" value="${todayISO}">
-                        <button class="btn btn-primary btn-consultar px-3" onclick="renderCatalogList()">
+                        <button class="btn btn-primary btn-consultar px-3" onclick="window.renderCatalogList()">
                             CONSULTAR
                         </button>
                     </div>`;
             } else {
-                wrapper.innerHTML = `<input type="text" id="cat-search" class="filter-input" placeholder="Buscar por nombre..." oninput="renderCatalogList()">`;
+                wrapper.innerHTML = `<input type="text" id="cat-search" class="filter-input" placeholder="Buscar por nombre..." oninput="window.renderCatalogList()">`;
             }
-            renderCatalogList();
+            window.renderCatalogList();
         };
 
         const renderAll = () => {
             renderEntregas();
-            renderCatalogList();
+            window.renderCatalogList();
         };
 
+        // --- RENDERIZADO ENTREGAS ---
         const renderEntregas = () => {
             const hoy = getLocalDateString();
             const vHoy = state.sales.filter(s => s.fechaStr === hoy);
             const list = document.getElementById('lista-entregas');
             
-            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted small opacity-50">Sin ventas hoy</p>'; return; }
+            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted small opacity-50">Sin ventas registradas hoy</p>'; return; }
 
             const grouped = vHoy.reduce((acc, v) => {
                 const c = v.cliente || "S/N";
@@ -417,7 +424,8 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
         };
 
-        const renderCatalogList = () => {
+        // --- RENDERIZADO CONTROL ---
+        window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos');
             const summary = document.getElementById('cat-summary');
             let data = state[activeSubTab] || [];
@@ -439,10 +447,10 @@
                         </div>
                         <div class="text-end">
                             <span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span>
-                            <button class="action-btn btn-del" onclick="del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button>
+                            <button class="action-btn btn-del" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
-                `).join('') || '<p class="text-center py-5 text-muted">No hay ventas registradas</p>';
+                `).join('') || '<p class="text-center py-5 text-muted">No hay ventas registradas para esta fecha</p>';
             } else {
                 const searchEl = document.getElementById('cat-search');
                 const search = searchEl ? searchEl.value.toLowerCase() : "";
@@ -460,13 +468,14 @@
                         </div>
                         <div class="d-flex gap-2">
                             <button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button>
-                            <button class="action-btn btn-del" onclick="del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button>
+                            <button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
                 `).join('') || '<p class="text-center py-5 text-muted">Sin resultados</p>';
             }
         };
 
+        // --- ACCIONES ---
         window.del = async (col, id, name) => {
             if (col === 'products' || col === 'clients') {
                 const linked = state.sales.some(s => {
@@ -607,38 +616,37 @@
             } catch(e) { alert("Error al generar imagen"); }
         };
 
-        const auto = (id, boxId, key) => {
-            const inp = document.getElementById(id);
-            const box = document.getElementById(boxId);
-            inp.oninput = () => {
-                const val = inp.value.toLowerCase().trim();
-                if(!val) { box.classList.add('d-none'); return; }
-                const m = state[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
-                box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre}</div>`).join('');
-                box.classList.toggle('d-none', m.length === 0);
-            };
-            box.onclick = (e) => {
-                const v = e.target.dataset.v;
-                if(v) {
-                    inp.value = v; box.classList.add('d-none');
-                    if(key === 'products') {
-                        const p = state.products.find(x => x.nombre === v);
-                        if(p) {
-                            document.getElementById('in-costo').value = p.pCosto || 0;
-                            document.getElementById('in-precio').value = p.pVenta || 0;
+        const setupAutocompletes = () => {
+            const auto = (id, boxId, key) => {
+                const inp = document.getElementById(id);
+                const box = document.getElementById(boxId);
+                inp.oninput = () => {
+                    const val = inp.value.toLowerCase().trim();
+                    if(!val) { box.classList.add('d-none'); return; }
+                    const m = state[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
+                    box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre}</div>`).join('');
+                    box.classList.toggle('d-none', m.length === 0);
+                };
+                box.onclick = (e) => {
+                    const v = e.target.dataset.v;
+                    if(v) {
+                        inp.value = v; box.classList.add('d-none');
+                        if(key === 'products') {
+                            const p = state.products.find(x => x.nombre === v);
+                            if(p) {
+                                document.getElementById('in-costo').value = p.pCosto || 0;
+                                document.getElementById('in-precio').value = p.pVenta || 0;
+                            }
                         }
                     }
-                }
+                };
             };
+            auto('in-tienda', 'sug-tienda', 'stores');
+            auto('in-cliente', 'sug-cliente', 'clients');
+            auto('in-producto', 'sug-producto', 'products');
         };
 
-        auto('in-tienda', 'sug-tienda', 'stores');
-        auto('in-cliente', 'sug-cliente', 'clients');
-        auto('in-producto', 'sug-producto', 'products');
-
+        setupAutocompletes();
     </script>
 </body>
 </html>
-
-
-
