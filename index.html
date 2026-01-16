@@ -49,7 +49,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
-        /* Notificación Flotante */
         #toast-alert {
             position: fixed; top: 25px; left: 50%;
             transform: translateX(-50%);
@@ -70,7 +69,6 @@
             to { transform: translate(-50%, 0); opacity: 1; }
         }
 
-        /* Modales de Edición */
         #edit-overlay {
             position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
             z-index: 3000; display: none; align-items: center; justify-content: center;
@@ -98,7 +96,6 @@
         .tab-btn i { font-size: 1.6rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; transform: translateY(-3px); }
 
-        /* Sub-pestañas Control */
         .sub-nav {
             display: flex; gap: 10px; overflow-x: auto; padding: 5px 10px 15px;
             scrollbar-width: none;
@@ -111,15 +108,12 @@
         }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .filter-container {
-            margin: 0 10px 15px;
-        }
+        .filter-container { margin: 0 10px 15px; }
         .filter-input {
             border-radius: 15px; border: 1px solid #e2e8f0; padding: 10px 15px;
             width: 100%; font-size: 0.9rem; background: white;
         }
 
-        /* Autocomplete */
         .search-wrapper { position: relative; }
         .sug-box {
             position: absolute; top: 100%; left: 0; right: 0;
@@ -139,7 +133,6 @@
         .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .entregado-row { background-color: #f0fdf4 !important; border-left: 6px solid var(--success) !important; }
         
-        /* Ticket */
         #ticket-render {
             position: fixed; left: -10000px; width: 340px; background: white;
             padding: 30px; color: black; font-family: 'Courier New', monospace;
@@ -168,10 +161,8 @@
         <p class="mt-3 fw-bold text-primary">Cargando...</p>
     </div>
 
-    <!-- Mensajes de Sistema -->
     <div id="toast-alert"></div>
 
-    <!-- Modal de Edición (Solo para Productos, Clientes y Tiendas) -->
     <div id="edit-overlay">
         <div class="card-custom w-100 shadow-lg" style="max-width: 450px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -196,7 +187,7 @@
 
     <div class="container py-3">
         
-        <!-- PESTAÑA: OPERACIONES (REGISTRO) -->
+        <!-- PESTAÑA: OPERACIONES -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
@@ -258,10 +249,7 @@
             </div>
 
             <div class="filter-container">
-                <!-- Buscador para catálogos / Calendario para Ventas -->
-                <div id="filter-wrapper">
-                    <input type="text" id="cat-search" class="filter-input" placeholder="Escribe para buscar..." oninput="renderCatalogList()">
-                </div>
+                <div id="filter-wrapper"></div>
             </div>
 
             <div id="cat-summary" class="px-2"></div>
@@ -271,7 +259,7 @@
 
     </div>
 
-    <!-- Ticket Invisible -->
+    <!-- Ticket -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo" onerror="this.style.display='none'">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px;">
@@ -288,7 +276,6 @@
         <p style="text-align: center; margin-top: 35px; font-size: 0.8rem; border-top: 1px solid #eee; pt-3">¡GRACIAS POR SU PREFERENCIA!</p>
     </div>
 
-    <!-- Navegación Inferior Principal -->
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Operaciones</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Entregas</button>
@@ -317,14 +304,26 @@
         let state = { clients: [], products: [], stores: [], sales: [] };
         let activeSubTab = 'sales';
 
+        // Funciones auxiliares para fechas locales (México)
+        const getLocalDateString = (date = new Date()) => {
+            return date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
+        };
+
+        const getISODateString = (date = new Date()) => {
+            // Devuelve YYYY-MM-DD en hora local de México
+            const loc = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
+            return loc;
+        };
+
         signInAnonymously(auth);
         
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
-                document.getElementById('date-now').innerText = new Date().toLocaleDateString();
+                document.getElementById('date-now').innerText = getLocalDateString();
                 startSync();
+                switchSubTab('sales', document.querySelector('.sub-btn.active'));
             }
         });
 
@@ -350,14 +349,13 @@
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            // Cambiar buscador por calendario si es Ventas
             const wrapper = document.getElementById('filter-wrapper');
             if (id === 'sales') {
-                const today = new Date().toISOString().split('T')[0];
-                wrapper.innerHTML = `<label class="small fw-bold text-muted d-block mb-1">FECHA DE CONSULTA</label>
-                                     <input type="date" id="cat-date" class="filter-input" value="${today}" oninput="renderCatalogList()">`;
+                const todayISO = getISODateString();
+                wrapper.innerHTML = `<label class="small fw-bold text-muted d-block mb-1">CONSULTAR FECHA</label>
+                                     <input type="date" id="cat-date" class="filter-input" value="${todayISO}" oninput="renderCatalogList()">`;
             } else {
-                wrapper.innerHTML = `<input type="text" id="cat-search" class="filter-input" placeholder="Escribe para buscar..." oninput="renderCatalogList()">`;
+                wrapper.innerHTML = `<input type="text" id="cat-search" class="filter-input" placeholder="Buscar por nombre..." oninput="renderCatalogList()">`;
             }
             renderCatalogList();
         };
@@ -368,11 +366,11 @@
         };
 
         const renderEntregas = () => {
-            const hoy = new Date().toLocaleDateString();
+            const hoy = getLocalDateString();
             const vHoy = state.sales.filter(s => s.fechaStr === hoy);
             const list = document.getElementById('lista-entregas');
             
-            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted small opacity-50">Sin registros para hoy</p>'; return; }
+            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted small opacity-50">Sin ventas hoy</p>'; return; }
 
             const grouped = vHoy.reduce((acc, v) => {
                 const c = v.cliente || "S/N";
@@ -417,12 +415,13 @@
 
             if (activeSubTab === 'sales') {
                 const filterDateEl = document.getElementById('cat-date');
-                const filterDate = filterDateEl ? new Date(filterDateEl.value + "T00:00:00").toLocaleDateString() : new Date().toLocaleDateString();
+                // Forzamos la creación de la fecha en la zona horaria correcta
+                const filterDate = filterDateEl ? new Date(filterDateEl.value + "T12:00:00").toLocaleDateString('es-MX') : getLocalDateString();
                 
                 data = data.filter(s => s.fechaStr === filterDate);
                 const sorted = [...data].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
                 
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-calendar-day me-2"></i>Mostrando ventas del ${filterDate}</div>`;
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-calendar-day me-2"></i>Ventas del ${filterDate}</div>`;
                 
                 list.innerHTML = sorted.map(s => `
                     <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
@@ -430,21 +429,18 @@
                             <div class="fw-bold">${s.cantidad}x ${s.producto}</div>
                             <div class="text-muted small">${s.cliente} • $${s.precio || 0} c/u</div>
                         </div>
-                        <div class="text-end d-flex align-items-center gap-2">
-                            <span class="fw-bold text-primary me-1">$${(s.total || 0).toFixed(2)}</span>
+                        <div class="text-end">
+                            <span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span>
                             <button class="action-btn btn-del" onclick="del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
-                `).join('') || '<p class="text-center py-5 text-muted">No hay ventas para esta fecha</p>';
+                `).join('') || '<p class="text-center py-5 text-muted">No hay ventas registradas</p>';
             } else {
                 const searchEl = document.getElementById('cat-search');
                 const search = searchEl ? searchEl.value.toLowerCase() : "";
-                
-                if (search) {
-                    data = data.filter(item => (item.nombre || "").toLowerCase().includes(search));
-                }
+                if (search) data = data.filter(item => (item.nombre || "").toLowerCase().includes(search));
 
-                if (activeSubTab === 'products') summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-box me-2"></i>${data.length} Productos en Catálogo</div>`;
+                if (activeSubTab === 'products') summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-box me-2"></i>${data.length} Productos registrados</div>`;
                 else if (activeSubTab === 'clients') summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-user-friends me-2"></i>${data.length} Clientes registrados</div>`;
                 else summary.innerHTML = "";
 
@@ -452,7 +448,7 @@
                     <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
                         <div style="flex:1">
                             <div class="fw-bold text-uppercase">${item.nombre}</div>
-                            ${activeSubTab === 'products' ? `<small class="text-muted">Costo: $${item.pCosto || 0} / Venta: $${item.pVenta || 0}</small>` : ''}
+                            ${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto || 0} / V: $${item.pVenta || 0}</small>` : ''}
                         </div>
                         <div class="d-flex gap-2">
                             <button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button>
@@ -464,20 +460,14 @@
         };
 
         window.del = async (col, id, name) => {
-            // Impedir borrado de catálogos si hay vinculación con historial
             if (col === 'products' || col === 'clients') {
                 const linked = state.sales.some(s => {
                     if (col === 'products') return s.producto.toLowerCase() === name.toLowerCase();
                     if (col === 'clients') return s.cliente.toLowerCase() === name.toLowerCase();
                     return false;
                 });
-                
-                if (linked) {
-                    showToast(`¡Error! "${name}" tiene ventas en el historial.`, 'danger');
-                    return;
-                }
+                if (linked) return showToast(`¡Error! "${name}" tiene ventas activas.`, 'danger');
             }
-
             if (confirm(`¿Eliminar "${name}" permanentemente?`)) {
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
                 showToast("Registro eliminado", 'success');
@@ -488,7 +478,7 @@
         window.openEdit = (col, id) => {
             const item = state[col].find(x => x.id === id);
             if(!item) return;
-            currentEdit = { col, id };
+            currentEdit = { col, id, oldName: item.nombre || item.producto };
             
             const form = document.getElementById('edit-form-body');
             document.getElementById('edit-title').innerText = `Editar ${col === 'products' ? 'Producto' : 'Registro'}`;
@@ -504,28 +494,37 @@
             } else {
                 form.innerHTML = `<div class="mb-3"><label class="small fw-bold text-muted">NOMBRE</label><input id="edit-val-1" class="form-control" value="${item.nombre}"></div>`;
             }
-            
             document.getElementById('edit-overlay').style.display = 'flex';
         };
 
-        window.closeEdit = () => {
-            document.getElementById('edit-overlay').style.display = 'none';
-        };
+        window.closeEdit = () => { document.getElementById('edit-overlay').style.display = 'none'; };
 
         document.getElementById('btn-save-edit').onclick = async () => {
-            const { col, id } = currentEdit;
+            const { col, id, oldName } = currentEdit;
             const updates = {};
+            const newName = document.getElementById('edit-val-1').value.trim();
+
             if(col === 'products') {
-                updates.nombre = document.getElementById('edit-val-1').value;
+                updates.nombre = newName;
                 updates.pCosto = parseFloat(document.getElementById('edit-val-2').value);
                 updates.pVenta = parseFloat(document.getElementById('edit-val-3').value);
+                
+                const relatedSales = state.sales.filter(s => s.producto.toLowerCase() === oldName.toLowerCase());
+                for (const sale of relatedSales) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), {
+                        producto: newName,
+                        precio: updates.pVenta,
+                        total: sale.cantidad * updates.pVenta,
+                        costo: updates.pCosto
+                    });
+                }
             } else {
-                updates.nombre = document.getElementById('edit-val-1').value;
+                updates.nombre = newName;
             }
             
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), updates);
-                showToast("Cambios Guardados", 'success');
+                showToast("Actualización completa", 'success');
                 closeEdit();
             } catch(e) { showToast("Error de nube", 'danger'); }
         };
@@ -542,13 +541,12 @@
             };
 
             if (!data.cliente || !data.producto || data.precio <= 0) return alert("Completa los datos de la venta.");
-
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> PROCESANDO...';
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
                     ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(),
-                    fechaStr: new Date().toLocaleDateString(), entregado: false
+                    fechaStr: getLocalDateString(), entregado: false
                 });
 
                 const check = (col, val) => {
@@ -583,9 +581,9 @@
         };
 
         window.genTicket = async (cli) => {
-            const hoy = new Date().toLocaleDateString();
+            const hoy = getLocalDateString();
             const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
-            document.getElementById('t-fecha').innerText = new Date().toLocaleString();
+            document.getElementById('t-fecha').innerText = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
             document.getElementById('t-cliente').innerText = cli;
             let total = 0;
             document.getElementById('t-items').innerHTML = items.map(i => {
@@ -633,4 +631,5 @@
     </script>
 </body>
 </html>
+
 
