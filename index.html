@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v6.7</title>
+    <title>Yaute Rápidas Control Pro v6.9</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -119,21 +119,19 @@
         .action-btn { width: 38px; height: 38px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-edit { background: #eff6ff; color: var(--accent); }
         .btn-del { background: #fef2f2; color: var(--danger); }
-        .btn-wa-action { background: #dcfce7; color: var(--whatsapp); font-size: 1.1rem; }
         
         .badge-info-stat { background: #f1f5f9; color: #475569; padding: 8px 15px; border-radius: 12px; display: inline-block; width: 100%; text-align: center; margin-bottom: 15px; font-weight: 700; font-size: 0.8rem; }
         .btn-consultar { border-radius: 15px; font-weight: 700; padding: 10px 20px; }
 
-        .table-resumen { font-size: 0.85rem; width: 100%; margin-top: 10px; }
-        .table-resumen th { color: #64748b; font-weight: 600; padding: 8px; border-bottom: 1px solid #f1f5f9; }
-        .table-resumen td { padding: 8px; border-bottom: 1px solid #f1f5f9; }
-
         .total-dia-card { background: var(--primary); color: white; border-radius: 15px; padding: 18px; margin-top: 5px; margin-bottom: 15px; }
 
         /* Scanner Styles */
-        #reader { width: 100%; border-radius: 15px; overflow: hidden; }
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; background: #000; }
         .scanner-controls { margin-top: 20px; display: flex; gap: 10px; }
-        .btn-scanner { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+
+        /* Diezmo Styles */
+        .diezmo-card { border-left: 6px solid var(--warning); position: relative; }
+        .history-tag { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; background: #f1f5f9; color: #94a3b8; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -185,7 +183,7 @@
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
-                    <label class="small fw-bold text-muted mb-2 text-uppercase">Tienda (Persistente)</label>
+                    <label class="small fw-bold text-muted mb-2 text-uppercase">Tienda</label>
                     <input type="text" id="in-tienda" class="form-control form-control-lg border-0 bg-light text-uppercase fw-bold text-primary" style="border-radius: 12px;" placeholder="ORIGEN..." autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
@@ -246,6 +244,7 @@
                 <button class="sub-btn" onclick="window.switchSubTab('products', this)">Productos</button>
                 <button class="sub-btn" onclick="window.switchSubTab('clients', this)">Clientes</button>
                 <button class="sub-btn" onclick="window.switchSubTab('stores', this)">Tiendas</button>
+                <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
             </div>
 
             <div class="filter-container">
@@ -284,7 +283,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
@@ -300,13 +299,14 @@
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let state = { clients: [], products: [], stores: [], sales: [] };
+        let state = { clients: [], products: [], stores: [], sales: [], diezmos: [] };
         let activeSubTab = 'sales';
         let html5QrCode = null;
 
         // --- FECHAS MÉXICO ---
         const getLocalDateString = (date = new Date()) => date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
         const getISODateString = (date = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
+        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
         const refreshLogos = () => {
             const cacheBuster = "?t=" + new Date().getTime();
@@ -337,22 +337,53 @@
                     renderAll();
                 });
             };
-            ['clients', 'products', 'stores', 'sales'].forEach(sync);
+            ['clients', 'products', 'stores', 'sales', 'diezmos'].forEach(sync);
         };
 
         const checkResetCycle = () => {
             const now = new Date();
             if (now.getDate() === 20 && (now.getMonth() + 1) % 2 === 0) {
-                if (confirm("Reinicio bimestral detectado (Día 20). ¿Limpiar historial de ventas?")) {
+                if (confirm("Reinicio bimestral detectado (Día 20). ¿Limpiar ventas y guardar resumen de diezmos?")) {
                     clearSalesHistory();
                 }
             }
         };
 
         const clearSalesHistory = async () => {
+            // Antes de borrar, agregamos los totales actuales al historial de diezmos para persistencia
+            const monthlyData = {};
+            state.sales.forEach(s => {
+                if(!s.fechaStr) return;
+                const parts = s.fechaStr.split('/');
+                if(parts.length < 3) return;
+                const key = `${parts[2]}-${parts[1].padStart(2, '0')}`; // YYYY-MM
+                if(!monthlyData[key]) monthlyData[key] = { venta: 0, costo: 0, mes: months[parseInt(parts[1])-1], year: parts[2] };
+                monthlyData[key].venta += (s.total || 0);
+                monthlyData[key].costo += ((s.costo || 0) * (s.cantidad || 0));
+            });
+
+            for(const key in monthlyData) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'diezmos', key);
+                // Si ya existe registro de ese mes, sumamos lo nuevo (para no perder datos si se borra varias veces el mismo mes)
+                const exist = state.diezmos.find(d => d.id === key);
+                const util = monthlyData[key].venta - monthlyData[key].costo;
+                const finalVenta = (exist?.venta || 0) + monthlyData[key].venta;
+                const finalCosto = (exist?.costo || 0) + monthlyData[key].costo;
+                
+                await setDoc(docRef, {
+                    venta: finalVenta,
+                    costo: finalCosto,
+                    mes: monthlyData[key].mes,
+                    year: monthlyData[key].year,
+                    ultima_actualizacion: serverTimestamp()
+                });
+            }
+
             const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'sales'));
-            snap.forEach(async (d) => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', d.id)));
-            showToast("Ventas restablecidas", 'success');
+            for (const d of snap.docs) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', d.id));
+            }
+            showToast("Ventas reiniciadas e historial guardado", 'success');
         };
 
         window.showTab = (id, btn) => {
@@ -452,6 +483,62 @@
                     let cT = 0, pT = 0; salesT.forEach(s => { cT += (s.costo*s.cantidad); pT += s.total; });
                     return `<div class="card-custom mb-3 py-3"><h6 class="fw-bold border-bottom pb-2 mb-2 text-uppercase text-accent">${t}</h6><div class="d-flex justify-content-between small"><span>Costos: $${cT.toFixed(2)}</span> <span>Ventas: $${pT.toFixed(2)}</span></div><div class="text-end fw-bold text-success small">Utilidad: $${(pT-cT).toFixed(2)}</div></div>`;
                 }).join('');
+            } else if (activeSubTab === 'diezmo') {
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Reporte de Diezmos (Histórico + Actual)</div>`;
+                
+                // Agrupar datos de las ventas ACTIVAS actuales
+                const currentMonthly = {};
+                state.sales.forEach(s => {
+                    if(!s.fechaStr) return;
+                    const parts = s.fechaStr.split('/');
+                    if(parts.length < 3) return;
+                    const key = `${parts[2]}-${parts[1].padStart(2, '0')}`;
+                    if(!currentMonthly[key]) currentMonthly[key] = { venta: 0, costo: 0, mes: months[parseInt(parts[1])-1], year: parts[2], active: true };
+                    currentMonthly[key].venta += (s.total || 0);
+                    currentMonthly[key].costo += ((s.costo || 0) * (s.cantidad || 0));
+                });
+
+                // Combinar con los datos guardados en la base de datos (Persistentes)
+                const finalData = {};
+                
+                // Primero cargar históricos
+                state.diezmos.forEach(d => {
+                    finalData[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true };
+                });
+
+                // Luego añadir/sumar activos
+                for(const key in currentMonthly) {
+                    if(finalData[key]) {
+                        finalData[key].venta += currentMonthly[key].venta;
+                        finalData[key].costo += currentMonthly[key].costo;
+                    } else {
+                        finalData[key] = currentMonthly[key];
+                    }
+                }
+
+                const sortedKeys = Object.keys(finalData).sort().reverse();
+
+                list.innerHTML = sortedKeys.map(k => {
+                    const d = finalData[k];
+                    const util = d.venta - d.costo;
+                    const diezmo = util * 0.10;
+                    return `<div class="card-custom diezmo-card shadow-sm mb-3">
+                        ${d.isStored && !d.active ? '<span class="history-tag">HISTÓRICO</span>' : '<span class="history-tag" style="color:var(--accent)">ACTIVO</span>'}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6>
+                            <span class="badge bg-warning text-dark fw-bold">10%</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Utilidad Acumulada:</span>
+                            <span>$${util.toFixed(2)}</span>
+                        </div>
+                        <div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top">
+                            <span>DIEZMO:</span>
+                            <span>$${diezmo.toFixed(2)}</span>
+                        </div>
+                    </div>`;
+                }).join('') || '<p class="text-center py-5 text-muted">Sin datos de ventas para calcular.</p>';
+
             } else if (activeSubTab === 'ticketTienda') {
                 const store = (document.getElementById('filter-store')?.value || "").toUpperCase();
                 const items = state.sales.filter(s => (s.tienda||"").toUpperCase() === store && s.fechaStr === filterDate);
@@ -520,13 +607,11 @@
                 const check = (c, val) => { if(!state[c].some(i => (i.nombre||"").toUpperCase() === val.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: val }); };
                 check('clients', data.cliente); check('stores', data.tienda);
                 
-                // Lógica de Producto: Buscar por código o nombre
                 const existingProd = state.products.find(p => (p.codigo === data.codigo && data.codigo !== "") || (p.nombre||"").toUpperCase() === data.producto.toUpperCase());
                 
                 if(!existingProd) {
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
                 } else if (data.codigo !== "" && existingProd.codigo === "") {
-                    // Si el producto existía por nombre pero no tenía código, se lo asignamos
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { codigo: data.codigo });
                 }
 
@@ -603,15 +688,24 @@
             auto('in-tienda', 'sug-tienda', 'stores'); auto('in-cliente', 'sug-cliente', 'clients'); auto('in-producto', 'sug-producto', 'products');
         };
 
-        // --- SCANNER LOGIC ---
+        // --- SCANNER LOGIC MEJORADA ---
         window.startScanner = () => {
             document.getElementById('scanner-overlay').style.display = 'flex';
-            html5QrCode = new Html5Qrcode("reader");
-            const config = { fps: 10, qrbox: { width: 250, height: 150 } };
-            
+            const formatsToSupport = [
+                Html5QrcodeSupportedFormats.QR_CODE,
+                Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.EAN_8,
+                Html5QrcodeSupportedFormats.CODE_128,
+                Html5QrcodeSupportedFormats.CODE_39,
+                Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.UPC_E,
+                Html5QrcodeSupportedFormats.ITF
+            ];
+            html5QrCode = new Html5Qrcode("reader", { formatsToSupport: formatsToSupport });
+            const config = { fps: 20, qrbox: { width: 300, height: 180 }, aspectRatio: 1.0 };
             html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
                 .catch(err => {
-                    showToast("Error cámara: " + err, 'danger');
+                    showToast("No se pudo iniciar cámara: " + err, 'danger');
                     stopScanner();
                 });
         };
@@ -630,11 +724,8 @@
 
         const onScanSuccess = (decodedText) => {
             stopScanner();
-            showToast("Código detectado: " + decodedText, 'success');
-            
+            showToast("Código: " + decodedText, 'success');
             document.getElementById('in-codigo').value = decodedText;
-            
-            // Buscar si ya existe el producto con ese código
             const found = state.products.find(p => p.codigo === decodedText);
             if (found) {
                 document.getElementById('in-producto').value = found.nombre.toUpperCase();
@@ -646,7 +737,7 @@
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-producto').focus();
-                showToast("Producto nuevo. Ingrese datos.", 'warning');
+                showToast("Producto nuevo. Completa los datos.", 'warning');
             }
         };
 
@@ -654,4 +745,5 @@
     </script>
 </body>
 </html>
+
 
