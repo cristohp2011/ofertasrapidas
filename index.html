@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v6.9</title>
+    <title>Yaute Rápidas Control Pro v7.0</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -65,9 +65,9 @@
         @keyframes slideDown { from { transform: translate(-50%, -100px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
         #edit-overlay, #scanner-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9);
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95);
             z-index: 3000; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px); padding: 20px;
+            backdrop-filter: blur(8px); padding: 15px;
         }
 
         .tab-content { display: none; }
@@ -97,9 +97,6 @@
         }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .filter-container { margin: 0 10px 15px; }
-        .filter-input { border-radius: 15px; border: 1px solid #e2e8f0; padding: 10px 15px; width: 100%; font-size: 0.9rem; background: white; }
-
         .search-wrapper { position: relative; }
         .sug-box {
             position: absolute; top: 100%; left: 0; right: 0;
@@ -113,9 +110,6 @@
         .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .entregado-row { background-color: #f0fdf4 !important; border-left: 6px solid var(--success) !important; }
         
-        #ticket-render { position: fixed; left: -10000px; width: 340px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
-        .ticket-logo { width: 120px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
-        
         .action-btn { width: 38px; height: 38px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-edit { background: #eff6ff; color: var(--accent); }
         .btn-del { background: #fef2f2; color: var(--danger); }
@@ -126,12 +120,25 @@
         .total-dia-card { background: var(--primary); color: white; border-radius: 15px; padding: 18px; margin-top: 5px; margin-bottom: 15px; }
 
         /* Scanner Styles */
-        #reader { width: 100%; border-radius: 15px; overflow: hidden; background: #000; }
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; background: #000; position: relative; }
+        #reader video { object-fit: cover !important; }
         .scanner-controls { margin-top: 20px; display: flex; gap: 10px; }
+        
+        /* Laser animation for scanner */
+        .scanner-laser {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(239, 68, 68, 0.7); box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+            z-index: 10; animation: laserMove 2s infinite linear;
+        }
+        @keyframes laserMove { 0% { top: 20%; } 50% { top: 80%; } 100% { top: 20%; } }
 
         /* Diezmo Styles */
         .diezmo-card { border-left: 6px solid var(--warning); position: relative; }
         .history-tag { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; background: #f1f5f9; color: #94a3b8; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
+        
+        /* Ticket Workspace */
+        #ticket-render { position: fixed; left: -10000px; width: 340px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
+        .ticket-logo { width: 120px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
     </style>
 </head>
 <body>
@@ -158,14 +165,23 @@
         </div>
     </div>
 
-    <!-- Overlay de Escáner -->
+    <!-- Overlay de Escáner Mejorado -->
     <div id="scanner-overlay">
-        <div class="card-custom w-100 shadow-lg" style="max-width: 450px; background: white;">
-            <h6 class="fw-bold mb-3 text-center text-uppercase">Escaneando Producto</h6>
-            <div id="reader"></div>
-            <div class="scanner-controls">
-                <button class="btn btn-danger w-100 py-3 fw-bold" style="border-radius: 15px;" onclick="stopScanner()">CERRAR ESCÁNER</button>
+        <div class="card-custom w-100 shadow-lg" style="max-width: 450px; background: white; padding: 15px;">
+            <h6 class="fw-bold mb-3 text-center text-uppercase" style="letter-spacing: 1px;">Escáner de Productos</h6>
+            <div id="reader-container" style="position: relative;">
+                <div id="reader"></div>
+                <div class="scanner-laser"></div>
             </div>
+            <div class="scanner-controls">
+                <button id="btn-torch" class="btn btn-warning flex-fill py-3 fw-bold d-none" style="border-radius: 15px;" onclick="toggleTorch()">
+                    <i class="fas fa-bolt me-2"></i>LUZ
+                </button>
+                <button class="btn btn-danger flex-fill py-3 fw-bold" style="border-radius: 15px;" onclick="stopScanner()">
+                    CERRAR
+                </button>
+            </div>
+            <p class="text-center text-muted small mt-3 mb-0">Ubique el código de barras dentro del marco.</p>
         </div>
     </div>
 
@@ -200,7 +216,7 @@
                     <div class="col-8 search-wrapper">
                         <label class="small fw-bold text-muted mb-2 text-uppercase">Producto</label>
                         <div class="input-group">
-                            <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px 0 0 12px;" placeholder="¿Qué vendiste?">
+                            <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px 0 0 12px;" placeholder="Nombre o Escaneo">
                             <button class="btn btn-primary px-3" style="border-radius: 0 12px 12px 0;" onclick="startScanner()"><i class="fas fa-barcode"></i></button>
                         </div>
                         <div id="sug-producto" class="sug-box d-none"></div>
@@ -302,6 +318,7 @@
         let state = { clients: [], products: [], stores: [], sales: [], diezmos: [] };
         let activeSubTab = 'sales';
         let html5QrCode = null;
+        let isTorchOn = false;
 
         // --- FECHAS MÉXICO ---
         const getLocalDateString = (date = new Date()) => date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
@@ -343,20 +360,19 @@
         const checkResetCycle = () => {
             const now = new Date();
             if (now.getDate() === 20 && (now.getMonth() + 1) % 2 === 0) {
-                if (confirm("Reinicio bimestral detectado (Día 20). ¿Limpiar ventas y guardar resumen de diezmos?")) {
+                if (confirm("Reinicio bimestral detectado (Día 20). ¿Limpiar historial de ventas y guardar resumen?")) {
                     clearSalesHistory();
                 }
             }
         };
 
         const clearSalesHistory = async () => {
-            // Antes de borrar, agregamos los totales actuales al historial de diezmos para persistencia
             const monthlyData = {};
             state.sales.forEach(s => {
                 if(!s.fechaStr) return;
                 const parts = s.fechaStr.split('/');
                 if(parts.length < 3) return;
-                const key = `${parts[2]}-${parts[1].padStart(2, '0')}`; // YYYY-MM
+                const key = `${parts[2]}-${parts[1].padStart(2, '0')}`;
                 if(!monthlyData[key]) monthlyData[key] = { venta: 0, costo: 0, mes: months[parseInt(parts[1])-1], year: parts[2] };
                 monthlyData[key].venta += (s.total || 0);
                 monthlyData[key].costo += ((s.costo || 0) * (s.cantidad || 0));
@@ -364,26 +380,15 @@
 
             for(const key in monthlyData) {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'diezmos', key);
-                // Si ya existe registro de ese mes, sumamos lo nuevo (para no perder datos si se borra varias veces el mismo mes)
                 const exist = state.diezmos.find(d => d.id === key);
-                const util = monthlyData[key].venta - monthlyData[key].costo;
                 const finalVenta = (exist?.venta || 0) + monthlyData[key].venta;
                 const finalCosto = (exist?.costo || 0) + monthlyData[key].costo;
-                
-                await setDoc(docRef, {
-                    venta: finalVenta,
-                    costo: finalCosto,
-                    mes: monthlyData[key].mes,
-                    year: monthlyData[key].year,
-                    ultima_actualizacion: serverTimestamp()
-                });
+                await setDoc(docRef, { venta: finalVenta, costo: finalCosto, mes: monthlyData[key].mes, year: monthlyData[key].year, ultima_actualizacion: serverTimestamp() });
             }
 
             const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'sales'));
-            for (const d of snap.docs) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', d.id));
-            }
-            showToast("Ventas reiniciadas e historial guardado", 'success');
+            for (const d of snap.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', d.id));
+            showToast("Ventas reiniciadas", 'success');
         };
 
         window.showTab = (id, btn) => {
@@ -400,7 +405,7 @@
                 btn.classList.add('active');
             }
             const wrapper = document.getElementById('filter-wrapper');
-            if (id === 'sales' || id === 'totales' || id === 'ticketTienda') {
+            if (['sales', 'totales', 'ticketTienda'].includes(id)) {
                 const todayISO = getISODateString();
                 let extra = "";
                 if (id === 'ticketTienda') {
@@ -484,66 +489,37 @@
                     return `<div class="card-custom mb-3 py-3"><h6 class="fw-bold border-bottom pb-2 mb-2 text-uppercase text-accent">${t}</h6><div class="d-flex justify-content-between small"><span>Costos: $${cT.toFixed(2)}</span> <span>Ventas: $${pT.toFixed(2)}</span></div><div class="text-end fw-bold text-success small">Utilidad: $${(pT-cT).toFixed(2)}</div></div>`;
                 }).join('');
             } else if (activeSubTab === 'diezmo') {
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Reporte de Diezmos (Histórico + Actual)</div>`;
-                
-                // Agrupar datos de las ventas ACTIVAS actuales
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Diezmos Acumulados</div>`;
                 const currentMonthly = {};
                 state.sales.forEach(s => {
                     if(!s.fechaStr) return;
                     const parts = s.fechaStr.split('/');
-                    if(parts.length < 3) return;
                     const key = `${parts[2]}-${parts[1].padStart(2, '0')}`;
                     if(!currentMonthly[key]) currentMonthly[key] = { venta: 0, costo: 0, mes: months[parseInt(parts[1])-1], year: parts[2], active: true };
                     currentMonthly[key].venta += (s.total || 0);
                     currentMonthly[key].costo += ((s.costo || 0) * (s.cantidad || 0));
                 });
-
-                // Combinar con los datos guardados en la base de datos (Persistentes)
                 const finalData = {};
-                
-                // Primero cargar históricos
-                state.diezmos.forEach(d => {
-                    finalData[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true };
-                });
-
-                // Luego añadir/sumar activos
+                state.diezmos.forEach(d => { finalData[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true }; });
                 for(const key in currentMonthly) {
-                    if(finalData[key]) {
-                        finalData[key].venta += currentMonthly[key].venta;
-                        finalData[key].costo += currentMonthly[key].costo;
-                    } else {
-                        finalData[key] = currentMonthly[key];
-                    }
+                    if(finalData[key]) { finalData[key].venta += currentMonthly[key].venta; finalData[key].costo += currentMonthly[key].costo; }
+                    else { finalData[key] = currentMonthly[key]; }
                 }
-
                 const sortedKeys = Object.keys(finalData).sort().reverse();
-
                 list.innerHTML = sortedKeys.map(k => {
-                    const d = finalData[k];
-                    const util = d.venta - d.costo;
-                    const diezmo = util * 0.10;
+                    const d = finalData[k]; const util = d.venta - d.costo; const diezmo = util * 0.10;
                     return `<div class="card-custom diezmo-card shadow-sm mb-3">
                         ${d.isStored && !d.active ? '<span class="history-tag">HISTÓRICO</span>' : '<span class="history-tag" style="color:var(--accent)">ACTIVO</span>'}
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6>
-                            <span class="badge bg-warning text-dark fw-bold">10%</span>
-                        </div>
-                        <div class="d-flex justify-content-between small text-muted mb-1">
-                            <span>Utilidad Acumulada:</span>
-                            <span>$${util.toFixed(2)}</span>
-                        </div>
-                        <div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top">
-                            <span>DIEZMO:</span>
-                            <span>$${diezmo.toFixed(2)}</span>
-                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2"><h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark fw-bold">10%</span></div>
+                        <div class="d-flex justify-content-between small text-muted mb-1"><span>Utilidad:</span><span>$${util.toFixed(2)}</span></div>
+                        <div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top"><span>DIEZMO:</span><span>$${diezmo.toFixed(2)}</span></div>
                     </div>`;
-                }).join('') || '<p class="text-center py-5 text-muted">Sin datos de ventas para calcular.</p>';
-
+                }).join('') || '<p class="text-center py-5 text-muted">Sin datos.</p>';
             } else if (activeSubTab === 'ticketTienda') {
                 const store = (document.getElementById('filter-store')?.value || "").toUpperCase();
                 const items = state.sales.filter(s => (s.tienda||"").toUpperCase() === store && s.fechaStr === filterDate);
                 summary.innerHTML = `<div class="badge-info-stat shadow-sm">Carga de ${store || '...'}</div>`;
-                list.innerHTML = items.length ? `<div class="card-custom"><table class="table-resumen"><thead><tr><th>Prod.</th><th>Cant.</th><th>Costo</th><th>Total</th></tr></thead><tbody>${items.map(i => `<tr><td>${i.producto}</td><td>${i.cantidad}</td><td>$${i.costo}</td><td class="fw-bold">$${(i.costo*i.cantidad).toFixed(2)}</td></tr>`).join('')}</tbody></table><div class="text-end fw-bold mt-3 border-top pt-2 fs-5">COSTO: $${items.reduce((a,b)=>a+(b.costo*b.cantidad),0).toFixed(2)}</div></div>` : '<p class="text-center py-5 text-muted">Selecciona tienda y fecha</p>';
+                list.innerHTML = items.length ? `<div class="card-custom"><table class="table-resumen"><thead><tr><th>Prod.</th><th>Cant.</th><th>Costo</th><th>Total</th></tr></thead><tbody>${items.map(i => `<tr><td>${i.producto}</td><td>${i.cantidad}</td><td>$${i.costo}</td><td class="fw-bold">$${(i.costo*i.cantidad).toFixed(2)}</td></tr>`).join('')}</tbody></table><div class="text-end fw-bold mt-3 border-top pt-2 fs-5">COSTO: $${items.reduce((a,b)=>a+(b.costo*b.cantidad),0).toFixed(2)}</div></div>` : '<p class="text-center py-5 text-muted">Sin registros.</p>';
             } else {
                 data.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
                 list.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div>${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0} ${item.codigo ? ` / ID: ${item.codigo}` : ''}</small>` : ''}</div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
@@ -576,9 +552,7 @@
         document.getElementById('btn-save-edit').onclick = async () => {
             const { col, id, oldName } = curEdit; const newN = document.getElementById('ev1').value.trim().toUpperCase(); const up = { nombre: newN };
             if(col === 'products') {
-                up.pCosto = parseFloat(document.getElementById('ev2').value); 
-                up.pVenta = parseFloat(document.getElementById('ev3').value);
-                up.codigo = document.getElementById('ev4').value.trim();
+                up.pCosto = parseFloat(document.getElementById('ev2').value); up.pVenta = parseFloat(document.getElementById('ev3').value); up.codigo = document.getElementById('ev4').value.trim();
                 state.sales.filter(s => (s.producto||"").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { producto: newN, precio: up.pVenta, total: sale.cantidad*up.pVenta, costo: up.pCosto }); });
             } else if (col === 'stores') {
                 state.sales.filter(s => (s.tienda||"").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { tienda: newN }); });
@@ -615,51 +589,33 @@
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { codigo: data.codigo });
                 }
 
-                document.getElementById('in-cliente').value = ""; 
-                document.getElementById('in-producto').value = ""; 
-                document.getElementById('in-costo').value = ""; 
-                document.getElementById('in-precio').value = ""; 
-                document.getElementById('in-cantidad').value = "1";
-                document.getElementById('in-codigo').value = "";
-                
+                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-codigo').value = "";
                 showToast("¡Venta Guardada!", 'success');
             } catch(e) { showToast("Error", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
         const showToast = (msg, type = 'success') => {
-            const toast = document.getElementById('toast-alert');
-            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            const toast = document.getElementById('toast-alert'); toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
             toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i> ${msg}`;
             toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
-        // --- TICKET & WHATSAPP ---
+        // --- TICKET ---
         window.genTicket = async (cli, isWA) => {
-            const hoy = getLocalDateString();
-            const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === hoy);
-            document.getElementById('t-fecha').innerText = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
-            document.getElementById('t-cliente').innerText = cli.toUpperCase();
-            let total = 0;
-            document.getElementById('t-items').innerHTML = items.map(i => { total += i.total; return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto.toUpperCase()}</span><span>$${i.total.toFixed(2)}</span></div>`; }).join('');
+            const hoy = getLocalDateString(); const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === hoy);
+            document.getElementById('t-fecha').innerText = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' }); document.getElementById('t-cliente').innerText = cli.toUpperCase();
+            let total = 0; document.getElementById('t-items').innerHTML = items.map(i => { total += i.total; return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto.toUpperCase()}</span><span>$${i.total.toFixed(2)}</span></div>`; }).join('');
             document.getElementById('t-total').innerText = `$${total.toFixed(2)}`;
-
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
                 if (isWA) {
                     canvas.toBlob(async (blob) => {
                         const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                            await navigator.share({
-                                files: [file],
-                                title: 'Ticket Yaute Rápidas',
-                                text: 'Hola, aquí tienes tu ticket de compra. ¡Gracias por tu preferencia!'
-                            });
-                        } else { alert("Tu navegador no soporta compartir directamente."); }
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Ticket', text: '¡Gracias!' }); }
+                        else { alert("No soportado"); }
                     });
-                } else {
-                    const link = document.createElement('a'); link.download = `Ticket_${cli}.png`; link.href = canvas.toDataURL("image/png"); link.click();
-                }
-            } catch(e) { alert("Error al generar ticket."); }
+                } else { const link = document.createElement('a'); link.download = `Ticket_${cli}.png`; link.href = canvas.toDataURL("image/png"); link.click(); }
+            } catch(e) { alert("Error"); }
         };
 
         const setupAutos = () => {
@@ -676,11 +632,7 @@
                         inp.value = v.toUpperCase(); box.classList.add('d-none');
                         if(key === 'products') { 
                             const p = state.products.find(x => (x.nombre||"").toLowerCase() === v.toLowerCase()); 
-                            if(p) { 
-                                document.getElementById('in-costo').value = p.pCosto; 
-                                document.getElementById('in-precio').value = p.pVenta; 
-                                document.getElementById('in-codigo').value = p.codigo || "";
-                            } 
+                            if(p) { document.getElementById('in-costo').value = p.pCosto; document.getElementById('in-precio').value = p.pVenta; document.getElementById('in-codigo').value = p.codigo || ""; } 
                         }
                     }
                 };
@@ -688,56 +640,76 @@
             auto('in-tienda', 'sug-tienda', 'stores'); auto('in-cliente', 'sug-cliente', 'clients'); auto('in-producto', 'sug-producto', 'products');
         };
 
-        // --- SCANNER LOGIC MEJORADA ---
+        // --- SCANNER REFINADO V7.0 ---
         window.startScanner = () => {
             document.getElementById('scanner-overlay').style.display = 'flex';
             const formatsToSupport = [
-                Html5QrcodeSupportedFormats.QR_CODE,
-                Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.EAN_8,
-                Html5QrcodeSupportedFormats.CODE_128,
-                Html5QrcodeSupportedFormats.CODE_39,
-                Html5QrcodeSupportedFormats.UPC_A,
-                Html5QrcodeSupportedFormats.UPC_E,
-                Html5QrcodeSupportedFormats.ITF
+                Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.CODE_128,
+                Html5QrcodeSupportedFormats.CODE_39, Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.UPC_E, Html5QrcodeSupportedFormats.ITF
             ];
-            html5QrCode = new Html5Qrcode("reader", { formatsToSupport: formatsToSupport });
-            const config = { fps: 20, qrbox: { width: 300, height: 180 }, aspectRatio: 1.0 };
+            html5QrCode = new Html5Qrcode("reader", { formatsToSupport: formatsToSupport, verbose: false });
+            
+            // Configuración optimizada para enfoque y detección rápida
+            const config = { 
+                fps: 30, 
+                qrbox: (viewfinderWidth, viewfinderHeight) => {
+                    // Área rectangular más ancha para códigos de barras
+                    return { width: viewfinderWidth * 0.85, height: viewfinderHeight * 0.4 };
+                },
+                aspectRatio: 1.0,
+                videoConstraints: {
+                    facingMode: "environment",
+                    focusMode: "continuous",
+                    whiteBalanceMode: "continuous"
+                }
+            };
+            
             html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
-                .catch(err => {
-                    showToast("No se pudo iniciar cámara: " + err, 'danger');
-                    stopScanner();
-                });
+                .then(() => {
+                    // Verificar si el dispositivo soporta linterna
+                    const track = html5QrCode.getRunningTrack();
+                    if (track && track.getCapabilities().torch) {
+                        document.getElementById('btn-torch').classList.remove('d-none');
+                        isTorchOn = false;
+                    }
+                })
+                .catch(err => { showToast("Error de cámara", 'danger'); stopScanner(); });
+        };
+
+        window.toggleTorch = () => {
+            if (!html5QrCode) return;
+            isTorchOn = !isTorchOn;
+            html5QrCode.applyVideoConstraints({ advanced: [{ torch: isTorchOn }] })
+                .catch(() => showToast("Fallo de linterna", 'danger'));
         };
 
         window.stopScanner = () => {
             if (html5QrCode) {
-                html5QrCode.stop().then(() => {
+                html5QrCode.stop().finally(() => {
                     document.getElementById('scanner-overlay').style.display = 'none';
-                }).catch(() => {
-                    document.getElementById('scanner-overlay').style.display = 'none';
+                    document.getElementById('btn-torch').classList.add('d-none');
+                    isTorchOn = false;
                 });
-            } else {
-                document.getElementById('scanner-overlay').style.display = 'none';
-            }
+            } else { document.getElementById('scanner-overlay').style.display = 'none'; }
         };
 
         const onScanSuccess = (decodedText) => {
             stopScanner();
-            showToast("Código: " + decodedText, 'success');
             document.getElementById('in-codigo').value = decodedText;
             const found = state.products.find(p => p.codigo === decodedText);
             if (found) {
                 document.getElementById('in-producto').value = found.nombre.toUpperCase();
                 document.getElementById('in-costo').value = found.pCosto;
                 document.getElementById('in-precio').value = found.pVenta;
-                showToast("Producto cargado", 'success');
+                showToast("Producto cargado: " + found.nombre.toUpperCase(), 'success');
             } else {
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-producto').focus();
-                showToast("Producto nuevo. Completa los datos.", 'warning');
+                showToast("Código nuevo: " + decodedText + ". Ingrese datos.", 'warning');
             }
         };
 
