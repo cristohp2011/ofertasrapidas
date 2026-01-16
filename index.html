@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v6.6</title>
+    <title>Yaute Rápidas Control Pro v6.7</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Librería para escaneo de códigos -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
     
     <style>
         :root {
@@ -62,8 +64,8 @@
 
         @keyframes slideDown { from { transform: translate(-50%, -100px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
-        #edit-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
+        #edit-overlay, #scanner-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9);
             z-index: 3000; display: none; align-items: center; justify-content: center;
             backdrop-filter: blur(8px); padding: 20px;
         }
@@ -127,6 +129,11 @@
         .table-resumen td { padding: 8px; border-bottom: 1px solid #f1f5f9; }
 
         .total-dia-card { background: var(--primary); color: white; border-radius: 15px; padding: 18px; margin-top: 5px; margin-bottom: 15px; }
+
+        /* Scanner Styles */
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; }
+        .scanner-controls { margin-top: 20px; display: flex; gap: 10px; }
+        .btn-scanner { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -138,6 +145,7 @@
 
     <div id="toast-alert"></div>
 
+    <!-- Overlay de Edición -->
     <div id="edit-overlay">
         <div class="card-custom w-100 shadow-lg" style="max-width: 450px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -148,6 +156,17 @@
             <div class="d-flex gap-3 mt-4">
                 <button class="btn btn-light flex-fill py-2 fw-bold" onclick="closeEdit()">Cancelar</button>
                 <button id="btn-save-edit" class="btn btn-primary flex-fill py-2 fw-bold shadow">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de Escáner -->
+    <div id="scanner-overlay">
+        <div class="card-custom w-100 shadow-lg" style="max-width: 450px; background: white;">
+            <h6 class="fw-bold mb-3 text-center text-uppercase">Escaneando Producto</h6>
+            <div id="reader"></div>
+            <div class="scanner-controls">
+                <button class="btn btn-danger w-100 py-3 fw-bold" style="border-radius: 15px;" onclick="stopScanner()">CERRAR ESCÁNER</button>
             </div>
         </div>
     </div>
@@ -182,8 +201,12 @@
                 <div class="row g-3">
                     <div class="col-8 search-wrapper">
                         <label class="small fw-bold text-muted mb-2 text-uppercase">Producto</label>
-                        <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px;" placeholder="¿Qué vendiste?">
+                        <div class="input-group">
+                            <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px 0 0 12px;" placeholder="¿Qué vendiste?">
+                            <button class="btn btn-primary px-3" style="border-radius: 0 12px 12px 0;" onclick="startScanner()"><i class="fas fa-barcode"></i></button>
+                        </div>
                         <div id="sug-producto" class="sug-box d-none"></div>
+                        <input type="hidden" id="in-codigo" value="">
                     </div>
                     <div class="col-4">
                         <label class="small fw-bold text-muted mb-2 text-uppercase">Cant.</label>
@@ -260,7 +283,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -279,6 +302,7 @@
 
         let state = { clients: [], products: [], stores: [], sales: [] };
         let activeSubTab = 'sales';
+        let html5QrCode = null;
 
         // --- FECHAS MÉXICO ---
         const getLocalDateString = (date = new Date()) => date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
@@ -435,7 +459,7 @@
                 list.innerHTML = items.length ? `<div class="card-custom"><table class="table-resumen"><thead><tr><th>Prod.</th><th>Cant.</th><th>Costo</th><th>Total</th></tr></thead><tbody>${items.map(i => `<tr><td>${i.producto}</td><td>${i.cantidad}</td><td>$${i.costo}</td><td class="fw-bold">$${(i.costo*i.cantidad).toFixed(2)}</td></tr>`).join('')}</tbody></table><div class="text-end fw-bold mt-3 border-top pt-2 fs-5">COSTO: $${items.reduce((a,b)=>a+(b.costo*b.cantidad),0).toFixed(2)}</div></div>` : '<p class="text-center py-5 text-muted">Selecciona tienda y fecha</p>';
             } else {
                 data.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
-                list.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div>${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0}</small>` : ''}</div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
+                list.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div>${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0} ${item.codigo ? ` / ID: ${item.codigo}` : ''}</small>` : ''}</div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
             }
         };
 
@@ -453,7 +477,9 @@
             curEdit = { col, id, oldName: item.nombre }; const form = document.getElementById('edit-form-body');
             document.getElementById('edit-title').innerText = `Editar ${col === 'products' ? 'Producto' : 'Registro'}`;
             if(col === 'products') {
-                form.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div><div class="row g-2"><div class="col-6"><label class="small fw-bold">COSTO</label><input id="ev2" type="number" class="form-control" value="${item.pCosto}"></div><div class="col-6"><label class="small fw-bold">VENTA</label><input id="ev3" type="number" class="form-control" value="${item.pVenta}"></div></div>`;
+                form.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>
+                <div class="row g-2 mb-3"><div class="col-6"><label class="small fw-bold">COSTO</label><input id="ev2" type="number" class="form-control" value="${item.pCosto}"></div><div class="col-6"><label class="small fw-bold">VENTA</label><input id="ev3" type="number" class="form-control" value="${item.pVenta}"></div></div>
+                <div class="mb-3"><label class="small fw-bold">CÓDIGO / BARRA</label><input id="ev4" class="form-control" value="${item.codigo || ''}" placeholder="Opcional"></div>`;
             } else { form.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>`; }
             document.getElementById('edit-overlay').style.display = 'flex';
         };
@@ -463,7 +489,9 @@
         document.getElementById('btn-save-edit').onclick = async () => {
             const { col, id, oldName } = curEdit; const newN = document.getElementById('ev1').value.trim().toUpperCase(); const up = { nombre: newN };
             if(col === 'products') {
-                up.pCosto = parseFloat(document.getElementById('ev2').value); up.pVenta = parseFloat(document.getElementById('ev3').value);
+                up.pCosto = parseFloat(document.getElementById('ev2').value); 
+                up.pVenta = parseFloat(document.getElementById('ev3').value);
+                up.codigo = document.getElementById('ev4').value.trim();
                 state.sales.filter(s => (s.producto||"").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { producto: newN, precio: up.pVenta, total: sale.cantidad*up.pVenta, costo: up.pCosto }); });
             } else if (col === 'stores') {
                 state.sales.filter(s => (s.tienda||"").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { tienda: newN }); });
@@ -475,15 +503,40 @@
 
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
-            const data = { tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), producto: document.getElementById('in-producto').value.trim().toUpperCase(), cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, costo: parseFloat(document.getElementById('in-costo').value) || 0, precio: parseFloat(document.getElementById('in-precio').value) || 0 };
+            const data = { 
+                tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), 
+                cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), 
+                producto: document.getElementById('in-producto').value.trim().toUpperCase(), 
+                cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, 
+                costo: parseFloat(document.getElementById('in-costo').value) || 0, 
+                precio: parseFloat(document.getElementById('in-precio').value) || 0,
+                codigo: document.getElementById('in-codigo').value.trim()
+            };
             if (!data.cliente || !data.producto) return alert("Faltan datos");
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(), fechaStr: getLocalDateString(), entregado: false });
+                
                 const check = (c, val) => { if(!state[c].some(i => (i.nombre||"").toUpperCase() === val.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: val }); };
                 check('clients', data.cliente); check('stores', data.tienda);
-                if(!state.products.some(p => (p.nombre||"").toUpperCase() === data.producto.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
-                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1";
+                
+                // Lógica de Producto: Buscar por código o nombre
+                const existingProd = state.products.find(p => (p.codigo === data.codigo && data.codigo !== "") || (p.nombre||"").toUpperCase() === data.producto.toUpperCase());
+                
+                if(!existingProd) {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
+                } else if (data.codigo !== "" && existingProd.codigo === "") {
+                    // Si el producto existía por nombre pero no tenía código, se lo asignamos
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { codigo: data.codigo });
+                }
+
+                document.getElementById('in-cliente').value = ""; 
+                document.getElementById('in-producto').value = ""; 
+                document.getElementById('in-costo').value = ""; 
+                document.getElementById('in-precio').value = ""; 
+                document.getElementById('in-cantidad').value = "1";
+                document.getElementById('in-codigo').value = "";
+                
                 showToast("¡Venta Guardada!", 'success');
             } catch(e) { showToast("Error", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
@@ -536,14 +589,69 @@
                 box.onclick = (e) => {
                     const v = e.target.dataset.v; if(v) {
                         inp.value = v.toUpperCase(); box.classList.add('d-none');
-                        if(key === 'products') { const p = state.products.find(x => (x.nombre||"").toLowerCase() === v.toLowerCase()); if(p) { document.getElementById('in-costo').value = p.pCosto; document.getElementById('in-precio').value = p.pVenta; } }
+                        if(key === 'products') { 
+                            const p = state.products.find(x => (x.nombre||"").toLowerCase() === v.toLowerCase()); 
+                            if(p) { 
+                                document.getElementById('in-costo').value = p.pCosto; 
+                                document.getElementById('in-precio').value = p.pVenta; 
+                                document.getElementById('in-codigo').value = p.codigo || "";
+                            } 
+                        }
                     }
                 };
             };
             auto('in-tienda', 'sug-tienda', 'stores'); auto('in-cliente', 'sug-cliente', 'clients'); auto('in-producto', 'sug-producto', 'products');
         };
 
+        // --- SCANNER LOGIC ---
+        window.startScanner = () => {
+            document.getElementById('scanner-overlay').style.display = 'flex';
+            html5QrCode = new Html5Qrcode("reader");
+            const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+            
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+                .catch(err => {
+                    showToast("Error cámara: " + err, 'danger');
+                    stopScanner();
+                });
+        };
+
+        window.stopScanner = () => {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('scanner-overlay').style.display = 'none';
+                }).catch(() => {
+                    document.getElementById('scanner-overlay').style.display = 'none';
+                });
+            } else {
+                document.getElementById('scanner-overlay').style.display = 'none';
+            }
+        };
+
+        const onScanSuccess = (decodedText) => {
+            stopScanner();
+            showToast("Código detectado: " + decodedText, 'success');
+            
+            document.getElementById('in-codigo').value = decodedText;
+            
+            // Buscar si ya existe el producto con ese código
+            const found = state.products.find(p => p.codigo === decodedText);
+            if (found) {
+                document.getElementById('in-producto').value = found.nombre.toUpperCase();
+                document.getElementById('in-costo').value = found.pCosto;
+                document.getElementById('in-precio').value = found.pVenta;
+                showToast("Producto cargado", 'success');
+            } else {
+                document.getElementById('in-producto').value = "";
+                document.getElementById('in-costo').value = "";
+                document.getElementById('in-precio').value = "";
+                document.getElementById('in-producto').focus();
+                showToast("Producto nuevo. Ingrese datos.", 'warning');
+            }
+        };
+
         setupAutos();
     </script>
 </body>
 </html>
+
