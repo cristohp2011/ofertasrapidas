@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v7.1</title>
+    <title>Yaute Rápidas Control Pro v7.2</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -65,9 +65,9 @@
         @keyframes slideDown { from { transform: translate(-50%, -100px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
         #edit-overlay, #scanner-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.96);
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98);
             z-index: 3000; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px); padding: 15px;
+            backdrop-filter: blur(12px); padding: 15px;
         }
 
         .tab-content { display: none; }
@@ -97,45 +97,24 @@
         }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .search-wrapper { position: relative; }
-        .sug-box {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1); margin-top: 8px; border: 1px solid #f1f5f9;
-        }
-        .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
-
-        #loading-screen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-        .entregado-row { background-color: #f0fdf4 !important; border-left: 6px solid var(--success) !important; }
-        
-        .action-btn { width: 38px; height: 38px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-edit { background: #eff6ff; color: var(--accent); }
-        .btn-del { background: #fef2f2; color: var(--danger); }
-        
-        .badge-info-stat { background: #f1f5f9; color: #475569; padding: 8px 15px; border-radius: 12px; display: inline-block; width: 100%; text-align: center; margin-bottom: 15px; font-weight: 700; font-size: 0.8rem; }
-        .btn-consultar { border-radius: 15px; font-weight: 700; padding: 10px 20px; }
-
-        .total-dia-card { background: var(--primary); color: white; border-radius: 15px; padding: 18px; margin-top: 5px; margin-bottom: 15px; }
-
-        /* Scanner Styles */
-        #reader { width: 100%; border-radius: 15px; overflow: hidden; background: #000; position: relative; min-height: 300px; }
+        /* Scanner UI */
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; background: #000; position: relative; min-height: 250px; }
         #reader video { object-fit: cover !important; width: 100% !important; height: 100% !important; }
         .scanner-controls { margin-top: 20px; display: flex; gap: 10px; }
         
         .scanner-laser {
             position: absolute; top: 20%; left: 10%; width: 80%; height: 2px;
-            background: rgba(239, 68, 68, 0.8); box-shadow: 0 0 12px rgba(239, 68, 68, 0.9);
+            background: rgba(239, 68, 68, 0.9); box-shadow: 0 0 15px rgba(239, 68, 68, 1);
             z-index: 10; animation: laserMove 1.5s infinite ease-in-out;
         }
         @keyframes laserMove { 0% { top: 20%; } 50% { top: 80%; } 100% { top: 20%; } }
 
-        /* Diezmo Styles */
+        .badge-info-stat { background: #f1f5f9; color: #475569; padding: 8px 15px; border-radius: 12px; display: inline-block; width: 100%; text-align: center; margin-bottom: 15px; font-weight: 700; font-size: 0.8rem; }
+        .btn-consultar { border-radius: 15px; font-weight: 700; padding: 10px 20px; }
+        .total-dia-card { background: var(--primary); color: white; border-radius: 15px; padding: 18px; margin-top: 5px; margin-bottom: 15px; }
         .diezmo-card { border-left: 6px solid var(--warning); position: relative; }
         .history-tag { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; background: #f1f5f9; color: #94a3b8; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
         
-        /* Ticket Workspace */
         #ticket-render { position: fixed; left: -10000px; width: 340px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
         .ticket-logo { width: 120px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
     </style>
@@ -144,7 +123,7 @@
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Iniciando Sistema Yaute...</p>
+        <p class="mt-3 fw-bold text-primary">Conectando con Yaute...</p>
     </div>
 
     <div id="toast-alert"></div>
@@ -167,20 +146,18 @@
     <!-- Overlay de Escáner -->
     <div id="scanner-overlay">
         <div class="card-custom w-100 shadow-lg" style="max-width: 450px; background: white; padding: 15px;">
-            <h6 class="fw-bold mb-3 text-center text-uppercase" style="letter-spacing: 1px;">Escáner Pro</h6>
+            <h6 class="fw-bold mb-3 text-center text-uppercase" style="letter-spacing: 1px;">Escáner Inteligente</h6>
             <div id="reader-container" style="position: relative;">
                 <div id="reader"></div>
                 <div class="scanner-laser"></div>
             </div>
             <div class="scanner-controls">
-                <button id="btn-torch" class="btn btn-warning flex-fill py-3 fw-bold d-none" style="border-radius: 15px;" onclick="toggleTorch()">
-                    <i class="fas fa-lightbulb me-2"></i>LUZ
+                <button id="btn-torch" class="btn btn-warning flex-fill py-3 fw-bold d-none" onclick="toggleTorch()">
+                    <i class="fas fa-lightbulb"></i> LUZ
                 </button>
-                <button class="btn btn-danger flex-fill py-3 fw-bold" style="border-radius: 15px;" onclick="stopScanner()">
-                    SALIR
-                </button>
+                <button class="btn btn-danger flex-fill py-3 fw-bold" onclick="stopScanner()">CERRAR</button>
             </div>
-            <p id="scanner-hint" class="text-center text-muted small mt-3 mb-0">Aleje un poco el código para enfocar.</p>
+            <p id="scanner-status" class="text-center text-muted small mt-3 mb-0">Iniciando cámara...</p>
         </div>
     </div>
 
@@ -188,13 +165,12 @@
         <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 1rem; letter-spacing: 1px;">OFERTAS RÁPIDAS YAUTEPEC</h5>
         <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
         <div class="opacity-75 mt-2">
-            <small id="status-label"><span class="status-dot bg-warning"></span> Conectando...</small>
+            <small id="status-label"><span class="status-dot bg-warning"></span> Sincronizando...</small>
         </div>
     </header>
 
     <div class="container py-3">
         
-        <!-- PESTAÑA: OPERACIONES -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
@@ -215,7 +191,7 @@
                     <div class="col-8 search-wrapper">
                         <label class="small fw-bold text-muted mb-2 text-uppercase">Producto</label>
                         <div class="input-group">
-                            <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px 0 0 12px;" placeholder="Nombre o Escaneo">
+                            <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px 0 0 12px;" placeholder="Producto / Escaneo">
                             <button class="btn btn-primary px-3" style="border-radius: 0 12px 12px 0;" onclick="startScanner()"><i class="fas fa-barcode"></i></button>
                         </div>
                         <div id="sug-producto" class="sug-box d-none"></div>
@@ -241,7 +217,6 @@
             </div>
         </div>
 
-        <!-- PESTAÑA: ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
             <div class="d-flex justify-content-between align-items-center mb-3 px-1">
                 <h6 class="fw-bold text-muted m-0 text-uppercase" style="font-size: 0.8rem;">Reparto Hoy</h6>
@@ -250,7 +225,6 @@
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- PESTAÑA: CONTROL -->
         <div id="tab-control" class="tab-content">
             <div class="sub-nav mb-2">
                 <button class="sub-btn active" onclick="window.switchSubTab('sales', this)">Ventas</button>
@@ -261,11 +235,7 @@
                 <button class="sub-btn" onclick="window.switchSubTab('stores', this)">Tiendas</button>
                 <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
             </div>
-
-            <div class="filter-container">
-                <div id="filter-wrapper"></div>
-            </div>
-
+            <div class="filter-container"><div id="filter-wrapper"></div></div>
             <div id="cat-summary" class="px-2"></div>
             <div id="lista-catalogos"></div>
         </div>
@@ -282,10 +252,7 @@
         </div>
         <p style="font-size: 1rem; margin-bottom: 12px;"><b>CLIENTE:</b> <span id="t-cliente"></span></p>
         <div id="t-items" style="border-bottom: 1px dashed #444; padding-bottom: 12px; margin-bottom: 12px;"></div>
-        <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 1.2rem;">
-            <span>TOTAL:</span>
-            <span id="t-total"></span>
-        </div>
+        <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 1.2rem;"><span>TOTAL:</span><span id="t-total"></span></div>
         <p style="text-align: center; margin-top: 35px; font-size: 0.8rem; border-top: 1px solid #eee; pt-3">¡GRACIAS POR SU PREFERENCIA!</p>
     </div>
 
@@ -319,7 +286,6 @@
         let html5QrCode = null;
         let isTorchOn = false;
 
-        // --- UTILIDADES ---
         const getLocalDateString = (date = new Date()) => date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
         const getISODateString = (date = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
         const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -328,10 +294,9 @@
             const toast = document.getElementById('toast-alert');
             toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
             toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i> ${msg}`;
-            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4000);
+            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4500);
         };
 
-        // --- FIREBASE SYNC ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -357,30 +322,27 @@
         const checkResetCycle = () => {
             const now = new Date();
             if (now.getDate() === 20 && (now.getMonth() + 1) % 2 === 0) {
-                if (confirm("Reinicio detectado. ¿Guardar diezmos y limpiar historial?")) clearSalesHistory();
+                if (confirm("Ciclo de reinicio detectado. ¿Guardar resumen de utilidades y limpiar?")) clearSalesHistory();
             }
         };
 
         const clearSalesHistory = async () => {
-            const monthlyData = {};
+            const mData = {};
             state.sales.forEach(s => {
-                if(!s.fechaStr) return;
-                const parts = s.fechaStr.split('/');
-                const key = `${parts[2]}-${parts[1].padStart(2, '0')}`;
-                if(!monthlyData[key]) monthlyData[key] = { venta: 0, costo: 0, mes: months[parseInt(parts[1])-1], year: parts[2] };
-                monthlyData[key].venta += (s.total || 0); monthlyData[key].costo += ((s.costo || 0) * (s.cantidad || 0));
+                if(!s.fechaStr) return; const p = s.fechaStr.split('/'); const k = `${p[2]}-${p[1].padStart(2, '0')}`;
+                if(!mData[k]) mData[k] = { venta: 0, costo: 0, mes: months[parseInt(p[1])-1], year: p[2] };
+                mData[k].venta += (s.total || 0); mData[k].costo += ((s.costo || 0) * (s.cantidad || 0));
             });
-            for(const key in monthlyData) {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'diezmos', key);
-                const exist = state.diezmos.find(d => d.id === key);
-                await setDoc(docRef, { venta: (exist?.venta || 0) + monthlyData[key].venta, costo: (exist?.costo || 0) + monthlyData[key].costo, mes: monthlyData[key].mes, year: monthlyData[key].year, ultima_actualizacion: serverTimestamp() });
+            for(const k in mData) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'diezmos', k);
+                const ex = state.diezmos.find(d => d.id === k);
+                await setDoc(docRef, { venta: (ex?.venta || 0) + mData[k].venta, costo: (ex?.costo || 0) + mData[k].costo, mes: mData[k].mes, year: mData[k].year, ultima_actualizacion: serverTimestamp() });
             }
             const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'sales'));
             for (const d of snap.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', d.id));
             showToast("Ventas reiniciadas", 'success');
         };
 
-        // --- NAVEGACIÓN Y RENDER ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
@@ -391,37 +353,27 @@
         window.switchSubTab = (id, btn) => {
             activeSubTab = id;
             if (btn) { document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-            const wrapper = document.getElementById('filter-wrapper');
+            const w = document.getElementById('filter-wrapper');
             if (['sales', 'totales', 'ticketTienda'].includes(id)) {
-                let extra = id === 'ticketTienda' ? `<select id="filter-store" class="filter-input mb-2" onchange="window.renderCatalogList()"><option value="">-- TIENDA --</option>${[...new Set(state.stores.map(s => s.nombre.toUpperCase()))].sort().map(s => `<option value="${s}">${s}</option>`).join('')}</select>` : "";
-                wrapper.innerHTML = `${extra}<div class="d-flex gap-2"><input type="date" id="cat-date" class="filter-input flex-fill" value="${getISODateString()}"><button class="btn btn-primary btn-consultar px-3" onclick="window.renderCatalogList()">VER</button></div>`;
-            } else { wrapper.innerHTML = ""; }
+                let e = id === 'ticketTienda' ? `<select id="filter-store" class="filter-input mb-2" onchange="window.renderCatalogList()"><option value="">-- TIENDA --</option>${[...new Set(state.stores.map(s => s.nombre.toUpperCase()))].sort().map(s => `<option value="${s}">${s}</option>`).join('')}</select>` : "";
+                w.innerHTML = `${e}<div class="d-flex gap-2"><input type="date" id="cat-date" class="filter-input flex-fill" value="${getISODateString()}"><button class="btn btn-primary btn-consultar px-3" onclick="window.renderCatalogList()">VER</button></div>`;
+            } else { w.innerHTML = ""; }
             window.renderCatalogList();
         };
 
         const renderAll = () => { renderEntregas(); window.renderCatalogList(); };
 
         const renderEntregas = () => {
-            const hoy = getLocalDateString();
-            const vHoy = state.sales.filter(s => s.fechaStr === hoy);
+            const h = getLocalDateString(); const vH = state.sales.filter(s => s.fechaStr === h);
             const list = document.getElementById('lista-entregas');
-            if (!vHoy.length) { list.innerHTML = '<p class="text-center py-5 text-muted small">Sin ventas hoy</p>'; return; }
-            const grouped = vHoy.reduce((acc, v) => {
-                const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {total: 0, items: []};
-                acc[c].total += (v.total || 0); acc[c].items.push(v); return acc;
-            }, {});
-            list.innerHTML = Object.keys(grouped).map(cli => {
-                const items = grouped[cli].items; const totalEnt = items.every(i => i.entregado);
-                return `<div class="card-custom mb-3 ${totalEnt ? 'entregado-row opacity-75' : ''}">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="fw-bold fs-6 text-uppercase">${cli}</span>
-                        <div class="d-flex gap-1">
-                            <button class="btn btn-sm btn-dark rounded-pill px-2 shadow-sm" onclick="window.genTicket('${cli}', false)"><i class="fas fa-file-image"></i></button>
-                            <button class="btn btn-sm btn-success rounded-pill px-2 shadow-sm" onclick="window.genTicket('${cli}', true)"><i class="fab fa-whatsapp"></i></button>
-                        </div>
-                    </div>
+            if (!vH.length) { list.innerHTML = '<p class="text-center py-5 text-muted small">Sin ventas hoy</p>'; return; }
+            const g = vH.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {total: 0, items: []}; acc[c].total += (v.total || 0); acc[c].items.push(v); return acc; }, {});
+            list.innerHTML = Object.keys(g).map(cli => {
+                const items = g[cli].items; const tEnt = items.every(i => i.entregado);
+                return `<div class="card-custom mb-3 ${tEnt ? 'entregado-row opacity-75' : ''}">
+                    <div class="d-flex justify-content-between align-items-center mb-3"><span class="fw-bold fs-6 text-uppercase">${cli}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-dark rounded-pill px-2" onclick="window.genTicket('${cli}', false)"><i class="fas fa-file-image"></i></button><button class="btn btn-sm btn-success rounded-pill px-2" onclick="window.genTicket('${cli}', true)"><i class="fab fa-whatsapp"></i></button></div></div>
                     <div class="small">${items.map(i => `<div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2"><span class="${i.entregado ? 'text-decoration-line-through text-muted' : 'fw-medium'}">${i.cantidad}x ${i.producto}</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})"></div></div>`).join('')}</div>
-                    <div class="text-end fw-bold text-success pt-2 mt-1" style="font-size: 1.1rem;">$${grouped[cli].total.toFixed(2)}</div>
+                    <div class="text-end fw-bold text-success pt-2 mt-1" style="font-size: 1.1rem;">$${g[cli].total.toFixed(2)}</div>
                 </div>`;
             }).join('');
         };
@@ -429,52 +381,48 @@
         window.toggleEnt = async (id, val) => await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { entregado: !val });
 
         window.renderCatalogList = () => {
-            const list = document.getElementById('lista-catalogos'); const summary = document.getElementById('cat-summary');
-            let data = state[activeSubTab] || []; const fEl = document.getElementById('cat-date');
-            const fDate = fEl ? new Date(fEl.value + "T12:00:00").toLocaleDateString('es-MX') : getLocalDateString();
-
+            const l = document.getElementById('lista-catalogos'); const s = document.getElementById('cat-summary');
+            let d = state[activeSubTab] || []; const fE = document.getElementById('cat-date');
+            const fD = fE ? new Date(fE.value + "T12:00:00").toLocaleDateString('es-MX') : getLocalDateString();
             if (activeSubTab === 'sales') {
-                data = data.filter(s => s.fechaStr === fDate).sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Movimientos del ${fDate}</div>`;
-                list.innerHTML = data.map(s => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold">${s.cantidad}x ${s.producto}</div><div class="text-muted small text-uppercase">${s.tienda || 'GNR'} • ${s.cliente}</div></div><div class="text-end"><span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span><button class="action-btn btn-del" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('') || '<p class="text-center py-5 text-muted">Vacío</p>';
+                d = d.filter(s => s.fechaStr === fD).sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
+                s.innerHTML = `<div class="badge-info-stat shadow-sm">Movimientos del ${fD}</div>`;
+                l.innerHTML = d.map(s => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold">${s.cantidad}x ${s.producto}</div><div class="text-muted small text-uppercase">${s.tienda || 'GNR'} • ${s.cliente}</div></div><div class="text-end"><span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span><button class="action-btn btn-del" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('') || '<p class="text-center py-5 text-muted">Vacío</p>';
             } else if (activeSubTab === 'totales') {
-                const dv = state.sales.filter(s => s.fechaStr === fDate); let dC = 0, dV = 0; dv.forEach(s => { dC += ((s.costo||0)*(s.cantidad||0)); dV += (s.total||0); });
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Balance del ${fDate}</div>`;
-                list.innerHTML = `<div class="total-dia-card shadow-lg"><div class="d-flex justify-content-between mb-1"><span>Inversión:</span> <span>$${dC.toFixed(2)}</span></div><div class="d-flex justify-content-between mb-1"><span>Venta Total:</span> <span>$${dV.toFixed(2)}</span></div><div class="d-flex justify-content-between pt-2 mt-2 border-top"><span>GANANCIA:</span> <span class="fw-bold text-success fs-5">$${(dV - dC).toFixed(2)}</span></div></div>`;
+                const dv = state.sales.filter(s => s.fechaStr === fD); let dC = 0, dV = 0; dv.forEach(s => { dC += ((s.costo||0)*(s.cantidad||0)); dV += (s.total||0); });
+                s.innerHTML = `<div class="badge-info-stat shadow-sm">Balance del ${fD}</div>`;
+                l.innerHTML = `<div class="total-dia-card shadow-lg"><div class="d-flex justify-content-between mb-1"><span>Inversión:</span> <span>$${dC.toFixed(2)}</span></div><div class="d-flex justify-content-between mb-1"><span>Venta Total:</span> <span>$${dV.toFixed(2)}</span></div><div class="d-flex justify-content-between pt-2 mt-2 border-top"><span>GANANCIA:</span> <span class="fw-bold text-success fs-5">$${(dV - dC).toFixed(2)}</span></div></div>`;
             } else if (activeSubTab === 'diezmo') {
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Reporte de Diezmos</div>`;
+                s.innerHTML = `<div class="badge-info-stat shadow-sm">Reporte de Diezmos</div>`;
                 const cm = {}; state.sales.forEach(s => { if(!s.fechaStr) return; const p = s.fechaStr.split('/'); const k = `${p[2]}-${p[1].padStart(2,'0')}`; if(!cm[k]) cm[k] = { venta: 0, costo: 0, mes: months[parseInt(p[1])-1], year: p[2], active: true }; cm[k].venta += (s.total || 0); cm[k].costo += ((s.costo || 0) * (s.cantidad || 0)); });
-                const final = {}; state.diezmos.forEach(d => { final[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true }; });
-                for(const k in cm) { if(final[k]) { final[k].venta += cm[k].venta; final[k].costo += cm[k].costo; } else { final[k] = cm[k]; } }
-                list.innerHTML = Object.keys(final).sort().reverse().map(k => { const d = final[k]; const u = d.venta - d.costo; return `<div class="card-custom diezmo-card shadow-sm mb-3">${d.isStored && !d.active ? '<span class="history-tag">HISTÓRICO</span>' : '<span class="history-tag" style="color:var(--accent)">ACTUAL</span>'}<div class="d-flex justify-content-between align-items-center mb-2"><h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark fw-bold">10%</span></div><div class="d-flex justify-content-between small text-muted mb-1"><span>Utilidad:</span><span>$${u.toFixed(2)}</span></div><div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top"><span>DIEZMO:</span><span>$${(u * 0.10).toFixed(2)}</span></div></div>`; }).join('');
+                const fin = {}; state.diezmos.forEach(d => { fin[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true }; });
+                for(const k in cm) { if(fin[k]) { fin[k].venta += cm[k].venta; fin[k].costo += cm[k].costo; } else { fin[k] = cm[k]; } }
+                l.innerHTML = Object.keys(fin).sort().reverse().map(k => { const d = fin[k]; const u = d.venta - d.costo; return `<div class="card-custom diezmo-card shadow-sm mb-3">${d.isStored && !d.active ? '<span class="history-tag">HISTÓRICO</span>' : '<span class="history-tag" style="color:var(--accent)">ACTUAL</span>'}<div class="d-flex justify-content-between align-items-center mb-2"><h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark fw-bold">10%</span></div><div class="d-flex justify-content-between small text-muted mb-1"><span>Utilidad:</span><span>$${u.toFixed(2)}</span></div><div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top"><span>DIEZMO:</span><span>$${(u * 0.10).toFixed(2)}</span></div></div>`; }).join('');
             } else {
-                data.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
-                list.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div>${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0} ${item.codigo ? ` / ID: ${item.codigo}` : ''}</small>` : ''}</div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
+                d.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
+                l.innerHTML = d.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div>${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0} ${item.codigo ? ` / ID: ${item.codigo}` : ''}</small>` : ''}</div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
             }
         };
 
         window.del = async (col, id, name) => { if (confirm(`¿Eliminar?`)) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); showToast("Borrado", 'success'); } };
 
-        // --- EDICIÓN ---
-        let curEdit = null;
+        let curE = null;
         window.openEdit = (col, id) => {
-            const item = state[col].find(x => x.id === id); if(!item) return;
-            curEdit = { col, id, oldName: item.nombre }; const form = document.getElementById('edit-form-body');
-            document.getElementById('edit-title').innerText = `Editar ${col}`;
-            if(col === 'products') { form.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div><div class="row g-2 mb-3"><div class="col-6"><label class="small fw-bold">COSTO</label><input id="ev2" type="number" class="form-control" value="${item.pCosto}"></div><div class="col-6"><label class="small fw-bold">VENTA</label><input id="ev3" type="number" class="form-control" value="${item.pVenta}"></div></div><div class="mb-3"><label class="small fw-bold">CÓDIGO</label><input id="ev4" class="form-control" value="${item.codigo || ''}"></div>`; }
-            else { form.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>`; }
+            const i = state[col].find(x => x.id === id); if(!i) return; curE = { col, id, oldN: i.nombre };
+            const f = document.getElementById('edit-form-body'); document.getElementById('edit-title').innerText = `Editar ${col}`;
+            if(col === 'products') { f.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${i.nombre}"></div><div class="row g-2 mb-3"><div class="col-6"><label class="small fw-bold">COSTO</label><input id="ev2" type="number" class="form-control" value="${i.pCosto}"></div><div class="col-6"><label class="small fw-bold">VENTA</label><input id="ev3" type="number" class="form-control" value="${i.pVenta}"></div></div><div class="mb-3"><label class="small fw-bold">CÓDIGO</label><input id="ev4" class="form-control" value="${i.codigo || ''}"></div>`; }
+            else { f.innerHTML = `<div class="mb-3"><label class="small fw-bold">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${i.nombre}"></div>`; }
             document.getElementById('edit-overlay').style.display = 'flex';
         };
 
         window.closeEdit = () => document.getElementById('edit-overlay').style.display = 'none';
 
         document.getElementById('btn-save-edit').onclick = async () => {
-            const { col, id } = curEdit; const up = { nombre: document.getElementById('ev1').value.trim().toUpperCase() };
+            const { col, id } = curE; const up = { nombre: document.getElementById('ev1').value.trim().toUpperCase() };
             if(col === 'products') { up.pCosto = parseFloat(document.getElementById('ev2').value); up.pVenta = parseFloat(document.getElementById('ev3').value); up.codigo = document.getElementById('ev4').value.trim(); }
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), up); showToast("Actualizado", 'success'); closeEdit();
         };
 
-        // --- OPERACIÓN GUARDAR ---
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
             const data = { tienda: document.getElementById('in-tienda').value.trim().toUpperCase() || 'GENERAL', cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), producto: document.getElementById('in-producto').value.trim().toUpperCase(), cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, costo: parseFloat(document.getElementById('in-costo').value) || 0, precio: parseFloat(document.getElementById('in-precio').value) || 0, codigo: document.getElementById('in-codigo').value.trim() };
@@ -482,111 +430,112 @@
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(), fechaStr: getLocalDateString(), entregado: false });
-                const check = (c, val) => { if(!state[c].some(i => (i.nombre||"").toUpperCase() === val.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: val }); };
-                check('clients', data.cliente); check('stores', data.tienda);
-                const exProd = state.products.find(p => (p.codigo && p.codigo === data.codigo) || (p.nombre||"").toUpperCase() === data.producto.toUpperCase());
-                if(!exProd) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
-                else if (data.codigo && !exProd.codigo) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exProd.id), { codigo: data.codigo });
+                const ck = (c, v) => { if(!state[c].some(i => (i.nombre||"").toUpperCase() === v.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: v }); };
+                ck('clients', data.cliente); ck('stores', data.tienda);
+                const exP = state.products.find(p => (p.codigo && p.codigo === data.codigo) || (p.nombre||"").toUpperCase() === data.producto.toUpperCase());
+                if(!exP) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
+                else if (data.codigo && !exP.codigo) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exP.id), { codigo: data.codigo });
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-codigo').value = "";
                 showToast("¡Venta Guardada!", 'success');
-            } catch(e) { showToast("Error al guardar", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
+            } catch(e) { showToast("Error", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
-        // --- SCANNER REFINADO V7.1 ---
+        // --- SCANNER ROBUSTO V7.2 ---
         window.startScanner = async () => {
-            // Verificación de seguridad HTTPS
-            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                return showToast("La cámara requiere conexión HTTPS segura.", 'danger');
+            if (location.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(location.hostname)) {
+                return showToast("La cámara requiere conexión segura (HTTPS).", 'danger');
             }
-
-            document.getElementById('scanner-overlay').style.display = 'flex';
-            document.getElementById('scanner-hint').innerText = "Iniciando cámara...";
             
+            document.getElementById('scanner-overlay').style.display = 'flex';
+            const status = document.getElementById('scanner-status');
+            status.innerText = "Preparando lentes...";
+
             try {
+                // Paso 1: Obtener lista de cámaras
+                const devices = await Html5Qrcode.getCameras();
+                if (!devices || devices.length === 0) throw new Error("No se detectaron cámaras.");
+
+                // Paso 2: Seleccionar la cámara trasera (usualmente la última de la lista)
+                const lastCameraId = devices[devices.length - 1].id;
+                
                 html5QrCode = new Html5Qrcode("reader");
                 const config = { 
                     fps: 25, 
-                    qrbox: (w, h) => ({ width: w * 0.8, height: h * 0.4 }), // Rectángulo optimizado para barras
+                    qrbox: (w, h) => ({ width: w * 0.8, height: h * 0.5 }),
                     aspectRatio: 1.0 
                 };
 
+                // Paso 3: Intentar iniciar con la cámara seleccionada
                 await html5QrCode.start(
-                    { facingMode: "environment" }, 
+                    lastCameraId, 
                     config, 
                     onScanSuccess
                 );
 
-                document.getElementById('scanner-hint').innerText = "Coloque el código de barras frente al láser.";
-                
-                // Activar linterna si es posible
+                status.innerText = "Listo. Apunte al código de barras.";
                 const track = html5QrCode.getRunningTrack();
-                if (track && track.getCapabilities().torch) {
-                    document.getElementById('btn-torch').classList.remove('d-none');
-                }
+                if (track && track.getCapabilities().torch) document.getElementById('btn-torch').classList.remove('d-none');
+
             } catch (err) {
-                console.error("Scanner Error:", err);
-                let msg = "Error al acceder a cámara.";
-                if (err.name === 'NotAllowedError') msg = "Permiso denegado por el usuario.";
-                else if (err.name === 'NotFoundError') msg = "No se detectó cámara trasera.";
-                
-                showToast(msg, 'danger');
-                stopScanner();
+                console.warn("Fallo inicial, intentando modo alternativo...", err);
+                // Paso 4: Fallback a modo genérico si falla el ID específico
+                try {
+                    await html5QrCode.start({ facingMode: "environment" }, { fps: 20, qrbox: 250 }, onScanSuccess);
+                    status.innerText = "Modo alternativo activo.";
+                } catch (err2) {
+                    showToast("No se pudo acceder a la cámara. Verifique permisos.", 'danger');
+                    stopScanner();
+                }
             }
         };
 
         window.toggleTorch = async () => {
             if (!html5QrCode) return;
             isTorchOn = !isTorchOn;
-            try {
-                await html5QrCode.applyVideoConstraints({ advanced: [{ torch: isTorchOn }] });
-            } catch (e) { showToast("Flash no disponible", 'warning'); }
+            try { await html5QrCode.applyVideoConstraints({ advanced: [{ torch: isTorchOn }] }); } 
+            catch (e) { showToast("Luz no disponible", 'warning'); }
         };
 
         window.stopScanner = async () => {
-            if (html5QrCode) {
-                try {
-                    await html5QrCode.stop();
-                } catch (e) { console.warn("Stop error", e); }
-                html5QrCode = null;
-            }
+            if (html5QrCode) { try { await html5QrCode.stop(); } catch (e) {} html5QrCode = null; }
             document.getElementById('scanner-overlay').style.display = 'none';
             document.getElementById('btn-torch').classList.add('d-none');
             isTorchOn = false;
         };
 
-        const onScanSuccess = (decodedText) => {
+        const onScanSuccess = (text) => {
             stopScanner();
-            document.getElementById('in-codigo').value = decodedText;
-            const found = state.products.find(p => p.codigo === decodedText);
-            if (found) {
-                document.getElementById('in-producto').value = found.nombre.toUpperCase();
-                document.getElementById('in-costo').value = found.pCosto;
-                document.getElementById('in-precio').value = found.pVenta;
-                showToast("Producto: " + found.nombre, 'success');
+            document.getElementById('in-codigo').value = text;
+            const f = state.products.find(p => p.codigo === text);
+            if (f) {
+                document.getElementById('in-producto').value = f.nombre.toUpperCase();
+                document.getElementById('in-costo').value = f.pCosto;
+                document.getElementById('in-precio').value = f.pVenta;
+                showToast("Producto: " + f.nombre, 'success');
             } else {
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-producto').focus();
-                showToast("Código nuevo: " + decodedText, 'warning');
+                showToast("Código nuevo: " + text, 'warning');
             }
         };
 
-        // --- TICKET ---
         window.genTicket = async (cli, isWA) => {
-            const hoy = getLocalDateString(); const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === hoy);
-            document.getElementById('t-fecha').innerText = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' }); document.getElementById('t-cliente').innerText = cli.toUpperCase();
-            let total = 0; document.getElementById('t-items').innerHTML = items.map(i => { total += i.total; return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto.toUpperCase()}</span><span>$${i.total.toFixed(2)}</span></div>`; }).join('');
-            document.getElementById('t-total').innerText = `$${total.toFixed(2)}`;
+            const h = getLocalDateString(); const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === h);
+            document.getElementById('t-fecha').innerText = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
+            document.getElementById('t-cliente').innerText = cli.toUpperCase();
+            let t = 0; document.getElementById('t-items').innerHTML = items.map(i => { t += i.total; return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto.toUpperCase()}</span><span>$${i.total.toFixed(2)}</span></div>`; }).join('');
+            document.getElementById('t-total').innerText = `$${t.toFixed(2)}`;
             try {
-                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
+                const c = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
                 if (isWA) {
-                    canvas.toBlob(async (blob) => {
-                        const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Ticket Yaute', text: 'Aquí tienes tu ticket.' }); }
-                        else { window.open(canvas.toDataURL("image/png")); }
+                    c.toBlob(async (b) => {
+                        const f = new File([b], `Ticket_${cli}.png`, { type: 'image/png' });
+                        if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'Ticket' });
+                        else window.open(c.toDataURL("image/png"));
                     });
-                } else { const link = document.createElement('a'); link.download = `Ticket_${cli}.png`; link.href = canvas.toDataURL("image/png"); link.click(); }
+                } else { const l = document.createElement('a'); l.download = `Ticket_${cli}.png`; l.href = c.toDataURL("image/png"); l.click(); }
             } catch(e) { alert("Error al generar ticket"); }
         };
 
