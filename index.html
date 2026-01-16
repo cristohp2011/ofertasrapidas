@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v6.1</title>
+    <title>Yaute Rápidas Control Pro v6.3</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,6 +35,16 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             position: sticky; top: 0; z-index: 1000;
             border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+        }
+
+        /* Estilos del Logo */
+        .app-logo {
+            display: block;
+            height: 60px;
+            width: auto;
+            margin: 10px auto 0; /* Margen superior para separarlo del título */
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
         .header-logo { height: 50px; margin-bottom: 10px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
@@ -103,8 +113,15 @@
         .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
         .entregado-row { background-color: #f0fdf4 !important; border-left: 6px solid var(--success) !important; }
         
+        /* Estilos del Ticket con Logo */
         #ticket-render { position: fixed; left: -10000px; width: 340px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
-        .ticket-logo { width: 110px; height: auto; display: block; margin: 0 auto 15px; }
+        .ticket-logo { 
+            width: 100px; 
+            height: auto; 
+            display: block; 
+            margin: 0 auto 15px; 
+            object-fit: contain;
+        }
         
         .action-btn { width: 38px; height: 38px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-edit { background: #eff6ff; color: var(--accent); }
@@ -124,7 +141,7 @@
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Sincronizando Sistema Yaute...</p>
+        <p class="mt-3 fw-bold text-primary">Sincronizando Yautepec...</p>
     </div>
 
     <div id="toast-alert"></div>
@@ -145,8 +162,9 @@
     </div>
 
     <header>
-        <img src="logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
-        <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.9rem;">Ofertas Rápidas Yautepec</h5>
+        <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.95rem;">OFERTAS RÁPIDAS YAUTEPEC</h5>
+        <!-- El Logo aparece después del título como se solicitó -->
+        <img src="logo.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
         <div class="opacity-75 mt-2">
             <small id="status-label"><span class="status-dot bg-warning"></span> Conectando...</small>
         </div>
@@ -223,7 +241,7 @@
 
     </div>
 
-    <!-- Ticket Invisible -->
+    <!-- Ticket Invisible con Logo -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo" onerror="this.style.display='none'">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px;">
@@ -336,9 +354,10 @@
                 const todayISO = getISODateString();
                 let extra = "";
                 if (id === 'ticketTienda') {
+                    const uniqueStores = [...new Set(state.stores.map(s => s.nombre.toUpperCase()))].sort();
                     extra = `<select id="filter-store" class="filter-input mb-2" onchange="window.renderCatalogList()">
                         <option value="">-- SELECCIONAR TIENDA --</option>
-                        ${state.stores.sort((a,b) => a.nombre.localeCompare(b.nombre)).map(s => `<option value="${s.nombre}">${s.nombre}</option>`).join('')}
+                        ${uniqueStores.map(s => `<option value="${s}">${s}</option>`).join('')}
                     </select>`;
                 }
                 wrapper.innerHTML = `${extra}<div class="d-flex gap-2">
@@ -346,7 +365,7 @@
                     <button class="btn btn-primary btn-consultar px-3" onclick="window.renderCatalogList()">CONSULTAR</button>
                 </div>`;
             } else {
-                wrapper.innerHTML = ""; // Quitar buscador de catálogos
+                wrapper.innerHTML = ""; 
             }
             window.renderCatalogList();
         };
@@ -415,12 +434,10 @@
 
             } else if (activeSubTab === 'totales') {
                 const dailySales = state.sales.filter(s => s.fechaStr === filterDate);
-                const uniqueTiendas = [...new Set(dailySales.map(s => s.tienda))];
+                const uniqueTiendas = [...new Set(dailySales.map(s => (s.tienda || 'GENERAL').toUpperCase()))].sort();
                 let dCosto = 0, dVenta = 0;
-                
-                dailySales.forEach(s => { dCosto += (s.costo * s.cantidad); dVenta += s.total; });
-                
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Balance del día: ${filterDate}</div>`;
+                dailySales.forEach(s => { dCosto += ((s.costo || 0) * (s.cantidad || 0)); dVenta += (s.total || 0); });
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm">Balance: ${filterDate}</div>`;
                 list.innerHTML = `
                 <div class="total-dia-card shadow-lg">
                     <div class="small opacity-75 text-uppercase fw-bold mb-1">Resumen General del Día</div>
@@ -428,20 +445,19 @@
                     <div class="d-flex justify-content-between align-items-center mb-1"><span>Venta Total:</span> <span class="fw-bold">$${dVenta.toFixed(2)}</span></div>
                     <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top"><span>GANANCIA:</span> <span class="fw-bold text-success fs-5">$${(dVenta - dCosto).toFixed(2)}</span></div>
                 </div>` + uniqueTiendas.map(t => {
-                    const salesT = dailySales.filter(s => s.tienda === t);
+                    const salesT = dailySales.filter(s => (s.tienda || 'GENERAL').toUpperCase() === t);
                     let cT = 0, pT = 0;
                     salesT.forEach(s => { cT += (s.costo * s.cantidad); pT += s.total; });
-                    return `
-                    <div class="card-custom mb-3 py-3">
-                        <h6 class="fw-bold border-bottom pb-2 mb-2 text-uppercase text-accent">${t || 'GENERAL'}</h6>
+                    return `<div class="card-custom mb-3 py-3">
+                        <h6 class="fw-bold border-bottom pb-2 mb-2 text-uppercase text-accent">${t}</h6>
                         <div class="d-flex justify-content-between small"><span>Costos: $${cT.toFixed(2)}</span> <span>Ventas: $${pT.toFixed(2)}</span></div>
                         <div class="text-end fw-bold text-success small">Utilidad: $${(pT - cT).toFixed(2)}</div>
                     </div>`;
                 }).join('');
 
             } else if (activeSubTab === 'ticketTienda') {
-                const store = document.getElementById('filter-store').value;
-                const items = state.sales.filter(s => s.tienda === store && s.fechaStr === filterDate);
+                const store = (document.getElementById('filter-store')?.value || "").toUpperCase();
+                const items = state.sales.filter(s => (s.tienda || "").toUpperCase() === store && s.fechaStr === filterDate);
                 summary.innerHTML = `<div class="badge-info-stat shadow-sm">Carga de ${store || '...'} - ${filterDate}</div>`;
                 list.innerHTML = items.length ? `
                     <div class="card-custom">
@@ -472,11 +488,11 @@
             if (col !== 'sales') {
                 const linked = state.sales.some(s => {
                     const k = col === 'products' ? 'producto' : (col === 'clients' ? 'cliente' : 'tienda');
-                    return s[k]?.toLowerCase() === name.toLowerCase();
+                    return (s[k] || "").toLowerCase() === name.toLowerCase();
                 });
-                if (linked) return showToast(`"${name}" está en el historial.`, 'danger');
+                if (linked) return showToast(`"${name}" tiene historial de ventas activo.`, 'danger');
             }
-            if (confirm(`¿Eliminar permanentemente?`)) {
+            if (confirm(`¿Eliminar "${name}" permanentemente?`)) {
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
                 showToast("Registro borrado", 'success');
             }
@@ -490,10 +506,10 @@
             const form = document.getElementById('edit-form-body');
             document.getElementById('edit-title').innerText = `Editar ${col === 'products' ? 'Producto' : 'Registro'}`;
             if(col === 'products') {
-                form.innerHTML = `<div class="mb-3"><label class="small fw-bold text-muted">NOMBRE</label><input id="ev1" class="form-control" value="${item.nombre}"></div>
+                form.innerHTML = `<div class="mb-3"><label class="small fw-bold text-muted">NOMBRE (SE GUARDARÁ EN MAYÚSCULAS)</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>
                 <div class="row g-2"><div class="col-6"><label class="small fw-bold text-muted">COSTO</label><input id="ev2" type="number" class="form-control" value="${item.pCosto}"></div>
                 <div class="col-6"><label class="small fw-bold text-muted">VENTA</label><input id="ev3" type="number" class="form-control" value="${item.pVenta}"></div></div>`;
-            } else { form.innerHTML = `<div class="mb-3"><label class="small fw-bold text-muted">NOMBRE</label><input id="ev1" class="form-control" value="${item.nombre}"></div>`; }
+            } else { form.innerHTML = `<div class="mb-3"><label class="small fw-bold text-muted">NOMBRE</label><input id="ev1" class="form-control text-uppercase" value="${item.nombre}"></div>`; }
             document.getElementById('edit-overlay').style.display = 'flex';
         };
 
@@ -501,33 +517,53 @@
 
         document.getElementById('btn-save-edit').onclick = async () => {
             const { col, id, oldName } = curEdit;
-            const newN = document.getElementById('ev1').value.trim();
+            const newN = document.getElementById('ev1').value.trim().toUpperCase();
             const up = { nombre: newN };
             if(col === 'products') {
                 up.pCosto = parseFloat(document.getElementById('ev2').value);
                 up.pVenta = parseFloat(document.getElementById('ev3').value);
-                state.sales.filter(s => s.producto.toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => {
+                state.sales.filter(s => (s.producto || "").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { producto: newN, precio: up.pVenta, total: sale.cantidad * up.pVenta, costo: up.pCosto });
+                });
+            } else if (col === 'stores') {
+                state.sales.filter(s => (s.tienda || "").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { tienda: newN });
+                });
+            } else if (col === 'clients') {
+                state.sales.filter(s => (s.cliente || "").toLowerCase() === oldName.toLowerCase()).forEach(async (sale) => {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { cliente: newN });
                 });
             }
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), up);
-            showToast("Actualizado", 'success');
+            showToast("Actualizado correctamente", 'success');
             closeEdit();
         };
 
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
-            const data = { tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), cliente: document.getElementById('in-cliente').value.trim(), producto: document.getElementById('in-producto').value.trim(), cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, costo: parseFloat(document.getElementById('in-costo').value) || 0, precio: parseFloat(document.getElementById('in-precio').value) || 0 };
-            if (!data.cliente || !data.producto) return alert("Faltan datos");
+            const data = { 
+                tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), 
+                cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), 
+                producto: document.getElementById('in-producto').value.trim().toUpperCase(), 
+                cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, 
+                costo: parseFloat(document.getElementById('in-costo').value) || 0, 
+                precio: parseFloat(document.getElementById('in-precio').value) || 0 
+            };
+            if (!data.cliente || !data.producto) return alert("Faltan datos de cliente o producto");
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(), fechaStr: getLocalDateString(), entregado: false });
-                const check = (c, v) => { if(!state[c].some(i => (i.nombre||"").toLowerCase() === v.toLowerCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: v }); };
+                const check = (c, val) => { 
+                    if(!state[c].some(i => (i.nombre||"").toUpperCase() === val.toUpperCase())) 
+                        addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: val }); 
+                };
                 check('clients', data.cliente); check('stores', data.tienda);
-                if(!state.products.some(p => (p.nombre||"").toLowerCase() === data.producto.toLowerCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
+                if(!state.products.some(p => (p.nombre||"").toUpperCase() === data.producto.toUpperCase())) {
+                    addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
+                }
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1";
                 showToast("¡Venta Guardada!", 'success');
-            } catch(e) { showToast("Error", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
+            } catch(e) { showToast("Error al guardar", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
         const showToast = (msg, type = 'success') => {
@@ -539,16 +575,16 @@
 
         window.genTicket = async (cli) => {
             const hoy = getLocalDateString();
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === hoy);
+            const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === hoy);
             document.getElementById('t-fecha').innerText = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
-            document.getElementById('t-cliente').innerText = cli;
+            document.getElementById('t-cliente').innerText = cli.toUpperCase();
             let total = 0;
-            document.getElementById('t-items').innerHTML = items.map(i => { total += i.total; return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto}</span><span>$${i.total.toFixed(2)}</span></div>`; }).join('');
+            document.getElementById('t-items').innerHTML = items.map(i => { total += i.total; return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto.toUpperCase()}</span><span>$${i.total.toFixed(2)}</span></div>`; }).join('');
             document.getElementById('t-total').innerText = `$${total.toFixed(2)}`;
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
                 const link = document.createElement('a'); link.download = `Ticket_${cli}.png`; link.href = canvas.toDataURL("image/png"); link.click();
-            } catch(e) { alert("Error imagen"); }
+            } catch(e) { alert("Error al generar imagen"); }
         };
 
         const setupAutos = () => {
@@ -559,16 +595,16 @@
                     const val = inp.value.toLowerCase().trim();
                     if(!val) { box.classList.add('d-none'); return; }
                     const m = state[key].filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
-                    box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre}</div>`).join('');
+                    box.innerHTML = m.map(x => `<div class="sug-item" data-v="${x.nombre}">${x.nombre.toUpperCase()}</div>`).join('');
                     box.classList.toggle('d-none', m.length === 0);
                 };
                 box.onclick = (e) => {
                     const v = e.target.dataset.v;
                     if(v) {
-                        inp.value = v; box.classList.add('d-none');
+                        inp.value = v.toUpperCase(); box.classList.add('d-none');
                         if(key === 'products') {
-                            const p = state.products.find(x => x.nombre === v);
-                            if(p) { document.getElementById('in-costo').value = p.pCosto; document.getElementById('in-precio').value = p.pVenta; }
+                            const p = state.products.find(x => (x.nombre||"").toLowerCase() === v.toLowerCase());
+                            if(p) { document.getElementById('in-costo').value = p.pCosto || 0; document.getElementById('in-precio').value = p.pVenta || 0; }
                         }
                     }
                 };
