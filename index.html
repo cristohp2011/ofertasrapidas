@@ -152,13 +152,19 @@
             border-radius: 12px; display: inline-block; width: 100%; text-align: center;
             margin-bottom: 15px; font-weight: 700; font-size: 0.8rem;
         }
+
+        .btn-consultar {
+            border-radius: 15px;
+            font-weight: 700;
+            padding: 10px 20px;
+        }
     </style>
 </head>
 <body>
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Cargando...</p>
+        <p class="mt-3 fw-bold text-primary">Cargando Sistema Yaute...</p>
     </div>
 
     <div id="toast-alert"></div>
@@ -304,15 +310,12 @@
         let state = { clients: [], products: [], stores: [], sales: [] };
         let activeSubTab = 'sales';
 
-        // Funciones auxiliares para fechas locales (México)
         const getLocalDateString = (date = new Date()) => {
             return date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
         };
 
         const getISODateString = (date = new Date()) => {
-            // Devuelve YYYY-MM-DD en hora local de México
-            const loc = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
-            return loc;
+            return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
         };
 
         signInAnonymously(auth);
@@ -352,8 +355,14 @@
             const wrapper = document.getElementById('filter-wrapper');
             if (id === 'sales') {
                 const todayISO = getISODateString();
-                wrapper.innerHTML = `<label class="small fw-bold text-muted d-block mb-1">CONSULTAR FECHA</label>
-                                     <input type="date" id="cat-date" class="filter-input" value="${todayISO}" oninput="renderCatalogList()">`;
+                wrapper.innerHTML = `
+                    <label class="small fw-bold text-muted d-block mb-1">CONSULTAR FECHA</label>
+                    <div class="d-flex gap-2">
+                        <input type="date" id="cat-date" class="filter-input flex-fill" value="${todayISO}">
+                        <button class="btn btn-primary btn-consultar px-3" onclick="renderCatalogList()">
+                            CONSULTAR
+                        </button>
+                    </div>`;
             } else {
                 wrapper.innerHTML = `<input type="text" id="cat-search" class="filter-input" placeholder="Buscar por nombre..." oninput="renderCatalogList()">`;
             }
@@ -415,7 +424,6 @@
 
             if (activeSubTab === 'sales') {
                 const filterDateEl = document.getElementById('cat-date');
-                // Forzamos la creación de la fecha en la zona horaria correcta
                 const filterDate = filterDateEl ? new Date(filterDateEl.value + "T12:00:00").toLocaleDateString('es-MX') : getLocalDateString();
                 
                 data = data.filter(s => s.fechaStr === filterDate);
@@ -631,5 +639,6 @@
     </script>
 </body>
 </html>
+
 
 
