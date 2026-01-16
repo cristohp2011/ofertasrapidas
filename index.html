@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yautepec Pro</title>
+    <title>Ofertas Rápidas Yautepec - Control</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -62,6 +62,8 @@
             display: none;
             box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
             animation: slideDown 0.4s ease;
+            text-align: center;
+            min-width: 250px;
         }
 
         @keyframes slideDown {
@@ -97,7 +99,7 @@
         .tab-btn i { font-size: 1.6rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; transform: translateY(-3px); }
 
-        /* Sub-pestañas Catálogos */
+        /* Sub-pestañas Control */
         .sub-nav {
             display: flex; gap: 10px; overflow-x: auto; padding: 5px 10px 15px;
             scrollbar-width: none;
@@ -154,10 +156,10 @@
         .btn-edit { background: #eff6ff; color: var(--accent); }
         .btn-del { background: #fef2f2; color: var(--danger); }
         
-        .badge-total {
-            background: var(--primary); color: white; padding: 10px 15px;
+        .badge-info-stat {
+            background: #f1f5f9; color: #475569; padding: 10px 15px;
             border-radius: 15px; display: inline-block; width: 100%; text-align: center;
-            margin-bottom: 15px; font-weight: 700;
+            margin-bottom: 15px; font-weight: 700; font-size: 0.85rem;
         }
     </style>
 </head>
@@ -165,11 +167,11 @@
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Cargando Sistema Yaute...</p>
+        <p class="mt-3 fw-bold text-primary">Actualizando Control...</p>
     </div>
 
-    <!-- Mensaje de Éxito -->
-    <div id="toast-alert"><i class="fas fa-check-circle me-2"></i> Operación Exitosa</div>
+    <!-- Mensaje de Éxito o Alerta -->
+    <div id="toast-alert"></div>
 
     <!-- Modal de Edición -->
     <div id="edit-overlay">
@@ -190,7 +192,7 @@
 
     <header>
         <img src="logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
-        <h5 class="m-0 fw-extrabold text-uppercase letter-spacing-1" style="font-size: 1rem;">Yaute Rápidas Pro</h5>
+        <h5 class="m-0 fw-extrabold text-uppercase letter-spacing-1" style="font-size: 1rem;">Ofertas Rápidas Yautepec</h5>
         <div class="opacity-75 mt-2">
             <small id="status-label"><span class="status-dot bg-warning"></span> Sincronizando...</small>
         </div>
@@ -198,12 +200,12 @@
 
     <div class="container py-3">
         
-        <!-- PESTAÑA: VENTA -->
-        <div id="tab-venta" class="tab-content active">
+        <!-- PESTAÑA: VENTAS (REGISTRO) -->
+        <div id="tab-ventas" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
                     <label class="small fw-bold text-muted mb-2 text-uppercase">Tienda (Persistente)</label>
-                    <input type="text" id="in-tienda" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px;" placeholder="Origen..." autocomplete="off">
+                    <input type="text" id="in-tienda" class="form-control form-control-lg border-0 bg-light text-uppercase fw-bold" style="border-radius: 12px;" placeholder="ORIGEN..." autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
 
@@ -236,7 +238,7 @@
                 </div>
 
                 <button id="btn-save" class="btn btn-primary w-100 py-3 mt-4 fw-bold shadow-lg" style="border-radius: 15px; font-size: 1.1rem;">
-                    <i class="fas fa-check-circle me-2"></i>GUARDAR VENTA
+                    <i class="fas fa-cash-register me-2"></i>GUARDAR VENTA
                 </button>
             </div>
         </div>
@@ -250,17 +252,17 @@
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- PESTAÑA: CATÁLOGOS -->
-        <div id="tab-catalogos" class="tab-content">
+        <!-- PESTAÑA: CONTROL -->
+        <div id="tab-control" class="tab-content">
             <div class="sub-nav mb-2">
-                <button class="sub-btn active" onclick="switchSubTab('sales', this)">Historial Ventas</button>
-                <button class="sub-btn" onclick="switchSubTab('products', this)">Inventario</button>
+                <button class="sub-btn active" onclick="switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn" onclick="switchSubTab('products', this)">Productos</button>
                 <button class="sub-btn" onclick="switchSubTab('clients', this)">Clientes</button>
                 <button class="sub-btn" onclick="switchSubTab('stores', this)">Tiendas</button>
             </div>
 
             <div class="search-container">
-                <input type="text" id="cat-search" class="search-input" placeholder="Buscar en la lista..." oninput="renderCatalogList()">
+                <input type="text" id="cat-search" class="search-input" placeholder="Escribe para buscar..." oninput="renderCatalogList()">
             </div>
 
             <div id="cat-summary" class="px-2"></div>
@@ -272,7 +274,7 @@
 
     </div>
 
-    <!-- Ticket Invisible (Refinado) -->
+    <!-- Ticket Invisible (Sin tienda) -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo" onerror="this.style.display='none'">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px;">
@@ -289,10 +291,11 @@
         <p style="text-align: center; margin-top: 35px; font-size: 0.8rem; border-top: 1px solid #eee; pt-3">¡GRACIAS POR SU PREFERENCIA!</p>
     </div>
 
+    <!-- Navegación Inferior Principal -->
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('venta', this)"><i class="fas fa-plus-square"></i>Venta</button>
+        <button class="tab-btn active" onclick="showTab('ventas', this)"><i class="fas fa-cash-register"></i>Ventas</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Entregas</button>
-        <button class="tab-btn" onclick="showTab('catalogos', this)"><i class="fas fa-list-ul"></i>Catálogos</button>
+        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-list-ul"></i>Control</button>
     </nav>
 
     <script type="module">
@@ -322,7 +325,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
+                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Conectado';
                 document.getElementById('date-now').innerText = new Date().toLocaleDateString();
                 startSync();
             }
@@ -363,7 +366,7 @@
             const vHoy = state.sales.filter(s => s.fechaStr === hoy);
             const list = document.getElementById('lista-entregas');
             
-            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted small opacity-50">Hoy no has registrado nada aún</p>'; return; }
+            if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted small opacity-50">Sin registros para hoy</p>'; return; }
 
             const grouped = vHoy.reduce((acc, v) => {
                 const c = v.cliente || "Sin Nombre";
@@ -411,16 +414,16 @@
             if (search) {
                 data = data.filter(item => {
                     const name = (activeSubTab === 'sales' ? item.producto : item.nombre) || "";
-                    return name.toLowerCase().includes(search) || (item.cliente || "").toLowerCase().includes(search);
+                    const client = (item.cliente || "").toLowerCase();
+                    return name.toLowerCase().includes(search) || client.includes(search);
                 });
             }
 
-            // Resumen de Totales
-            if (activeSubTab === 'sales') {
-                const totalVenta = data.reduce((a, b) => a + (b.total || 0), 0);
-                summary.innerHTML = `<div class="badge-total shadow-sm">Venta acumulada: $${totalVenta.toFixed(2)}</div>`;
-            } else if (activeSubTab === 'products') {
-                summary.innerHTML = `<div class="badge-total bg-accent shadow-sm">${data.length} Productos registrados</div>`;
+            // Resumen (Eliminado Total Acumulado en Ventas por petición)
+            if (activeSubTab === 'products') {
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-box me-2"></i>${data.length} Productos en Catálogo</div>`;
+            } else if (activeSubTab === 'clients') {
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-user-friends me-2"></i>${data.length} Clientes registrados</div>`;
             } else {
                 summary.innerHTML = "";
             }
@@ -431,35 +434,49 @@
                     <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
                         <div style="flex:1">
                             <div class="fw-bold">${s.producto}</div>
-                            <div class="text-muted small">${s.cliente} • $${s.precio || 0} p/u</div>
+                            <div class="text-muted small">${s.cliente} • $${s.precio || 0} c/u</div>
                         </div>
                         <div class="text-end d-flex align-items-center gap-2">
                             <span class="fw-bold text-primary me-1">$${(s.total || 0).toFixed(2)}</span>
                             <button class="action-btn btn-edit" onclick="openEdit('sales', '${s.id}')"><i class="fas fa-pen"></i></button>
-                            <button class="action-btn btn-del" onclick="del('sales', '${s.id}')"><i class="fas fa-trash-alt"></i></button>
+                            <button class="action-btn btn-del" onclick="del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
-                `).join('') || '<p class="text-center py-5 text-muted">No se encontraron ventas</p>';
+                `).join('') || '<p class="text-center py-5 text-muted">Historial vacío</p>';
             } else {
                 list.innerHTML = data.map(item => `
                     <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
                         <div style="flex:1">
-                            <div class="fw-bold">${item.nombre}</div>
+                            <div class="fw-bold text-uppercase">${item.nombre}</div>
                             ${activeSubTab === 'products' ? `<small class="text-muted">Costo: $${item.pCosto || 0} / Venta: $${item.pVenta || 0}</small>` : ''}
                         </div>
                         <div class="d-flex gap-2">
                             <button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button>
-                            <button class="action-btn btn-del" onclick="del('${activeSubTab}', '${item.id}')"><i class="fas fa-trash-alt"></i></button>
+                            <button class="action-btn btn-del" onclick="del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
-                `).join('') || '<p class="text-center py-5 text-muted">Catálogo vacío o sin resultados</p>';
+                `).join('') || '<p class="text-center py-5 text-muted">Sin resultados</p>';
             }
         };
 
-        window.del = async (col, id) => {
-            if (confirm("¿Estás seguro de eliminar este registro de forma permanente?")) {
+        window.del = async (col, id, name) => {
+            // Impedir borrado si hay relación con ventas (Catálogos de Clientes y Productos)
+            if (col === 'products' || col === 'clients') {
+                const linked = state.sales.some(s => {
+                    if (col === 'products') return s.producto.toLowerCase() === name.toLowerCase();
+                    if (col === 'clients') return s.cliente.toLowerCase() === name.toLowerCase();
+                    return false;
+                });
+                
+                if (linked) {
+                    showToast(`¡Error! "${name}" tiene ventas activas.`, 'danger');
+                    return;
+                }
+            }
+
+            if (confirm(`¿Eliminar "${name}" permanentemente?`)) {
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
-                showToast("Registro eliminado");
+                showToast("Registro eliminado", 'success');
             }
         };
 
@@ -527,15 +544,15 @@
             
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), updates);
-                showToast("Cambios Guardados");
+                showToast("Cambios Guardados", 'success');
                 closeEdit();
-            } catch(e) { alert("Error al conectar con la nube"); }
+            } catch(e) { showToast("Error de nube", 'danger'); }
         };
 
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
             const data = {
-                tienda: document.getElementById('in-tienda').value.trim(),
+                tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim(),
                 producto: document.getElementById('in-producto').value.trim(),
                 cantidad: parseInt(document.getElementById('in-cantidad').value) || 1,
@@ -543,9 +560,9 @@
                 precio: parseFloat(document.getElementById('in-precio').value) || 0
             };
 
-            if (!data.cliente || !data.producto || data.precio <= 0) return alert("Por favor, completa cliente, producto y precio.");
+            if (!data.cliente || !data.producto || data.precio <= 0) return alert("Completa los datos de la venta.");
 
-            btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> GUARDANDO...';
+            btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> PROCESANDO...';
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), {
@@ -567,22 +584,23 @@
                     });
                 }
 
-                // Limpieza inteligente (Tienda persiste)
+                // Limpieza (La tienda persiste)
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-cantidad').value = "1";
                 
-                showToast("Venta Guardada con éxito");
+                showToast("¡Venta Guardada!", 'success');
 
-            } catch(e) { console.error(e); alert("Error de conexión"); }
-            finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>GUARDAR VENTA'; }
+            } catch(e) { showToast("Error de red", 'danger'); }
+            finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
-        const showToast = (msg) => {
+        const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
-            toast.innerHTML = `<i class="fas fa-check-circle me-2"></i> ${msg}`;
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i> ${msg}`;
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 3000);
         };
@@ -604,7 +622,7 @@
                 const link = document.createElement('a');
                 link.download = `Ticket_${cli}.png`;
                 link.href = canvas.toDataURL("image/png"); link.click();
-            } catch(e) { alert("Error al capturar el ticket"); }
+            } catch(e) { alert("Error al generar imagen"); }
         };
 
         const auto = (id, boxId, key) => {
@@ -639,4 +657,3 @@
     </script>
 </body>
 </html>
-
