@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v7.7</title>
+    <title>Yaute Rápidas Control Pro v7.8</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -178,9 +178,9 @@
                 <hr class="my-4 opacity-25">
 
                 <div class="mb-3">
-                    <label class="small fw-bold text-muted mb-2 text-uppercase">Código</label>
+                    <label class="small fw-bold text-muted mb-2 text-uppercase">Código (Opcional)</label>
                     <div class="input-group">
-                        <input type="text" id="in-codigo" class="form-control form-control-lg border-0 bg-light fw-bold" style="border-radius: 12px 0 0 12px;" placeholder="Escanea o escribe código...">
+                        <input type="text" id="in-codigo" class="form-control form-control-lg border-0 bg-light fw-bold" style="border-radius: 12px 0 0 12px;" placeholder="Escanear o escribir...">
                         <button class="btn btn-primary px-3" style="border-radius: 0 12px 12px 0;" onclick="startScanner()"><i class="fas fa-barcode"></i></button>
                     </div>
                 </div>
@@ -196,7 +196,7 @@
                         <input type="number" id="in-cantidad" class="form-control form-control-lg border-0 bg-light text-center" style="border-radius: 12px;" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="small fw-bold text-muted mb-2 text-uppercase">Costo U.</label>
+                        <label class="small fw-bold text-muted mb-2 text-uppercase">Costo Unitario</label>
                         <input type="number" id="in-costo" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px;" placeholder="0.00">
                     </div>
                     <div class="col-6">
@@ -288,7 +288,7 @@
             const toast = document.getElementById('toast-alert');
             toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
             toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i> ${msg}`;
-            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4000);
+            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4500);
         };
 
         signInAnonymously(auth);
@@ -399,11 +399,11 @@
                 for(const k in cm) { if(fin[k]) { fin[k].venta += cm[k].venta; fin[k].costo += cm[k].costo; } else { fin[k] = cm[k]; } }
                 l.innerHTML = Object.keys(fin).sort().reverse().map(k => { const d = fin[k]; const u = d.venta - d.costo; return `<div class="card-custom diezmo-card shadow-sm mb-3">${d.isStored && !d.active ? '<span class="history-tag">HISTORIAL</span>' : '<span class="history-tag" style="color:var(--accent)">ACTUAL</span>'}<div class="d-flex justify-content-between align-items-center mb-2"><h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark fw-bold">10%</span></div><div class="d-flex justify-content-between small text-muted mb-1"><span>Utilidad:</span><span>$${u.toFixed(2)}</span></div><div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top"><span>DIEZMO:</span><span>$${(u * 0.10).toFixed(2)}</span></div></div>`; }).join('');
             } else if (activeSubTab === 'products') {
-                data = [...state.products].sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
+                let data = [...state.products].sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
                 l.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div><small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0} ${item.codigo ? `<br><span class="text-primary fw-bold">BARRA: ${item.codigo}</span>` : ''}</small></div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
             } else {
-                d.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
-                l.innerHTML = d.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div></div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
+                let dSorted = [...d].sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
+                l.innerHTML = dSorted.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div></div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
             }
         };
 
@@ -429,7 +429,7 @@
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
             const data = { 
-                tienda: document.getElementById('in-tienda').value.trim().toUpperCase() || 'GENERAL', 
+                tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), 
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), 
                 producto: document.getElementById('in-producto').value.trim().toUpperCase(), 
                 cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, 
@@ -437,7 +437,14 @@
                 precio: parseFloat(document.getElementById('in-precio').value) || 0, 
                 codigo: document.getElementById('in-codigo').value.trim() 
             };
-            if (!data.cliente || !data.producto) return alert("Faltan datos");
+
+            // VALIDACIÓN DE CAMPOS OBLIGATORIOS
+            if (!data.tienda) return showToast("Falta introducir Tienda", 'danger');
+            if (!data.cliente) return showToast("Falta introducir Cliente", 'danger');
+            if (!data.producto) return showToast("Falta introducir Producto", 'danger');
+            if (data.costo <= 0) return showToast("Falta Costo Unitario válido", 'danger');
+            if (data.precio <= 0) return showToast("Falta Precio de Venta válido", 'danger');
+
             btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>...';
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(), fechaStr: getLocalDateString(), entregado: false });
@@ -448,7 +455,6 @@
                 if(!exP) {
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
                 } else {
-                    // Actualizar código si no tenía o precios si cambiaron
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exP.id), { codigo: data.codigo || exP.codigo, pCosto: data.costo, pVenta: data.precio });
                 }
                 
