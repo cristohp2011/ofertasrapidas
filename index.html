@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v7.2</title>
+    <title>Yaute Rápidas Control Pro v7.3</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -100,7 +100,7 @@
         /* Scanner UI */
         #reader { width: 100%; border-radius: 15px; overflow: hidden; background: #000; position: relative; min-height: 250px; }
         #reader video { object-fit: cover !important; width: 100% !important; height: 100% !important; }
-        .scanner-controls { margin-top: 20px; display: flex; gap: 10px; }
+        .scanner-controls { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
         
         .scanner-laser {
             position: absolute; top: 20%; left: 10%; width: 80%; height: 2px;
@@ -117,6 +117,10 @@
         
         #ticket-render { position: fixed; left: -10000px; width: 340px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
         .ticket-logo { width: 120px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
+
+        /* Fallback scanner button */
+        .btn-fallback { background: #f1f5f9; border: 2px dashed #cbd5e1; color: #64748b; border-radius: 15px; padding: 15px; font-weight: 700; transition: 0.2s; }
+        .btn-fallback:active { background: #e2e8f0; }
     </style>
 </head>
 <body>
@@ -146,18 +150,32 @@
     <!-- Overlay de Escáner -->
     <div id="scanner-overlay">
         <div class="card-custom w-100 shadow-lg" style="max-width: 450px; background: white; padding: 15px;">
-            <h6 class="fw-bold mb-3 text-center text-uppercase" style="letter-spacing: 1px;">Escáner Inteligente</h6>
+            <h6 class="fw-bold mb-3 text-center text-uppercase" style="letter-spacing: 1px;">Escáner Multifunción</h6>
+            
+            <!-- Real-time Reader Area -->
             <div id="reader-container" style="position: relative;">
                 <div id="reader"></div>
                 <div class="scanner-laser"></div>
             </div>
+
             <div class="scanner-controls">
-                <button id="btn-torch" class="btn btn-warning flex-fill py-3 fw-bold d-none" onclick="toggleTorch()">
-                    <i class="fas fa-lightbulb"></i> LUZ
-                </button>
-                <button class="btn btn-danger flex-fill py-3 fw-bold" onclick="stopScanner()">CERRAR</button>
+                <div class="d-flex gap-2">
+                    <button id="btn-torch" class="btn btn-warning flex-fill py-3 fw-bold d-none" onclick="toggleTorch()">
+                        <i class="fas fa-lightbulb"></i> LUZ
+                    </button>
+                    <button class="btn btn-danger flex-fill py-3 fw-bold" onclick="stopScanner()">CERRAR</button>
+                </div>
+                
+                <hr class="my-2 opacity-25">
+                
+                <!-- Fallback: Native Camera -->
+                <label for="fallback-input" class="btn-fallback text-center w-100">
+                    <i class="fas fa-camera me-2"></i> ¿FALLÓ LA CÁMARA? TOMAR FOTO
+                </label>
+                <input type="file" id="fallback-input" accept="image/*" capture="environment" style="display:none;" onchange="handleFallback(this)">
             </div>
-            <p id="scanner-status" class="text-center text-muted small mt-3 mb-0">Iniciando cámara...</p>
+            
+            <p id="scanner-status" class="text-center text-muted small mt-3 mb-0">Iniciando lentes...</p>
         </div>
     </div>
 
@@ -170,7 +188,6 @@
     </header>
 
     <div class="container py-3">
-        
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
@@ -239,7 +256,6 @@
             <div id="cat-summary" class="px-2"></div>
             <div id="lista-catalogos"></div>
         </div>
-
     </div>
 
     <!-- Ticket Workspace -->
@@ -322,7 +338,7 @@
         const checkResetCycle = () => {
             const now = new Date();
             if (now.getDate() === 20 && (now.getMonth() + 1) % 2 === 0) {
-                if (confirm("Ciclo de reinicio detectado. ¿Guardar resumen de utilidades y limpiar?")) clearSalesHistory();
+                if (confirm("¿Limpiar ventas y guardar diezmos?")) clearSalesHistory();
             }
         };
 
@@ -340,7 +356,7 @@
             }
             const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'sales'));
             for (const d of snap.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', d.id));
-            showToast("Ventas reiniciadas", 'success');
+            showToast("Reinicio completado", 'success');
         };
 
         window.showTab = (id, btn) => {
@@ -393,7 +409,7 @@
                 s.innerHTML = `<div class="badge-info-stat shadow-sm">Balance del ${fD}</div>`;
                 l.innerHTML = `<div class="total-dia-card shadow-lg"><div class="d-flex justify-content-between mb-1"><span>Inversión:</span> <span>$${dC.toFixed(2)}</span></div><div class="d-flex justify-content-between mb-1"><span>Venta Total:</span> <span>$${dV.toFixed(2)}</span></div><div class="d-flex justify-content-between pt-2 mt-2 border-top"><span>GANANCIA:</span> <span class="fw-bold text-success fs-5">$${(dV - dC).toFixed(2)}</span></div></div>`;
             } else if (activeSubTab === 'diezmo') {
-                s.innerHTML = `<div class="badge-info-stat shadow-sm">Reporte de Diezmos</div>`;
+                s.innerHTML = `<div class="badge-info-stat shadow-sm">Cálculo de Diezmos</div>`;
                 const cm = {}; state.sales.forEach(s => { if(!s.fechaStr) return; const p = s.fechaStr.split('/'); const k = `${p[2]}-${p[1].padStart(2,'0')}`; if(!cm[k]) cm[k] = { venta: 0, costo: 0, mes: months[parseInt(p[1])-1], year: p[2], active: true }; cm[k].venta += (s.total || 0); cm[k].costo += ((s.costo || 0) * (s.cantidad || 0)); });
                 const fin = {}; state.diezmos.forEach(d => { fin[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true }; });
                 for(const k in cm) { if(fin[k]) { fin[k].venta += cm[k].venta; fin[k].costo += cm[k].costo; } else { fin[k] = cm[k]; } }
@@ -436,64 +452,63 @@
                 if(!exP) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
                 else if (data.codigo && !exP.codigo) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exP.id), { codigo: data.codigo });
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-codigo').value = "";
-                showToast("¡Venta Guardada!", 'success');
-            } catch(e) { showToast("Error", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
+                showToast("Venta Guardada", 'success');
+            } catch(e) { showToast("Error al guardar", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
-        // --- SCANNER ROBUSTO V7.2 ---
+        // --- SCANNER ROBUSTO V7.3 ---
         window.startScanner = async () => {
-            if (location.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(location.hostname)) {
-                return showToast("La cámara requiere conexión segura (HTTPS).", 'danger');
-            }
-            
             document.getElementById('scanner-overlay').style.display = 'flex';
             const status = document.getElementById('scanner-status');
-            status.innerText = "Preparando lentes...";
+            status.innerText = "Solicitando permisos...";
 
             try {
-                // Paso 1: Obtener lista de cámaras
-                const devices = await Html5Qrcode.getCameras();
-                if (!devices || devices.length === 0) throw new Error("No se detectaron cámaras.");
-
-                // Paso 2: Seleccionar la cámara trasera (usualmente la última de la lista)
-                const lastCameraId = devices[devices.length - 1].id;
+                // Forzar solicitud de permisos explícita antes de cargar librería
+                await navigator.mediaDevices.getUserMedia({ video: true });
                 
-                html5QrCode = new Html5Qrcode("reader");
-                const config = { 
-                    fps: 25, 
-                    qrbox: (w, h) => ({ width: w * 0.8, height: h * 0.5 }),
-                    aspectRatio: 1.0 
-                };
+                const devices = await Html5Qrcode.getCameras();
+                if (!devices || devices.length === 0) throw new Error("Sin cámara");
 
-                // Paso 3: Intentar iniciar con la cámara seleccionada
+                const lastCam = devices[devices.length - 1].id;
+                html5QrCode = new Html5Qrcode("reader");
+                
                 await html5QrCode.start(
-                    lastCameraId, 
-                    config, 
+                    lastCam, 
+                    { fps: 25, qrbox: (w, h) => ({ width: w * 0.85, height: h * 0.45 }), aspectRatio: 1.0 }, 
                     onScanSuccess
                 );
 
-                status.innerText = "Listo. Apunte al código de barras.";
+                status.innerText = "Enfocando... Acerque el código.";
                 const track = html5QrCode.getRunningTrack();
                 if (track && track.getCapabilities().torch) document.getElementById('btn-torch').classList.remove('d-none');
 
             } catch (err) {
-                console.warn("Fallo inicial, intentando modo alternativo...", err);
-                // Paso 4: Fallback a modo genérico si falla el ID específico
-                try {
-                    await html5QrCode.start({ facingMode: "environment" }, { fps: 20, qrbox: 250 }, onScanSuccess);
-                    status.innerText = "Modo alternativo activo.";
-                } catch (err2) {
-                    showToast("No se pudo acceder a la cámara. Verifique permisos.", 'danger');
-                    stopScanner();
-                }
+                console.error("Scanner Error:", err);
+                status.innerText = "Fallo: Use la cámara nativa abajo.";
+                showToast("Acceso bloqueado. Use 'Tomar Foto'.", 'warning');
             }
+        };
+
+        // Plan B: Procesar foto del código
+        window.handleFallback = (input) => {
+            if (!input.files || !input.files[0]) return;
+            const status = document.getElementById('scanner-status');
+            status.innerText = "Procesando imagen...";
+            
+            const html5Qr = new Html5Qrcode("reader");
+            html5Qr.scanFile(input.files[0], true)
+                .then(onScanSuccess)
+                .catch(err => {
+                    status.innerText = "No se detectó código en la foto.";
+                    showToast("No se detectó código. Intente otra foto.", 'danger');
+                });
         };
 
         window.toggleTorch = async () => {
             if (!html5QrCode) return;
             isTorchOn = !isTorchOn;
             try { await html5QrCode.applyVideoConstraints({ advanced: [{ torch: isTorchOn }] }); } 
-            catch (e) { showToast("Luz no disponible", 'warning'); }
+            catch (e) { showToast("Flash no disponible", 'warning'); }
         };
 
         window.stopScanner = async () => {
@@ -511,13 +526,13 @@
                 document.getElementById('in-producto').value = f.nombre.toUpperCase();
                 document.getElementById('in-costo').value = f.pCosto;
                 document.getElementById('in-precio').value = f.pVenta;
-                showToast("Producto: " + f.nombre, 'success');
+                showToast("Producto encontrado", 'success');
             } else {
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-producto').focus();
-                showToast("Código nuevo: " + text, 'warning');
+                showToast("Nuevo código: " + text, 'warning');
             }
         };
 
