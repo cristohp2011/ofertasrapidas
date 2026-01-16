@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v7.5</title>
+    <title>Yaute Rápidas Control Pro v7.6</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -104,6 +104,8 @@
         .badge-info-stat { background: #f1f5f9; color: #475569; padding: 8px 15px; border-radius: 12px; display: inline-block; width: 100%; text-align: center; margin-bottom: 15px; font-weight: 700; font-size: 0.8rem; }
         .btn-consultar { border-radius: 15px; font-weight: 700; padding: 10px 20px; }
         .total-dia-card { background: var(--primary); color: white; border-radius: 15px; padding: 18px; margin-top: 5px; margin-bottom: 15px; }
+        
+        /* Diezmo Styles */
         .diezmo-card { border-left: 6px solid var(--warning); position: relative; }
         .history-tag { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; background: #f1f5f9; color: #94a3b8; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
         
@@ -117,7 +119,7 @@
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Conectando con Yaute...</p>
+        <p class="mt-3 fw-bold text-primary">Estabilizando Sistema...</p>
     </div>
 
     <div id="toast-alert"></div>
@@ -150,11 +152,11 @@
                 <hr class="my-2 opacity-25">
                 
                 <label for="fallback-input" class="btn-fallback-label w-100">
-                    <i class="fas fa-camera me-1"></i> ¿No abre? Tomar foto al código
+                    <i class="fas fa-camera me-1"></i> ¿No abre la cámara? Carga una foto
                 </label>
                 <input type="file" id="fallback-input" accept="image/*" capture="environment" style="display:none;" onchange="handleFallback(this)">
             </div>
-            <p id="scanner-status" class="text-center text-muted small mt-2 mb-0">Ubique el código frente a la cámara.</p>
+            <p id="scanner-status" class="text-center text-muted small mt-2 mb-0">Ubique el código de barras aquí.</p>
         </div>
     </div>
 
@@ -162,7 +164,7 @@
         <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 1rem; letter-spacing: 1px;">OFERTAS RÁPIDAS YAUTEPEC</h5>
         <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
         <div class="opacity-75 mt-2">
-            <small id="status-label"><span class="status-dot bg-warning"></span> Sincronizando...</small>
+            <small id="status-label"><span class="status-dot bg-warning"></span> Conectando...</small>
         </div>
     </header>
 
@@ -172,13 +174,13 @@
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
                     <label class="small fw-bold text-muted mb-2 text-uppercase">Tienda</label>
-                    <input type="text" id="in-tienda" class="form-control form-control-lg border-0 bg-light text-uppercase fw-bold text-primary" style="border-radius: 12px;" placeholder="ORIGEN..." autocomplete="off">
+                    <input type="text" id="in-tienda" class="form-control form-control-lg border-0 bg-light text-uppercase fw-bold text-primary" style="border-radius: 12px;" placeholder="¿De dónde sale?" autocomplete="off">
                     <div id="sug-tienda" class="sug-box d-none"></div>
                 </div>
 
                 <div class="mb-3 search-wrapper">
                     <label class="small fw-bold text-muted mb-2 text-uppercase">Cliente</label>
-                    <input type="text" id="in-cliente" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px;" placeholder="Nombre del cliente..." autocomplete="off">
+                    <input type="text" id="in-cliente" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px;" placeholder="¿A quién se le vende?" autocomplete="off">
                     <div id="sug-cliente" class="sug-box d-none"></div>
                 </div>
 
@@ -188,7 +190,7 @@
                     <div class="col-8 search-wrapper">
                         <label class="small fw-bold text-muted mb-2 text-uppercase">Producto</label>
                         <div class="input-group">
-                            <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px 0 0 12px;" placeholder="¿Qué vendiste?">
+                            <input type="text" id="in-producto" class="form-control form-control-lg border-0 bg-light" style="border-radius: 12px 0 0 12px;" placeholder="Producto o Barra">
                             <button class="btn btn-primary px-3" style="border-radius: 0 12px 12px 0;" onclick="startScanner()"><i class="fas fa-barcode"></i></button>
                         </div>
                         <div id="sug-producto" class="sug-box d-none"></div>
@@ -217,7 +219,7 @@
         <!-- PESTAÑA: ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
             <div class="d-flex justify-content-between align-items-center mb-3 px-1">
-                <h6 class="fw-bold text-muted m-0 text-uppercase" style="font-size: 0.8rem;">Reparto Hoy</h6>
+                <h6 class="fw-bold text-muted m-0 text-uppercase" style="font-size: 0.8rem;">Entregas de Hoy</h6>
                 <span class="badge bg-white text-dark shadow-sm border" id="date-now"></span>
             </div>
             <div id="lista-entregas"></div>
@@ -240,7 +242,7 @@
         </div>
     </div>
 
-    <!-- Ticket Workspace -->
+    <!-- Ticket Render Space -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo" id="ticket-logo-img">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px;">
@@ -319,7 +321,7 @@
         const checkResetCycle = () => {
             const now = new Date();
             if (now.getDate() === 20 && (now.getMonth() + 1) % 2 === 0) {
-                if (confirm("Reinicio detectado. ¿Limpiar ventas y guardar historial de diezmos?")) clearSalesHistory();
+                if (confirm("Se detectó reinicio bimestral. ¿Limpiar ventas y guardar diezmos?")) clearSalesHistory();
             }
         };
 
@@ -337,7 +339,7 @@
             }
             const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'sales'));
             for (const d of snap.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', d.id));
-            showToast("Ventas reiniciadas", 'success');
+            showToast("Historial reiniciado exitosamente", 'success');
         };
 
         window.showTab = (id, btn) => {
@@ -368,13 +370,7 @@
             list.innerHTML = Object.keys(g).map(cli => {
                 const items = g[cli].items; const tEnt = items.every(i => i.entregado);
                 return `<div class="card-custom mb-3 ${tEnt ? 'entregado-row opacity-75' : ''}">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="fw-bold fs-6 text-uppercase">${cli}</span>
-                        <div class="d-flex gap-1">
-                            <button class="btn btn-sm btn-dark rounded-pill px-2" onclick="window.genTicket('${cli}', false)"><i class="fas fa-file-image"></i></button>
-                            <button class="btn btn-sm btn-success rounded-pill px-2" onclick="window.genTicket('${cli}', true)"><i class="fab fa-whatsapp"></i></button>
-                        </div>
-                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3"><span class="fw-bold fs-6 text-uppercase">${cli}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-dark rounded-pill px-2" onclick="window.genTicket('${cli}', false)"><i class="fas fa-file-image"></i></button><button class="btn btn-sm btn-success rounded-pill px-2" onclick="window.genTicket('${cli}', true)"><i class="fab fa-whatsapp"></i></button></div></div>
                     <div class="small">${items.map(i => `<div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2"><span class="${i.entregado ? 'text-decoration-line-through text-muted' : 'fw-medium'}">${i.cantidad}x ${i.producto}</span><div class="form-check form-switch"><input class="form-check-input" type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})"></div></div>`).join('')}</div>
                     <div class="text-end fw-bold text-success pt-2 mt-1" style="font-size: 1.1rem;">$${g[cli].total.toFixed(2)}</div>
                 </div>`;
@@ -390,24 +386,24 @@
             if (activeSubTab === 'sales') {
                 d = d.filter(s => s.fechaStr === fD).sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
                 s.innerHTML = `<div class="badge-info-stat shadow-sm">Movimientos del ${fD}</div>`;
-                l.innerHTML = d.map(s => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold">${s.cantidad}x ${s.producto}</div><div class="text-muted small text-uppercase">${s.tienda || 'GNR'} • ${s.cliente}</div></div><div class="text-end"><span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span><button class="action-btn btn-del" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('') || '<p class="text-center py-5 text-muted">Vacío</p>';
+                l.innerHTML = d.map(s => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold">${s.cantidad}x ${s.producto}</div><div class="text-muted small text-uppercase">${s.tienda || 'GNR'} • ${s.cliente}</div></div><div class="text-end"><span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span><button class="action-btn btn-del" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('') || '<p class="text-center py-5 text-muted">No hay registros</p>';
             } else if (activeSubTab === 'totales') {
                 const dv = state.sales.filter(s => s.fechaStr === fD); let dC = 0, dV = 0; dv.forEach(s => { dC += ((s.costo||0)*(s.cantidad||0)); dV += (s.total||0); });
                 s.innerHTML = `<div class="badge-info-stat shadow-sm">Balance del ${fD}</div>`;
                 l.innerHTML = `<div class="total-dia-card shadow-lg"><div class="d-flex justify-content-between mb-1"><span>Inversión:</span> <span>$${dC.toFixed(2)}</span></div><div class="d-flex justify-content-between mb-1"><span>Venta Total:</span> <span>$${dV.toFixed(2)}</span></div><div class="d-flex justify-content-between pt-2 mt-2 border-top"><span>GANANCIA:</span> <span class="fw-bold text-success fs-5">$${(dV - dC).toFixed(2)}</span></div></div>`;
             } else if (activeSubTab === 'diezmo') {
-                s.innerHTML = `<div class="badge-info-stat shadow-sm">Reporte de Diezmos</div>`;
+                s.innerHTML = `<div class="badge-info-stat shadow-sm">Resumen de Diezmos</div>`;
                 const cm = {}; state.sales.forEach(s => { if(!s.fechaStr) return; const p = s.fechaStr.split('/'); const k = `${p[2]}-${p[1].padStart(2,'0')}`; if(!cm[k]) cm[k] = { venta: 0, costo: 0, mes: months[parseInt(p[1])-1], year: p[2], active: true }; cm[k].venta += (s.total || 0); cm[k].costo += ((s.costo || 0) * (s.cantidad || 0)); });
                 const fin = {}; state.diezmos.forEach(d => { fin[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true }; });
                 for(const k in cm) { if(fin[k]) { fin[k].venta += cm[k].venta; fin[k].costo += cm[k].costo; } else { fin[k] = cm[k]; } }
-                l.innerHTML = Object.keys(fin).sort().reverse().map(k => { const d = fin[k]; const u = d.venta - d.costo; return `<div class="card-custom diezmo-card shadow-sm mb-3">${d.isStored && !d.active ? '<span class="history-tag">HISTÓRICO</span>' : '<span class="history-tag" style="color:var(--accent)">ACTUAL</span>'}<div class="d-flex justify-content-between align-items-center mb-2"><h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark fw-bold">10%</span></div><div class="d-flex justify-content-between small text-muted mb-1"><span>Utilidad:</span><span>$${u.toFixed(2)}</span></div><div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top"><span>DIEZMO:</span><span>$${(u * 0.10).toFixed(2)}</span></div></div>`; }).join('');
+                l.innerHTML = Object.keys(fin).sort().reverse().map(k => { const d = fin[k]; const u = d.venta - d.costo; return `<div class="card-custom diezmo-card shadow-sm mb-3">${d.isStored && !d.active ? '<span class="history-tag">HISTORIAL</span>' : '<span class="history-tag" style="color:var(--accent)">ACTUAL</span>'}<div class="d-flex justify-content-between align-items-center mb-2"><h6 class="fw-bold m-0 text-primary">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark fw-bold">10%</span></div><div class="d-flex justify-content-between small text-muted mb-1"><span>Utilidad:</span><span>$${u.toFixed(2)}</span></div><div class="d-flex justify-content-between fw-bold text-success fs-5 pt-2 border-top"><span>DIEZMO:</span><span>$${(u * 0.10).toFixed(2)}</span></div></div>`; }).join('');
             } else {
                 d.sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
                 l.innerHTML = d.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2"><div style="flex:1"><div class="fw-bold text-uppercase">${item.nombre}</div>${activeSubTab === 'products' ? `<small class="text-muted">C: $${item.pCosto||0} / V: $${item.pVenta||0} ${item.codigo ? ` / ID: ${item.codigo}` : ''}</small>` : ''}</div><div class="d-flex gap-2"><button class="action-btn btn-edit" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="action-btn btn-del" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('');
             }
         };
 
-        window.del = async (col, id, name) => { if (confirm(`¿Eliminar?`)) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); showToast("Borrado", 'success'); } };
+        window.del = async (col, id, name) => { if (confirm(`¿Eliminar permanentemente?`)) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); showToast("Borrado", 'success'); } };
 
         let curE = null;
         window.openEdit = (col, id) => {
@@ -439,41 +435,41 @@
                 if(!exP) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
                 else if (data.codigo && !exP.codigo) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exP.id), { codigo: data.codigo });
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-codigo').value = "";
-                showToast("Venta Guardada", 'success');
+                showToast("¡Venta Guardada!", 'success');
             } catch(e) { showToast("Error al guardar", 'danger'); } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
-        // --- SCANNER BÁSICO V6.8 ---
+        // --- SCANNER BÁSICO V6.8 (Ultra-Compatible) ---
         window.startScanner = () => {
             document.getElementById('scanner-overlay').style.display = 'flex';
-            document.getElementById('scanner-status').innerText = "Iniciando...";
+            document.getElementById('scanner-status').innerText = "Abriendo cámara...";
             
             html5QrCode = new Html5Qrcode("reader");
+            
+            // Configuración básica directa sin parámetros de enfoque avanzados para evitar bloqueos
             const config = { 
                 fps: 10, 
-                qrbox: { width: 250, height: 150 }
+                qrbox: { width: 250, height: 150 } 
             };
 
             html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
-                .then(() => {
-                    document.getElementById('scanner-status').innerText = "Escáner activo";
-                })
+                .then(() => { document.getElementById('scanner-status').innerText = "Cámara lista. Escanee."; })
                 .catch(err => {
-                    console.error(err);
-                    showToast("Error cámara", 'danger');
-                    stopScanner();
+                    console.error("Scanner Error:", err);
+                    document.getElementById('scanner-status').innerText = "Fallo: " + err;
+                    showToast("Error de acceso a cámara.", 'danger');
                 });
         };
 
         window.handleFallback = (input) => {
             if (!input.files || !input.files[0]) return;
-            document.getElementById('scanner-status').innerText = "Analizando foto...";
+            document.getElementById('scanner-status').innerText = "Procesando foto...";
             const scanner = new Html5Qrcode("reader");
             scanner.scanFile(input.files[0], true)
                 .then(onScanSuccess)
                 .catch(err => {
-                    showToast("No se detectó código", 'danger');
-                    document.getElementById('scanner-status').innerText = "Reintente con otra foto";
+                    showToast("No se encontró ningún código.", 'danger');
+                    document.getElementById('scanner-status').innerText = "Pruebe otra foto.";
                 });
         };
 
@@ -481,6 +477,7 @@
             if (html5QrCode) {
                 html5QrCode.stop().finally(() => {
                     document.getElementById('scanner-overlay').style.display = 'none';
+                    html5QrCode = null;
                 });
             } else {
                 document.getElementById('scanner-overlay').style.display = 'none';
@@ -495,13 +492,13 @@
                 document.getElementById('in-producto').value = f.nombre.toUpperCase();
                 document.getElementById('in-costo').value = f.pCosto;
                 document.getElementById('in-precio').value = f.pVenta;
-                showToast("Cargado: " + f.nombre, 'success');
+                showToast("Producto cargado", 'success');
             } else {
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-producto').focus();
-                showToast("Nuevo: " + text, 'warning');
+                showToast("Código nuevo detectado", 'warning');
             }
         };
 
@@ -516,11 +513,11 @@
                 if (isWA) {
                     c.toBlob(async (b) => {
                         const f = new File([b], `Ticket_${cli}.png`, { type: 'image/png' });
-                        if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'Ticket' });
+                        if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'Ticket Compra' });
                         else window.open(c.toDataURL("image/png"));
                     });
                 } else { const l = document.createElement('a'); l.download = `Ticket_${cli}.png`; l.href = c.toDataURL("image/png"); l.click(); }
-            } catch(e) { alert("Error ticket"); }
+            } catch(e) { alert("Fallo al generar el ticket."); }
         };
 
         const setupAutos = () => {
