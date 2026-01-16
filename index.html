@@ -54,13 +54,12 @@
             position: fixed; top: 25px; left: 50%;
             transform: translateX(-50%);
             z-index: 10001;
-            background: var(--success);
-            color: white;
             padding: 14px 28px;
             border-radius: 50px;
             font-weight: 700;
             display: none;
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             animation: slideDown 0.4s ease;
             text-align: center;
             min-width: 250px;
@@ -112,12 +111,12 @@
         }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .search-container {
+        .filter-container {
             margin: 0 10px 15px;
         }
-        .search-input {
+        .filter-input {
             border-radius: 15px; border: 1px solid #e2e8f0; padding: 10px 15px;
-            width: 100%; font-size: 0.9rem;
+            width: 100%; font-size: 0.9rem; background: white;
         }
 
         /* Autocomplete */
@@ -130,7 +129,6 @@
             margin-top: 8px; border: 1px solid #f1f5f9;
         }
         .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
-        .sug-item:last-child { border: none; }
 
         #loading-screen {
             position: fixed; inset: 0; background: white;
@@ -157,9 +155,9 @@
         .btn-del { background: #fef2f2; color: var(--danger); }
         
         .badge-info-stat {
-            background: #f1f5f9; color: #475569; padding: 10px 15px;
-            border-radius: 15px; display: inline-block; width: 100%; text-align: center;
-            margin-bottom: 15px; font-weight: 700; font-size: 0.85rem;
+            background: #f1f5f9; color: #475569; padding: 8px 15px;
+            border-radius: 12px; display: inline-block; width: 100%; text-align: center;
+            margin-bottom: 15px; font-weight: 700; font-size: 0.8rem;
         }
     </style>
 </head>
@@ -167,41 +165,39 @@
 
     <div id="loading-screen">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Actualizando Control...</p>
+        <p class="mt-3 fw-bold text-primary">Cargando...</p>
     </div>
 
-    <!-- Mensaje de Éxito o Alerta -->
+    <!-- Mensajes de Sistema -->
     <div id="toast-alert"></div>
 
-    <!-- Modal de Edición -->
+    <!-- Modal de Edición (Solo para Productos, Clientes y Tiendas) -->
     <div id="edit-overlay">
         <div class="card-custom w-100 shadow-lg" style="max-width: 450px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 id="edit-title" class="fw-bold m-0">Editar Registro</h5>
                 <button class="btn-close" onclick="closeEdit()"></button>
             </div>
-            <div id="edit-form-body">
-                <!-- Se llena dinámicamente -->
-            </div>
+            <div id="edit-form-body"></div>
             <div class="d-flex gap-3 mt-4">
                 <button class="btn btn-light flex-fill py-2 fw-bold" onclick="closeEdit()">Cancelar</button>
-                <button id="btn-save-edit" class="btn btn-primary flex-fill py-2 fw-bold shadow">Guardar Cambios</button>
+                <button id="btn-save-edit" class="btn btn-primary flex-fill py-2 fw-bold shadow">Guardar</button>
             </div>
         </div>
     </div>
 
     <header>
         <img src="logo.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
-        <h5 class="m-0 fw-extrabold text-uppercase letter-spacing-1" style="font-size: 1rem;">Ofertas Rápidas Yautepec</h5>
+        <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.9rem;">Ofertas Rápidas Yautepec</h5>
         <div class="opacity-75 mt-2">
-            <small id="status-label"><span class="status-dot bg-warning"></span> Sincronizando...</small>
+            <small id="status-label"><span class="status-dot bg-warning"></span> Conectando...</small>
         </div>
     </header>
 
     <div class="container py-3">
         
-        <!-- PESTAÑA: VENTAS (REGISTRO) -->
-        <div id="tab-ventas" class="tab-content active">
+        <!-- PESTAÑA: OPERACIONES (REGISTRO) -->
+        <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="mb-3 search-wrapper">
                     <label class="small fw-bold text-muted mb-2 text-uppercase">Tienda (Persistente)</label>
@@ -246,7 +242,7 @@
         <!-- PESTAÑA: ENTREGAS -->
         <div id="tab-entregas" class="tab-content">
             <div class="d-flex justify-content-between align-items-center mb-3 px-1">
-                <h6 class="fw-bold text-muted m-0 text-uppercase" style="font-size: 0.8rem;">Reparto para Hoy</h6>
+                <h6 class="fw-bold text-muted m-0 text-uppercase" style="font-size: 0.8rem;">Reparto Hoy</h6>
                 <span class="badge bg-white text-dark shadow-sm border" id="date-now"></span>
             </div>
             <div id="lista-entregas"></div>
@@ -261,20 +257,21 @@
                 <button class="sub-btn" onclick="switchSubTab('stores', this)">Tiendas</button>
             </div>
 
-            <div class="search-container">
-                <input type="text" id="cat-search" class="search-input" placeholder="Escribe para buscar..." oninput="renderCatalogList()">
+            <div class="filter-container">
+                <!-- Buscador para catálogos / Calendario para Ventas -->
+                <div id="filter-wrapper">
+                    <input type="text" id="cat-search" class="filter-input" placeholder="Escribe para buscar..." oninput="renderCatalogList()">
+                </div>
             </div>
 
             <div id="cat-summary" class="px-2"></div>
             
-            <div id="lista-catalogos">
-                <!-- Se llena dinámicamente -->
-            </div>
+            <div id="lista-catalogos"></div>
         </div>
 
     </div>
 
-    <!-- Ticket Invisible (Sin tienda) -->
+    <!-- Ticket Invisible -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo" onerror="this.style.display='none'">
         <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px;">
@@ -293,7 +290,7 @@
 
     <!-- Navegación Inferior Principal -->
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('ventas', this)"><i class="fas fa-cash-register"></i>Ventas</button>
+        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Operaciones</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Entregas</button>
         <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-list-ul"></i>Control</button>
     </nav>
@@ -325,7 +322,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Conectado';
+                document.getElementById('status-label').innerHTML = '<span class="status-dot bg-success"></span> Online';
                 document.getElementById('date-now').innerText = new Date().toLocaleDateString();
                 startSync();
             }
@@ -352,7 +349,16 @@
             activeSubTab = id;
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            document.getElementById('cat-search').value = "";
+            
+            // Cambiar buscador por calendario si es Ventas
+            const wrapper = document.getElementById('filter-wrapper');
+            if (id === 'sales') {
+                const today = new Date().toISOString().split('T')[0];
+                wrapper.innerHTML = `<label class="small fw-bold text-muted d-block mb-1">FECHA DE CONSULTA</label>
+                                     <input type="date" id="cat-date" class="filter-input" value="${today}" oninput="renderCatalogList()">`;
+            } else {
+                wrapper.innerHTML = `<input type="text" id="cat-search" class="filter-input" placeholder="Escribe para buscar..." oninput="renderCatalogList()">`;
+            }
             renderCatalogList();
         };
 
@@ -369,7 +375,7 @@
             if (vHoy.length === 0) { list.innerHTML = '<p class="text-center py-5 text-muted small opacity-50">Sin registros para hoy</p>'; return; }
 
             const grouped = vHoy.reduce((acc, v) => {
-                const c = v.cliente || "Sin Nombre";
+                const c = v.cliente || "S/N";
                 if(!acc[c]) acc[c] = {total: 0, items: []};
                 acc[c].total += (v.total || 0);
                 acc[c].items.push(v);
@@ -407,43 +413,41 @@
         const renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos');
             const summary = document.getElementById('cat-summary');
-            const search = document.getElementById('cat-search').value.toLowerCase();
             let data = state[activeSubTab] || [];
 
-            // Filtrado
-            if (search) {
-                data = data.filter(item => {
-                    const name = (activeSubTab === 'sales' ? item.producto : item.nombre) || "";
-                    const client = (item.cliente || "").toLowerCase();
-                    return name.toLowerCase().includes(search) || client.includes(search);
-                });
-            }
-
-            // Resumen (Eliminado Total Acumulado en Ventas por petición)
-            if (activeSubTab === 'products') {
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-box me-2"></i>${data.length} Productos en Catálogo</div>`;
-            } else if (activeSubTab === 'clients') {
-                summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-user-friends me-2"></i>${data.length} Clientes registrados</div>`;
-            } else {
-                summary.innerHTML = "";
-            }
-
             if (activeSubTab === 'sales') {
+                const filterDateEl = document.getElementById('cat-date');
+                const filterDate = filterDateEl ? new Date(filterDateEl.value + "T00:00:00").toLocaleDateString() : new Date().toLocaleDateString();
+                
+                data = data.filter(s => s.fechaStr === filterDate);
                 const sorted = [...data].sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
+                
+                summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-calendar-day me-2"></i>Mostrando ventas del ${filterDate}</div>`;
+                
                 list.innerHTML = sorted.map(s => `
                     <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
                         <div style="flex:1">
-                            <div class="fw-bold">${s.producto}</div>
+                            <div class="fw-bold">${s.cantidad}x ${s.producto}</div>
                             <div class="text-muted small">${s.cliente} • $${s.precio || 0} c/u</div>
                         </div>
                         <div class="text-end d-flex align-items-center gap-2">
                             <span class="fw-bold text-primary me-1">$${(s.total || 0).toFixed(2)}</span>
-                            <button class="action-btn btn-edit" onclick="openEdit('sales', '${s.id}')"><i class="fas fa-pen"></i></button>
                             <button class="action-btn btn-del" onclick="del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
-                `).join('') || '<p class="text-center py-5 text-muted">Historial vacío</p>';
+                `).join('') || '<p class="text-center py-5 text-muted">No hay ventas para esta fecha</p>';
             } else {
+                const searchEl = document.getElementById('cat-search');
+                const search = searchEl ? searchEl.value.toLowerCase() : "";
+                
+                if (search) {
+                    data = data.filter(item => (item.nombre || "").toLowerCase().includes(search));
+                }
+
+                if (activeSubTab === 'products') summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-box me-2"></i>${data.length} Productos en Catálogo</div>`;
+                else if (activeSubTab === 'clients') summary.innerHTML = `<div class="badge-info-stat shadow-sm"><i class="fas fa-user-friends me-2"></i>${data.length} Clientes registrados</div>`;
+                else summary.innerHTML = "";
+
                 list.innerHTML = data.map(item => `
                     <div class="card-custom d-flex justify-content-between align-items-center py-3 mb-2">
                         <div style="flex:1">
@@ -460,7 +464,7 @@
         };
 
         window.del = async (col, id, name) => {
-            // Impedir borrado si hay relación con ventas (Catálogos de Clientes y Productos)
+            // Impedir borrado de catálogos si hay vinculación con historial
             if (col === 'products' || col === 'clients') {
                 const linked = state.sales.some(s => {
                     if (col === 'products') return s.producto.toLowerCase() === name.toLowerCase();
@@ -469,7 +473,7 @@
                 });
                 
                 if (linked) {
-                    showToast(`¡Error! "${name}" tiene ventas activas.`, 'danger');
+                    showToast(`¡Error! "${name}" tiene ventas en el historial.`, 'danger');
                     return;
                 }
             }
@@ -480,7 +484,6 @@
             }
         };
 
-        // LÓGICA DE EDICIÓN
         let currentEdit = null;
         window.openEdit = (col, id) => {
             const item = state[col].find(x => x.id === id);
@@ -488,18 +491,9 @@
             currentEdit = { col, id };
             
             const form = document.getElementById('edit-form-body');
-            document.getElementById('edit-title').innerText = `Editar ${col === 'sales' ? 'Venta' : col === 'products' ? 'Producto' : 'Registro'}`;
+            document.getElementById('edit-title').innerText = `Editar ${col === 'products' ? 'Producto' : 'Registro'}`;
             
-            if(col === 'sales') {
-                form.innerHTML = `
-                    <div class="mb-3"><label class="small fw-bold text-muted">PRODUCTO</label><input id="edit-val-1" class="form-control" value="${item.producto}"></div>
-                    <div class="mb-3"><label class="small fw-bold text-muted">CLIENTE</label><input id="edit-val-2" class="form-control" value="${item.cliente}"></div>
-                    <div class="row g-2">
-                        <div class="col-6"><label class="small fw-bold text-muted">CANTIDAD</label><input id="edit-val-3" type="number" class="form-control" value="${item.cantidad}"></div>
-                        <div class="col-6"><label class="small fw-bold text-muted">PRECIO U.</label><input id="edit-val-4" type="number" class="form-control" value="${item.precio}"></div>
-                    </div>
-                `;
-            } else if(col === 'products') {
+            if(col === 'products') {
                 form.innerHTML = `
                     <div class="mb-3"><label class="small fw-bold text-muted">NOMBRE PRODUCTO</label><input id="edit-val-1" class="form-control" value="${item.nombre}"></div>
                     <div class="row g-2">
@@ -521,23 +515,10 @@
         document.getElementById('btn-save-edit').onclick = async () => {
             const { col, id } = currentEdit;
             const updates = {};
-            
-            if(col === 'sales') {
-                const cant = parseInt(document.getElementById('edit-val-3').value);
-                const prec = parseFloat(document.getElementById('edit-val-4').value);
-                Object.assign(updates, {
-                    producto: document.getElementById('edit-val-1').value,
-                    cliente: document.getElementById('edit-val-2').value,
-                    cantidad: cant,
-                    precio: prec,
-                    total: cant * prec
-                });
-            } else if(col === 'products') {
-                Object.assign(updates, {
-                    nombre: document.getElementById('edit-val-1').value,
-                    pCosto: parseFloat(document.getElementById('edit-val-2').value),
-                    pVenta: parseFloat(document.getElementById('edit-val-3').value)
-                });
+            if(col === 'products') {
+                updates.nombre = document.getElementById('edit-val-1').value;
+                updates.pCosto = parseFloat(document.getElementById('edit-val-2').value);
+                updates.pVenta = parseFloat(document.getElementById('edit-val-3').value);
             } else {
                 updates.nombre = document.getElementById('edit-val-1').value;
             }
@@ -577,23 +558,19 @@
                 };
                 check('clients', data.cliente);
                 check('stores', data.tienda);
-                
                 if(!state.products.some(p => (p.nombre || "").toLowerCase() === data.producto.toLowerCase())) {
                     addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
                         nombre: data.producto, pCosto: data.costo, pVenta: data.precio
                     });
                 }
 
-                // Limpieza (La tienda persiste)
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
                 document.getElementById('in-cantidad').value = "1";
-                
                 showToast("¡Venta Guardada!", 'success');
-
-            } catch(e) { showToast("Error de red", 'danger'); }
+            } catch(e) { showToast("Error de conexión", 'danger'); }
             finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cash-register me-2"></i>GUARDAR VENTA'; }
         };
 
@@ -616,7 +593,6 @@
                 return `<div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${i.cantidad}x ${i.producto}</span><span>$${(i.total || 0).toFixed(2)}</span></div>`;
             }).join('');
             document.getElementById('t-total').innerText = `$${total.toFixed(2)}`;
-
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
                 const link = document.createElement('a');
@@ -657,3 +633,4 @@
     </script>
 </body>
 </html>
+
