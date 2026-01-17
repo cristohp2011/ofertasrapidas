@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v8.8</title>
+    <title>Yaute Rápidas Control Pro v8.9</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
     
     <style>
         :root {
@@ -20,30 +19,30 @@
             --warning: #f59e0b;
             --whatsapp: #25d366;
             --bg: #f8fafc;
-            --card-radius: 15px;
+            --card-radius: 12px;
         }
 
         body { 
             background-color: var(--bg); 
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding-bottom: 80px;
+            padding-bottom: 70px;
             user-select: none;
             color: #1e293b;
         }
 
         header {
             background: var(--primary);
-            color: white; padding: 0.5rem 1rem;
+            color: white; padding: 0.4rem 1rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: sticky; top: 0; z-index: 1000;
-            border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;
+            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
         }
 
         .header-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .app-logo {
@@ -60,8 +59,8 @@
         }
 
         .card-custom {
-            background: white; border-radius: var(--card-radius); padding: 15px;
-            margin-bottom: 12px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            background: white; border-radius: var(--card-radius); padding: 12px;
+            margin-bottom: 10px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         #toast-alert {
@@ -69,87 +68,93 @@
             z-index: 10001; padding: 10px 20px; border-radius: 50px;
             font-weight: 700; display: none; color: white;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); animation: slideDown 0.4s ease;
-            text-align: center; min-width: 250px; font-size: 0.85rem;
+            text-align: center; min-width: 260px; font-size: 0.8rem;
         }
 
         @keyframes slideDown { from { transform: translate(-50%, -100px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
-        #edit-overlay, #scanner-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98);
+        #edit-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95);
             z-index: 3000; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(12px); padding: 10px;
+            backdrop-filter: blur(8px); padding: 10px;
         }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .form-control {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.9rem;
-            border-radius: 10px;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.85rem;
+            border-radius: 8px;
         }
 
         label.text-uppercase {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             margin-bottom: 2px;
             font-weight: 800;
             color: #64748b;
+            display: block;
         }
 
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
-            display: flex; justify-content: space-around; padding: 8px 0 20px;
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-around; padding: 6px 0 18px;
             border-top: 1px solid #e2e8f0; z-index: 2000;
         }
 
         .tab-btn {
-            background: none; border: none; color: #94a3b8; font-size: 0.7rem;
+            background: none; border: none; color: #94a3b8; font-size: 0.65rem;
             display: flex; flex-direction: column; align-items: center; flex: 1;
         }
-        .tab-btn i { font-size: 1.4rem; margin-bottom: 2px; }
+        .tab-btn i { font-size: 1.3rem; margin-bottom: 1px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 2px 10px 10px; scrollbar-width: none; }
+        .sub-nav { display: flex; gap: 6px; overflow-x: auto; padding: 2px 10px 8px; scrollbar-width: none; }
         .sub-btn { 
-            background: white; border: 1px solid #e2e8f0; border-radius: 20px; 
-            padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b;
+            background: white; border: 1px solid #e2e8f0; border-radius: 15px; 
+            padding: 5px 12px; font-size: 0.65rem; white-space: nowrap; color: #64748b;
             font-weight: 600;
         }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        #reader { width: 100%; border-radius: 12px; overflow: hidden; background: #000; min-height: 200px; }
+        .badge-info-stat { background: #f1f5f9; color: #475569; padding: 5px 10px; border-radius: 8px; display: inline-block; width: 100%; text-align: center; margin-bottom: 8px; font-weight: 700; font-size: 0.7rem; }
         
-        .badge-info-stat { background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 10px; display: inline-block; width: 100%; text-align: center; margin-bottom: 10px; font-weight: 700; font-size: 0.75rem; }
+        .total-dia-card { background: var(--primary); color: white; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
         
-        .total-dia-card { background: var(--primary); color: white; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
-        
-        .table-resumen { font-size: 0.8rem; width: 100%; }
-        .table-resumen th { padding: 6px; border-bottom: 1px solid #f1f5f9; }
-        .table-resumen td { padding: 6px; border-bottom: 1px solid #f1f5f9; }
+        .table-resumen { font-size: 0.75rem; width: 100%; }
+        .table-resumen th { padding: 5px; border-bottom: 1px solid #f1f5f9; text-align: left; color: #64748b; }
+        .table-resumen td { padding: 5px; border-bottom: 1px solid #f1f5f9; }
 
-        .diezmo-card { border-left: 4px solid var(--warning); position: relative; padding: 12px; }
-        .history-tag { position: absolute; top: 8px; right: 8px; font-size: 0.55rem; background: #f1f5f9; color: #94a3b8; padding: 1px 6px; border-radius: 8px; font-weight: 800; }
+        .diezmo-card { border-left: 4px solid var(--warning); position: relative; padding: 10px; }
+        .history-tag { position: absolute; top: 6px; right: 6px; font-size: 0.5rem; background: #f1f5f9; color: #94a3b8; padding: 1px 5px; border-radius: 6px; font-weight: 800; }
         
+        .search-wrapper { position: relative; }
+        .sug-box {
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: white; border-radius: 10px; max-height: 180px; overflow-y: auto; z-index: 1500;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9;
+        }
+        .sug-item { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.8rem; }
+
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 20px; color: black; font-family: 'Courier New', monospace; }
-        .ticket-logo { width: 100px; height: auto; display: block; margin: 0 auto 10px; }
     </style>
 </head>
 <body>
 
     <div id="loading-screen" style="position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
-        <div class="spinner-border text-primary" role="status" style="width: 2.5rem; height: 2.5rem;"></div>
-        <p class="mt-2 fw-bold text-primary small">Yaute 8.8...</p>
+        <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;"></div>
+        <p class="mt-2 fw-bold text-primary small">Iniciando Yaute 8.9...</p>
     </div>
 
     <div id="toast-alert"></div>
 
-    <!-- Overlay de Edición -->
     <div id="edit-overlay">
-        <div class="card-custom w-100" style="max-width: 400px;">
+        <div class="card-custom w-100" style="max-width: 380px;">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 id="edit-title" class="fw-bold m-0">Editar</h6>
-                <button class="btn-close" style="font-size: 0.8rem;" onclick="closeEdit()"></button>
+                <h6 id="edit-title" class="fw-bold m-0 small">Editar Registro</h6>
+                <button class="btn-close" style="font-size: 0.7rem;" onclick="closeEdit()"></button>
             </div>
             <div id="edit-form-body"></div>
             <div class="d-flex gap-2 mt-3">
@@ -159,20 +164,9 @@
         </div>
     </div>
 
-    <!-- Overlay de Escáner -->
-    <div id="scanner-overlay">
-        <div class="card-custom w-100" style="max-width: 400px; background: white; padding: 12px;">
-            <h6 class="fw-bold mb-2 text-center text-uppercase small">Escáner</h6>
-            <div id="reader"></div>
-            <div class="mt-3">
-                <button class="btn btn-danger w-100 py-2 fw-bold btn-sm" onclick="stopScanner()">SALIR</button>
-            </div>
-        </div>
-    </div>
-
     <header>
         <div class="header-container">
-            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">
                 Ofertas Rapidas Yaute
             </h5>
             <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
@@ -197,14 +191,6 @@
                     </div>
                 </div>
 
-                <div class="mb-2">
-                    <label class="text-uppercase">Código</label>
-                    <div class="input-group input-group-sm">
-                        <input type="text" id="in-codigo" class="form-control border-0 bg-light fw-bold" placeholder="Escanear...">
-                        <button class="btn btn-primary px-3" onclick="startScanner()"><i class="fas fa-barcode"></i></button>
-                    </div>
-                </div>
-
                 <div class="row g-2 mb-3">
                     <div class="col-9 search-wrapper">
                         <label class="text-uppercase">Producto</label>
@@ -224,7 +210,7 @@
                         <input type="number" id="in-precio" class="form-control form-control-sm border-0 bg-light" placeholder="0.00">
                     </div>
                 </div>
-                <button id="btn-save" class="btn btn-primary w-100 py-2 fw-bold shadow-sm" style="border-radius: 12px; font-size: 0.95rem;">GUARDAR VENTA</button>
+                <button id="btn-save" class="btn btn-primary w-100 py-2 fw-bold shadow-sm" style="border-radius: 10px; font-size: 0.9rem;">GUARDAR VENTA</button>
             </div>
         </div>
 
@@ -246,7 +232,7 @@
             </div>
             <div class="filter-container"><div id="filter-wrapper"></div></div>
             <div id="cat-summary" class="px-2"></div>
-            <div id="lista-catalogos" style="margin-top: 5px;"></div>
+            <div id="lista-catalogos"></div>
         </div>
     </div>
 
@@ -290,7 +276,6 @@
 
         let state = { clients: [], products: [], stores: [], sales: [], diezmos: [] };
         let activeSubTab = 'sales';
-        let html5QrCode = null;
 
         const getLocalDateString = (date = new Date()) => date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
         const getISODateString = (date = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
@@ -300,7 +285,7 @@
             const toast = document.getElementById('toast-alert');
             toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
             toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i> ${msg}`;
-            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3500);
+            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
         signInAnonymously(auth);
@@ -363,8 +348,8 @@
             if (btn) { document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
             const w = document.getElementById('filter-wrapper');
             if (['sales', 'totales', 'ticketTienda'].includes(id)) {
-                let e = id === 'ticketTienda' ? `<select id="filter-store" class="filter-input mb-1 py-1" style="font-size:0.8rem;" onchange="window.renderCatalogList()"><option value="">-- TIENDA --</option>${[...new Set(state.stores.map(s => s.nombre.toUpperCase()))].sort().map(s => `<option value="${s}">${s}</option>`).join('')}</select>` : "";
-                w.innerHTML = `${e}<div class="d-flex gap-2"><input type="date" id="cat-date" class="filter-input flex-fill py-1" style="font-size:0.8rem;" value="${getISODateString()}"><button class="btn btn-primary btn-sm px-2" onclick="window.renderCatalogList()">OK</button></div>`;
+                let e = id === 'ticketTienda' ? `<select id="filter-store" class="filter-input mb-1 py-1" style="font-size:0.75rem;" onchange="window.renderCatalogList()"><option value="">-- TIENDA --</option>${[...new Set(state.stores.map(s => s.nombre.toUpperCase()))].sort().map(s => `<option value="${s}">${s}</option>`).join('')}</select>` : "";
+                w.innerHTML = `${e}<div class="d-flex gap-2"><input type="date" id="cat-date" class="filter-input flex-fill py-1" style="font-size:0.75rem;" value="${getISODateString()}"><button class="btn btn-primary btn-sm px-2" onclick="window.renderCatalogList()">OK</button></div>`;
             } else { w.innerHTML = ""; }
             renderAll();
         };
@@ -379,8 +364,8 @@
             list.innerHTML = Object.keys(g).map(cli => {
                 const items = g[cli].items; const tEnt = items.every(i => i.entregado);
                 return `<div class="card-custom mb-2 py-2 px-3 ${tEnt ? 'opacity-50' : ''}">
-                    <div class="d-flex justify-content-between align-items-center mb-1"><span class="fw-bold small text-uppercase">${cli}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-dark rounded-pill px-2 py-0" style="font-size:0.7rem;" onclick="window.genTicket('${cli}', false)"><i class="fas fa-file-image"></i></button><button class="btn btn-sm btn-success rounded-pill px-2 py-0" style="font-size:0.7rem;" onclick="window.genTicket('${cli}', true)"><i class="fab fa-whatsapp"></i></button></div></div>
-                    <div style="font-size:0.8rem;">${items.map(i => `<div class="d-flex justify-content-between mb-1"><span class="${i.entregado ? 'text-decoration-line-through text-muted' : ''}">${i.cantidad}x ${i.producto}</span><div class="form-check form-switch"><input class="form-check-input" style="height:1rem; width:1.8rem;" type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})"></div></div>`).join('')}</div>
+                    <div class="d-flex justify-content-between align-items-center mb-1"><span class="fw-bold small text-uppercase">${cli}</span><div class="d-flex gap-1"><button class="btn btn-sm btn-dark rounded-pill px-2 py-0" style="font-size:0.65rem;" onclick="window.genTicket('${cli}', false)"><i class="fas fa-file-image"></i></button><button class="btn btn-sm btn-success rounded-pill px-2 py-0" style="font-size:0.65rem;" onclick="window.genTicket('${cli}', true)"><i class="fab fa-whatsapp"></i></button></div></div>
+                    <div style="font-size:0.75rem;">${items.map(i => `<div class="d-flex justify-content-between mb-1"><span class="${i.entregado ? 'text-decoration-line-through text-muted' : ''}">${i.cantidad}x ${i.producto}</span><div class="form-check form-switch"><input class="form-check-input" style="height:0.9rem; width:1.7rem;" type="checkbox" ${i.entregado ? 'checked' : ''} onchange="toggleEnt('${i.id}', ${i.entregado})"></div></div>`).join('')}</div>
                     <div class="text-end fw-bold text-success small pt-1 border-top mt-1">$${g[cli].total.toFixed(2)}</div>
                 </div>`;
             }).join('');
@@ -399,17 +384,17 @@
             if (activeSubTab === 'sales') {
                 d = d.filter(s => s.fechaStr === fD).sort((a,b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
                 s.innerHTML = `<div class="badge-info-stat">${fD}</div>`;
-                l.innerHTML = d.map(s => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-2"><div style="flex:1" class="small"><div class="fw-bold">${s.cantidad}x ${s.producto} ${s.entregado ? '✓' : ''}</div><div class="text-muted text-uppercase" style="font-size:0.65rem;">${s.tienda || 'GNR'} • ${s.cliente}</div></div><div class="text-end"><span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span><button class="btn btn-sm p-0 text-danger" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('') || '<p class="text-center py-4 text-muted small">Vacío</p>';
+                l.innerHTML = d.map(s => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-2"><div style="flex:1" class="small"><div class="fw-bold">${s.cantidad}x ${s.producto} ${s.entregado ? '✓' : ''}</div><div class="text-muted text-uppercase" style="font-size:0.6rem;">${s.tienda || 'GNR'} • ${s.cliente}</div></div><div class="text-end"><span class="fw-bold text-primary me-2">$${(s.total || 0).toFixed(2)}</span><button class="btn btn-sm p-0 text-danger" onclick="window.del('sales', '${s.id}', '${s.producto}')"><i class="fas fa-trash-alt"></i></button></div></div>`).join('') || '<p class="text-center py-4 text-muted small">Vacío</p>';
             } else if (activeSubTab === 'totales') {
                 const dv = state.sales.filter(s => s.fechaStr === fD); 
                 let dC = 0, dV = 0; dv.forEach(s => { dC += ((s.costo||0)*(s.cantidad||0)); dV += (s.total||0); });
                 s.innerHTML = `<div class="badge-info-stat">${fD}</div>`;
-                let html = `<div class="total-dia-card shadow-sm mb-3"><div class="d-flex justify-content-between small mb-1"><span>Inversión:</span> <span>$${dC.toFixed(2)}</span></div><div class="d-flex justify-content-between small mb-1"><span>Venta Total:</span> <span>$${dV.toFixed(2)}</span></div><div class="d-flex justify-content-between pt-1 mt-1 border-top"><span class="fw-bold">GANANCIA:</span> <span class="fw-bold text-success">$${(dV - dC).toFixed(2)}</span></div></div>`;
+                let html = `<div class="total-dia-card mb-3"><div class="d-flex justify-content-between small mb-1"><span>Inversión:</span> <span>$${dC.toFixed(2)}</span></div><div class="d-flex justify-content-between small mb-1"><span>Venta Total:</span> <span>$${dV.toFixed(2)}</span></div><div class="d-flex justify-content-between pt-1 mt-1 border-top"><span class="fw-bold">GANANCIA:</span> <span class="fw-bold text-success">$${(dV - dC).toFixed(2)}</span></div></div>`;
                 const uniqueStores = [...new Set(dv.map(s => (s.tienda || 'GENERAL').toUpperCase()))].sort();
                 uniqueStores.forEach(stName => {
                     const stSales = dv.filter(s => (s.tienda || 'GENERAL').toUpperCase() === stName);
                     let stC = 0, stV = 0; stSales.forEach(s => { stC += ((s.costo || 0) * (s.cantidad || 0)); stV += (s.total || 0); });
-                    html += `<div class="card-custom mb-2 py-2 border-start border-3 border-primary"><h6 class="fw-bold text-primary text-uppercase mb-1 small">${stName}</h6><div class="d-flex justify-content-between small"><span>Inv: $${stC.toFixed(2)}</span> <span>Vta: $${stV.toFixed(2)}</span> <span class="text-success fw-bold">+$${(stV - stC).toFixed(2)}</span></div></div>`;
+                    html += `<div class="card-custom mb-2 py-2 border-start border-3 border-primary"><h6 class="fw-bold text-primary text-uppercase mb-1" style="font-size:0.7rem;">${stName}</h6><div class="d-flex justify-content-between small" style="font-size:0.7rem;"><span>Inv: $${stC.toFixed(2)}</span> <span>Vta: $${stV.toFixed(2)}</span> <span class="text-success fw-bold">+$${(stV - stC).toFixed(2)}</span></div></div>`;
                 });
                 l.innerHTML = dv.length ? html : '<p class="text-center py-4 text-muted small">Sin ventas.</p>';
             } else if (activeSubTab === 'ticketTienda') {
@@ -421,23 +406,23 @@
                     const groupedArray = Object.values(grouped).sort((a,b) => a.producto.localeCompare(b.producto));
                     const totalArts = items.reduce((acc, curr) => acc + (parseInt(curr.cantidad) || 0), 0);
                     const totalCosto = items.reduce((acc, curr) => acc + (curr.costo * curr.cantidad), 0);
-                    l.innerHTML = `<div class="card-custom py-2"><table class="table-resumen"><thead><tr><th>Prod.</th><th>Cant.</th><th>$U</th><th>Tot.</th></tr></thead><tbody>${groupedArray.map(i => `<tr><td>${i.producto}</td><td>${i.cantidad}</td><td>$${i.costo}</td><td class="fw-bold">$${i.total.toFixed(2)}</td></tr>`).join('')}</tbody></table><div class="mt-2 border-top pt-1 small"><div class="d-flex justify-content-between"><span>Artículos:</span><b>${totalArts}</b></div><div class="d-flex justify-content-between fw-bold text-primary mt-1"><span>COSTO:</span><span>$${totalCosto.toFixed(2)}</span></div></div></div>`;
+                    l.innerHTML = `<div class="card-custom py-2"><table class="table-resumen"><thead><tr><th>Prod.</th><th>Cant.</th><th>$U</th><th>Tot.</th></tr></thead><tbody>${groupedArray.map(i => `<tr><td>${i.producto}</td><td>${i.cantidad}</td><td>$${i.costo}</td><td class="fw-bold">$${i.total.toFixed(2)}</td></tr>`).join('')}</tbody></table><div class="mt-2 border-top pt-1 small" style="font-size:0.7rem;"><div class="d-flex justify-content-between"><span>Artículos:</span><b>${totalArts}</b></div><div class="d-flex justify-content-between fw-bold text-primary mt-1"><span>COSTO:</span><span>$${totalCosto.toFixed(2)}</span></div></div></div>`;
                 } else { l.innerHTML = '<p class="text-center py-4 text-muted small">Sin datos.</p>'; }
             } else if (activeSubTab === 'diezmo') {
                 s.innerHTML = `<div class="badge-info-stat">Reporte de Diezmos</div>`;
                 const cm = {}; state.sales.forEach(s => { if(!s.fechaStr) return; const p = s.fechaStr.split('/'); const k = `${p[2]}-${p[1].padStart(2,'0')}`; if(!cm[k]) cm[k] = { venta: 0, costo: 0, mes: months[parseInt(p[1])-1], year: p[2], active: true }; cm[k].venta += (s.total || 0); cm[k].costo += ((s.costo || 0) * (s.cantidad || 0)); });
                 const fin = {}; state.diezmos.forEach(d => { fin[d.id] = { venta: d.venta, costo: d.costo, mes: d.mes, year: d.year, isStored: true }; });
                 for(const k in cm) { if(fin[k]) { fin[k].venta += cm[k].venta; fin[k].costo += cm[k].costo; } else { fin[k] = cm[k]; } }
-                l.innerHTML = Object.keys(fin).sort().reverse().map(k => { const d = fin[k]; const u = d.venta - d.costo; return `<div class="card-custom diezmo-card mb-2">${d.isStored && !d.active ? '<span class="history-tag">HISTORIAL</span>' : '<span class="history-tag text-primary">ACTUAL</span>'}<div class="d-flex justify-content-between align-items-center mb-1"><h6 class="fw-bold m-0 text-primary small">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark px-2 py-1" style="font-size:0.6rem;">10%</span></div><div class="d-flex justify-content-between small" style="font-size:0.75rem;"><span>Utilidad: $${u.toFixed(2)}</span><span class="fw-bold text-success">DIEZMO: $${(u * 0.10).toFixed(2)}</span></div></div>`; }).join('');
+                l.innerHTML = Object.keys(fin).sort().reverse().map(k => { const d = fin[k]; const u = d.venta - d.costo; return `<div class="card-custom diezmo-card mb-2 py-1 px-2">${d.isStored && !d.active ? '<span class="history-tag">HISTORIAL</span>' : '<span class="history-tag text-primary">ACTUAL</span>'}<div class="d-flex justify-content-between align-items-center mb-1"><h6 class="fw-bold m-0 text-primary small" style="font-size:0.7rem;">${d.mes.toUpperCase()} ${d.year}</h6><span class="badge bg-warning text-dark px-1" style="font-size:0.55rem;">10%</span></div><div class="d-flex justify-content-between small" style="font-size:0.65rem;"><span>Utilidad: $${u.toFixed(2)}</span><span class="fw-bold text-success">DIEZMO: $${(u * 0.10).toFixed(2)}</span></div></div>`; }).join('');
             } else if (activeSubTab === 'products') {
-                s.innerHTML = `<div class="badge-info-stat">Catálogo de Productos</div>`;
+                s.innerHTML = `<div class="badge-info-stat">Catálogo Alfabético</div>`;
                 let data = [...state.products].sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
-                l.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-2"><div style="flex:1" class="small"><div class="fw-bold text-uppercase">${item.nombre}</div><div class="text-muted" style="font-size:0.7rem;">C:$${item.pCosto} / V:$${item.pVenta} ${item.codigo ? ` / ID:${item.codigo}` : ''}</div></div><div class="d-flex gap-2"><button class="btn btn-sm p-0 text-primary" onclick="openEdit('products', '${item.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm p-0 text-danger" onclick="window.del('products', '${item.id}', '${item.nombre}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-4 text-muted small">Vacío.</p>';
+                l.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><div style="flex:1" class="small"><div class="fw-bold text-uppercase" style="font-size:0.75rem;">${item.nombre}</div><div class="text-muted" style="font-size:0.65rem;">C:$${item.pCosto} / V:$${item.pVenta}</div></div><div class="d-flex gap-2"><button class="btn btn-sm p-0 text-primary" onclick="openEdit('products', '${item.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm p-0 text-danger" onclick="window.del('products', '${item.id}', '${item.nombre}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-4 text-muted small">Vacío.</p>';
             } else if (activeSubTab === 'clients' || activeSubTab === 'stores') {
                 const title = activeSubTab === 'clients' ? "Clientes" : "Tiendas";
-                s.innerHTML = `<div class="badge-info-stat">Lista de ${title}</div>`;
+                s.innerHTML = `<div class="badge-info-stat">Directorio de ${title}</div>`;
                 let data = [...state[activeSubTab]].sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
-                l.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-2"><div style="flex:1" class="small text-uppercase fw-bold">${item.nombre}</div><div class="d-flex gap-2"><button class="btn btn-sm p-0 text-primary" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm p-0 text-danger" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-4 text-muted small">Sin registros.</p>';
+                l.innerHTML = data.map(item => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><div style="flex:1" class="small text-uppercase fw-bold" style="font-size:0.75rem;">${item.nombre}</div><div class="d-flex gap-2"><button class="btn btn-sm p-0 text-primary" onclick="openEdit('${activeSubTab}', '${item.id}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm p-0 text-danger" onclick="window.del('${activeSubTab}', '${item.id}', '${item.nombre}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-4 text-muted small">Sin registros.</p>';
             }
         };
 
@@ -447,7 +432,7 @@
         window.openEdit = (col, id) => {
             const i = state[col].find(x => x.id === id); if(!i) return; curE = { col, id, oldName: i.nombre };
             const f = document.getElementById('edit-form-body'); document.getElementById('edit-title').innerText = `Editar ${col}`;
-            if(col === 'products') { f.innerHTML = `<div class="mb-2"><label class="text-uppercase">Nombre</label><input id="ev1" class="form-control form-control-sm text-uppercase" value="${i.nombre}"></div><div class="row g-2 mb-2"><div class="col-6"><label class="text-uppercase">Costo</label><input id="ev2" type="number" class="form-control form-control-sm" value="${i.pCosto}"></div><div class="col-6"><label class="text-uppercase">Venta</label><input id="ev3" type="number" class="form-control form-control-sm" value="${i.pVenta}"></div></div><div class="mb-2"><label class="text-uppercase">ID Código</label><input id="ev4" class="form-control form-control-sm" value="${i.codigo || ''}"></div>`; }
+            if(col === 'products') { f.innerHTML = `<div class="mb-2"><label class="text-uppercase">Nombre</label><input id="ev1" class="form-control form-control-sm text-uppercase" value="${i.nombre}"></div><div class="row g-2 mb-2"><div class="col-6"><label class="text-uppercase">Costo</label><input id="ev2" type="number" class="form-control form-control-sm" value="${i.pCosto}"></div><div class="col-6"><label class="text-uppercase">Venta</label><input id="ev3" type="number" class="form-control form-control-sm" value="${i.pVenta}"></div></div>`; }
             else { f.innerHTML = `<div class="mb-2"><label class="text-uppercase">Nombre</label><input id="ev1" class="form-control form-control-sm text-uppercase" value="${i.nombre}"></div>`; }
             document.getElementById('edit-overlay').style.display = 'flex';
         };
@@ -461,7 +446,6 @@
             if(col === 'products') { 
                 up.pCosto = parseFloat(document.getElementById('ev2').value); 
                 up.pVenta = parseFloat(document.getElementById('ev3').value); 
-                up.codigo = document.getElementById('ev4').value.trim(); 
                 state.sales.filter(s => (s.producto||"").toUpperCase() === oldName.toUpperCase()).forEach(async (sale) => {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), { producto: newName, costo: up.pCosto, precio: up.pVenta, total: sale.cantidad * up.pVenta });
                 });
@@ -477,7 +461,7 @@
 
         document.getElementById('btn-save').onclick = async () => {
             const btn = document.getElementById('btn-save');
-            const data = { tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), producto: document.getElementById('in-producto').value.trim().toUpperCase(), cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, costo: parseFloat(document.getElementById('in-costo').value) || 0, precio: parseFloat(document.getElementById('in-precio').value) || 0, codigo: document.getElementById('in-codigo').value.trim() };
+            const data = { tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), producto: document.getElementById('in-producto').value.trim().toUpperCase(), cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, costo: parseFloat(document.getElementById('in-costo').value) || 0, precio: parseFloat(document.getElementById('in-precio').value) || 0 };
             if (!data.tienda) return showToast("Falta Tienda", 'danger');
             if (!data.cliente) return showToast("Falta Cliente", 'danger');
             if (!data.producto) return showToast("Falta Producto", 'danger');
@@ -489,42 +473,14 @@
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(), fechaStr: getLocalDateString(), entregado: false });
                 const ck = (c, v) => { if(!state[c].some(i => (i.nombre||"").toUpperCase() === v.toUpperCase())) addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: v }); };
                 ck('clients', data.cliente); ck('stores', data.tienda);
-                const exP = state.products.find(p => (p.codigo && p.codigo === data.codigo) || (p.nombre||"").toUpperCase() === data.producto.toUpperCase());
-                if(!exP) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio, codigo: data.codigo });
-                else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exP.id), { codigo: data.codigo || exP.codigo, pCosto: data.costo, pVenta: data.precio });
+                const exP = state.products.find(p => (p.nombre||"").toUpperCase() === data.producto.toUpperCase());
+                if(!exP) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
+                else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exP.id), { pCosto: data.costo, pVenta: data.precio });
                 
-                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-codigo').value = "";
-                showToast("Venta Guardada", 'success');
+                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cantidad').value = "1";
+                showToast("¡Venta Guardada!", 'success');
                 renderAll();
-            } catch(e) { showToast("Error", 'danger'); } finally { btn.disabled = false; btn.innerHTML = "GUARDAR VENTA"; }
-        };
-
-        window.startScanner = () => {
-            document.getElementById('scanner-overlay').style.display = 'flex';
-            html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 250, height: 120 } }, onScanSuccess)
-                .catch(() => { showToast("Error cámara", 'danger'); stopScanner(); });
-        };
-
-        window.stopScanner = () => {
-            if (html5QrCode) { html5QrCode.stop().finally(() => { document.getElementById('scanner-overlay').style.display = 'none'; html5QrCode = null; }); }
-            else { document.getElementById('scanner-overlay').style.display = 'none'; }
-        };
-
-        const onScanSuccess = (text) => {
-            stopScanner();
-            document.getElementById('in-codigo').value = text;
-            const f = state.products.find(p => p.codigo === text);
-            if (f) {
-                const isC = document.getElementById('in-cliente').value.trim().toUpperCase() === 'CRISTO';
-                document.getElementById('in-producto').value = f.nombre.toUpperCase();
-                document.getElementById('in-costo').value = f.pCosto;
-                document.getElementById('in-precio').value = isC ? f.pCosto : f.pVenta;
-                showToast("Cargado", 'success');
-            } else {
-                document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-producto').focus();
-                showToast("ID nuevo detectado", 'warning');
-            }
+            } catch(e) { showToast("Error al guardar", 'danger'); } finally { btn.disabled = false; btn.innerHTML = "GUARDAR VENTA"; }
         };
 
         window.genTicket = async (cli, isWA) => {
@@ -567,7 +523,6 @@
                                 const isC = document.getElementById('in-cliente').value.trim().toUpperCase() === 'CRISTO';
                                 document.getElementById('in-costo').value = p.pCosto; 
                                 document.getElementById('in-precio').value = isC ? p.pCosto : p.pVenta; 
-                                document.getElementById('in-codigo').value = p.codigo || ""; 
                             } 
                         }
                         if (key === 'clients' && v.toLowerCase() === 'cristo') {
