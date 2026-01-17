@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v9.5</title>
+    <title>Yaute Rápidas Control Pro v9.6</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -69,8 +69,23 @@
         /* Variaciones de color para Entregas */
         .card-entrega-pendiente { border-left-color: #cbd5e1; }
         .card-entrega-pagado { background-color: #f0fdf4 !important; border-left-color: var(--success); }
-        .card-entrega-enviado { background-color: #eff6ff !important; border-left-color: var(--accent); }
+        .card-entrega-enviado { background-color: #fff1f2 !important; border-left-color: var(--danger); } /* Fondo rosado si solo entregado */
         .card-entrega-completo { background-color: #ecfdf5 !important; border-left-color: #059669; opacity: 0.9; }
+
+        /* Estilos de tachado */
+        .strike-red {
+            text-decoration: line-through;
+            text-decoration-color: var(--danger);
+            text-decoration-thickness: 2px;
+            color: #991b1b !important;
+        }
+
+        .strike-green {
+            text-decoration: line-through;
+            text-decoration-color: var(--success);
+            text-decoration-thickness: 2px;
+            color: #166534 !important;
+        }
 
         #toast-alert {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
@@ -90,7 +105,6 @@
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .form-control {
             padding: 0.4rem 0.6rem;
@@ -177,7 +191,7 @@
             margin: 0;
         }
         .check-paid { accent-color: var(--success); }
-        .check-delivered { accent-color: var(--accent); }
+        .check-delivered { accent-color: var(--danger); } /* Rojo para entrega sin pago */
         
         .status-badge {
             font-size: 0.55rem;
@@ -192,7 +206,7 @@
 
     <div id="loading-screen" style="position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
         <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;"></div>
-        <p class="mt-2 fw-bold text-primary small">Actualizando Yaute 9.5...</p>
+        <p class="mt-2 fw-bold text-primary small">Yaute Pro v9.6...</p>
     </div>
 
     <div id="toast-alert"></div>
@@ -222,7 +236,7 @@
     </header>
 
     <div class="container py-2">
-        <!-- PESTAÑA: OPERACIONES (VENTA) -->
+        <!-- PESTAÑA: OPERACIONES -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -366,7 +380,7 @@
         const checkResetCycle = () => {
             const now = new Date();
             if (now.getDate() === 20 && (now.getMonth() + 1) % 2 === 0) {
-                if (confirm("Reinicio bimestral detectado. ¿Guardar diezmos?")) clearSalesHistory();
+                if (confirm("Reinicio detectado. ¿Guardar diezmos?")) clearSalesHistory();
             }
         };
 
@@ -432,10 +446,20 @@
                 const tPag = items.every(i => i.pagado === true);
                 
                 let cardClass = "card-custom ";
-                if (tEnt && tPag) cardClass += "card-entrega-completo";
-                else if (tEnt) cardClass += "card-entrega-enviado";
-                else if (tPag) cardClass += "card-entrega-pagado";
-                else cardClass += "card-entrega-pendiente";
+                let strikeClass = "";
+                
+                if (tEnt && tPag) {
+                    cardClass += "card-entrega-completo";
+                    strikeClass = "strike-green";
+                } else if (tPag) {
+                    cardClass += "card-entrega-pagado";
+                    strikeClass = "strike-green";
+                } else if (tEnt) {
+                    cardClass += "card-entrega-enviado";
+                    strikeClass = "strike-red";
+                } else {
+                    cardClass += "card-entrega-pendiente";
+                }
 
                 return `<div class="${cardClass}">
                     <div class="d-flex justify-content-between align-items-start mb-2">
@@ -443,12 +467,12 @@
                             <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
                                 <span class="fw-bold small text-uppercase">${cli}</span>
                                 ${tPag ? '<span class="badge bg-success status-badge">PAGADO</span>' : '<span class="badge bg-warning text-dark status-badge">P. PAGO</span>'}
-                                ${tEnt ? '<span class="badge bg-primary status-badge">ENTREGADO</span>' : ''}
+                                ${tEnt ? '<span class="badge bg-danger status-badge">ENTREGADO</span>' : ''}
                             </div>
                             <div class="check-group mt-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <input type="checkbox" class="custom-check check-delivered" ${tEnt ? 'checked' : ''} onchange="toggleFielCliente('${cli}', '${targetDate}', 'entregado', ${tEnt})">
-                                    <i class="fas fa-truck ${tEnt ? 'text-primary' : 'text-muted'}" style="font-size: 1rem;"></i>
+                                    <i class="fas fa-truck ${tEnt ? 'text-danger' : 'text-muted'}" style="font-size: 1rem;"></i>
                                 </div>
                                 <div class="d-flex align-items-center gap-2 ms-1">
                                     <input type="checkbox" class="custom-check check-paid" ${tPag ? 'checked' : ''} onchange="toggleFielCliente('${cli}', '${targetDate}', 'pagado', ${tPag})">
@@ -460,9 +484,9 @@
                             <i class="fab fa-whatsapp me-1"></i>TICKET
                         </button>
                     </div>
-                    <div style="font-size:0.75rem;" class="mt-2 text-muted">
+                    <div style="font-size:0.8rem;" class="mt-2">
                         ${items.map(i => `<div class="mb-1">
-                            <span class="${tEnt ? 'text-decoration-line-through' : ''}">${i.cantidad}x ${i.producto}</span>
+                            <span class="${strikeClass}">${i.cantidad}x ${i.producto}</span>
                         </div>`).join('')}
                     </div>
                     <div class="text-end fw-bold ${tPag ? 'text-success' : 'text-danger'} small pt-1 border-top mt-1">$${g[cli].total.toFixed(2)}</div>
@@ -610,7 +634,6 @@
                             text: `Hola ${cli}, aquí tienes tu ticket de compra.`
                         });
                     } else {
-                        // Fallback simple por si no soporta share
                         window.open(c.toDataURL("image/png"));
                     }
                 });
