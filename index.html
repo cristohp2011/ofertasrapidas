@@ -499,7 +499,7 @@
                             await navigator.share({
                                 files: [file],
                                 title: 'Ticket de Venta',
-                                text: `Ticket para ${cli}`
+                                text: `Te envío tu cuenta ${cli}`
                             });
                         } catch (e) { if(e.name !== 'AbortError') showToast("Error al compartir", 'danger'); }
                     } else {
@@ -545,4 +545,3 @@
     </script>
 </body>
 </html>
-
