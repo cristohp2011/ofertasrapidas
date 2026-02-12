@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro 2 v10.7</title>
+    <title>Yaute Rápidas Control Pro v10.8</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,6 +30,64 @@
             color: #1e293b;
         }
 
+        /* --- SPLASH SCREEN STYLES --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .splash-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .splash-title {
+            font-weight: 900;
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .splash-version {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .splash-loader {
+            margin-top: 30px;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- UI STYLES --- */
         header {
             background: var(--primary);
             color: white; padding: 0.5rem 1rem;
@@ -130,9 +188,12 @@
 </head>
 <body>
 
-    <div id="loading-screen" style="position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
-        <div class="spinner-border text-primary" role="status" style="width: 2.5rem; height: 2.5rem;"></div>
-        <p class="mt-2 fw-bold text-primary small">Yaute Pro v10.7...</p>
+    <!-- --- NUEVO SPLASH SCREEN --- -->
+    <div id="splash-screen">
+        <img src="logo.png" alt="Yaute Logo" class="splash-logo">
+        <div class="splash-title">Ofertas Rápidas</div>
+        <div class="splash-version">CONTROL PRO v10.8</div>
+        <div class="splash-loader"></div>
     </div>
 
     <div id="toast-alert"></div>
@@ -263,11 +324,17 @@
         signInAnonymously(auth);
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('status-dot').className = 'status-indicator bg-success';
                 document.getElementById('entregas-date').value = getISODateString();
                 startSync();
-                // Forzar que la pestaña de venta sea la activa al cargar
+                
+                // --- LOGICA DE SALIDA DEL SPLASH ---
+                setTimeout(() => {
+                    const splash = document.getElementById('splash-screen');
+                    splash.style.opacity = '0';
+                    setTimeout(() => { splash.style.visibility = 'hidden'; }, 500);
+                }, 2000); // Muestra el splash por 2 segundos
+
                 window.showTab('operaciones', document.querySelector('.tab-btn.active'));
                 window.switchSubTab('sales', document.querySelector('.sub-btn.active'));
             } else {
@@ -314,6 +381,7 @@
             const targetDate = dateInput && dateInput.value ? getLocalDateString(new Date(dateInput.value + "T12:00:00")) : getLocalDateString();
             const vH = state.sales.filter(s => s.fechaStr === targetDate);
             const list = document.getElementById('lista-entregas');
+            if (!vH) return;
             if (!vH.length) { list.innerHTML = '<p class="text-center py-4 text-muted small">Sin ventas para hoy</p>'; return; }
             
             const g = vH.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {total: 0, items: []}; acc[c].total += (v.total || 0); acc[c].items.push(v); return acc; }, {});
