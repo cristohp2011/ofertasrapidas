@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.8</title>
+    <title>Ofertas Rápidas Yaute v10.9</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -186,6 +186,27 @@
         .check-paid { accent-color: var(--success); }
         .check-delivered { accent-color: var(--danger); }
         .status-badge { font-size: 0.6rem; padding: 3px 8px; border-radius: 20px; font-weight: 900; }
+
+        /* Estilo para botón de escaneo */
+        .btn-scan {
+            background: #f1f5f9;
+            color: var(--primary);
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        .btn-scan:active { background: #e2e8f0; transform: scale(0.98); }
+        .btn-scan i { font-size: 1.2rem; color: var(--accent); }
+        .btn-scan.loading { opacity: 0.7; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -194,7 +215,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.8</div>
+        <div class="splash-version">CONTROL PRO v10.9</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -224,6 +245,16 @@
                         <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
+
+                <hr class="my-3 opacity-10">
+                
+                <!-- BOTÓN ESCANEO IA -->
+                <button id="btn-scan" class="btn-scan">
+                    <i class="fas fa-camera"></i>
+                    <span id="scan-text">ESCANEAR ETIQUETA DE ANAQUEL</span>
+                </button>
+                <input type="file" id="input-camera" accept="image/*" capture="environment" style="display: none;">
+
                 <div class="row g-2 mb-3">
                     <div class="col-9 search-wrapper">
                         <label class="text-uppercase">Producto</label>
@@ -236,11 +267,11 @@
                     </div>
                     <div class="col-6">
                         <label class="text-uppercase">Costo Unit.</label>
-                        <input type="number" id="in-costo" class="form-control" placeholder="0.00">
+                        <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
                         <label class="text-uppercase">Venta</label>
-                        <input type="number" id="in-precio" class="form-control" placeholder="0.00">
+                        <input type="number" id="in-precio" class="form-control" placeholder="0.00" step="0.01">
                     </div>
                 </div>
                 <button id="btn-save" class="btn btn-primary w-100 py-2 fw-bold shadow-sm" style="border-radius: 10px;">GUARDAR VENTA</button>
@@ -330,7 +361,6 @@
                 document.getElementById('entregas-date').value = getISODateString();
                 startSync();
                 
-                // --- LOGICA DE SALIDA DEL SPLASH (3 SEGUNDOS) ---
                 setTimeout(() => {
                     const splash = document.getElementById('splash-screen');
                     splash.style.opacity = '0';
@@ -352,6 +382,92 @@
                 });
             });
         };
+
+        // --- LÓGICA DE ESCANEO IA ---
+        const apiKey = ""; // Se proporcionará en tiempo de ejecución
+        const btnScan = document.getElementById('btn-scan');
+        const inputCamera = document.getElementById('input-camera');
+        const scanText = document.getElementById('scan-text');
+
+        btnScan.onclick = () => inputCamera.click();
+
+        inputCamera.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Iniciar visual de carga
+            btnScan.classList.add('loading');
+            scanText.innerText = "IA ESCANEANDO ETIQUETA...";
+            
+            try {
+                const base64Image = await fileToBase64(file);
+                const result = await callGeminiIA(base64Image);
+                
+                if (result) {
+                    document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
+                    document.getElementById('in-costo').value = result.unitCost || "";
+                    showToast("¡Etiqueta leída!", "success");
+                    // Dar foco al siguiente campo lógico
+                    document.getElementById('in-cantidad').focus();
+                } else {
+                    showToast("No se pudo leer la etiqueta", "warning");
+                }
+            } catch (err) {
+                showToast("Error en el escaneo", "danger");
+            } finally {
+                btnScan.classList.remove('loading');
+                scanText.innerText = "ESCANEAR ETIQUETA DE ANAQUEL";
+                inputCamera.value = ""; // Resetear para permitir la misma foto si se desea
+            }
+        };
+
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = error => reject(error);
+        });
+
+        const callGeminiIA = async (base64Data, retryCount = 0) => {
+            const systemPrompt = "Eres un asistente experto en lectura de etiquetas de anaquel de supermercados. Tu objetivo es extraer el NOMBRE DEL PRODUCTO y el PRECIO UNITARIO de la imagen. Responde estrictamente en formato JSON con las claves 'productName' (string) y 'unitCost' (number). Si no ves un precio, unitCost debe ser null.";
+            const userQuery = "Extrae los datos de esta etiqueta de precio.";
+
+            const payload = {
+                contents: [{
+                    role: "user",
+                    parts: [
+                        { text: userQuery },
+                        { inlineData: { mimeType: "image/png", data: base64Data } }
+                    ]
+                }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('API Error');
+
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                return text ? JSON.parse(text) : null;
+
+            } catch (error) {
+                if (retryCount < 5) {
+                    const delay = Math.pow(2, retryCount) * 1000;
+                    await new Promise(r => setTimeout(r, delay));
+                    return callGeminiIA(base64Data, retryCount + 1);
+                }
+                return null;
+            }
+        };
+
+        // --- RESTO DE LA LÓGICA ORIGINAL ---
 
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -383,7 +499,7 @@
             const targetDate = dateInput && dateInput.value ? getLocalDateString(new Date(dateInput.value + "T12:00:00")) : getLocalDateString();
             const vH = state.sales.filter(s => s.fechaStr === targetDate);
             const list = document.getElementById('lista-entregas');
-            if (!vH) return;
+            if (!vH || !list) return;
             if (!vH.length) { list.innerHTML = '<p class="text-center py-4 text-muted small">Sin ventas para hoy</p>'; return; }
             
             const g = vH.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {total: 0, items: []}; acc[c].total += (v.total || 0); acc[c].items.push(v); return acc; }, {});
