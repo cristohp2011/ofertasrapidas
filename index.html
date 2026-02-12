@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v10.8</title>
+    <title>Ofertas Rápidas Yaute v10.8</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -57,6 +57,8 @@
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-align: center;
+            padding: 0 20px;
         }
 
         .splash-version {
@@ -191,7 +193,7 @@
     <!-- --- SPLASH SCREEN --- -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
-        <div class="splash-title">Ofertas Rápidas</div>
+        <div class="splash-title">Ofertas Rápidas Yaute</div>
         <div class="splash-version">CONTROL PRO v10.8</div>
         <div class="splash-loader"></div>
     </div>
@@ -200,7 +202,7 @@
 
     <header>
         <div class="header-container">
-            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Ofertas Rapidas Yaute</h5>
+            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;">Ofertas Rápidas Yaute</h5>
             <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
             <div id="status-dot" class="status-indicator bg-warning"></div>
         </div>
@@ -275,7 +277,7 @@
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo">
         <div class="ticket-header">
-            <h3>OFERTAS RAPIDAS YAUTE</h3>
+            <h3>OFERTAS RÁPIDAS YAUTE</h3>
             <small id="t-fecha" style="display:block; margin-top:5px;"></small>
         </div>
         <div style="text-align:left; font-size:0.9rem; margin-bottom:12px;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
@@ -328,7 +330,7 @@
                 document.getElementById('entregas-date').value = getISODateString();
                 startSync();
                 
-                // --- LOGICA DE SALIDA DEL SPLASH (AHORA 3 SEGUNDOS) ---
+                // --- LOGICA DE SALIDA DEL SPLASH (3 SEGUNDOS) ---
                 setTimeout(() => {
                     const splash = document.getElementById('splash-screen');
                     splash.style.opacity = '0';
