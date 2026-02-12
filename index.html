@@ -40,7 +40,7 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s;
+            transition: opacity 0.8s ease, visibility 0.8s;
         }
 
         .splash-logo {
@@ -188,7 +188,7 @@
 </head>
 <body>
 
-    <!-- --- NUEVO SPLASH SCREEN --- -->
+    <!-- --- SPLASH SCREEN --- -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas</div>
@@ -328,12 +328,12 @@
                 document.getElementById('entregas-date').value = getISODateString();
                 startSync();
                 
-                // --- LOGICA DE SALIDA DEL SPLASH ---
+                // --- LOGICA DE SALIDA DEL SPLASH (AHORA 3 SEGUNDOS) ---
                 setTimeout(() => {
                     const splash = document.getElementById('splash-screen');
                     splash.style.opacity = '0';
-                    setTimeout(() => { splash.style.visibility = 'hidden'; }, 500);
-                }, 2000); // Muestra el splash por 2 segundos
+                    setTimeout(() => { splash.style.visibility = 'hidden'; }, 800);
+                }, 3000); 
 
                 window.showTab('operaciones', document.querySelector('.tab-btn.active'));
                 window.switchSubTab('sales', document.querySelector('.sub-btn.active'));
