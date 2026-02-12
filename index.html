@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.10</title>
+    <title>Ofertas Rápidas Yaute v10.11</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -191,11 +191,14 @@
         .btn-scan {
             background: #f1f5f9; color: var(--primary); border: 2px dashed #cbd5e1; border-radius: 10px; padding: 10px;
             display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.8rem; font-weight: 700;
-            width: 100%; margin-bottom: 15px; transition: all 0.2s;
+            width: 100%; margin-bottom: 15px; transition: all 0.2s; position: relative;
         }
         .btn-scan:active { background: #e2e8f0; transform: scale(0.98); }
         .btn-scan i { font-size: 1.2rem; color: var(--accent); }
-        .btn-scan.loading { opacity: 0.7; pointer-events: none; }
+        .btn-scan.loading { background: #e2e8f0; color: #64748b; border-color: var(--accent); cursor: not-allowed; }
+        .btn-scan .spinner-border { width: 1rem; height: 1rem; border-width: 0.2em; display: none; }
+        .btn-scan.loading .spinner-border { display: inline-block; }
+        .btn-scan.loading i { display: none; }
     </style>
 </head>
 <body>
@@ -204,7 +207,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.10</div>
+        <div class="splash-version">CONTROL PRO v10.11</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -240,6 +243,7 @@
                 <!-- BOTÓN ESCANEO IA -->
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera"></i>
+                    <div class="spinner-border text-accent me-2" role="status"></div>
                     <span id="scan-text">ESCANEAR ETIQUETA DE ANAQUEL</span>
                 </button>
                 <input type="file" id="input-camera" accept="image/*" capture="environment" style="display: none;">
@@ -343,6 +347,20 @@
             toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
+        // Función para sonido de error (Beep)
+        const playErrorSignal = () => {
+            try {
+                const context = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = context.createOscillator();
+                const gain = context.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(200, context.currentTime);
+                gain.gain.setValueAtTime(0.1, context.currentTime);
+                osc.connect(gain); gain.connect(context.destination);
+                osc.start(); osc.stop(context.currentTime + 0.3);
+            } catch(e) { console.log("Audio not supported"); }
+        };
+
         signInAnonymously(auth);
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -380,19 +398,32 @@
         inputCamera.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+            
             btnScan.classList.add('loading');
-            scanText.innerText = "IA ESCANEANDO ETIQUETA...";
+            scanText.innerText = "IA LEYENDO ETIQUETA...";
+            
             try {
                 const base64Image = await fileToBase64(file);
                 const result = await callGeminiIA(base64Image);
-                if (result) {
+                
+                if (result && (result.productName || result.unitCost)) {
                     document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
                     document.getElementById('in-costo').value = result.unitCost || "";
                     showToast("¡Etiqueta leída!", "success");
                     document.getElementById('in-cantidad').focus();
-                } else { showToast("No se pudo leer", "warning"); }
-            } catch (err) { showToast("Error escaneo", "danger"); } 
-            finally { btnScan.classList.remove('loading'); scanText.innerText = "ESCANEAR ETIQUETA DE ANAQUEL"; inputCamera.value = ""; }
+                } else { 
+                    playErrorSignal();
+                    showToast("No se pudo leer la etiqueta. Intente de nuevo.", "danger"); 
+                }
+            } catch (err) { 
+                playErrorSignal();
+                showToast("Error de conexión con IA.", "danger"); 
+            } 
+            finally { 
+                btnScan.classList.remove('loading'); 
+                scanText.innerText = "ESCANEAR ETIQUETA DE ANAQUEL"; 
+                inputCamera.value = ""; 
+            }
         };
 
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
@@ -403,7 +434,7 @@
 
         const callGeminiIA = async (base64Data, retryCount = 0) => {
             const payload = {
-                contents: [{ role: "user", parts: [{ text: "Extrae NOMBRE DEL PRODUCTO y PRECIO UNITARIO de esta etiqueta. Responde estrictamente en JSON: {'productName': string, 'unitCost': number}." }, { inlineData: { mimeType: "image/png", data: base64Data } }] }],
+                contents: [{ role: "user", parts: [{ text: "Extrae NOMBRE DEL PRODUCTO y PRECIO UNITARIO de esta etiqueta de anaquel. Responde estrictamente en JSON: {'productName': string, 'unitCost': number}. Si no hay precio pon null." }, { inlineData: { mimeType: "image/png", data: base64Data } }] }],
                 generationConfig: { responseMimeType: "application/json" }
             };
             try {
@@ -420,7 +451,7 @@
             }
         };
 
-        // --- MANEJO DE AUTOCOMPLETADO (FIXED) ---
+        // --- MANEJO DE AUTOCOMPLETADO ---
         const auto = (id, boxId, key) => {
             const inp = document.getElementById(id);
             const box = document.getElementById(boxId);
