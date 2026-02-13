@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.52</title>
+    <title>Ofertas Rápidas Yaute v10.55</title>
     
-    <!-- Librerías de confianza -->
+    <!-- Librerías base -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -22,6 +22,7 @@
             --card-radius: 14px;
         }
 
+        /* --- ARREGLO DE ESTRUCTURA Y PANTALLA --- */
         html, body {
             height: 100%;
             margin: 0;
@@ -41,7 +42,8 @@
         main {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 90px;
+            padding: 15px;
+            padding-bottom: 85px; /* Espacio para menú inferior */
         }
 
         /* --- SPLASH SCREEN --- */
@@ -51,7 +53,7 @@
             z-index: 9999;
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; padding: 0 20px; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; }
         .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -59,13 +61,14 @@
         /* --- UI STYLES --- */
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .header-container { display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .app-logo { height: 30px; width: auto; object-fit: contain; }
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 5px solid transparent; }
         .card-status-ok { background-color: #f0fdf4 !important; border-left-color: var(--success); }
         .card-summary { background: var(--primary); color: white; border-left-color: var(--accent); }
         .card-profit { border-left-color: var(--success); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 280px; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
         .tab-content { display: none; }
@@ -102,27 +105,26 @@
         .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; color: #475569; }
         .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
 
-        /* --- TICKET RENDERER (ESTILO TICKET OK.JPEG) --- */
+        /* --- TICKET RENDERER (FORMATO EXACTO) --- */
         #ticket-render { 
-            position: absolute; 
-            top: -20000px; 
-            left: 0;
+            position: fixed; 
+            left: -10000px; 
             width: 380px; 
             background: white; 
             padding: 30px; 
             color: black; 
             font-family: 'Courier New', Courier, monospace; 
         }
-        .ticket-header-img { width: 180px; height: auto; display: block; margin: 0 auto 10px; }
+        .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
         .ticket-brand { text-align: center; font-size: 1.3rem; font-weight: 900; margin: 5px 0; }
         .ticket-datetime { text-align: center; font-size: 1rem; margin-bottom: 15px; }
         .ticket-line-solid { border-top: 3px solid #000; margin: 10px 0; }
         .ticket-line-dashed { border-top: 2px dashed #000; margin: 15px 0; }
         .ticket-client-row { font-size: 1.1rem; margin: 15px 0 25px 0; }
         .ticket-table { width: 100%; font-size: 1rem; border-collapse: collapse; }
-        .ticket-table td { padding: 8px 0; }
-        .ticket-total-row { font-size: 1.4rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 10px; }
-        .ticket-footer { text-align: center; font-size: 0.9rem; color: #666; margin-top: 30px; text-transform: uppercase; }
+        .ticket-table td { padding: 8px 0; vertical-align: top; }
+        .ticket-total-row { font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 15px; }
+        .ticket-footer { text-align: center; font-size: 0.9rem; color: #333; margin-top: 40px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -130,7 +132,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.52</div>
+        <div class="splash-version">CONTROL PRO v10.55</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -152,8 +154,8 @@
         </div>
     </header>
 
-    <main class="container py-3">
-        <!-- PESTAÑA: REGISTRO (UNA MANO) -->
+    <main>
+        <!-- PESTAÑA: REGISTRO -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="row g-2 mb-3">
@@ -226,7 +228,7 @@
         </div>
     </main>
 
-    <!-- TICKET RENDERER (FORMATO IMAGEN) -->
+    <!-- TICKET RENDERER (FORMATO ORIGINAL) -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-header-img">
         <div class="ticket-brand">OFERTAS RAPIDAS YAUTE</div>
@@ -280,7 +282,7 @@
             const toast = document.getElementById('toast-alert');
             if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3500);
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
@@ -295,7 +297,7 @@
         document.getElementById('in-cliente').addEventListener('input', syncPriceIfCristo);
         document.getElementById('in-costo').addEventListener('input', syncPriceIfCristo);
 
-        // --- CÁMARA IA ---
+        // --- CÁMARA ---
         const btnScan = document.getElementById('btn-scan');
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
@@ -342,7 +344,6 @@
             finally { document.getElementById('scan-spinner').classList.add('d-none'); }
         }
 
-        // --- BUSCADORES REGISTRO ---
         const setupAuto = (id, boxId, key) => {
             const inp = document.getElementById(id); const box = document.getElementById(boxId);
             if(!inp || !box) return;
@@ -363,7 +364,6 @@
             };
         };
 
-        // --- FIREBASE CORE ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
             if (u) {
@@ -412,7 +412,7 @@
             const fw = document.getElementById('filter-wrapper');
             const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar en catálogo..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales' || id === 'ganancias') {
                 fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             } else if(id === 'ticketTienda') {
@@ -424,30 +424,13 @@
             renderCatalogList();
         };
 
-        // --- SISTEMA DE INTEGRIDAD Y CASCADA ---
         window.editItem = async (col, id, currentData) => {
-            if (col === 'clients') {
-                const nuevo = prompt("Nuevo nombre del cliente:", currentData.nombre);
-                if (nuevo && nuevo.toUpperCase().trim() !== currentData.nombre) {
-                    const fn = nuevo.toUpperCase().trim();
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clients', id), { nombre: fn });
-                    const salesToUpdate = state.sales.filter(s => s.cliente === currentData.nombre);
-                    for (const s of salesToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { cliente: fn }); }
-                    showToast("Cliente actualizado en cascada");
-                }
-            } else if (col === 'products') {
-                const n = prompt("Nuevo nombre:", currentData.nombre);
-                const c = prompt("Nuevo costo:", currentData.pCosto);
-                const v = prompt("Nuevo precio:", currentData.pVenta);
-                if (n) {
-                    const fn = n.toUpperCase().trim();
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', id), { nombre: fn, pCosto: parseFloat(c) || 0, pVenta: parseFloat(v) || 0 });
-                    if (fn !== currentData.nombre) {
-                        const salesToUpdate = state.sales.filter(s => s.producto === currentData.nombre);
-                        for (const s of salesToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { producto: fn }); }
-                    }
-                    showToast("Producto actualizado");
-                }
+            const nuevo = prompt("Nuevo nombre:", currentData.nombre);
+            if (nuevo) {
+                const fn = nuevo.toUpperCase().trim();
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), { nombre: fn });
+                const salesToUpdate = state.sales.filter(s => col === 'clients' ? s.cliente === currentData.nombre : s.producto === currentData.nombre);
+                for (const s of salesToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [col === 'clients' ? 'cliente' : 'producto']: fn }); }
             }
         };
 
@@ -455,7 +438,7 @@
             const item = state[col].find(x => x.id === id);
             if (!item) return;
             const isUsed = state.sales.some(s => col === 'clients' ? s.cliente === item.nombre : s.producto === item.nombre);
-            if (isUsed) { showToast(`No se puede borrar: tiene ventas registradas`, "danger"); return; }
+            if (isUsed) { showToast(`No se puede eliminar: tiene ventas registradas`, "danger"); return; }
             if (confirm("¿Seguro que desea eliminar este registro?")) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); }
         };
 
@@ -529,8 +512,11 @@
                 const tu = dv.reduce((acc, v) => acc + v.cantidad, 0);
                 list.innerHTML = `<div class="card-custom"><div class="mb-3"><h6 class="m-0 text-uppercase">${document.getElementById('st-store').value}</h6><small class="text-muted">${fd}</small></div><div class="small">${dv.map(i => `<div class="d-flex justify-content-between py-1 border-bottom border-light"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}</div><div class="mt-3 border-top pt-2"><div class="d-flex justify-content-between small text-muted"><span>TOTAL PIEZAS:</span><b>${tu}</b></div><div class="d-flex justify-content-between fw-bold text-primary" style="font-size:1.1rem"><span>COSTO TOTAL:</span><span>$${tc.toFixed(2)}</span></div></div></div>`;
             } else {
-                const s = new Date(document.getElementById('d-start').value + "T00:00:00");
-                const e = new Date(document.getElementById('d-end').value + "T23:59:59");
+                const startEl = document.getElementById('d-start');
+                const endEl = document.getElementById('d-end');
+                if(!startEl || !endEl || !startEl.value || !endEl.value) return;
+                const s = new Date(startEl.value + "T00:00:00");
+                const e = new Date(endEl.value + "T23:59:59");
                 const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
                 let profit = 0; fs.forEach(v => { profit += (v.total - ((v.costo || 0) * v.cantidad)); });
                 list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
@@ -563,18 +549,24 @@
             const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
             if (!filtered.length) return;
+
             const now = new Date();
             const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
+
             document.getElementById('t-cliente-name').innerText = name;
             document.getElementById('t-date-val').innerText = `${fd} ${timeStr}`;
+            
             let total = 0;
             document.getElementById('t-body-items').innerHTML = filtered.map(i => { total += i.total; return `<tr><td style="width: 40px;">${i.cantidad}x</td><td style="text-transform: uppercase;">${i.producto}</td><td style="text-align: right;">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-grand-total').innerText = total.toFixed(2);
+
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
                 canvas.toBlob(async blob => {
                     const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
-                    if (navigator.share) await navigator.share({ files: [file], title: 'Ticket' });
+                    if (navigator.share) {
+                        await navigator.share({ files: [file], title: 'Ticket' });
+                    }
                 }, 'image/png');
             } catch (err) { showToast("Error al generar ticket", "danger"); }
         };
