@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.17</title>
+    <title>Ofertas Rápidas Yaute v10.18</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -75,7 +75,7 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; }
 
-        /* --- CAMERA VIEW STYLES --- */
+        /* --- CAMERA OVERLAY --- */
         #camera-overlay {
             position: fixed; inset: 0; background: #000; z-index: 10000; display: none;
             flex-direction: column; align-items: center; justify-content: center;
@@ -83,36 +83,29 @@
         #camera-video { width: 100%; height: 100%; object-fit: cover; }
         
         .camera-guide {
-            position: absolute; width: 92%; height: 220px;
-            border: 2px solid rgba(255,255,255,0.9); border-radius: 15px;
-            box-shadow: 0 0 0 4000px rgba(0,0,0,0.45); pointer-events: none;
-        }
-        .camera-guide::before {
-            content: "ENCUADRE NOMBRE Y PRECIO GRANDE"; position: absolute; top: -35px; left: 0; right: 0;
-            text-align: center; color: white; font-size: 0.75rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            position: absolute; width: 90%; height: 220px;
+            border: 2px solid #fff; border-radius: 15px;
+            box-shadow: 0 0 0 4000px rgba(0,0,0,0.5); pointer-events: none;
         }
         
         .camera-capture-btn {
-            position: absolute; bottom: 40px; width: 85px; height: 85px;
-            background: white; border: 8px solid rgba(59, 130, 246, 0.4);
-            border-radius: 50%; color: var(--primary); font-size: 1.8rem;
+            position: absolute; bottom: 50px; width: 70px; height: 70px;
+            background: white; border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%; color: var(--primary);
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        .camera-capture-btn:active { transform: scale(0.9); background: #eee; }
 
         .camera-close {
-            position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.4);
-            color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.4rem;
-            display: flex; align-items: center; justify-content: center;
+            position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.5);
+            color: white; border: none; width: 40px; height: 40px; border-radius: 50%;
         }
 
         .btn-scan {
-            background: #eff6ff; color: var(--accent); border: 2px solid #3b82f6; border-radius: 12px; padding: 14px;
-            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; font-weight: 900;
-            width: 100%; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            background: #f1f5f9; color: var(--accent); border: 2px dashed #cbd5e1; border-radius: 12px; padding: 15px;
+            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.85rem; font-weight: 800;
+            width: 100%; margin-bottom: 20px;
         }
-        .btn-scan.processing { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; pointer-events: none; }
+        .btn-scan.processing { background: #e2e8f0; color: #94a3b8; pointer-events: none; }
 
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 20px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
         .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
@@ -127,17 +120,15 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.17</div>
+        <div class="splash-version">CONTROL PRO v10.18</div>
         <div class="splash-loader"></div>
     </div>
 
-    <!-- --- INTERFAZ DE CÁMARA MEJORADA --- -->
+    <!-- --- CÁMARA --- -->
     <div id="camera-overlay">
         <video id="camera-video" autoplay playsinline muted></video>
         <div class="camera-guide"></div>
-        <button id="camera-capture" class="camera-capture-btn">
-            <i class="fas fa-camera"></i>
-        </button>
+        <button id="camera-capture" class="camera-capture-btn"><i class="fas fa-camera fa-2x"></i></button>
         <button id="camera-close" class="camera-close"><i class="fas fa-times"></i></button>
         <canvas id="camera-canvas" style="display:none;"></canvas>
     </div>
@@ -153,7 +144,7 @@
     </header>
 
     <div class="container py-2">
-        <!-- VENTA (Operaciones) -->
+        <!-- VENTA -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -172,13 +163,13 @@
                 <hr class="my-3 opacity-10">
                 
                 <button id="btn-scan" class="btn-scan">
-                    <i class="fas fa-expand"></i>
-                    <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
+                    <i class="fas fa-camera"></i>
+                    <span id="scan-text">TOMAR FOTO A ETIQUETA</span>
                 </button>
 
                 <div class="row g-2 mb-3">
                     <div class="col-9 search-wrapper">
-                        <label class="text-uppercase">Nombre + Presentación</label>
+                        <label class="text-uppercase">Producto (Nombre + Presentación)</label>
                         <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Producto">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
@@ -187,7 +178,7 @@
                         <input type="number" id="in-cantidad" class="form-control text-center" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Costo (Núm. Grande)</label>
+                        <label class="text-uppercase">Costo Unit. (Extraído)</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
@@ -212,20 +203,16 @@
         <div id="tab-control" class="tab-content">
             <div class="sub-nav">
                 <button class="sub-btn active" onclick="window.switchSubTab('sales', this)">Ventas</button>
-                <button class="sub-btn" onclick="window.switchSubTab('ticketTienda', this)">Ticket</button>
-                <button class="sub-btn" onclick="window.switchSubTab('products', this)">Productos</button>
-                <button class="sub-btn" onclick="window.switchSubTab('clients', this)">Clientes</button>
-                <button class="sub-btn" onclick="window.switchSubTab('stores', this)">Tiendas</button>
+                <button class="sub-btn" onclick="window.switchSubTab('products', this)">Catálogo</button>
                 <button class="sub-btn" onclick="window.switchSubTab('totales', this)">Totales</button>
                 <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
             </div>
             <div id="filter-wrapper" class="p-2"></div>
-            <div id="cat-summary" class="px-2"></div>
             <div id="lista-catalogos"></div>
         </div>
     </div>
 
-    <!-- RENDER TICKET -->
+    <!-- TICKET -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo">
         <div class="ticket-header"><h3>OFERTAS RÁPIDAS YAUTE</h3><small id="t-fecha"></small></div>
@@ -306,7 +293,7 @@
             });
         };
 
-        // --- LÓGICA DE CÁMARA A COLOR E IA REFORZADA (v10.17) ---
+        // --- LÓGICA DE ESCANEO REFORZADA (v10.18) ---
         const apiKey = ""; 
         const btnScan = document.getElementById('btn-scan');
         const camOverlay = document.getElementById('camera-overlay');
@@ -318,11 +305,11 @@
         btnScan.onclick = async () => {
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } } 
+                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } 
                 });
                 video.srcObject = stream;
                 camOverlay.style.display = 'flex';
-            } catch (e) { showToast("Error de cámara", "danger"); }
+            } catch (e) { showToast("Error al abrir cámara", "danger"); }
         };
 
         document.getElementById('camera-close').onclick = stopCamera;
@@ -339,57 +326,74 @@
 
         async function processCapture() {
             const ctx = canvas.getContext('2d');
-            canvas.width = 1024; 
-            canvas.height = 768;
+            canvas.width = video.videoWidth || 1024;
+            canvas.height = video.videoHeight || 768;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // ENVIAMOS A COLOR NATURAL (Sin filtros que borren texto)
-            const base64 = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
             
+            const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
             stopCamera();
+            
             btnScan.classList.add('processing');
-            document.getElementById('scan-text').innerText = "IA LEYENDO ETIQUETA...";
+            document.getElementById('scan-text').innerText = "IA ANALIZANDO...";
 
-            const result = await callGeminiIA(base64);
-            if (result) {
-                document.getElementById('in-producto').value = (result.productName || "").toUpperCase().trim();
-                if(result.unitCost) document.getElementById('in-costo').value = parseFloat(result.unitCost).toFixed(2);
-                
-                showToast("Datos extraídos correctamente", "success");
-                document.getElementById('in-cantidad').focus();
-            } else {
+            try {
+                const result = await callGeminiIA(base64);
+                if (result && result.productName) {
+                    document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
+                    if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
+                    showToast("Etiqueta detectada", "success");
+                    document.getElementById('in-cantidad').focus();
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
                 playSignal('error');
-                showToast("No se detectó información. Intente de nuevo.", "warning");
+                showToast("Detección fallida. Verifique enfoque y luz.", "danger");
+            } finally {
+                btnScan.classList.remove('processing');
+                document.getElementById('scan-text').innerText = "TOMAR FOTO A ETIQUETA";
             }
-            btnScan.classList.remove('processing');
-            document.getElementById('scan-text').innerText = "FOTOGRAFIAR ETIQUETA";
         }
 
         async function callGeminiIA(base64, retry = 0) {
-            const sysPrompt = `Actúa como un experto en extracción de datos de anaqueles.
-            La imagen muestra una etiqueta de precio de supermercado.
-            REGLAS DE EXTRACCIÓN:
-            1. El número con el tamaño de fuente MÁS GRANDE es el PRECIO UNITARIO (unitCost).
-            2. El texto ubicado en la esquina SUPERIOR IZQUIERDA es el NOMBRE del producto.
-            3. El texto ubicado en la esquina SUPERIOR DERECHA es la PRESENTACIÓN/EMPAQUE (ej. 1L, 500g, 4 pack).
-            4. Devuelve un objeto JSON con las claves 'productName' (Nombre + Presentación) y 'unitCost' (Número).
-            5. Si no hay precio, devuelve null en unitCost. Responde SOLO el JSON.`;
+            // Instrucción ultra-precisa con esquema JSON forzado
+            const prompt = `Extrae datos de esta etiqueta de anaquel:
+            1. El número más grande es 'unitCost' (número).
+            2. El texto arriba a la izquierda es el nombre.
+            3. El texto arriba a la derecha es la presentación.
+            Combina nombre y presentación en 'productName'.`;
 
             const payload = {
-                contents: [{ role: "user", parts: [{ text: "Lee esta etiqueta de anaquel." }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                systemInstruction: { parts: [{ text: sysPrompt }] },
-                generationConfig: { responseMimeType: "application/json" }
+                contents: [{ 
+                    parts: [
+                        { text: prompt },
+                        { inlineData: { mimeType: "image/jpeg", data: base64 } }
+                    ] 
+                }],
+                generationConfig: { 
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            productName: { type: "STRING" },
+                            unitCost: { type: "NUMBER" }
+                        },
+                        required: ["productName"]
+                    }
+                }
             };
+
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(payload)
                 });
+                
                 if (!res.ok) throw new Error();
                 const data = await res.json();
-                const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                // Limpieza básica por si la IA agrega backticks
-                const cleanJson = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-                return JSON.parse(cleanJson);
+                const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                return content ? JSON.parse(content) : null;
             } catch (e) {
                 if (retry < 3) { 
                     await new Promise(r => setTimeout(r, 1000)); 
@@ -399,7 +403,7 @@
             }
         }
 
-        // --- LÓGICA DE NEGOCIO ORIGINAL ---
+        // --- LÓGICA DE NEGOCIO ---
         const auto = (id, boxId, key) => {
             const inp = document.getElementById(id); const box = document.getElementById(boxId);
             inp.oninput = () => {
@@ -412,10 +416,6 @@
             box.onclick = (e) => {
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val.toUpperCase(); box.classList.add('d-none');
-                if(key === 'products') {
-                    const p = state.products.find(x => (x.nombre||"").toLowerCase() === item.dataset.val.toLowerCase());
-                    if(p) { document.getElementById('in-costo').value = p.pCosto || ""; document.getElementById('in-precio').value = p.pVenta || ""; }
-                }
             };
         };
         auto('in-tienda', 'sug-tienda', 'stores'); auto('in-cliente', 'sug-cliente', 'clients'); auto('in-producto', 'sug-producto', 'products');
@@ -431,9 +431,8 @@
             activeSubTab = id; if (btn) { document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
             const w = document.getElementById('filter-wrapper');
             if (id === 'diezmo') w.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="diezmo-start" class="filter-input" value="${getISODateString()}"></div><div class="col-6"><input type="date" id="diezmo-end" class="filter-input" value="${getISODateString()}"></div><button class="btn btn-sm btn-primary mt-1" onclick="window.renderCatalogList()">CALCULAR</button></div>`;
-            else if (['sales', 'totales', 'ticketTienda'].includes(id)) {
-                const st = [...new Set(state.stores.map(s => s.nombre.toUpperCase()))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
-                w.innerHTML = `<div class="row g-2"><div class="col-6"><select id="filter-store" class="filter-input" onchange="window.renderCatalogList()"><option value="">-- TODAS --</option>${st}</select></div><div class="col-6"><input type="date" id="cat-date" class="filter-input" value="${getISODateString()}" onchange="window.renderCatalogList()"></div></div>`;
+            else if (['sales', 'totales'].includes(id)) {
+                w.innerHTML = `<div class="row g-2"><div class="col-12"><input type="date" id="cat-date" class="filter-input" value="${getISODateString()}" onchange="window.renderCatalogList()"></div></div>`;
             } else w.innerHTML = `<input type="text" id="search-generic" class="filter-input" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             renderCatalogList();
         };
@@ -448,12 +447,9 @@
             if (!vH.length) { list.innerHTML = '<p class="text-center py-4 text-muted small">Sin ventas hoy</p>'; return; }
             const g = vH.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {total: 0, items: []}; acc[c].total += (v.total || 0); acc[c].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(g).map(cli => {
-                const items = g[cli].items; const tEnt = items.every(i => i.entregado); const tPag = items.every(i => i.pagado);
-                return `<div class="card-custom ${tEnt && tPag ? 'card-entrega-completo' : tPag ? 'card-entrega-pagado' : tEnt ? 'card-entrega-enviado' : ''}">
-                    <div class="d-flex justify-content-between mb-2">
-                        <div><span class="fw-bold small text-uppercase">${cli}</span></div>
-                        <button class="btn btn-sm btn-success rounded-pill" onclick="window.genTicket('${cli}')">TICKET</button>
-                    </div>
+                const items = g[cli].items;
+                return `<div class="card-custom">
+                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold small text-uppercase">${cli}</span><button class="btn btn-sm btn-success rounded-pill" onclick="window.genTicket('${cli}')">TICKET</button></div>
                     <div class="small">${items.map(i => `<div>${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold pt-1 border-top mt-1">$${g[cli].total.toFixed(2)}</div>
                 </div>`;
@@ -464,9 +460,8 @@
             const l = document.getElementById('lista-catalogos');
             if(!l) return;
             const fD = getLocalDateString(new Date((document.getElementById('cat-date')?.value || getISODateString()) + "T12:00:00"));
-            const storeF = document.getElementById('filter-store')?.value.toUpperCase() || "";
             if (activeSubTab === 'sales') {
-                let dv = state.sales.filter(v => v.fechaStr === fD); if (storeF) dv = dv.filter(v => (v.tienda || "").toUpperCase() === storeF);
+                let dv = state.sales.filter(v => v.fechaStr === fD);
                 l.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1 small"><div><b>${v.cantidad}x ${v.producto}</b><br><span class="text-muted">${v.tienda} • ${v.cliente}</span></div><div class="fw-bold">$${v.total.toFixed(2)}</div><button class="btn text-danger btn-sm" onclick="window.del('sales', '${v.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
             } else if (activeSubTab === 'diezmo') {
                 const sd = new Date((document.getElementById('diezmo-start')?.value || getISODateString()) + "T00:00:00");
@@ -474,10 +469,6 @@
                 const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= sd && d <= ed; });
                 let tC = 0, tV = 0; fs.forEach(v => { tC += ((v.costo||0)*v.cantidad); tV += v.total; });
                 l.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${((tV-tC)*0.1).toFixed(2)}</h3><div class="small">Diezmo Acumulado (10%)</div></div>`;
-            } else if (['products', 'clients', 'stores'].includes(activeSubTab)) {
-                const search = document.getElementById('search-generic')?.value.toLowerCase() || "";
-                let data = [...state[activeSubTab]].filter(i => (i.nombre || "").toLowerCase().includes(search)).sort((a,b) => (a.nombre||"").localeCompare(b.nombre||""));
-                l.innerHTML = data.map(i => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1 small"><b>${i.nombre}</b><button class="btn text-danger btn-sm" onclick="window.del('${activeSubTab}', '${i.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
             }
         };
 
