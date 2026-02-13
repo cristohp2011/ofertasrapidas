@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.31</title>
+    <title>Ofertas Rápidas Yaute v10.35</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,7 +25,7 @@
         body { 
             background-color: var(--bg); 
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
             user-select: none;
             color: #1e293b;
         }
@@ -38,7 +38,7 @@
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; }
-        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -48,62 +48,53 @@
         .app-logo { height: 30px; width: auto; object-fit: contain; }
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid transparent; }
+        .card-status-ok { background-color: #f0fdf4 !important; border-left-color: var(--success); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; font-size: 0.9rem; animation: slideDown 0.3s ease; }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; font-size: 0.9rem; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .form-control { padding: 0.6rem 0.8rem; font-size: 0.95rem; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #fff; }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; }
+        .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #fff; }
+        label.text-uppercase { font-size: 0.6rem; margin-bottom: 3px; font-weight: 800; color: #64748b; display: block; }
+
+        .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        /* --- BOTÓN CÁMARA INTEGRADO --- */
-        .btn-inline-cam {
-            background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px;
-            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-        }
-        .btn-inline-cam.loading { color: #94a3b8; background: #f1f5f9; }
+        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
+        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 600; }
+        .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* --- CÁMARA IN-APP --- */
-        #cam-container {
-            position: fixed; inset: 0; background: #000; z-index: 10010; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
+        #cam-container { position: fixed; inset: 0; background: #000; z-index: 10010; display: none; flex-direction: column; align-items: center; justify-content: center; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
-        .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; align-items: center; }
+        .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 75px; height: 75px; background: #fff; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; }
-        .btn-cam-close { position: absolute; top: 40px; right: 20px; color: #fff; background: rgba(0,0,0,0.4); border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem; }
 
-        /* --- BUSCADOR / SUGERENCIAS --- */
-        .search-wrapper { position: relative; }
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
-        .sug-item:active { background: #f8fafc; }
 
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 25px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
-        .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
+        .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
-        <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.31</div>
+        <div class="splash-title">Yaute Rápidas</div>
+        <div class="splash-version">CONTROL PRO v10.35</div>
         <div class="splash-loader"></div>
     </div>
 
-    <!-- INTERFAZ DE CÁMARA (SIN MARCO) -->
     <div id="cam-container">
         <video id="cam-preview" autoplay playsinline muted></video>
-        <button id="btn-cam-cancel" class="btn-cam-close"><i class="fas fa-times"></i></button>
+        <button id="btn-cam-cancel" class="btn-cam-close" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:45px; height:45px;"><i class="fas fa-times"></i></button>
         <div class="cam-controls">
             <button id="btn-do-capture" class="btn-capture"></button>
         </div>
@@ -114,23 +105,23 @@
 
     <header>
         <div class="header-container">
-            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem;">Ofertas Rápidas Yaute</h5>
+            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem;">Yaute Rápidas</h5>
             <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
-            <div id="status-dot" class="status-indicator bg-warning"></div>
+            <div id="status-dot" class="status-indicator bg-warning" style="width:10px; height:10px; border-radius:50%;"></div>
         </div>
     </header>
 
     <div class="container py-3">
+        <!-- PESTAÑA: REGISTRO -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
-                <!-- FILA 1: TIENDA Y CLIENTE -->
                 <div class="row g-2 mb-3">
-                    <div class="col-6 search-wrapper">
+                    <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Tienda</label>
                         <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Walmart">
                         <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
-                    <div class="col-6 search-wrapper">
+                    <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Cliente</label>
                         <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
                         <div id="sug-cliente" class="sug-box d-none"></div>
@@ -139,27 +130,24 @@
 
                 <hr class="my-3 opacity-25">
                 
-                <!-- FILA 2: SCANNER, PRODUCTO Y CANTIDAD (MAX 2 CIFRAS) -->
                 <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-2">
+                        <label class="text-uppercase">Cant.</label>
+                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold px-1" value="1" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2)">
+                    </div>
+                    <div class="col" style="position:relative">
+                        <label class="text-uppercase">PRODUCTO</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Escriba o use cámara">
+                        <div id="sug-producto" class="sug-box d-none"></div>
+                    </div>
                     <div class="col-auto">
-                        <label class="text-uppercase">IA</label>
                         <button id="btn-scan" class="btn-inline-cam">
                             <i class="fas fa-camera"></i>
                             <i class="fas fa-spinner fa-spin d-none" id="scan-spinner"></i>
                         </button>
                     </div>
-                    <div class="col search-wrapper">
-                        <label class="text-uppercase">Producto + Presentación</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Escriba o use cámara">
-                        <div id="sug-producto" class="sug-box d-none"></div>
-                    </div>
-                    <div class="col-2">
-                        <label class="text-uppercase">Cant.</label>
-                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold px-1" value="1" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2)">
-                    </div>
                 </div>
 
-                <!-- FILA 3: COSTO Y PRECIO VENTA -->
                 <div class="row g-2 mb-4">
                     <div class="col-6">
                         <label class="text-uppercase">Costo (Anaquel)</label>
@@ -170,32 +158,46 @@
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                
                 <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow" style="border-radius: 12px;">GUARDAR REGISTRO</button>
             </div>
         </div>
 
-        <!-- REPARTO -->
+        <!-- PESTAÑA: REPARTO -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-3 text-center mb-3">
-                <input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="renderEntregas()">
+                <input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()">
             </div>
             <div id="lista-entregas"></div>
         </div>
 
+        <!-- PESTAÑA: CONTROL -->
         <div id="tab-control" class="tab-content">
-            <div id="lista-catalogos" class="px-1"></div>
+            <div class="sub-nav">
+                <button class="sub-btn active" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn" id="btn-sub-store" onclick="switchSubTab('ticketTienda', this)">Ticket Tienda</button>
+                <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
+            </div>
+            <div id="filter-wrapper" class="mb-3"></div>
+            <div id="lista-catalogos"></div>
         </div>
     </div>
 
+    <!-- TICKET RENDER -->
+    <div id="ticket-render">
+        <img src="logo.png" alt="Logo" class="ticket-logo">
+        <div id="t-header" style="font-weight:800; border-top:1px solid #000; padding-top:10px; margin-bottom:10px; text-transform:uppercase;"></div>
+        <table id="t-items" style="width:100%; font-size:0.85rem;"></table>
+        <div id="t-total" style="font-weight:900; border-top:1px dashed #000; margin-top:10px; padding-top:5px;"></div>
+    </div>
+
+    <!-- NAVEGACIÓN PRINCIPAL -->
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-camera-retro"></i>Registro</button>
-        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-shipping-fast"></i>Reparto</button>
-        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Historial</button>
+        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
+        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
+        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
     <script type="module">
-        // --- API KEY CONFIGURADA ---
         const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -217,141 +219,101 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
-        
+        let activeSubTab = 'sales';
+
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
+            if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>${msg}`;
-            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4000);
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
-        // --- LÓGICA DE CÁMARA (SIN MARCO NI ZOOM) ---
+        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
+
+        // --- CÁMARA ---
         const btnScan = document.getElementById('btn-scan');
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
-        const btnDoCapture = document.getElementById('btn-do-capture');
-        const btnCamCancel = document.getElementById('btn-cam-cancel');
-        const scanSpinner = document.getElementById('scan-spinner');
-        const camIcon = btnScan.querySelector('.fa-camera');
-        
         let stream = null;
 
         btnScan.onclick = async () => {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } 
-                });
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
                 camPreview.srcObject = stream;
                 camContainer.style.display = 'flex';
-            } catch (e) { showToast("Error al activar cámara", "danger"); }
+            } catch (e) { showToast("Error de cámara", "danger"); }
         };
 
-        btnCamCancel.onclick = stopCam;
+        document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
-        btnDoCapture.onclick = () => {
+        document.getElementById('btn-do-capture').onclick = () => {
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = camPreview.videoWidth;
-            camCanvas.height = camPreview.videoHeight;
+            camCanvas.width = camPreview.videoWidth; camCanvas.height = camPreview.videoHeight;
             ctx.drawImage(camPreview, 0, 0);
-            const base64 = camCanvas.toDataURL('image/jpeg', 0.85).split(',')[1];
-            stopCam();
+            const base64 = camCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            if(stream) stream.getTracks().forEach(t => t.stop());
+            camContainer.style.display = 'none';
             processIA(base64);
         };
 
-        function stopCam() {
-            if (stream) stream.getTracks().forEach(t => t.stop());
-            camContainer.style.display = 'none';
-        }
-
         async function processIA(base64) {
-            btnScan.classList.add('loading');
-            camIcon.classList.add('d-none');
-            scanSpinner.classList.remove('d-none');
-
+            document.getElementById('scan-spinner').classList.remove('d-none');
             try {
-                const prompt = "Extrae unitCost (número más grande) y productName (combina nombre arriba izq con presentación arriba der). JSON: {'productName': string, 'unitCost': number}";
+                const prompt = "Extrae unitCost (número grande) y productName (texto arriba izq + der). JSON: {'productName': string, 'unitCost': number}";
                 const payload = {
                     contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                    generationConfig: { 
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: { productName: { type: "STRING" }, unitCost: { type: "NUMBER" } },
-                            required: ["productName"]
-                        }
-                    }
+                    generationConfig: { responseMimeType: "application/json" }
                 };
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
-                if (!res.ok) throw new Error();
                 const data = await res.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
-                
-                if (result && result.productName) {
-                    document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
-                    if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("Etiqueta capturada");
-                    document.getElementById('in-cantidad').focus();
-                }
-            } catch (err) {
-                showToast("Fallo de lectura. Reintente.", "danger");
-            } finally {
-                btnScan.classList.remove('loading');
-                camIcon.classList.remove('d-none');
-                scanSpinner.classList.add('d-none');
-            }
+                document.getElementById('in-producto').value = result.productName.toUpperCase();
+                document.getElementById('in-costo').value = result.unitCost;
+                showToast("Etiqueta leída");
+            } catch (e) { showToast("No se leyó la etiqueta", "danger"); }
+            finally { document.getElementById('scan-spinner').classList.add('d-none'); }
         }
 
-        // --- BUSCADOR DE TIENDAS Y CLIENTES (RESTAURADO) ---
+        // --- BUSCADORES ---
         const setupAuto = (id, boxId, key) => {
-            const inp = document.getElementById(id);
-            const box = document.getElementById(boxId);
+            const inp = document.getElementById(id); const box = document.getElementById(boxId);
             if(!inp || !box) return;
-
             inp.oninput = () => {
-                const val = inp.value.toUpperCase().trim();
+                const val = inp.value.toUpperCase();
                 if(!val) { box.classList.add('d-none'); return; }
-                const matches = (state[key] || []).filter(x => (x.nombre || '').toUpperCase().includes(val)).slice(0, 5);
-                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre}</div>`).join('');
-                box.classList.toggle('d-none', matches.length === 0);
+                const ms = (state[key] || []).filter(x => (x.nombre || '').toUpperCase().includes(val)).slice(0, 5);
+                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre}</div>`).join('');
+                box.classList.toggle('d-none', ms.length === 0);
             };
-
             box.onclick = (e) => {
-                const item = e.target.closest('.sug-item');
-                if(!item) return;
-                inp.value = item.dataset.val;
-                box.classList.add('d-none');
-                if(key === 'products') {
-                    const p = state.products.find(x => x.nombre === item.dataset.val);
-                    if(p) { document.getElementById('in-costo').value = p.pCosto; document.getElementById('in-precio').value = p.pVenta; }
-                }
+                const item = e.target.closest('.sug-item'); if(!item) return;
+                inp.value = item.dataset.val; box.classList.add('d-none');
             };
         };
 
-        // --- FUNCIONES CORE ---
+        // --- FIREBASE ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 document.getElementById('status-dot').className = 'status-indicator bg-success';
-                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                document.getElementById('entregas-date').value = getISODate();
                 startSync();
-                setTimeout(() => { document.getElementById('splash-screen').style.opacity = '0'; setTimeout(() => document.getElementById('splash-screen').style.visibility = 'hidden', 800); }, 2000);
+                switchSubTab('sales', document.getElementById('btn-sub-sales'));
+                setTimeout(() => { document.getElementById('splash-screen').style.visibility = 'hidden'; }, 2000);
             }
         });
 
         const startSync = () => {
-            const cols = ['sales', 'clients', 'stores', 'products'];
-            cols.forEach(n => {
+            ['sales', 'clients', 'stores', 'products'].forEach(n => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    if(n === 'sales') renderEntregas();
+                    renderEntregas(); renderCatalogList();
                 });
             });
-            setupAuto('in-tienda', 'sug-tienda', 'stores');
-            setupAuto('in-cliente', 'sug-cliente', 'clients');
-            setupAuto('in-producto', 'sug-producto', 'products');
+            setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
         };
 
         window.showTab = (id, btn) => {
@@ -361,27 +323,140 @@
             if(btn) btn.classList.add('active');
         };
 
+        window.switchSubTab = (id, btn) => {
+            activeSubTab = id;
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            const fw = document.getElementById('filter-wrapper');
+            
+            const storesOptions = [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
+
+            if(id === 'sales') {
+                fw.innerHTML = `
+                    <div class="row g-2">
+                        <div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"></div>
+                        <div class="col-6">
+                            <select id="filter-store" class="form-select" onchange="window.renderCatalogList()">
+                                <option value="">-- TODAS TIENDAS --</option>${storesOptions}
+                            </select>
+                        </div>
+                        <div class="col-6"><input type="text" id="filter-client" class="form-control" placeholder="Buscar Cliente..." oninput="window.renderCatalogList()"></div>
+                    </div>`;
+            } else if(id === 'ticketTienda') {
+                fw.innerHTML = `
+                    <div class="row g-2">
+                        <div class="col-6"><input type="date" id="st-date" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"></div>
+                        <div class="col-6">
+                            <select id="st-store" class="form-select" onchange="window.renderCatalogList()">
+                                <option value="">-- ELIGE TIENDA --</option>${storesOptions}
+                            </select>
+                        </div>
+                    </div>`;
+            } else {
+                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"></div>`;
+            }
+            renderCatalogList();
+        };
+
+        window.toggleStatus = async (id, field, val) => {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { [field]: val });
+        };
+
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas');
             if(!list) return;
-            const dateInput = document.getElementById('entregas-date').value;
-            const targetDate = new Date(dateInput + "T12:00:00").toLocaleDateString('es-MX');
+            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            const grouped = filtered.reduce((acc, v) => { 
-                const c = v.cliente || "GENERAL"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
-                acc[c].t += v.total; acc[c].items.push(v); return acc; 
+            if(!filtered.length) { list.innerHTML = '<div class="text-center py-5 opacity-40">Sin pedidos</div>'; return; }
+            
+            const grouped = filtered.reduce((acc, v) => {
+                const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]};
+                acc[c].t += v.total; acc[c].items.push(v); return acc;
             }, {});
-            list.innerHTML = Object.keys(grouped).map(cli => `
-                <div class="card-custom">
-                    <div class="d-flex justify-content-between mb-3 align-items-center">
-                        <span class="fw-bold text-uppercase">${cli}</span> 
-                        <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button>
+
+            list.innerHTML = Object.keys(grouped).map(cli => {
+                const items = grouped[cli].items;
+                const allDone = items.every(i => i.entregado && i.pagado);
+                return `<div class="card-custom ${allDone ? 'card-status-ok' : ''}">
+                    <div class="d-flex justify-content-between mb-2"><b>${cli}</b> <button class="btn btn-sm btn-success rounded-pill" onclick="window.shareTicket('${cli}', 'CLIENTE')"><i class="fab fa-whatsapp"></i></button></div>
+                    <div class="small">
+                        ${items.map(i => `
+                            <div class="d-flex align-items-center gap-2 mb-2 border-bottom pb-1">
+                                <div class="flex-grow-1">${i.cantidad}x ${i.producto}</div>
+                                <div class="d-flex gap-2">
+                                    <input type="checkbox" ${i.entregado ? 'checked' : ''} onclick="window.toggleStatus('${i.id}', 'entregado', this.checked)"> <i class="fas fa-truck-loading opacity-50"></i>
+                                    <input type="checkbox" ${i.pagado ? 'checked' : ''} onclick="window.toggleStatus('${i.id}', 'pagado', this.checked)"> <i class="fas fa-dollar-sign opacity-50"></i>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
-                    <div class="small fw-medium">${grouped[cli].items.map(i => `<div class="mb-1">⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold pt-2 border-top mt-2 text-primary">$${grouped[cli].t.toFixed(2)}</div>
-                </div>
-            `).join('') || '<div class="text-center py-5 opacity-40">Sin registros</div>';
+                    <div class="text-end fw-bold text-primary mt-1">$${grouped[cli].t.toFixed(2)}</div>
+                </div>`;
+            }).join('');
         };
+
+        window.renderCatalogList = () => {
+            const list = document.getElementById('lista-catalogos');
+            if(!list) return;
+            
+            if(activeSubTab === 'sales') {
+                const dateEl = document.getElementById('hist-date');
+                const storeEl = document.getElementById('filter-store');
+                const clientEl = document.getElementById('filter-client');
+                if(!dateEl) return;
+                
+                const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
+                let dv = state.sales.filter(s => s.fechaStr === fd);
+                
+                if(storeEl && storeEl.value) dv = dv.filter(s => s.tienda === storeEl.value);
+                if(clientEl && clientEl.value) dv = dv.filter(s => s.cliente.includes(clientEl.value.toUpperCase()));
+
+                list.innerHTML = dv.map(v => `
+                    <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
+                        <div class="small"><b>${v.cantidad}x ${v.producto}</b><br><span class="opacity-50">${v.tienda} • ${v.cliente}</span></div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="fw-bold text-primary">$${v.total.toFixed(2)}</span>
+                            <button class="btn btn-sm text-danger" onclick="window.delSale('${v.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('') || '<p class="text-center py-5 opacity-40">Sin resultados</p>';
+
+            } else if(activeSubTab === 'ticketTienda') {
+                const dateEl = document.getElementById('st-date');
+                const storeEl = document.getElementById('st-store');
+                if(!dateEl || !storeEl || !storeEl.value) { list.innerHTML = '<p class="text-center py-5 opacity-40">Seleccione una tienda</p>'; return; }
+                
+                const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
+                const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === storeEl.value);
+                
+                if(!dv.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">No hay compras en esta tienda hoy</p>'; return; }
+                
+                const total = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
+                list.innerHTML = `
+                    <div class="card-custom">
+                        <div class="d-flex justify-content-between mb-3 align-items-center">
+                            <div><h6 class="m-0">${storeEl.value}</h6><small>${fd}</small></div>
+                            <button class="btn btn-sm btn-dark" onclick="window.shareTicket('${storeEl.value}', 'TIENDA')">GENERAR TICKET</button>
+                        </div>
+                        <div class="small">
+                            ${dv.map(i => `<div class="d-flex justify-content-between"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}
+                        </div>
+                        <div class="text-end fw-bold pt-2 border-top mt-2">COSTO TOTAL: $${total.toFixed(2)}</div>
+                    </div>`;
+
+            } else {
+                const startEl = document.getElementById('d-start');
+                const endEl = document.getElementById('d-end');
+                if(!startEl || !endEl) return;
+                const s = new Date(startEl.value + "T00:00:00");
+                const e = new Date(endEl.value + "T23:59:59");
+                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
+                let profit = 0; fs.forEach(v => { profit += (v.total - ((v.costo || 0) * v.cantidad)); });
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+            }
+        };
+
+        window.delSale = async (id) => { if(confirm("¿Eliminar registro?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); };
 
         document.getElementById('btn-save').onclick = async () => {
             const data = {
@@ -392,34 +467,51 @@
                 costo: parseFloat(document.getElementById('in-costo').value) || 0,
                 precio: parseFloat(document.getElementById('in-precio').value) || 0,
                 fechaStr: new Date().toLocaleDateString('es-MX'),
-                total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0)
+                total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0),
+                entregado: false, pagado: false
             };
             if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos", "danger");
-            
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                const checkAndAdd = async (col, val) => {
-                    if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
-                };
-                await checkAndAdd('stores', data.tienda);
-                await checkAndAdd('clients', data.cliente);
-                
-                showToast("¡Venta guardada!");
+                const ck = async (col, val) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val }); };
+                await ck('stores', data.tienda); await ck('clients', data.cliente);
+                showToast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { showToast("Error al guardar", "danger"); }
+            } catch(e) { showToast("Error de guardado", "danger"); }
         };
 
-        window.shareTicket = async (cli) => {
-            document.getElementById('t-cliente').innerText = "CLIENTE: " + cli.toUpperCase();
-            const filtered = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === new Date().toLocaleDateString('es-MX'));
+        window.shareTicket = async (name, type) => {
+            const header = document.getElementById('t-header');
+            const itemsTable = document.getElementById('t-items');
+            const totalEl = document.getElementById('t-total');
+            
+            header.innerText = `${type}: ${name}`;
+            
+            const dateStr = (type === 'CLIENTE') ? new Date().toLocaleDateString('es-MX') : document.getElementById('st-date').value;
+            const fd = (type === 'CLIENTE') ? dateStr : new Date(dateStr + "T12:00:00").toLocaleDateString('es-MX');
+
+            let filtered = [];
             let total = 0;
-            document.getElementById('t-items').innerHTML = filtered.map(i => {
-                total += i.total;
-                return `<tr><td style="text-align:left; padding:5px 0;">${i.cantidad}x ${i.producto}</td><td style="text-align:right;">$${i.total.toFixed(2)}</td></tr>`;
-            }).join('');
+
+            if(type === 'CLIENTE') {
+                filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
+                itemsTable.innerHTML = filtered.map(i => {
+                    total += i.total;
+                    return `<tr><td>${i.cantidad}x ${i.producto}</td><td class="text-end">$${i.total.toFixed(2)}</td></tr>`;
+                }).join('');
+                totalEl.innerText = "TOTAL: $" + total.toFixed(2);
+            } else {
+                filtered = state.sales.filter(s => s.tienda === name && s.fechaStr === fd);
+                itemsTable.innerHTML = filtered.map(i => {
+                    total += (i.costo * i.cantidad);
+                    return `<tr><td>${i.cantidad}x ${i.producto}</td><td class="text-end">$${(i.costo * i.cantidad).toFixed(2)}</td></tr>`;
+                }).join('');
+                totalEl.innerText = "TOTAL COMPRA: $" + total.toFixed(2);
+            }
+
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3 });
             canvas.toBlob(blob => {
-                const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
+                const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
                 if(navigator.share) navigator.share({ files: [file] });
             });
         };
