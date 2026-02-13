@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.26</title>
+    <title>Ofertas Rápidas Yaute v10.27</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -38,7 +38,7 @@
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -67,9 +67,12 @@
         .btn-scan {
             background: #f0f9ff; color: var(--accent); border: 2px solid #3b82f6; border-radius: 15px; padding: 18px;
             display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1rem; font-weight: 900;
-            width: 100%; margin-bottom: 20px;
+            width: 100%; margin-bottom: 20px; transition: all 0.2s;
         }
         .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; cursor: wait; pointer-events: none; }
+        .btn-scan .fa-spinner { display: none; }
+        .btn-scan.loading .fa-spinner { display: inline-block; }
+        .btn-scan.loading .fa-camera { display: none; }
 
         .search-wrapper { position: relative; }
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 5px; border: 1px solid #f1f5f9; }
@@ -85,7 +88,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.26</div>
+        <div class="splash-version">CONTROL PRO v10.27</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -117,8 +120,10 @@
 
                 <hr class="my-3 opacity-25">
                 
+                <!-- BOTÓN PRINCIPAL DE ESCANEO CON INDICADOR -->
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera fa-lg"></i>
+                    <i class="fas fa-spinner fa-spin fa-lg"></i>
                     <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
                 </button>
                 <input type="file" id="input-file" accept="image/*" capture="environment" style="display: none;">
@@ -134,11 +139,11 @@
                         <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Costo (Anaquel)</label>
+                        <label class="text-uppercase">Costo (IA)</label>
                         <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Precio de Venta</label>
+                        <label class="text-uppercase">Venta</label>
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
@@ -166,7 +171,7 @@
 
     <script type="module">
         // ==========================================
-        // --- PEGA TU API KEY DE GOOGLE AQUÍ (LÍNEA 174) ---
+        // --- PEGA TU API KEY DE GOOGLE AQUÍ (LÍNEA 175) ---
         const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
         // ==========================================
 
@@ -203,7 +208,7 @@
 
         btnScan.onclick = () => {
             if (!apiKey) {
-                showToast("Falta API KEY. Consíguela en Google AI Studio.", "danger");
+                showToast("Falta API KEY. Pégala en el código.", "danger");
                 return;
             }
             inputFile.click();
@@ -212,20 +217,24 @@
         inputFile.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            // ACTIVAR INDICADOR DE CARGA
             btnScan.classList.add('loading');
-            scanText.innerText = "IA LEYENDO... ESPERE";
+            scanText.innerText = "IA ANALIZANDO... ESPERE";
+
             try {
                 const base64 = await fileToBase64(file);
                 const result = await callGeminiIA(base64);
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("¡Etiqueta identificada!");
+                    showToast("¡Etiqueta identificada!", "success");
                     document.getElementById('in-cantidad').focus();
                 } else { throw new Error(); }
             } catch (err) {
                 showToast("Fallo de lectura. Revisa la luz o tu API Key.", "danger");
             } finally {
+                // DESACTIVAR INDICADOR DE CARGA
                 btnScan.classList.remove('loading');
                 scanText.innerText = "FOTOGRAFIAR ETIQUETA";
                 inputFile.value = "";
@@ -233,10 +242,21 @@
         };
 
         async function callGeminiIA(base64) {
-            const prompt = `Analiza la etiqueta: unitCost es el número más grande. productName es texto arriba izq + arriba der. JSON: {"productName": "string", "unitCost": number}`;
+            const prompt = `Extrae de esta etiqueta de anaquel: 
+            1. unitCost: el número más grande. 
+            2. productName: combina el texto de arriba a la izquierda con el de arriba a la derecha. 
+            Responde JSON: {"productName": "string", "unitCost": number}`;
+
             const payload = {
                 contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                generationConfig: { responseMimeType: "application/json" }
+                generationConfig: { 
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: { productName: { type: "STRING" }, unitCost: { type: "NUMBER" } },
+                        required: ["productName"]
+                    }
+                }
             };
             const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
@@ -252,6 +272,7 @@
             reader.onload = () => resolve(reader.result.split(',')[1]);
         });
 
+        // --- FUNCIONES CORE ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
             if (u) {
@@ -281,7 +302,8 @@
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas');
             if(!list) return;
-            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const dateInput = document.getElementById('entregas-date').value;
+            const targetDate = new Date(dateInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "GENERAL"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
@@ -296,7 +318,7 @@
                     <div class="small fw-medium">${grouped[cli].items.map(i => `<div class="mb-1">⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold pt-2 border-top mt-2 text-primary" style="font-size: 1.1rem;">$${grouped[cli].t.toFixed(2)}</div>
                 </div>
-            `).join('') || '<div class="text-center py-5 opacity-40">No hay registros</div>';
+            `).join('') || '<div class="text-center py-5 opacity-40">Sin registros para hoy</div>';
         };
 
         document.getElementById('btn-save').onclick = async () => {
@@ -315,9 +337,10 @@
             btn.disabled = true;
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                showToast("¡Guardado!");
+                showToast("¡Venta guardada!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { showToast("Error de conexión", "danger"); }
+                document.getElementById('in-producto').focus();
+            } catch(e) { showToast("Error", "danger"); }
             finally { btn.disabled = false; }
         };
 
