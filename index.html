@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.27</title>
+    <title>Ofertas Rápidas Yaute v10.28</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Librería para el ajuste de márgenes (Recorte) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     
     <style>
         :root {
@@ -74,6 +78,15 @@
         .btn-scan.loading .fa-spinner { display: inline-block; }
         .btn-scan.loading .fa-camera { display: none; }
 
+        /* --- CROPPER OVERLAY --- */
+        #crop-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 10005; display: none;
+            flex-direction: column; align-items: center; padding-top: 40px;
+        }
+        .crop-container { width: 90%; height: 60vh; background: #111; overflow: hidden; border-radius: 12px; }
+        #crop-image { max-width: 100%; display: block; }
+        .crop-footer { width: 100%; display: flex; gap: 15px; padding: 25px; justify-content: center; }
+
         .search-wrapper { position: relative; }
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 5px; border: 1px solid #f1f5f9; }
         .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
@@ -88,8 +101,20 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.27</div>
+        <div class="splash-version">CONTROL PRO v10.28</div>
         <div class="splash-loader"></div>
+    </div>
+
+    <!-- PANTALLA DE RECORTE / AJUSTE DE MÁRGENES -->
+    <div id="crop-overlay">
+        <h6 class="text-white mb-3 fw-bold">AJUSTA LOS MÁRGENES A LA ETIQUETA</h6>
+        <div class="crop-container">
+            <img id="crop-image">
+        </div>
+        <div class="crop-footer">
+            <button id="btn-crop-cancel" class="btn btn-outline-light rounded-pill px-4">CANCELAR</button>
+            <button id="btn-crop-confirm" class="btn btn-primary rounded-pill px-4 fw-bold">LEER ETIQUETA</button>
+        </div>
     </div>
 
     <div id="toast-alert"></div>
@@ -120,7 +145,6 @@
 
                 <hr class="my-3 opacity-25">
                 
-                <!-- BOTÓN PRINCIPAL DE ESCANEO CON INDICADOR -->
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera fa-lg"></i>
                     <i class="fas fa-spinner fa-spin fa-lg"></i>
@@ -171,7 +195,7 @@
 
     <script type="module">
         // ==========================================
-        // --- PEGA TU API KEY DE GOOGLE AQUÍ (LÍNEA 175) ---
+        // --- API KEY CONFIGURADA (LÍNEA 175) ---
         const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
         // ==========================================
 
@@ -194,6 +218,7 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { clients: [], products: [], stores: [], sales: [] };
+        let cropper = null;
         
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
@@ -205,25 +230,58 @@
         const btnScan = document.getElementById('btn-scan');
         const inputFile = document.getElementById('input-file');
         const scanText = document.getElementById('scan-text');
+        
+        const cropOverlay = document.getElementById('crop-overlay');
+        const cropImage = document.getElementById('crop-image');
+        const btnCropConfirm = document.getElementById('btn-crop-confirm');
+        const btnCropCancel = document.getElementById('btn-crop-cancel');
 
         btnScan.onclick = () => {
             if (!apiKey) {
-                showToast("Falta API KEY. Pégala en el código.", "danger");
+                showToast("Falta API KEY en el código.", "danger");
                 return;
             }
             inputFile.click();
         };
 
-        inputFile.onchange = async (e) => {
+        // PASO 1: Al tomar la foto, abrir el editor de márgenes
+        inputFile.onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            // ACTIVAR INDICADOR DE CARGA
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                cropImage.src = event.target.result;
+                cropOverlay.style.display = 'flex';
+                
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(cropImage, {
+                    viewMode: 1,
+                    autoCropArea: 0.8,
+                    dragMode: 'move',
+                    background: false
+                });
+            };
+            reader.readAsDataURL(file);
+        };
+
+        btnCropCancel.onclick = () => {
+            cropOverlay.style.display = 'none';
+            inputFile.value = "";
+        };
+
+        // PASO 2: Al confirmar márgenes, procesar con IA
+        btnCropConfirm.onclick = async () => {
+            if (!cropper) return;
+            
+            const canvas = cropper.getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 });
+            const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+            
+            cropOverlay.style.display = 'none';
             btnScan.classList.add('loading');
             scanText.innerText = "IA ANALIZANDO... ESPERE";
 
             try {
-                const base64 = await fileToBase64(file);
                 const result = await callGeminiIA(base64);
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
@@ -232,9 +290,8 @@
                     document.getElementById('in-cantidad').focus();
                 } else { throw new Error(); }
             } catch (err) {
-                showToast("Fallo de lectura. Revisa la luz o tu API Key.", "danger");
+                showToast("Detección fallida. Ajuste más los márgenes.", "danger");
             } finally {
-                // DESACTIVAR INDICADOR DE CARGA
                 btnScan.classList.remove('loading');
                 scanText.innerText = "FOTOGRAFIAR ETIQUETA";
                 inputFile.value = "";
@@ -242,10 +299,10 @@
         };
 
         async function callGeminiIA(base64) {
-            const prompt = `Extrae de esta etiqueta de anaquel: 
-            1. unitCost: el número más grande. 
-            2. productName: combina el texto de arriba a la izquierda con el de arriba a la derecha. 
-            Responde JSON: {"productName": "string", "unitCost": number}`;
+            const prompt = `Analiza los datos de esta etiqueta: 
+            1. unitCost: el número más grande y destacado. 
+            2. productName: combina el nombre con la presentación (g, ml, pack). 
+            Responde estrictamente JSON: {"productName": "string", "unitCost": number}`;
 
             const payload = {
                 contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
@@ -265,12 +322,6 @@
             const data = await res.json();
             return JSON.parse(data.candidates[0].content.parts[0].text);
         }
-
-        const fileToBase64 = (file) => new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-        });
 
         // --- FUNCIONES CORE ---
         signInAnonymously(auth);
