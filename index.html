@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.18</title>
+    <title>Ofertas Rápidas Yaute v10.19</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -49,10 +49,7 @@
         .status-indicator { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid transparent; }
-        .card-entrega-pagado { background-color: #f0fdf4 !important; border-left-color: var(--success); }
-        .card-entrega-enviado { background-color: #fff1f2 !important; border-left-color: var(--danger); }
-        .card-entrega-completo { background-color: #ecfdf5 !important; border-left-color: #059669; opacity: 0.9; }
-
+        
         #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 250px; font-size: 0.85rem; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
@@ -75,7 +72,7 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; }
 
-        /* --- CAMERA OVERLAY --- */
+        /* --- CÁMARA OVERLAY CON FLASH --- */
         #camera-overlay {
             position: fixed; inset: 0; background: #000; z-index: 10000; display: none;
             flex-direction: column; align-items: center; justify-content: center;
@@ -89,19 +86,26 @@
         }
         
         .camera-capture-btn {
-            position: absolute; bottom: 50px; width: 70px; height: 70px;
-            background: white; border: 5px solid rgba(255,255,255,0.3);
+            position: absolute; bottom: 50px; width: 75px; height: 75px;
+            background: white; border: 6px solid rgba(59, 130, 246, 0.3);
             border-radius: 50%; color: var(--primary);
             display: flex; align-items: center; justify-content: center;
         }
 
         .camera-close {
             position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.5);
-            color: white; border: none; width: 40px; height: 40px; border-radius: 50%;
+            color: white; border: none; width: 45px; height: 45px; border-radius: 50%;
         }
 
+        .camera-flash-btn {
+            position: absolute; top: 40px; left: 20px; background: rgba(0,0,0,0.5);
+            color: white; border: none; width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .camera-flash-btn.on { color: #fbbf24; background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24; }
+
         .btn-scan {
-            background: #f1f5f9; color: var(--accent); border: 2px dashed #cbd5e1; border-radius: 12px; padding: 15px;
+            background: #f1f5f9; color: var(--accent); border: 2px dashed #3b82f6; border-radius: 12px; padding: 15px;
             display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.85rem; font-weight: 800;
             width: 100%; margin-bottom: 20px;
         }
@@ -120,7 +124,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.18</div>
+        <div class="splash-version">CONTROL PRO v10.19</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -128,6 +132,7 @@
     <div id="camera-overlay">
         <video id="camera-video" autoplay playsinline muted></video>
         <div class="camera-guide"></div>
+        <button id="camera-flash" class="camera-flash-btn"><i class="fas fa-bolt"></i></button>
         <button id="camera-capture" class="camera-capture-btn"><i class="fas fa-camera fa-2x"></i></button>
         <button id="camera-close" class="camera-close"><i class="fas fa-times"></i></button>
         <canvas id="camera-canvas" style="display:none;"></canvas>
@@ -164,7 +169,7 @@
                 
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera"></i>
-                    <span id="scan-text">TOMAR FOTO A ETIQUETA</span>
+                    <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
                 </button>
 
                 <div class="row g-2 mb-3">
@@ -178,7 +183,7 @@
                         <input type="number" id="in-cantidad" class="form-control text-center" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Costo Unit. (Extraído)</label>
+                        <label class="text-uppercase">Costo (IA)</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
@@ -212,7 +217,7 @@
         </div>
     </div>
 
-    <!-- TICKET -->
+    <!-- TICKET RENDER -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo">
         <div class="ticket-header"><h3>OFERTAS RÁPIDAS YAUTE</h3><small id="t-fecha"></small></div>
@@ -293,14 +298,17 @@
             });
         };
 
-        // --- LÓGICA DE ESCANEO REFORZADA (v10.18) ---
+        // --- LÓGICA DE ESCANEO CON FLASH (v10.19) ---
         const apiKey = ""; 
         const btnScan = document.getElementById('btn-scan');
         const camOverlay = document.getElementById('camera-overlay');
         const video = document.getElementById('camera-video');
         const canvas = document.getElementById('camera-canvas');
         const btnCapture = document.getElementById('camera-capture');
+        const btnFlash = document.getElementById('camera-flash');
+        
         let stream = null;
+        let flashOn = false;
 
         btnScan.onclick = async () => {
             try {
@@ -309,7 +317,25 @@
                 });
                 video.srcObject = stream;
                 camOverlay.style.display = 'flex';
+                flashOn = false;
+                btnFlash.classList.remove('on');
             } catch (e) { showToast("Error al abrir cámara", "danger"); }
+        };
+
+        btnFlash.onclick = async () => {
+            if (!stream) return;
+            const track = stream.getVideoTracks()[0];
+            const caps = track.getCapabilities();
+            
+            if (caps.torch) {
+                flashOn = !flashOn;
+                try {
+                    await track.applyConstraints({ advanced: [{ torch: flashOn }] });
+                    btnFlash.classList.toggle('on', flashOn);
+                } catch (err) { showToast("No se pudo controlar el flash", "warning"); }
+            } else {
+                showToast("Flash no disponible en este navegador", "warning");
+            }
         };
 
         document.getElementById('camera-close').onclick = stopCamera;
@@ -343,25 +369,22 @@
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
                     showToast("Etiqueta detectada", "success");
                     document.getElementById('in-cantidad').focus();
-                } else {
-                    throw new Error();
-                }
+                } else { throw new Error(); }
             } catch (e) {
                 playSignal('error');
-                showToast("Detección fallida. Verifique enfoque y luz.", "danger");
+                showToast("Lectura fallida. Repita con más luz.", "danger");
             } finally {
                 btnScan.classList.remove('processing');
-                document.getElementById('scan-text').innerText = "TOMAR FOTO A ETIQUETA";
+                document.getElementById('scan-text').innerText = "FOTOGRAFIAR ETIQUETA";
             }
         }
 
         async function callGeminiIA(base64, retry = 0) {
-            // Instrucción ultra-precisa con esquema JSON forzado
             const prompt = `Extrae datos de esta etiqueta de anaquel:
-            1. El número más grande es 'unitCost' (número).
-            2. El texto arriba a la izquierda es el nombre.
-            3. El texto arriba a la derecha es la presentación.
-            Combina nombre y presentación en 'productName'.`;
+            1. El número más grande y destacado es el PRECIO ('unitCost').
+            2. El texto en la esquina superior izquierda es el NOMBRE.
+            3. El texto en la esquina superior derecha es la PRESENTACIÓN (ml, gr, kg, etc).
+            Responde en JSON con claves 'productName' (Nombre + Presentación) y 'unitCost' (Número).`;
 
             const payload = {
                 contents: [{ 
@@ -389,7 +412,6 @@
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify(payload)
                 });
-                
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -416,6 +438,10 @@
             box.onclick = (e) => {
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val.toUpperCase(); box.classList.add('d-none');
+                if(key === 'products') {
+                    const p = state.products.find(x => (x.nombre||"").toLowerCase() === item.dataset.val.toLowerCase());
+                    if(p) { document.getElementById('in-costo').value = p.pCosto || ""; document.getElementById('in-precio').value = p.pVenta || ""; }
+                }
             };
         };
         auto('in-tienda', 'sug-tienda', 'stores'); auto('in-cliente', 'sug-cliente', 'clients'); auto('in-producto', 'sug-producto', 'products');
