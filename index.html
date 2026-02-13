@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.29</title>
+    <title>Ofertas Rápidas Yaute v10.30</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -37,8 +37,8 @@
             z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; }
+        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -46,7 +46,6 @@
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .header-container { display: flex; align-items: center; justify-content: center; gap: 12px; }
         .app-logo { height: 30px; width: auto; object-fit: contain; }
-        .status-indicator { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 15px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid transparent; }
         
@@ -65,18 +64,29 @@
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
         .btn-scan {
-            background: #f0f9ff; color: var(--accent); border: 2px solid #3b82f6; border-radius: 15px; padding: 18px;
+            background: #f0f9ff; color: var(--accent); border: 2.5px dashed var(--accent); border-radius: 15px; padding: 18px;
             display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1rem; font-weight: 900;
             width: 100%; margin-bottom: 20px; transition: all 0.2s;
         }
         .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; cursor: wait; pointer-events: none; }
-        .btn-scan .fa-spinner { display: none; }
-        .btn-scan.loading .fa-spinner { display: inline-block; }
-        .btn-scan.loading .fa-camera { display: none; }
 
-        .search-wrapper { position: relative; }
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 5px; border: 1px solid #f1f5f9; }
-        .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+        /* --- CÁMARA IN-APP (v10.30) --- */
+        #cam-container {
+            position: fixed; inset: 0; background: #000; z-index: 10010; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+        #cam-preview { width: 100%; height: 100%; object-fit: cover; }
+        .cam-guide {
+            position: absolute; width: 85%; height: 180px;
+            border: 2px solid #fff; border-radius: 12px;
+            box-shadow: 0 0 0 4000px rgba(0,0,0,0.5); pointer-events: none;
+        }
+        .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; align-items: center; }
+        .btn-capture { width: 80px; height: 80px; background: #fff; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .btn-capture:active { transform: scale(0.9); }
+        .btn-cam-close { position: absolute; top: 40px; right: 20px; color: #fff; background: rgba(0,0,0,0.4); border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem; }
+        .btn-cam-flash { position: absolute; top: 40px; left: 20px; color: #fff; background: rgba(0,0,0,0.4); border: none; width: 45px; height: 45px; border-radius: 50%; }
+        .btn-cam-flash.active { color: #fbbf24; background: rgba(251,191,36,0.2); border: 1px solid #fbbf24; }
 
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 25px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
         .ticket-logo { width: 180px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
@@ -84,12 +94,24 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA INICIAL -->
+    <!-- PANTALLA DE CARGA -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.29</div>
+        <div class="splash-version">CONTROL PRO v10.30</div>
         <div class="splash-loader"></div>
+    </div>
+
+    <!-- INTERFAZ DE CÁMARA DIRECTA -->
+    <div id="cam-container">
+        <video id="cam-preview" autoplay playsinline muted></video>
+        <div class="cam-guide"></div>
+        <button id="btn-flash-toggle" class="btn-cam-close" style="right: auto; left: 20px;"><i class="fas fa-bolt"></i></button>
+        <button id="btn-cam-cancel" class="btn-cam-close"><i class="fas fa-times"></i></button>
+        <div class="cam-controls">
+            <button id="btn-do-capture" class="btn-capture"></button>
+        </div>
+        <canvas id="cam-canvas" style="display:none;"></canvas>
     </div>
 
     <div id="toast-alert"></div>
@@ -106,34 +128,28 @@
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="row g-2 mb-3">
-                    <div class="col-6 search-wrapper">
+                    <div class="col-6">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Walmart">
-                        <div id="sug-tienda" class="sug-box d-none"></div>
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Ej. Walmart">
                     </div>
-                    <div class="col-6 search-wrapper">
+                    <div class="col-6">
                         <label class="text-uppercase">Cliente</label>
                         <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
-                        <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
 
                 <hr class="my-3 opacity-25">
                 
-                <!-- BOTÓN DE CÁMARA DIRECTA -->
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera fa-lg"></i>
-                    <i class="fas fa-spinner fa-spin fa-lg"></i>
+                    <i class="fas fa-spinner fa-spin fa-lg" id="scan-spinner" style="display:none;"></i>
                     <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
                 </button>
-                <!-- capture="environment" obliga a abrir la cámara trasera directamente -->
-                <input type="file" id="input-file" accept="image/*" capture="environment" style="display: none;">
 
                 <div class="row g-2 mb-4">
-                    <div class="col-9 search-wrapper">
+                    <div class="col-9">
                         <label class="text-uppercase">Producto + Presentación</label>
                         <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Esperando foto...">
-                        <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-3">
                         <label class="text-uppercase">Cant.</label>
@@ -144,7 +160,7 @@
                         <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Venta</label>
+                        <label class="text-uppercase">Precio de Venta</label>
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
@@ -152,6 +168,7 @@
             </div>
         </div>
 
+        <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-3 text-center mb-3">
                 <input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="renderEntregas()">
@@ -167,11 +184,11 @@
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-camera-retro"></i>Registro</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-shipping-fast"></i>Reparto</button>
-        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-list-alt"></i>Historial</button>
+        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Historial</button>
     </nav>
 
     <script type="module">
-        // --- API KEY CONFIGURADA ---
+        // --- API KEY CONFIGURADA (v10.30) ---
         const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -192,86 +209,107 @@
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let state = { clients: [], products: [], stores: [], sales: [] };
+        let state = { sales: [] };
         
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
             toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>${msg}`;
-            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 5000);
+            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4000);
         };
 
+        // --- LÓGICA DE CÁMARA INTERNA (INSTANTÁNEA) ---
         const btnScan = document.getElementById('btn-scan');
-        const inputFile = document.getElementById('input-file');
-        const scanText = document.getElementById('scan-text');
+        const camContainer = document.getElementById('cam-container');
+        const camPreview = document.getElementById('cam-preview');
+        const camCanvas = document.getElementById('cam-canvas');
+        const btnDoCapture = document.getElementById('btn-do-capture');
+        const btnCamCancel = document.getElementById('btn-cam-cancel');
+        const btnFlashToggle = document.getElementById('btn-flash-toggle');
+        
+        let stream = null;
+        let isFlashOn = false;
 
-        btnScan.onclick = () => {
-            if (!apiKey) {
-                showToast("Falta API KEY en el código.", "danger");
-                return;
-            }
-            inputFile.click();
+        btnScan.onclick = async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } 
+                });
+                camPreview.srcObject = stream;
+                camContainer.style.display = 'flex';
+                isFlashOn = false;
+            } catch (e) { showToast("Permiso de cámara denegado", "danger"); }
         };
 
-        // PASO ÚNICO: Captura directa y envío a IA
-        inputFile.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+        btnCamCancel.onclick = stopCam;
 
+        btnFlashToggle.onclick = async () => {
+            if (!stream) return;
+            const track = stream.getVideoTracks()[0];
+            try {
+                isFlashOn = !isFlashOn;
+                await track.applyConstraints({ advanced: [{ torch: isFlashOn }] });
+                btnFlashToggle.classList.toggle('active', isFlashOn);
+            } catch (err) { showToast("Flash no disponible", "warning"); }
+        };
+
+        btnDoCapture.onclick = () => {
+            const ctx = camCanvas.getContext('2d');
+            camCanvas.width = camPreview.videoWidth;
+            camCanvas.height = camPreview.videoHeight;
+            ctx.drawImage(camPreview, 0, 0);
+            
+            const base64 = camCanvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+            stopCam();
+            processIA(base64);
+        };
+
+        function stopCam() {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            camContainer.style.display = 'none';
+        }
+
+        async function processIA(base64) {
             btnScan.classList.add('loading');
-            scanText.innerText = "IA LEYENDO... ESPERE";
+            document.getElementById('scan-spinner').style.display = 'inline-block';
+            document.getElementById('scan-text').innerText = "IA ANALIZANDO...";
 
             try {
-                const base64 = await fileToBase64(file);
-                const result = await callGeminiIA(base64);
+                const prompt = "Extrae de la etiqueta de anaquel: unitCost (número más grande) y productName (combina nombre arriba izq con presentación arriba der). JSON: {'productName': string, 'unitCost': number}";
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    generationConfig: { 
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: { productName: { type: "STRING" }, unitCost: { type: "NUMBER" } },
+                            required: ["productName"]
+                        }
+                    }
+                };
+
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                const result = JSON.parse(data.candidates[0].content.parts[0].text);
                 
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("¡Etiqueta leída!", "success");
+                    showToast("Etiqueta leída");
                     document.getElementById('in-cantidad').focus();
-                } else { throw new Error(); }
+                }
             } catch (err) {
-                showToast("Error al procesar la foto. Intente de nuevo.", "danger");
+                showToast("Fallo al detectar texto. Intente de nuevo.", "danger");
             } finally {
                 btnScan.classList.remove('loading');
-                scanText.innerText = "FOTOGRAFIAR ETIQUETA";
-                inputFile.value = "";
+                document.getElementById('scan-spinner').style.display = 'none';
+                document.getElementById('scan-text').innerText = "FOTOGRAFIAR ETIQUETA";
             }
-        };
-
-        async function callGeminiIA(base64) {
-            // Instrucción mejorada para que la IA haga el "auto-recorte" visual
-            const prompt = `Analiza esta fotografía de un anaquel de supermercado.
-            Identifica la etiqueta de precio más cercana al centro de la imagen y extrae:
-            1. unitCost: el número más grande y destacado (precio unitario).
-            2. productName: combina el nombre del producto (arriba izq) con su presentación (arriba der).
-            Responde estrictamente JSON: {"productName": "string", "unitCost": number}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                generationConfig: { 
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: { productName: { type: "STRING" }, unitCost: { type: "NUMBER" } },
-                        required: ["productName"]
-                    }
-                }
-            };
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-            });
-            if (!res.ok) throw new Error();
-            const data = await res.json();
-            return JSON.parse(data.candidates[0].content.parts[0].text);
         }
-
-        const fileToBase64 = (file) => new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-        });
 
         // --- FUNCIONES CORE ---
         signInAnonymously(auth);
@@ -285,11 +323,9 @@
         });
 
         const startSync = () => {
-            ['clients', 'products', 'stores', 'sales'].forEach(n => {
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
-                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderEntregas();
-                });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), (s) => {
+                state.sales = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderEntregas();
             });
         };
 
@@ -303,8 +339,7 @@
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas');
             if(!list) return;
-            const dateInput = document.getElementById('entregas-date').value;
-            const targetDate = new Date(dateInput + "T12:00:00").toLocaleDateString('es-MX');
+            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "GENERAL"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
@@ -316,14 +351,13 @@
                         <span class="fw-bold text-uppercase">${cli}</span> 
                         <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')">TICKET</button>
                     </div>
-                    <div class="small fw-medium">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="small fw-medium">${grouped[cli].items.map(i => `<div class="mb-1">⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold pt-2 border-top mt-2 text-primary" style="font-size: 1.1rem;">$${grouped[cli].t.toFixed(2)}</div>
                 </div>
             `).join('') || '<div class="text-center py-5 opacity-40">No hay registros hoy</div>';
         };
 
         document.getElementById('btn-save').onclick = async () => {
-            const btn = document.getElementById('btn-save');
             const data = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -335,14 +369,11 @@
                 total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0)
             };
             if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos", "danger");
-            btn.disabled = true;
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
                 showToast("¡Venta guardada!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-                document.getElementById('in-producto').focus();
-            } catch(e) { showToast("Error al guardar", "danger"); }
-            finally { btn.disabled = false; }
+            } catch(e) { showToast("Error", "danger"); }
         };
 
         window.shareTicket = async (cli) => {
@@ -357,7 +388,7 @@
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3 });
             canvas.toBlob(blob => {
                 const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
-                if(navigator.share) navigator.share({ files: [file], title: 'Ticket' });
+                if(navigator.share) navigator.share({ files: [file] });
             });
         };
     </script>
