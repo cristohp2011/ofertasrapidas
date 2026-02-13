@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.21</title>
+    <title>Ofertas Rápidas Yaute v10.22</title>
     
-    <!-- Librerías -->
+    <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -42,15 +42,16 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- UI --- */
+        /* --- HEADER & UI --- */
         header { background: var(--primary); color: white; padding: 0.5rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
         .header-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .app-logo { height: 28px; width: auto; object-fit: contain; }
         .status-indicator { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid transparent; }
-        
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 250px; font-size: 0.85rem; animation: slideDown 0.3s ease; }
+        .card-entrega-completo { background-color: #ecfdf5 !important; border-left-color: #059669; }
+
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 280px; font-size: 0.85rem; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
         .tab-content { display: none; }
@@ -66,27 +67,25 @@
         .btn-scan {
             background: #f0f9ff; color: var(--accent); border: 2px solid #bae6fd; border-radius: 12px; padding: 16px;
             display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 0.9rem; font-weight: 900;
-            width: 100%; margin-bottom: 20px; cursor: pointer; transition: all 0.2s;
+            width: 100%; margin-bottom: 20px; transition: all 0.2s;
         }
-        .btn-scan:active { background: #e0f2fe; transform: scale(0.98); }
-        .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; pointer-events: none; }
+        .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; cursor: wait; }
 
         .search-wrapper { position: relative; }
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; }
 
-        /* --- TICKET RENDER --- */
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 20px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
         .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
     </style>
 </head>
 <body>
 
-    <!-- SPLASH SCREEN -->
+    <!-- PANTALLA DE CARGA -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.21</div>
+        <div class="splash-version">CONTROL PRO v10.22</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -101,7 +100,6 @@
     </header>
 
     <div class="container py-2">
-        <!-- VENTA -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -119,7 +117,6 @@
 
                 <hr class="my-3 opacity-10">
                 
-                <!-- SCANNER SIMPLE: Dispara la cámara nativa del celular -->
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera"></i>
                     <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
@@ -128,7 +125,7 @@
 
                 <div class="row g-2 mb-3">
                     <div class="col-9 search-wrapper">
-                        <label class="text-uppercase">Producto (Nombre + Presentación)</label>
+                        <label class="text-uppercase">Producto + Presentación</label>
                         <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Producto">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
@@ -137,7 +134,7 @@
                         <input type="number" id="in-cantidad" class="form-control text-center" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Costo (Extraído)</label>
+                        <label class="text-uppercase">Costo Unit. (IA)</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
@@ -149,31 +146,27 @@
             </div>
         </div>
 
-        <!-- OTRAS PESTAÑAS (Entregas y Control se mantienen) -->
+        <!-- OTRAS SECCIONES (ENTREGAS/CONTROL) -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-2 px-3 mb-2">
-                <label class="text-uppercase mb-1">Fecha Reparto</label>
                 <input type="date" id="entregas-date" class="form-control" onchange="renderEntregas()">
             </div>
             <div id="lista-entregas"></div>
         </div>
 
         <div id="tab-control" class="tab-content">
-            <div class="sub-nav mb-2">
-                <button class="sub-btn active" onclick="window.switchSubTab('sales', this)">Ventas</button>
-                <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
-            </div>
-            <div id="filter-wrapper" class="p-1"></div>
             <div id="lista-catalogos"></div>
         </div>
     </div>
 
-    <!-- TICKET RENDER -->
+    <!-- TICKET OCULTO PARA IMPRESIÓN -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo">
-        <div style="text-align:left; font-size:0.9rem; border-top: 1px solid #000; padding-top:10px;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
-        <table style="width:100%; font-size:0.85rem; margin-top:10px;" id="t-items"></table>
-        <div style="display:flex; justify-content:space-between; font-weight:900; border-top:1px dashed #000; padding-top:10px; margin-top:10px;"><span>TOTAL:</span><span id="t-total"></span></div>
+        <hr>
+        <div id="t-cliente"></div>
+        <table style="width:100%" id="t-items"></table>
+        <hr>
+        <div id="t-total"></div>
     </div>
 
     <nav class="bottom-nav">
@@ -202,41 +195,15 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { clients: [], products: [], stores: [], sales: [] };
-        let activeSubTab = 'sales';
-
-        const getLocalDateString = (date = new Date()) => date.toLocaleDateString('es-MX', { timeZone: 'America/Mexico_City' });
-        const getISODateString = (date = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City' }).format(date);
-
+        
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
-            toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
-            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4000);
         };
 
-        signInAnonymously(auth);
-        onAuthStateChanged(auth, (u) => {
-            if (u) {
-                document.getElementById('status-dot').className = 'status-indicator bg-success';
-                document.getElementById('entregas-date').value = getISODateString();
-                startSync();
-                setTimeout(() => { 
-                    document.getElementById('splash-screen').style.opacity = '0';
-                    setTimeout(() => document.getElementById('splash-screen').style.visibility = 'hidden', 800);
-                }, 3000);
-            }
-        });
-
-        const startSync = () => {
-            ['clients', 'products', 'stores', 'sales'].forEach(n => {
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
-                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderAll();
-                });
-            });
-        };
-
-        // --- LÓGICA DE ESCANEO A CERO (CÁMARA NATIVA) ---
-        const apiKey = ""; 
+        // --- LÓGICA DE ESCANEO REFORZADA (v10.22) ---
+        const apiKey = ""; // IMPORTANTE: En GitHub esto debe tener una clave válida de Google AI Studio
         const btnScan = document.getElementById('btn-scan');
         const inputFile = document.getElementById('input-file');
         const scanText = document.getElementById('scan-text');
@@ -248,22 +215,22 @@
             if (!file) return;
 
             btnScan.classList.add('loading');
-            scanText.innerText = "IA ANALIZANDO IMAGEN...";
+            scanText.innerText = "IA ANALIZANDO... REINTENTANDO SI FALLA";
 
             try {
                 const base64 = await fileToBase64(file);
-                const result = await callGeminiIA(base64);
+                const result = await callGeminiIAWithRetry(base64);
                 
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("Etiqueta leída", "success");
+                    showToast("Etiqueta leída con éxito", "success");
                     document.getElementById('in-cantidad').focus();
                 } else {
-                    throw new Error();
+                    throw new Error("No se detectó el producto");
                 }
             } catch (err) {
-                showToast("No se detectó información clara", "danger");
+                showToast(err.message || "Error al leer. Intente con otra foto.", "danger");
             } finally {
                 btnScan.classList.remove('loading');
                 scanText.innerText = "FOTOGRAFIAR ETIQUETA";
@@ -271,19 +238,13 @@
             }
         };
 
-        const fileToBase64 = (file) => new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-        });
-
-        async function callGeminiIA(base64, retry = 0) {
-            const prompt = `Analiza esta etiqueta de anaquel de supermercado.
-            Extrae el nombre del producto y su precio unitario siguiendo estas reglas:
-            1. El NÚMERO MÁS GRANDE es el precio ('unitCost').
-            2. El texto ARRIBA A LA IZQUIERDA es el nombre.
-            3. El texto ARRIBA A LA DERECHA es la presentación (ej: 1Lt, 500g).
-            Devuelve un JSON estrictamente así: {"productName": "Nombre + Presentación", "unitCost": número}.`;
+        async function callGeminiIAWithRetry(base64, retryCount = 0) {
+            const maxRetries = 3;
+            const prompt = `Analiza la etiqueta de anaquel:
+            1. PRECIO UNITARIO: Es el número más grande.
+            2. NOMBRE: Texto arriba a la izquierda.
+            3. PRESENTACIÓN: Texto arriba a la derecha.
+            Responde JSON: {"productName": "Nombre + Presentación", "unitCost": número}.`;
 
             const payload = {
                 contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
@@ -298,114 +259,107 @@
             };
 
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-                });
-                if (!res.ok) throw new Error();
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                
+                if (res.status === 403) throw new Error("Falta API Key o acceso denegado.");
+                if (!res.ok) throw new Error("Error en el servidor de IA.");
+
                 const data = await res.json();
                 const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                return text ? JSON.parse(text) : null;
+                if(!text) throw new Error("La IA no devolvió datos legibles.");
+                return JSON.parse(text);
+
             } catch (e) {
-                if (retry < 3) { await new Promise(r => setTimeout(r, 1000)); return callGeminiIA(base64, retry + 1); }
-                return null;
+                if (retryCount < maxRetries) {
+                    const waitTime = Math.pow(2, retryCount) * 1000;
+                    await new Promise(r => setTimeout(r, waitTime));
+                    return callGeminiIAWithRetry(base64, retryCount + 1);
+                }
+                throw e;
             }
         }
 
-        // --- LÓGICA DE NEGOCIO ---
-        const auto = (id, boxId, key) => {
-            const inp = document.getElementById(id); const box = document.getElementById(boxId);
-            inp.oninput = () => {
-                const val = inp.value.toLowerCase().trim();
-                if(!val) { box.classList.add('d-none'); return; }
-                const ms = (state[key] || []).filter(x => (x.nombre || '').toLowerCase().includes(val)).slice(0, 5);
-                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre.toUpperCase()}</div>`).join('');
-                box.classList.toggle('d-none', ms.length === 0);
-            };
-            box.onclick = (e) => {
-                const item = e.target.closest('.sug-item'); if(!item) return;
-                inp.value = item.dataset.val.toUpperCase(); box.classList.add('d-none');
-            };
+        const fileToBase64 = (file) => new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+        });
+
+        // --- FUNCIONES CORE ---
+        signInAnonymously(auth);
+        onAuthStateChanged(auth, (u) => {
+            if (u) {
+                document.getElementById('status-dot').className = 'status-indicator bg-success';
+                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                startSync();
+                setTimeout(() => { document.getElementById('splash-screen').style.visibility = 'hidden'; }, 2000);
+            }
+        });
+
+        const startSync = () => {
+            ['clients', 'products', 'stores', 'sales'].forEach(n => {
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
+                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderEntregas();
+                });
+            });
         };
-        auto('in-tienda', 'sug-tienda', 'stores'); auto('in-cliente', 'sug-cliente', 'clients'); auto('in-producto', 'sug-producto', 'products');
 
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active'); renderAll(); 
+            if(btn) btn.classList.add('active');
         };
-
-        window.switchSubTab = (id, btn) => {
-            activeSubTab = id; if (btn) { document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-            const w = document.getElementById('filter-wrapper');
-            if (id === 'diezmo') w.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="diezmo-start" class="filter-input" value="${getISODateString()}"></div><div class="col-6"><input type="date" id="diezmo-end" class="filter-input" value="${getISODateString()}"></div><button class="btn btn-sm btn-primary mt-1" onclick="window.renderCatalogList()">CALCULAR</button></div>`;
-            else w.innerHTML = `<div class="row g-2"><div class="col-12"><input type="date" id="cat-date" class="filter-input" value="${getISODateString()}" onchange="window.renderCatalogList()"></div></div>`;
-            renderCatalogList();
-        };
-
-        const renderAll = () => { renderEntregas(); renderCatalogList(); };
 
         window.renderEntregas = () => {
-            const dv = document.getElementById('entregas-date')?.value || getISODateString();
-            const targetDate = getLocalDateString(new Date(dv + "T12:00:00"));
             const list = document.getElementById('lista-entregas');
-            const vH = state.sales.filter(s => s.fechaStr === targetDate);
-            if (!vH.length) { list.innerHTML = '<p class="text-center py-4 text-muted small">Sin ventas hoy</p>'; return; }
-            const g = vH.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {total: 0, items: []}; acc[c].total += (v.total || 0); acc[c].items.push(v); return acc; }, {});
-            list.innerHTML = Object.keys(g).map(cli => {
-                const items = g[cli].items;
-                return `<div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold small text-uppercase">${cli}</span><button class="btn btn-sm btn-success rounded-pill" onclick="window.genTicket('${cli}')">TICKET</button></div>
-                    <div class="small">${items.map(i => `<div>${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold pt-1 border-top mt-1">$${g[cli].total.toFixed(2)}</div>
-                </div>`;
-            }).join('');
-        };
+            if(!list) return;
+            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const filtered = state.sales.filter(s => s.fechaStr === targetDate);
+            if (!filtered.length) { list.innerHTML = '<p class="text-center py-5 text-muted">Sin registros para esta fecha</p>'; return; }
+            
+            const grouped = filtered.reduce((acc, v) => { 
+                const c = v.cliente || "GNR"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
+                acc[c].t += v.total; acc[c].items.push(v); return acc; 
+            }, {});
 
-        window.renderCatalogList = () => {
-            const l = document.getElementById('lista-catalogos');
-            if(!l) return;
-            const fD = getLocalDateString(new Date((document.getElementById('cat-date')?.value || getISODateString()) + "T12:00:00"));
-            if (activeSubTab === 'sales') {
-                let dv = state.sales.filter(v => v.fechaStr === fD);
-                l.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1 small"><div><b>${v.cantidad}x ${v.producto}</b><br><span class="text-muted">${v.tienda} • ${v.cliente}</span></div><div class="fw-bold">$${v.total.toFixed(2)}</div><button class="btn text-danger btn-sm" onclick="window.del('sales', '${v.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
-            } else if (activeSubTab === 'diezmo') {
-                const sd = new Date((document.getElementById('diezmo-start')?.value || getISODateString()) + "T00:00:00");
-                const ed = new Date((document.getElementById('diezmo-end')?.value || getISODateString()) + "T23:59:59");
-                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= sd && d <= ed; });
-                let tC = 0, tV = 0; fs.forEach(v => { tC += ((v.costo||0)*v.cantidad); tV += v.total; });
-                l.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${((tV-tC)*0.1).toFixed(2)}</h3><div class="small">Diezmo Acumulado (10%)</div></div>`;
-            }
+            list.innerHTML = Object.keys(grouped).map(cli => `
+                <div class="card-custom">
+                    <div class="d-flex justify-content-between mb-2"><b>${cli}</b> <button class="btn btn-sm btn-success" onclick="window.shareTicket('${cli}')">TICKET</button></div>
+                    <div class="small">${grouped[cli].items.map(i => `<div>${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="text-end fw-bold pt-1 border-top mt-1">$${grouped[cli].t.toFixed(2)}</div>
+                </div>
+            `).join('');
         };
-
-        window.del = async (col, id) => { if (confirm("¿Eliminar?")) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); showToast("Eliminado"); } };
 
         document.getElementById('btn-save').onclick = async () => {
-            const data = { tienda: document.getElementById('in-tienda').value.trim().toUpperCase(), cliente: document.getElementById('in-cliente').value.trim().toUpperCase(), producto: document.getElementById('in-producto').value.trim().toUpperCase(), cantidad: parseInt(document.getElementById('in-cantidad').value) || 1, costo: parseFloat(document.getElementById('in-costo').value) || 0, precio: parseFloat(document.getElementById('in-precio').value) || 0 };
-            if (!data.tienda || !data.cliente || !data.producto || data.costo <= 0 || data.precio <= 0) return showToast("Faltan datos", 'danger');
+            const data = {
+                tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
+                cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
+                producto: document.getElementById('in-producto').value.trim().toUpperCase(),
+                cantidad: parseInt(document.getElementById('in-cantidad').value) || 1,
+                costo: parseFloat(document.getElementById('in-costo').value) || 0,
+                precio: parseFloat(document.getElementById('in-precio').value) || 0,
+                fechaStr: new Date().toLocaleDateString('es-MX'),
+                total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0)
+            };
+            if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos clave", "danger");
+            
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, total: data.cantidad * data.precio, fecha: serverTimestamp(), fechaStr: getLocalDateString(), entregado: false, pagado: false });
-                const ck = async (c, v) => { if(!state[c].some(i => i.nombre.toUpperCase() === v.toUpperCase())) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: v }); };
-                await ck('clients', data.cliente); await ck('stores', data.tienda);
-                const exP = state.products.find(p => p.nombre.toUpperCase() === data.producto.toUpperCase());
-                if(!exP) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
-                else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', exP.id), { pCosto: data.costo, pVenta: data.precio });
-                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-                showToast("Guardado");
-            } catch(e) { showToast("Error al guardar", 'danger'); }
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
+                showToast("Venta guardada");
+                document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
+            } catch(e) { showToast("Error al guardar", "danger"); }
         };
 
-        window.genTicket = async (cli) => {
-            const dv = document.getElementById('entregas-date')?.value || getISODateString();
-            const targetDate = getLocalDateString(new Date(dv + "T12:00:00"));
-            const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === targetDate);
-            document.getElementById('t-cliente').innerText = cli.toUpperCase();
-            let t = 0; document.getElementById('t-items').innerHTML = items.map(i => { t += i.total; return `<tr><td>${i.cantidad}x ${i.producto}</td><td style="text-align:right;">$${i.total.toFixed(2)}</td></tr>`; }).join('');
-            document.getElementById('t-total').innerText = `$${t.toFixed(2)}`;
-            const canvasT = await html2canvas(document.getElementById('ticket-render'), { scale: 3 });
-            canvasT.toBlob(blob => {
+        window.shareTicket = async (cli) => {
+            document.getElementById('t-cliente').innerText = cli;
+            const canvas = await html2canvas(document.getElementById('ticket-render'));
+            canvas.toBlob(blob => {
                 const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
-                if (navigator.share) navigator.share({ files: [file], title: 'Ticket' });
+                if(navigator.share) navigator.share({ files: [file] });
             });
         };
     </script>
