@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.50</title>
+    <title>Ofertas Rápidas Yaute v10.51</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -84,9 +84,26 @@
         .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; color: #475569; }
         .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
 
-        /* --- TICKET RENDERER (OCULTO) --- */
-        #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 25px; color: black; font-family: 'Courier New', Courier, monospace; }
-        .ticket-logo { width: 140px; height: auto; display: block; margin: 0 auto 15px; }
+        /* --- TICKET RENDERER (ESTILO SEGÚN IMAGEN COMPARTIDA) --- */
+        #ticket-render { 
+            position: fixed; 
+            left: -10000px; 
+            width: 380px; 
+            background: white; 
+            padding: 30px; 
+            color: black; 
+            font-family: 'Courier New', Courier, monospace; 
+        }
+        .ticket-header-img { width: 180px; height: auto; display: block; margin: 0 auto 10px; }
+        .ticket-brand { text-align: center; font-size: 1.3rem; font-weight: 900; margin: 5px 0; }
+        .ticket-datetime { text-align: center; font-size: 1rem; margin-bottom: 15px; }
+        .ticket-line-solid { border-top: 3px solid #000; margin: 10px 0; }
+        .ticket-line-dashed { border-top: 2px dashed #000; margin: 15px 0; }
+        .ticket-client-row { font-size: 1.1rem; margin: 15px 0 25px 0; }
+        .ticket-table { width: 100%; font-size: 1rem; border-collapse: collapse; }
+        .ticket-table td { padding: 8px 0; }
+        .ticket-total-row { font-size: 1.4rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 10px; }
+        .ticket-footer { text-align: center; font-size: 0.9rem; color: #666; margin-top: 30px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -94,7 +111,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.50</div>
+        <div class="splash-version">CONTROL PRO v10.51</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -191,35 +208,30 @@
         </div>
     </div>
 
-    <!-- TICKET RENDERER (OCULTO) -->
+    <!-- TICKET RENDERER (CON FORMATO EXACTO DE LA IMAGEN) -->
     <div id="ticket-render">
-        <div style="text-align: center;">
-            <img src="logo.png" alt="Logo" class="ticket-logo">
-            <h4 style="margin: 0; font-weight: 900;">OFERTAS YAUTC</h4>
-            <hr style="border: 0.5px solid #000; margin: 10px 0;">
+        <img src="logo.png" alt="Logo" class="ticket-header-img">
+        <div class="ticket-brand">OFERTAS RAPIDAS YAUTE</div>
+        <div class="ticket-datetime" id="t-date-val"></div>
+        
+        <div class="ticket-line-solid"></div>
+        
+        <div class="ticket-client-row">
+            <b>CLIENTE:</b> <span id="t-cliente-name"></span>
         </div>
-        <div style="font-size: 0.9rem; margin-bottom: 10px;">
-            <b>CLIENTE:</b> <span id="t-cliente-name" style="text-transform: uppercase;"></span><br>
-            <b>FECHA:</b> <span id="t-date-val"></span>
-        </div>
-        <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
-            <thead style="border-bottom: 1px solid #000;">
-                <tr>
-                    <th style="text-align: left; padding: 4px 0;">CANT</th>
-                    <th style="text-align: left; padding: 4px 0;">PRODUCTO</th>
-                    <th style="text-align: right; padding: 4px 0;">TOTAL</th>
-                </tr>
-            </thead>
+        
+        <table class="ticket-table">
             <tbody id="t-body-items"></tbody>
         </table>
-        <hr style="border: 0.5px dashed #000; margin: 10px 0;">
-        <div style="text-align: right; font-size: 0.85rem;">
-            <b>PIEZAS:</b> <span id="t-total-pieces"></span>
+        
+        <div class="ticket-line-dashed"></div>
+        
+        <div class="ticket-total-row">
+            <span>TOTAL:</span>
+            <span id="t-grand-total"></span>
         </div>
-        <div style="text-align: right; font-size: 1.1rem; margin-top: 5px;">
-            <b>TOTAL: $<span id="t-grand-total"></span></b>
-        </div>
-        <div style="text-align: center; font-size: 0.7rem; margin-top: 20px; opacity: 0.7;">
+        
+        <div class="ticket-footer">
             ¡Gracias por su preferencia!
         </div>
     </div>
@@ -452,9 +464,18 @@
                 const items = grouped[cli].items;
                 const allDone = items.every(i => i.entregado && i.pagado);
                 return `<div class="card-custom ${allDone ? 'card-status-ok' : ''}">
-                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase" style="font-size:0.9rem">${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label><div style="width:1px; height:15px; background:#cbd5e1"></div><label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label></div>
-                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div><div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`;
+                    <div class="d-flex justify-content-between mb-2">
+                        <b class="text-uppercase" style="font-size:0.9rem">${cli}</b> 
+                        <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button>
+                    </div>
+                    <div class="check-group mb-2">
+                        <label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label>
+                        <div style="width:1px; height:15px; background:#cbd5e1"></div>
+                        <label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label>
+                    </div>
+                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div>
+                </div>`;
             }).join('');
         };
 
@@ -536,7 +557,7 @@
             } catch(e) { showToast("Error de guardado", "danger"); }
         };
 
-        // --- COMPARTIR TICKET FORZADO (SOLO IMAGEN) v10.50 ---
+        // --- COMPARTIR TICKET ACTUALIZADO v10.51 (Fiel a ticket ok.jpeg) ---
         window.shareTicket = async (name) => {
             const targetDateInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
@@ -544,21 +565,27 @@
             
             if (!filtered.length) { showToast("Sin productos hoy", "warning"); return; }
 
-            // Llenar datos en el ticket invisible
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
+
             document.getElementById('t-cliente-name').innerText = name;
-            document.getElementById('t-date-val').innerText = targetDate;
-            let total = 0; let pieces = 0;
+            document.getElementById('t-date-val').innerText = `${targetDate} ${timeStr}`;
+            
+            let grandTotal = 0;
             document.getElementById('t-body-items').innerHTML = filtered.map(i => {
-                total += i.total; pieces += i.cantidad;
-                return `<tr style="border-bottom: 0.5px solid #eee;"><td style="padding: 6px 0;">${i.cantidad}</td><td style="padding: 6px 0;">${i.producto}</td><td style="padding: 6px 0; text-align: right;">$${i.total.toFixed(2)}</td></tr>`;
+                grandTotal += i.total;
+                return `<tr>
+                    <td style="width: 40px; vertical-align: top;">${i.cantidad}x</td>
+                    <td style="vertical-align: top; text-transform: uppercase;">${i.producto}</td>
+                    <td style="text-align: right; vertical-align: top;">$${i.total.toFixed(2)}</td>
+                </tr>`;
             }).join('');
-            document.getElementById('t-total-pieces').innerText = pieces;
-            document.getElementById('t-grand-total').innerText = total.toFixed(2);
+
+            document.getElementById('t-grand-total').innerText = grandTotal.toFixed(2);
 
             try {
-                // Renderizado ultrarrápido para que Xiaomi no bloquee
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { 
-                    scale: 2, 
+                    scale: 3, 
                     logging: false, 
                     useCORS: true,
                     backgroundColor: '#ffffff'
@@ -566,20 +593,11 @@
                 
                 canvas.toBlob(async blob => {
                     const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
-                    
-                    // Solo usamos navigator.share si soporta archivos. Sin fallbacks de texto.
                     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: 'Ticket Yaute Rápidas'
-                        });
-                    } else {
-                        showToast("Su navegador no permite compartir imágenes", "danger");
-                    }
+                        await navigator.share({ files: [file], title: 'Ticket' });
+                    } else { showToast("No se pudo abrir el menú de compartir", "danger"); }
                 }, 'image/png');
-            } catch (err) {
-                showToast("Error al generar ticket", "danger");
-            }
+            } catch (err) { showToast("Error al generar imagen", "danger"); }
         };
     </script>
 </body>
