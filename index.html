@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.52</title>
+    <title>Ofertas Rápidas Yaute v10.53</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,10 +22,17 @@
             --card-radius: 14px;
         }
 
+        /* --- ARREGLO DE ALTURA Y SCROLL --- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
         body { 
             background-color: var(--bg); 
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding-bottom: 95px;
+            padding-bottom: 75px; /* Ajustado para que el menú no tape nada */
             user-select: none;
             color: #1e293b;
         }
@@ -34,7 +41,7 @@
         #splash-screen {
             position: fixed; inset: 0; background: #ffffff;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
+            z-index: 9999;
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; }
@@ -47,14 +54,14 @@
         .header-container { display: flex; align-items: center; justify-content: center; gap: 12px; }
         .app-logo { height: 30px; width: auto; object-fit: contain; }
 
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border-left: 5px solid transparent; }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 5px solid transparent; }
         .card-status-ok { background-color: #f0fdf4 !important; border-left-color: var(--success); }
         .card-summary { background: var(--primary); color: white; border-left-color: var(--accent); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; font-size: 0.9rem; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
-        .tab-content { display: none; }
+        .tab-content { display: none; padding-bottom: 20px; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -63,13 +70,23 @@
 
         .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            background: #ffffff; 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 10px 0 15px; 
+            border-top: 1px solid #e2e8f0; 
+            z-index: 2000; 
+        }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
         .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; justify-content: flex-start; }
-        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 600; }
+        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.65rem; white-space: nowrap; color: #64748b; font-weight: 600; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
         #cam-container { position: fixed; inset: 0; background: #000; z-index: 10010; display: none; flex-direction: column; align-items: center; justify-content: center; }
@@ -84,26 +101,27 @@
         .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; color: #475569; }
         .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
 
-        /* --- TICKET RENDERER (ESTILO SEGÚN IMAGEN COMPARTIDA) --- */
+        /* --- TICKET RENDERER (FORMATO EXACTO ticket ok.jpeg) --- */
         #ticket-render { 
-            position: fixed; 
-            left: -10000px; 
-            width: 380px; 
+            position: absolute; 
+            top: -20000px; 
+            left: 0;
+            width: 400px; 
             background: white; 
-            padding: 30px; 
+            padding: 40px; 
             color: black; 
             font-family: 'Courier New', Courier, monospace; 
         }
-        .ticket-header-img { width: 180px; height: auto; display: block; margin: 0 auto 10px; }
-        .ticket-brand { text-align: center; font-size: 1.3rem; font-weight: 900; margin: 5px 0; }
-        .ticket-datetime { text-align: center; font-size: 1rem; margin-bottom: 15px; }
-        .ticket-line-solid { border-top: 3px solid #000; margin: 10px 0; }
-        .ticket-line-dashed { border-top: 2px dashed #000; margin: 15px 0; }
-        .ticket-client-row { font-size: 1.1rem; margin: 15px 0 25px 0; }
-        .ticket-table { width: 100%; font-size: 1rem; border-collapse: collapse; }
-        .ticket-table td { padding: 8px 0; }
-        .ticket-total-row { font-size: 1.4rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 10px; }
-        .ticket-footer { text-align: center; font-size: 0.9rem; color: #666; margin-top: 30px; text-transform: uppercase; }
+        .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
+        .ticket-brand { text-align: center; font-size: 1.4rem; font-weight: 900; margin: 10px 0; letter-spacing: 1px; }
+        .ticket-datetime { text-align: center; font-size: 1.1rem; margin-bottom: 20px; }
+        .ticket-line-solid { border-top: 4px solid #000; margin: 10px 0; }
+        .ticket-line-dashed { border-top: 2px dashed #000; margin: 20px 0; }
+        .ticket-client-row { font-size: 1.2rem; margin: 20px 0 30px 0; }
+        .ticket-table { width: 100%; font-size: 1.1rem; border-collapse: collapse; }
+        .ticket-table td { padding: 10px 0; vertical-align: top; }
+        .ticket-total-row { font-size: 1.6rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 15px; }
+        .ticket-footer { text-align: center; font-size: 0.95rem; color: #333; margin-top: 40px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -111,7 +129,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.52</div>
+        <div class="splash-version">CONTROL PRO v10.53</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -208,32 +226,24 @@
         </div>
     </div>
 
-    <!-- TICKET RENDERER (BASADO EN TICKET OK.JPEG) -->
+    <!-- TICKET RENDERER (FIEL A LA IMAGEN) -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-header-img">
         <div class="ticket-brand">OFERTAS RAPIDAS YAUTE</div>
         <div class="ticket-datetime" id="t-date-val"></div>
-        
         <div class="ticket-line-solid"></div>
-        
         <div class="ticket-client-row">
             <b>CLIENTE:</b> <span id="t-cliente-name"></span>
         </div>
-        
         <table class="ticket-table">
             <tbody id="t-body-items"></tbody>
         </table>
-        
         <div class="ticket-line-dashed"></div>
-        
         <div class="ticket-total-row">
             <span>TOTAL:</span>
             <span id="t-grand-total"></span>
         </div>
-        
-        <div class="ticket-footer">
-            ¡Gracias por su preferencia!
-        </div>
+        <div class="ticket-footer">¡GRACIAS POR SU PREFERENCIA!</div>
     </div>
 
     <nav class="bottom-nav">
@@ -315,9 +325,8 @@
         async function processIA(base64) {
             document.getElementById('scan-spinner').classList.remove('d-none');
             try {
-                const prompt = "Extrae unitCost (número grande) y productName (texto arriba izq + der). JSON: {'productName': string, 'unitCost': number}";
                 const payload = {
-                    contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Extrae unitCost (número grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
@@ -360,7 +369,7 @@
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
                 switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-                setTimeout(() => { document.getElementById('splash-screen').style.visibility = 'hidden'; }, 2000);
+                setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 2000);
             }
         });
 
@@ -421,7 +430,6 @@
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clients', id), { nombre: finalNewName });
                     const salesToUpdate = state.sales.filter(s => s.cliente === currentData.nombre);
                     for (const s of salesToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { cliente: finalNewName }); }
-                    showToast("Cliente actualizado");
                 }
             } else if (col === 'products') {
                 const n = prompt("Nuevo nombre del producto:", currentData.nombre);
@@ -434,7 +442,6 @@
                         const salesToUpdate = state.sales.filter(s => s.producto === currentData.nombre);
                         for (const s of salesToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { producto: finalNewName }); }
                     }
-                    showToast("Producto actualizado");
                 }
             }
         };
@@ -464,18 +471,9 @@
                 const items = grouped[cli].items;
                 const allDone = items.every(i => i.entregado && i.pagado);
                 return `<div class="card-custom ${allDone ? 'card-status-ok' : ''}">
-                    <div class="d-flex justify-content-between mb-2">
-                        <b class="text-uppercase" style="font-size:0.9rem">${cli}</b> 
-                        <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button>
-                    </div>
-                    <div class="check-group mb-2">
-                        <label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label>
-                        <div style="width:1px; height:15px; background:#cbd5e1"></div>
-                        <label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label>
-                    </div>
-                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div>
-                </div>`;
+                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase" style="font-size:0.9rem">${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
+                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label><div style="width:1px; height:15px; background:#cbd5e1"></div><label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label></div>
+                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div><div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`;
             }).join('');
         };
 
@@ -557,7 +555,7 @@
             } catch(e) { showToast("Error de guardado", "danger"); }
         };
 
-        // --- COMPARTIR TICKET ACTUALIZADO v10.52 (FIEL A TICKET OK.JPEG Y OPTIMIZADO PARA XIAOMI) ---
+        // --- COMPARTIR TICKET ACTUALIZADO (FORZADO SIN canShare) ---
         window.shareTicket = async (name) => {
             const targetDateInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
@@ -575,16 +573,15 @@
             document.getElementById('t-body-items').innerHTML = filtered.map(i => {
                 grandTotal += i.total;
                 return `<tr>
-                    <td style="width: 40px; vertical-align: top;">${i.cantidad}x</td>
-                    <td style="vertical-align: top; text-transform: uppercase;">${i.producto}</td>
-                    <td style="text-align: right; vertical-align: top;">$${i.total.toFixed(2)}</td>
+                    <td style="width: 40px;">${i.cantidad}x</td>
+                    <td style="text-transform: uppercase;">${i.producto}</td>
+                    <td style="text-align: right;">$${i.total.toFixed(2)}</td>
                 </tr>`;
             }).join('');
 
             document.getElementById('t-grand-total').innerText = grandTotal.toFixed(2);
 
             try {
-                // Renderizado con escala 2 para mejor rendimiento en Xiaomi X13
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { 
                     scale: 2, 
                     logging: false, 
@@ -594,19 +591,13 @@
                 
                 canvas.toBlob(async blob => {
                     const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
-                    
-                    // Verificación de disponibilidad de API de compartido
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file],
-                                title: 'Ticket Yaute'
-                            });
-                        } catch (err) {
-                            showToast("El sistema bloqueó el envío de imagen", "danger");
-                        }
+                    if (navigator.share) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Ticket'
+                        });
                     } else {
-                        showToast("Navegador incompatible con envío de archivos", "danger");
+                        showToast("Navegador incompatible", "danger");
                     }
                 }, 'image/png');
             } catch (err) {
