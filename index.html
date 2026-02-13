@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.20</title>
+    <title>Ofertas Rápidas Yaute v10.21</title>
     
-    <!-- Librerías de confianza -->
+    <!-- Librerías -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -42,7 +42,7 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- UI STYLES --- */
+        /* --- UI --- */
         header { background: var(--primary); color: white; padding: 0.5rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
         .header-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .app-logo { height: 28px; width: auto; object-fit: contain; }
@@ -63,81 +63,31 @@
         .tab-btn i { font-size: 1.4rem; margin-bottom: 2px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 10px 10px; scrollbar-width: none; }
-        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 600; }
-        .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .btn-scan {
+            background: #f0f9ff; color: var(--accent); border: 2px solid #bae6fd; border-radius: 12px; padding: 16px;
+            display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 0.9rem; font-weight: 900;
+            width: 100%; margin-bottom: 20px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-scan:active { background: #e0f2fe; transform: scale(0.98); }
+        .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; pointer-events: none; }
 
         .search-wrapper { position: relative; }
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; }
 
-        /* --- CÁMARA OVERLAY --- */
-        #camera-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 10000; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
-        #camera-video { width: 100%; height: 100%; object-fit: cover; }
-        
-        .camera-guide {
-            position: absolute; width: 92%; height: 240px;
-            border: 2px solid #fff; border-radius: 15px;
-            box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); pointer-events: none;
-        }
-        
-        .camera-capture-btn {
-            position: absolute; bottom: 50px; width: 80px; height: 80px;
-            background: white; border: 8px solid rgba(255,255,255,0.3);
-            border-radius: 50%; color: var(--primary);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-
-        .camera-close {
-            position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.6);
-            color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .camera-flash-btn {
-            position: absolute; top: 40px; left: 20px; background: rgba(0,0,0,0.6);
-            color: white; border: none; width: 45px; height: 45px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-        }
-        .camera-flash-btn.on { color: #fbbf24; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; }
-
-        .btn-scan {
-            background: #f1f5f9; color: var(--accent); border: 2px dashed #3b82f6; border-radius: 12px; padding: 15px;
-            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; font-weight: 800;
-            width: 100%; margin-bottom: 20px;
-        }
-        .btn-scan.processing { background: #e2e8f0; color: #94a3b8; pointer-events: none; }
-
-        /* --- TICKETS --- */
+        /* --- TICKET RENDER --- */
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 20px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
         .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
-        .ticket-header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-        .ticket-table { width: 100%; font-size: 0.85rem; margin-bottom: 15px; border-collapse: collapse; }
-        .ticket-total { display: flex; justify-content: space-between; font-weight: 900; font-size: 1.1rem; border-top: 1px dashed #000; padding-top: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- --- SPLASH SCREEN --- -->
+    <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.20</div>
+        <div class="splash-version">CONTROL PRO v10.21</div>
         <div class="splash-loader"></div>
-    </div>
-
-    <!-- --- CÁMARA --- -->
-    <div id="camera-overlay">
-        <video id="camera-video" autoplay playsinline muted></video>
-        <div class="camera-guide"></div>
-        <button id="camera-flash" class="camera-flash-btn"><i class="fas fa-bolt"></i></button>
-        <button id="camera-capture" class="camera-capture-btn"><i class="fas fa-camera fa-2x"></i></button>
-        <button id="camera-close" class="camera-close"><i class="fas fa-times"></i></button>
-        <canvas id="camera-canvas" style="display:none;"></canvas>
     </div>
 
     <div id="toast-alert"></div>
@@ -169,10 +119,12 @@
 
                 <hr class="my-3 opacity-10">
                 
+                <!-- SCANNER SIMPLE: Dispara la cámara nativa del celular -->
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera"></i>
-                    <span id="scan-text">TOMAR FOTO A ETIQUETA</span>
+                    <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
                 </button>
+                <input type="file" id="input-file" accept="image/*" capture="environment" style="display: none;">
 
                 <div class="row g-2 mb-3">
                     <div class="col-9 search-wrapper">
@@ -197,7 +149,7 @@
             </div>
         </div>
 
-        <!-- ENTREGAS -->
+        <!-- OTRAS PESTAÑAS (Entregas y Control se mantienen) -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-2 px-3 mb-2">
                 <label class="text-uppercase mb-1">Fecha Reparto</label>
@@ -206,15 +158,12 @@
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- CONTROL -->
         <div id="tab-control" class="tab-content">
-            <div class="sub-nav">
+            <div class="sub-nav mb-2">
                 <button class="sub-btn active" onclick="window.switchSubTab('sales', this)">Ventas</button>
-                <button class="sub-btn" onclick="window.switchSubTab('products', this)">Catálogo</button>
-                <button class="sub-btn" onclick="window.switchSubTab('totales', this)">Totales</button>
                 <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
             </div>
-            <div id="filter-wrapper" class="p-2"></div>
+            <div id="filter-wrapper" class="p-1"></div>
             <div id="lista-catalogos"></div>
         </div>
     </div>
@@ -222,10 +171,9 @@
     <!-- TICKET RENDER -->
     <div id="ticket-render">
         <img src="logo.png" alt="Logo" class="ticket-logo">
-        <div class="ticket-header"><h3>OFERTAS RÁPIDAS YAUTE</h3><small id="t-fecha"></small></div>
-        <div style="text-align:left; font-size:0.9rem; margin-bottom:12px;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
-        <table class="ticket-table"><tbody id="t-items"></tbody></table>
-        <div class="ticket-total"><span>TOTAL:</span><span id="t-total"></span></div>
+        <div style="text-align:left; font-size:0.9rem; border-top: 1px solid #000; padding-top:10px;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
+        <table style="width:100%; font-size:0.85rem; margin-top:10px;" id="t-items"></table>
+        <div style="display:flex; justify-content:space-between; font-weight:900; border-top:1px dashed #000; padding-top:10px; margin-top:10px;"><span>TOTAL:</span><span id="t-total"></span></div>
     </div>
 
     <nav class="bottom-nav">
@@ -265,19 +213,6 @@
             toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
-        const playSignal = (type) => {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = type === 'error' ? 'sawtooth' : 'sine';
-                osc.frequency.setValueAtTime(type === 'error' ? 180 : 1000, ctx.currentTime);
-                gain.gain.setValueAtTime(0.04, ctx.currentTime);
-                osc.connect(gain); gain.connect(context.destination);
-                osc.start(); osc.stop(ctx.currentTime + 0.2);
-            } catch(e) {}
-        };
-
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
             if (u) {
@@ -300,100 +235,55 @@
             });
         };
 
-        // --- LÓGICA DE ESCANEO CON FLASH REFORZADO (v10.20) ---
+        // --- LÓGICA DE ESCANEO A CERO (CÁMARA NATIVA) ---
         const apiKey = ""; 
         const btnScan = document.getElementById('btn-scan');
-        const camOverlay = document.getElementById('camera-overlay');
-        const video = document.getElementById('camera-video');
-        const canvas = document.getElementById('camera-canvas');
-        const btnCapture = document.getElementById('camera-capture');
-        const btnFlash = document.getElementById('camera-flash');
-        
-        let stream = null;
-        let flashOn = false;
+        const inputFile = document.getElementById('input-file');
+        const scanText = document.getElementById('scan-text');
 
-        btnScan.onclick = async () => {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 }, focusMode: 'continuous' } 
-                });
-                video.srcObject = stream;
-                camOverlay.style.display = 'flex';
-                flashOn = false;
-                btnFlash.classList.remove('on');
-            } catch (e) { showToast("Error de acceso a cámara", "danger"); }
-        };
+        btnScan.onclick = () => inputFile.click();
 
-        btnFlash.onclick = async () => {
-            if (!stream) return;
-            const track = stream.getVideoTracks()[0];
-            const caps = track.getCapabilities ? track.getCapabilities() : {};
-            
-            if (caps.torch) {
-                flashOn = !flashOn;
-                try {
-                    await track.applyConstraints({ advanced: [{ torch: flashOn }] });
-                    btnFlash.classList.toggle('on', flashOn);
-                } catch (err) { showToast("No se pudo activar el flash", "warning"); }
-            } else {
-                showToast("Hardware de flash no detectado", "warning");
-            }
-        };
+        inputFile.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        document.getElementById('camera-close').onclick = stopCamera;
-
-        function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(t => {
-                    // Apagar flash antes de cerrar
-                    if (t.applyConstraints) t.applyConstraints({ advanced: [{ torch: false }] });
-                    t.stop();
-                });
-            }
-            camOverlay.style.display = 'none';
-        }
-
-        btnCapture.onclick = () => {
-            playSignal('snap');
-            processCapture();
-        };
-
-        async function processCapture() {
-            const ctx = canvas.getContext('2d');
-            // Captura de alta fidelidad
-            canvas.width = video.videoWidth || 1280;
-            canvas.height = video.videoHeight || 960;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
-            stopCamera();
-            
-            btnScan.classList.add('processing');
-            document.getElementById('scan-text').innerText = "IA ANALIZANDO...";
+            btnScan.classList.add('loading');
+            scanText.innerText = "IA ANALIZANDO IMAGEN...";
 
             try {
+                const base64 = await fileToBase64(file);
                 const result = await callGeminiIA(base64);
+                
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("¡Etiqueta leída!", "success");
+                    showToast("Etiqueta leída", "success");
                     document.getElementById('in-cantidad').focus();
-                } else { throw new Error(); }
-            } catch (e) {
-                playSignal('error');
-                showToast("No se detectó información. Use el flash.", "danger");
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                showToast("No se detectó información clara", "danger");
             } finally {
-                btnScan.classList.remove('processing');
-                document.getElementById('scan-text').innerText = "TOMAR FOTO A ETIQUETA";
+                btnScan.classList.remove('loading');
+                scanText.innerText = "FOTOGRAFIAR ETIQUETA";
+                inputFile.value = "";
             }
-        }
+        };
+
+        const fileToBase64 = (file) => new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+        });
 
         async function callGeminiIA(base64, retry = 0) {
-            const prompt = `Analiza esta etiqueta de anaquel:
-            1. El número más grande es 'unitCost'.
-            2. El texto arriba a la izquierda es el nombre.
-            3. El texto arriba a la derecha es la presentación.
-            Responde estrictamente en JSON: {"productName": "Nombre + Presentación", "unitCost": número}.`;
+            const prompt = `Analiza esta etiqueta de anaquel de supermercado.
+            Extrae el nombre del producto y su precio unitario siguiendo estas reglas:
+            1. El NÚMERO MÁS GRANDE es el precio ('unitCost').
+            2. El texto ARRIBA A LA IZQUIERDA es el nombre.
+            3. El texto ARRIBA A LA DERECHA es la presentación (ej: 1Lt, 500g).
+            Devuelve un JSON estrictamente así: {"productName": "Nombre + Presentación", "unitCost": número}.`;
 
             const payload = {
                 contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
@@ -401,10 +291,7 @@
                     responseMimeType: "application/json",
                     responseSchema: {
                         type: "OBJECT",
-                        properties: {
-                            productName: { type: "STRING" },
-                            unitCost: { type: "NUMBER" }
-                        },
+                        properties: { productName: { type: "STRING" }, unitCost: { type: "NUMBER" } },
                         required: ["productName"]
                     }
                 }
@@ -416,8 +303,8 @@
                 });
                 if (!res.ok) throw new Error();
                 const data = await res.json();
-                const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                return content ? JSON.parse(content) : null;
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                return text ? JSON.parse(text) : null;
             } catch (e) {
                 if (retry < 3) { await new Promise(r => setTimeout(r, 1000)); return callGeminiIA(base64, retry + 1); }
                 return null;
@@ -452,9 +339,7 @@
             activeSubTab = id; if (btn) { document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
             const w = document.getElementById('filter-wrapper');
             if (id === 'diezmo') w.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="diezmo-start" class="filter-input" value="${getISODateString()}"></div><div class="col-6"><input type="date" id="diezmo-end" class="filter-input" value="${getISODateString()}"></div><button class="btn btn-sm btn-primary mt-1" onclick="window.renderCatalogList()">CALCULAR</button></div>`;
-            else if (['sales', 'totales'].includes(id)) {
-                w.innerHTML = `<div class="row g-2"><div class="col-12"><input type="date" id="cat-date" class="filter-input" value="${getISODateString()}" onchange="window.renderCatalogList()"></div></div>`;
-            } else w.innerHTML = `<input type="text" id="search-generic" class="filter-input" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+            else w.innerHTML = `<div class="row g-2"><div class="col-12"><input type="date" id="cat-date" class="filter-input" value="${getISODateString()}" onchange="window.renderCatalogList()"></div></div>`;
             renderCatalogList();
         };
 
@@ -514,7 +399,7 @@
             const dv = document.getElementById('entregas-date')?.value || getISODateString();
             const targetDate = getLocalDateString(new Date(dv + "T12:00:00"));
             const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === targetDate);
-            document.getElementById('t-fecha').innerText = targetDate; document.getElementById('t-cliente').innerText = cli.toUpperCase();
+            document.getElementById('t-cliente').innerText = cli.toUpperCase();
             let t = 0; document.getElementById('t-items').innerHTML = items.map(i => { t += i.total; return `<tr><td>${i.cantidad}x ${i.producto}</td><td style="text-align:right;">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = `$${t.toFixed(2)}`;
             const canvasT = await html2canvas(document.getElementById('ticket-render'), { scale: 3 });
