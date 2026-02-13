@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.30</title>
+    <title>Ofertas Rápidas Yaute v10.31</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -38,7 +38,7 @@
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; }
-        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -47,49 +47,47 @@
         .header-container { display: flex; align-items: center; justify-content: center; gap: 12px; }
         .app-logo { height: 30px; width: auto; object-fit: contain; }
 
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 15px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid transparent; }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid transparent; }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 14px 28px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; font-size: 0.9rem; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; font-size: 0.9rem; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 
         .form-control { padding: 0.6rem 0.8rem; font-size: 0.95rem; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #fff; }
-        label.text-uppercase { font-size: 0.7rem; margin-bottom: 5px; font-weight: 800; color: #64748b; display: block; }
+        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        .btn-scan {
-            background: #f0f9ff; color: var(--accent); border: 2.5px dashed var(--accent); border-radius: 15px; padding: 18px;
-            display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1rem; font-weight: 900;
-            width: 100%; margin-bottom: 20px; transition: all 0.2s;
+        /* --- BOTÓN CÁMARA INTEGRADO --- */
+        .btn-inline-cam {
+            background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px;
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
         }
-        .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; cursor: wait; pointer-events: none; }
+        .btn-inline-cam.loading { color: #94a3b8; background: #f1f5f9; }
 
-        /* --- CÁMARA IN-APP (v10.30) --- */
+        /* --- CÁMARA IN-APP --- */
         #cam-container {
             position: fixed; inset: 0; background: #000; z-index: 10010; display: none;
             flex-direction: column; align-items: center; justify-content: center;
         }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
-        .cam-guide {
-            position: absolute; width: 85%; height: 180px;
-            border: 2px solid #fff; border-radius: 12px;
-            box-shadow: 0 0 0 4000px rgba(0,0,0,0.5); pointer-events: none;
-        }
         .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; align-items: center; }
-        .btn-capture { width: 80px; height: 80px; background: #fff; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .btn-capture:active { transform: scale(0.9); }
+        .btn-capture { width: 75px; height: 75px; background: #fff; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; }
         .btn-cam-close { position: absolute; top: 40px; right: 20px; color: #fff; background: rgba(0,0,0,0.4); border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem; }
-        .btn-cam-flash { position: absolute; top: 40px; left: 20px; color: #fff; background: rgba(0,0,0,0.4); border: none; width: 45px; height: 45px; border-radius: 50%; }
-        .btn-cam-flash.active { color: #fbbf24; background: rgba(251,191,36,0.2); border: 1px solid #fbbf24; }
+
+        /* --- BUSCADOR / SUGERENCIAS --- */
+        .search-wrapper { position: relative; }
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
+        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+        .sug-item:active { background: #f8fafc; }
 
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 25px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
-        .ticket-logo { width: 180px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
+        .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
     </style>
 </head>
 <body>
@@ -98,15 +96,13 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.30</div>
+        <div class="splash-version">CONTROL PRO v10.31</div>
         <div class="splash-loader"></div>
     </div>
 
-    <!-- INTERFAZ DE CÁMARA DIRECTA -->
+    <!-- INTERFAZ DE CÁMARA (SIN MARCO) -->
     <div id="cam-container">
         <video id="cam-preview" autoplay playsinline muted></video>
-        <div class="cam-guide"></div>
-        <button id="btn-flash-toggle" class="btn-cam-close" style="right: auto; left: 20px;"><i class="fas fa-bolt"></i></button>
         <button id="btn-cam-cancel" class="btn-cam-close"><i class="fas fa-times"></i></button>
         <div class="cam-controls">
             <button id="btn-do-capture" class="btn-capture"></button>
@@ -127,43 +123,54 @@
     <div class="container py-3">
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
+                <!-- FILA 1: TIENDA Y CLIENTE -->
                 <div class="row g-2 mb-3">
-                    <div class="col-6">
+                    <div class="col-6 search-wrapper">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Ej. Walmart">
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Walmart">
+                        <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-6 search-wrapper">
                         <label class="text-uppercase">Cliente</label>
                         <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
+                        <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
 
                 <hr class="my-3 opacity-25">
                 
-                <button id="btn-scan" class="btn-scan">
-                    <i class="fas fa-camera fa-lg"></i>
-                    <i class="fas fa-spinner fa-spin fa-lg" id="scan-spinner" style="display:none;"></i>
-                    <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
-                </button>
-
-                <div class="row g-2 mb-4">
-                    <div class="col-9">
+                <!-- FILA 2: SCANNER, PRODUCTO Y CANTIDAD (MAX 2 CIFRAS) -->
+                <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-auto">
+                        <label class="text-uppercase">IA</label>
+                        <button id="btn-scan" class="btn-inline-cam">
+                            <i class="fas fa-camera"></i>
+                            <i class="fas fa-spinner fa-spin d-none" id="scan-spinner"></i>
+                        </button>
+                    </div>
+                    <div class="col search-wrapper">
                         <label class="text-uppercase">Producto + Presentación</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Esperando foto...">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Escriba o use cámara">
+                        <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-2">
                         <label class="text-uppercase">Cant.</label>
-                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1">
+                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold px-1" value="1" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2)">
                     </div>
+                </div>
+
+                <!-- FILA 3: COSTO Y PRECIO VENTA -->
+                <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="text-uppercase">Costo (IA)</label>
+                        <label class="text-uppercase">Costo (Anaquel)</label>
                         <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Precio de Venta</label>
+                        <label class="text-uppercase">Precio Venta</label>
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
+                
                 <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow" style="border-radius: 12px;">GUARDAR REGISTRO</button>
             </div>
         </div>
@@ -188,7 +195,7 @@
     </nav>
 
     <script type="module">
-        // --- API KEY CONFIGURADA (v10.30) ---
+        // --- API KEY CONFIGURADA ---
         const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -209,7 +216,7 @@
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let state = { sales: [] };
+        let state = { sales: [], clients: [], stores: [], products: [] };
         
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
@@ -218,17 +225,17 @@
             toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4000);
         };
 
-        // --- LÓGICA DE CÁMARA INTERNA (INSTANTÁNEA) ---
+        // --- LÓGICA DE CÁMARA (SIN MARCO NI ZOOM) ---
         const btnScan = document.getElementById('btn-scan');
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
         const btnDoCapture = document.getElementById('btn-do-capture');
         const btnCamCancel = document.getElementById('btn-cam-cancel');
-        const btnFlashToggle = document.getElementById('btn-flash-toggle');
+        const scanSpinner = document.getElementById('scan-spinner');
+        const camIcon = btnScan.querySelector('.fa-camera');
         
         let stream = null;
-        let isFlashOn = false;
 
         btnScan.onclick = async () => {
             try {
@@ -237,28 +244,16 @@
                 });
                 camPreview.srcObject = stream;
                 camContainer.style.display = 'flex';
-                isFlashOn = false;
-            } catch (e) { showToast("Permiso de cámara denegado", "danger"); }
+            } catch (e) { showToast("Error al activar cámara", "danger"); }
         };
 
         btnCamCancel.onclick = stopCam;
-
-        btnFlashToggle.onclick = async () => {
-            if (!stream) return;
-            const track = stream.getVideoTracks()[0];
-            try {
-                isFlashOn = !isFlashOn;
-                await track.applyConstraints({ advanced: [{ torch: isFlashOn }] });
-                btnFlashToggle.classList.toggle('active', isFlashOn);
-            } catch (err) { showToast("Flash no disponible", "warning"); }
-        };
 
         btnDoCapture.onclick = () => {
             const ctx = camCanvas.getContext('2d');
             camCanvas.width = camPreview.videoWidth;
             camCanvas.height = camPreview.videoHeight;
             ctx.drawImage(camPreview, 0, 0);
-            
             const base64 = camCanvas.toDataURL('image/jpeg', 0.85).split(',')[1];
             stopCam();
             processIA(base64);
@@ -271,11 +266,11 @@
 
         async function processIA(base64) {
             btnScan.classList.add('loading');
-            document.getElementById('scan-spinner').style.display = 'inline-block';
-            document.getElementById('scan-text').innerText = "IA ANALIZANDO...";
+            camIcon.classList.add('d-none');
+            scanSpinner.classList.remove('d-none');
 
             try {
-                const prompt = "Extrae de la etiqueta de anaquel: unitCost (número más grande) y productName (combina nombre arriba izq con presentación arriba der). JSON: {'productName': string, 'unitCost': number}";
+                const prompt = "Extrae unitCost (número más grande) y productName (combina nombre arriba izq con presentación arriba der). JSON: {'productName': string, 'unitCost': number}";
                 const payload = {
                     contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { 
@@ -287,11 +282,9 @@
                         }
                     }
                 };
-
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
-
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
@@ -299,17 +292,43 @@
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("Etiqueta leída");
+                    showToast("Etiqueta capturada");
                     document.getElementById('in-cantidad').focus();
                 }
             } catch (err) {
-                showToast("Fallo al detectar texto. Intente de nuevo.", "danger");
+                showToast("Fallo de lectura. Reintente.", "danger");
             } finally {
                 btnScan.classList.remove('loading');
-                document.getElementById('scan-spinner').style.display = 'none';
-                document.getElementById('scan-text').innerText = "FOTOGRAFIAR ETIQUETA";
+                camIcon.classList.remove('d-none');
+                scanSpinner.classList.add('d-none');
             }
         }
+
+        // --- BUSCADOR DE TIENDAS Y CLIENTES (RESTAURADO) ---
+        const setupAuto = (id, boxId, key) => {
+            const inp = document.getElementById(id);
+            const box = document.getElementById(boxId);
+            if(!inp || !box) return;
+
+            inp.oninput = () => {
+                const val = inp.value.toUpperCase().trim();
+                if(!val) { box.classList.add('d-none'); return; }
+                const matches = (state[key] || []).filter(x => (x.nombre || '').toUpperCase().includes(val)).slice(0, 5);
+                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre}</div>`).join('');
+                box.classList.toggle('d-none', matches.length === 0);
+            };
+
+            box.onclick = (e) => {
+                const item = e.target.closest('.sug-item');
+                if(!item) return;
+                inp.value = item.dataset.val;
+                box.classList.add('d-none');
+                if(key === 'products') {
+                    const p = state.products.find(x => x.nombre === item.dataset.val);
+                    if(p) { document.getElementById('in-costo').value = p.pCosto; document.getElementById('in-precio').value = p.pVenta; }
+                }
+            };
+        };
 
         // --- FUNCIONES CORE ---
         signInAnonymously(auth);
@@ -323,10 +342,16 @@
         });
 
         const startSync = () => {
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), (s) => {
-                state.sales = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderEntregas();
+            const cols = ['sales', 'clients', 'stores', 'products'];
+            cols.forEach(n => {
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
+                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if(n === 'sales') renderEntregas();
+                });
             });
+            setupAuto('in-tienda', 'sug-tienda', 'stores');
+            setupAuto('in-cliente', 'sug-cliente', 'clients');
+            setupAuto('in-producto', 'sug-producto', 'products');
         };
 
         window.showTab = (id, btn) => {
@@ -339,7 +364,8 @@
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas');
             if(!list) return;
-            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const dateInput = document.getElementById('entregas-date').value;
+            const targetDate = new Date(dateInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "GENERAL"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
@@ -349,12 +375,12 @@
                 <div class="card-custom">
                     <div class="d-flex justify-content-between mb-3 align-items-center">
                         <span class="fw-bold text-uppercase">${cli}</span> 
-                        <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')">TICKET</button>
+                        <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button>
                     </div>
                     <div class="small fw-medium">${grouped[cli].items.map(i => `<div class="mb-1">⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold pt-2 border-top mt-2 text-primary" style="font-size: 1.1rem;">$${grouped[cli].t.toFixed(2)}</div>
+                    <div class="text-end fw-bold pt-2 border-top mt-2 text-primary">$${grouped[cli].t.toFixed(2)}</div>
                 </div>
-            `).join('') || '<div class="text-center py-5 opacity-40">No hay registros hoy</div>';
+            `).join('') || '<div class="text-center py-5 opacity-40">Sin registros</div>';
         };
 
         document.getElementById('btn-save').onclick = async () => {
@@ -369,11 +395,18 @@
                 total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0)
             };
             if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos", "danger");
+            
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
+                const checkAndAdd = async (col, val) => {
+                    if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val });
+                };
+                await checkAndAdd('stores', data.tienda);
+                await checkAndAdd('clients', data.cliente);
+                
                 showToast("¡Venta guardada!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { showToast("Error", "danger"); }
+            } catch(e) { showToast("Error al guardar", "danger"); }
         };
 
         window.shareTicket = async (cli) => {
@@ -384,7 +417,6 @@
                 total += i.total;
                 return `<tr><td style="text-align:left; padding:5px 0;">${i.cantidad}x ${i.producto}</td><td style="text-align:right;">$${i.total.toFixed(2)}</td></tr>`;
             }).join('');
-            document.getElementById('t-total').innerText = "TOTAL: $" + total.toFixed(2);
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3 });
             canvas.toBlob(blob => {
                 const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
