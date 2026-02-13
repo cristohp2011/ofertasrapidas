@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.58</title>
+    <title>Ofertas Rápidas Yaute v10.59</title>
     
     <!-- Librerías base -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -112,7 +112,11 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
 
-        /* --- TICKET RENDERER --- */
+        .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 6px 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; color: #475569; }
+        .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
+
+        /* --- TICKET RENDERER (ESTILO ticket ok.jpeg) --- */
         #ticket-render { 
             position: absolute; 
             top: -5000px; 
@@ -140,7 +144,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.58</div>
+        <div class="splash-version">CONTROL PRO v10.59</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -249,7 +253,7 @@
         </div>
     </main>
 
-    <!-- TICKET RENDERER (OCULTO) -->
+    <!-- TICKET RENDERER -->
     <div id="ticket-render">
         <img src="logo.png" alt="Yaute Logo" class="ticket-header-img">
         <div class="ticket-brand">OFERTAS RAPIDAS YAUTE</div>
@@ -454,7 +458,6 @@
             } else if(id === 'ganancias') {
                 fw.innerHTML = `<div class="mb-2"><input type="date" id="hist-date" class="form-control text-center fw-bold" value="${today}" onchange="window.renderCatalogList()"></div>`;
             } else if(id === 'historial') {
-                // HISTORIAL NO LLEVA FILTROS, MUESTRA TODO GRUPADO POR FECHA
                 fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial acumulado por fecha</div>`;
             } else if(id === 'ticketTienda') {
                 fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
@@ -567,39 +570,22 @@
                 }
                 list.innerHTML = html;
             } else if(activeSubTab === 'historial') {
-                // NUEVA LÓGICA DE HISTORIAL TOTAL
                 const groupedByDate = state.sales.reduce((acc, v) => {
                     const date = v.fechaStr;
-                    if (!acc[date]) acc[date] = { sales: 0, profit: 0, rawDate: "" };
+                    if (!acc[date]) acc[date] = { sales: 0, profit: 0 };
                     acc[date].sales += v.total;
                     acc[date].profit += (v.total - ((v.costo || 0) * v.cantidad));
-                    // Intentamos obtener una fecha comparable para ordenar
-                    if (v.fecha) acc[date].rawDate = v.fecha.toDate();
                     return acc;
                 }, {});
-
-                // Convertir a array y ordenar por fecha (más reciente arriba)
                 const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
                     const [da, ma, aa] = a.split('/').map(Number);
                     const [db, mb, ab] = b.split('/').map(Number);
                     return new Date(ab, mb-1, db) - new Date(aa, ma-1, da);
                 });
-
                 list.innerHTML = sortedDates.map(date => {
                     const data = groupedByDate[date];
-                    return `
-                    <div class="card-custom py-3 mb-2" style="border-left: 5px solid var(--accent);">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold text-primary">${date}</span>
-                            <span class="badge bg-light text-dark fw-bold" style="font-size:0.8rem">Venta: $${data.sales.toFixed(2)}</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-light">
-                            <small class="text-uppercase fw-bold opacity-50">Ganancia Neta:</small>
-                            <b class="text-success" style="font-size:1.1rem">$${data.profit.toFixed(2)}</b>
-                        </div>
-                    </div>`;
-                }).join('') || '<p class="text-center py-5 opacity-40">No hay historial registrado</p>';
-
+                    return `<div class="card-custom py-3 mb-2" style="border-left: 5px solid var(--accent);"><div class="d-flex justify-content-between align-items-center mb-2"><span class="fw-bold text-primary">${date}</span><span class="badge bg-light text-dark fw-bold">Venta: $${data.sales.toFixed(2)}</span></div><div class="d-flex justify-content-between align-items-center pt-2 border-top border-light"><small class="text-uppercase fw-bold opacity-50">Ganancia Neta:</small><b class="text-success" style="font-size:1.1rem">$${data.profit.toFixed(2)}</b></div></div>`;
+                }).join('') || '<p class="text-center py-5 opacity-40">No hay historial</p>';
             } else if(activeSubTab === 'ticketTienda') {
                 const fd = new Date(document.getElementById('st-date').value + "T12:00:00").toLocaleDateString('es-MX');
                 const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === document.getElementById('st-store').value);
@@ -666,7 +652,13 @@
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
                 canvas.toBlob(async blob => {
                     const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
-                    if (navigator.share) { await navigator.share({ files: [file], title: 'Ticket' }); }
+                    if (navigator.share) { 
+                        await navigator.share({ 
+                            files: [file], 
+                            title: 'Ticket',
+                            text: `Hola ${name}, te envio tu cuenta` // MENSAJE PERSONALIZADO AÑADIDO
+                        }); 
+                    }
                 }, 'image/png');
             } catch (err) { showToast("Error al generar ticket", "danger"); }
         };
