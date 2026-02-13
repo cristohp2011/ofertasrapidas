@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.15</title>
+    <title>Ofertas Rápidas Yaute v10.17</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -83,37 +83,36 @@
         #camera-video { width: 100%; height: 100%; object-fit: cover; }
         
         .camera-guide {
-            position: absolute; width: 90%; height: 180px;
-            border: 3px solid #fff; border-radius: 15px;
-            box-shadow: 0 0 0 4000px rgba(0,0,0,0.4); pointer-events: none;
-            display: flex; align-items: center; justify-content: center;
+            position: absolute; width: 92%; height: 220px;
+            border: 2px solid rgba(255,255,255,0.9); border-radius: 15px;
+            box-shadow: 0 0 0 4000px rgba(0,0,0,0.45); pointer-events: none;
         }
         .camera-guide::before {
-            content: "CENTRE LA ETIQUETA"; color: white; font-weight: 900; font-size: 0.8rem;
-            background: var(--accent); padding: 4px 12px; border-radius: 5px;
+            content: "ENCUADRE NOMBRE Y PRECIO GRANDE"; position: absolute; top: -35px; left: 0; right: 0;
+            text-align: center; color: white; font-size: 0.75rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
         .camera-capture-btn {
-            position: absolute; bottom: 40px; width: 80px; height: 80px;
-            background: white; border: 6px solid rgba(255,255,255,0.4);
+            position: absolute; bottom: 40px; width: 85px; height: 85px;
+            background: white; border: 8px solid rgba(59, 130, 246, 0.4);
             border-radius: 50%; color: var(--primary); font-size: 1.8rem;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        .camera-capture-btn:active { transform: scale(0.9); }
+        .camera-capture-btn:active { transform: scale(0.9); background: #eee; }
 
         .camera-close {
-            position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.6);
-            color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.3rem;
+            position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.4);
+            color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.4rem;
             display: flex; align-items: center; justify-content: center;
         }
 
         .btn-scan {
-            background: #e0f2fe; color: var(--accent); border: 2px solid var(--accent); border-radius: 12px; padding: 14px;
-            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.85rem; font-weight: 800;
-            width: 100%; margin-bottom: 20px; text-transform: uppercase;
+            background: #eff6ff; color: var(--accent); border: 2px solid #3b82f6; border-radius: 12px; padding: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; font-weight: 900;
+            width: 100%; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
         }
-        .btn-scan.processing { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; pointer-events: none; }
+        .btn-scan.processing { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; pointer-events: none; }
 
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 20px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
         .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
@@ -128,11 +127,11 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.15</div>
+        <div class="splash-version">CONTROL PRO v10.17</div>
         <div class="splash-loader"></div>
     </div>
 
-    <!-- --- INTERFAZ DE CÁMARA --- -->
+    <!-- --- INTERFAZ DE CÁMARA MEJORADA --- -->
     <div id="camera-overlay">
         <video id="camera-video" autoplay playsinline muted></video>
         <div class="camera-guide"></div>
@@ -173,13 +172,13 @@
                 <hr class="my-3 opacity-10">
                 
                 <button id="btn-scan" class="btn-scan">
-                    <i class="fas fa-expand-arrows-alt"></i>
+                    <i class="fas fa-expand"></i>
                     <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
                 </button>
 
                 <div class="row g-2 mb-3">
                     <div class="col-9 search-wrapper">
-                        <label class="text-uppercase">Producto</label>
+                        <label class="text-uppercase">Nombre + Presentación</label>
                         <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Producto">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
@@ -188,7 +187,7 @@
                         <input type="number" id="in-cantidad" class="form-control text-center" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Costo Unit. (IA)</label>
+                        <label class="text-uppercase">Costo (Núm. Grande)</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
@@ -278,7 +277,7 @@
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = type === 'error' ? 'sawtooth' : 'sine';
-                osc.frequency.setValueAtTime(type === 'error' ? 180 : 900, ctx.currentTime);
+                osc.frequency.setValueAtTime(type === 'error' ? 180 : 1000, ctx.currentTime);
                 gain.gain.setValueAtTime(0.04, ctx.currentTime);
                 osc.connect(gain); gain.connect(context.destination);
                 osc.start(); osc.stop(ctx.currentTime + 0.2);
@@ -307,7 +306,7 @@
             });
         };
 
-        // --- LOGICA DE CAMARA OPTIMIZADA (v10.15) ---
+        // --- LÓGICA DE CÁMARA A COLOR E IA REFORZADA (v10.17) ---
         const apiKey = ""; 
         const btnScan = document.getElementById('btn-scan');
         const camOverlay = document.getElementById('camera-overlay');
@@ -319,11 +318,11 @@
         btnScan.onclick = async () => {
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 1024 }, height: { ideal: 768 } } 
+                    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } } 
                 });
                 video.srcObject = stream;
                 camOverlay.style.display = 'flex';
-            } catch (e) { showToast("Permiso cámara necesario", "danger"); }
+            } catch (e) { showToast("Error de cámara", "danger"); }
         };
 
         document.getElementById('camera-close').onclick = stopCamera;
@@ -340,43 +339,44 @@
 
         async function processCapture() {
             const ctx = canvas.getContext('2d');
-            canvas.width = 800; // Resolución optimizada para envío rápido
-            canvas.height = 600;
+            canvas.width = 1024; 
+            canvas.height = 768;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Filtro B/N veloz (Solo escala de grises básica para contraste)
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const d = imgData.data;
-            for (let i = 0; i < d.length; i += 4) {
-                const g = d[i] * 0.3 + d[i+1] * 0.59 + d[i+2] * 0.11;
-                d[i] = d[i+1] = d[i+2] = g > 110 ? 255 : 0; // Umbralización simple para resaltar texto
-            }
-            ctx.putImageData(imgData, 0, 0);
-            
-            const base64 = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
+            // ENVIAMOS A COLOR NATURAL (Sin filtros que borren texto)
+            const base64 = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
             
             stopCamera();
             btnScan.classList.add('processing');
-            document.getElementById('scan-text').innerText = "IA LEYENDO... ESPERE";
+            document.getElementById('scan-text').innerText = "IA LEYENDO ETIQUETA...";
 
             const result = await callGeminiIA(base64);
-            if (result && (result.productName || result.unitCost)) {
+            if (result) {
                 document.getElementById('in-producto').value = (result.productName || "").toUpperCase().trim();
                 if(result.unitCost) document.getElementById('in-costo').value = parseFloat(result.unitCost).toFixed(2);
-                showToast("Datos cargados", "success");
+                
+                showToast("Datos extraídos correctamente", "success");
                 document.getElementById('in-cantidad').focus();
             } else {
                 playSignal('error');
-                showToast("No se pudo leer la etiqueta. Repita.", "warning");
+                showToast("No se detectó información. Intente de nuevo.", "warning");
             }
             btnScan.classList.remove('processing');
             document.getElementById('scan-text').innerText = "FOTOGRAFIAR ETIQUETA";
         }
 
         async function callGeminiIA(base64, retry = 0) {
-            const sysPrompt = "Analiza esta etiqueta de precio de anaquel. Extrae el nombre del producto y el precio unitario. Responde solo en JSON: {'productName': string, 'unitCost': number}. Si no hay precio devuelve null.";
+            const sysPrompt = `Actúa como un experto en extracción de datos de anaqueles.
+            La imagen muestra una etiqueta de precio de supermercado.
+            REGLAS DE EXTRACCIÓN:
+            1. El número con el tamaño de fuente MÁS GRANDE es el PRECIO UNITARIO (unitCost).
+            2. El texto ubicado en la esquina SUPERIOR IZQUIERDA es el NOMBRE del producto.
+            3. El texto ubicado en la esquina SUPERIOR DERECHA es la PRESENTACIÓN/EMPAQUE (ej. 1L, 500g, 4 pack).
+            4. Devuelve un objeto JSON con las claves 'productName' (Nombre + Presentación) y 'unitCost' (Número).
+            5. Si no hay precio, devuelve null en unitCost. Responde SOLO el JSON.`;
+
             const payload = {
-                contents: [{ role: "user", parts: [{ text: "Lee la etiqueta." }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                contents: [{ role: "user", parts: [{ text: "Lee esta etiqueta de anaquel." }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                 systemInstruction: { parts: [{ text: sysPrompt }] },
                 generationConfig: { responseMimeType: "application/json" }
             };
@@ -386,14 +386,20 @@
                 });
                 if (!res.ok) throw new Error();
                 const data = await res.json();
-                return JSON.parse(data.candidates[0].content.parts[0].text);
+                const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                // Limpieza básica por si la IA agrega backticks
+                const cleanJson = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+                return JSON.parse(cleanJson);
             } catch (e) {
-                if (retry < 3) { await new Promise(r => setTimeout(r, 800)); return callGeminiIA(base64, retry + 1); }
+                if (retry < 3) { 
+                    await new Promise(r => setTimeout(r, 1000)); 
+                    return callGeminiIA(base64, retry + 1); 
+                }
                 return null;
             }
         }
 
-        // --- LÓGICA GENERAL ---
+        // --- LÓGICA DE NEGOCIO ORIGINAL ---
         const auto = (id, boxId, key) => {
             const inp = document.getElementById(id); const box = document.getElementById(boxId);
             inp.oninput = () => {
@@ -435,8 +441,8 @@
         const renderAll = () => { renderEntregas(); renderCatalogList(); };
 
         window.renderEntregas = () => {
-            const dateVal = document.getElementById('entregas-date')?.value || getISODateString();
-            const targetDate = getLocalDateString(new Date(dateVal + "T12:00:00"));
+            const dv = document.getElementById('entregas-date')?.value || getISODateString();
+            const targetDate = getLocalDateString(new Date(dv + "T12:00:00"));
             const list = document.getElementById('lista-entregas');
             const vH = state.sales.filter(s => s.fechaStr === targetDate);
             if (!vH.length) { list.innerHTML = '<p class="text-center py-4 text-muted small">Sin ventas hoy</p>'; return; }
@@ -493,8 +499,8 @@
         };
 
         window.genTicket = async (cli) => {
-            const dateVal = document.getElementById('entregas-date')?.value || getISODateString();
-            const targetDate = getLocalDateString(new Date(dateVal + "T12:00:00"));
+            const dv = document.getElementById('entregas-date')?.value || getISODateString();
+            const targetDate = getLocalDateString(new Date(dv + "T12:00:00"));
             const items = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === targetDate);
             document.getElementById('t-fecha').innerText = targetDate; document.getElementById('t-cliente').innerText = cli.toUpperCase();
             let t = 0; document.getElementById('t-items').innerHTML = items.map(i => { t += i.total; return `<tr><td>${i.cantidad}x ${i.producto}</td><td style="text-align:right;">$${i.total.toFixed(2)}</td></tr>`; }).join('');
