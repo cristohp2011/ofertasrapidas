@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.35</title>
+    <title>Ofertas Rápidas Yaute v10.47</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,7 +25,7 @@
         body { 
             background-color: var(--bg); 
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding-bottom: 90px;
+            padding-bottom: 95px;
             user-select: none;
             color: #1e293b;
         }
@@ -37,7 +37,7 @@
             z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; padding: 0 20px; }
         .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -49,6 +49,8 @@
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid transparent; }
         .card-status-ok { background-color: #f0fdf4 !important; border-left-color: var(--success); }
+        .card-summary { background: var(--primary); color: white; border-left-color: var(--accent); }
+        .card-profit { border-left-color: var(--success); }
         
         #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; font-size: 0.9rem; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
@@ -67,7 +69,7 @@
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
+        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; justify-content: flex-start; }
         .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 600; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
@@ -79,6 +81,10 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
 
+        .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 6px 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; color: #475569; }
+        .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
+
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 25px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
         .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
     </style>
@@ -87,14 +93,14 @@
 
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
-        <div class="splash-title">Yaute Rápidas</div>
-        <div class="splash-version">CONTROL PRO v10.35</div>
+        <div class="splash-title">Ofertas Rápidas Yaute</div>
+        <div class="splash-version">CONTROL PRO v10.47</div>
         <div class="splash-loader"></div>
     </div>
 
     <div id="cam-container">
         <video id="cam-preview" autoplay playsinline muted></video>
-        <button id="btn-cam-cancel" class="btn-cam-close" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:45px; height:45px;"><i class="fas fa-times"></i></button>
+        <button id="btn-cam-cancel" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:45px; height:45px;"><i class="fas fa-times"></i></button>
         <div class="cam-controls">
             <button id="btn-do-capture" class="btn-capture"></button>
         </div>
@@ -105,7 +111,7 @@
 
     <header>
         <div class="header-container">
-            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem;">Yaute Rápidas</h5>
+            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem;">Ofertas Rápidas Yaute</h5>
             <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
             <div id="status-dot" class="status-indicator bg-warning" style="width:10px; height:10px; border-radius:50%;"></div>
         </div>
@@ -173,7 +179,10 @@
         <!-- PESTAÑA: CONTROL -->
         <div id="tab-control" class="tab-content">
             <div class="sub-nav">
-                <button class="sub-btn active" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn active" id="btn-sub-clients" onclick="switchSubTab('clientes', this)">Clientes</button>
+                <button class="sub-btn" id="btn-sub-products" onclick="switchSubTab('productos', this)">Productos</button>
+                <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn" id="btn-sub-profit" onclick="switchSubTab('ganancias', this)">Ganancias</button>
                 <button class="sub-btn" id="btn-sub-store" onclick="switchSubTab('ticketTienda', this)">Ticket Tienda</button>
                 <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
             </div>
@@ -184,13 +193,13 @@
 
     <!-- TICKET RENDER -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Logo" class="ticket-logo">
+        <img src="logo.png" alt="Yaute Logo" class="ticket-logo">
         <div id="t-header" style="font-weight:800; border-top:1px solid #000; padding-top:10px; margin-bottom:10px; text-transform:uppercase;"></div>
         <table id="t-items" style="width:100%; font-size:0.85rem;"></table>
-        <div id="t-total" style="font-weight:900; border-top:1px dashed #000; margin-top:10px; padding-top:5px;"></div>
+        <div id="t-count" style="font-weight:700; border-top:1px solid #eee; margin-top:10px; padding-top:5px; font-size: 0.8rem; text-align: right;"></div>
+        <div id="t-total" style="font-weight:900; border-top:1px dashed #000; margin-top:5px; padding-top:5px; font-size: 1.1rem;"></div>
     </div>
 
-    <!-- NAVEGACIÓN PRINCIPAL -->
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
@@ -219,16 +228,28 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
-        let activeSubTab = 'sales';
+        let activeSubTab = 'clientes';
 
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
             if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3500);
         };
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
+
+        const syncPriceIfCristo = () => {
+            const clientIn = document.getElementById('in-cliente');
+            const costIn = document.getElementById('in-costo');
+            const priceIn = document.getElementById('in-precio');
+            if (clientIn && clientIn.value.toUpperCase().trim() === "CRISTO") {
+                priceIn.value = costIn.value;
+            }
+        };
+
+        document.getElementById('in-cliente').addEventListener('input', syncPriceIfCristo);
+        document.getElementById('in-costo').addEventListener('input', syncPriceIfCristo);
 
         // --- CÁMARA ---
         const btnScan = document.getElementById('btn-scan');
@@ -272,12 +293,12 @@
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
                 document.getElementById('in-producto').value = result.productName.toUpperCase();
                 document.getElementById('in-costo').value = result.unitCost;
+                syncPriceIfCristo();
                 showToast("Etiqueta leída");
             } catch (e) { showToast("No se leyó la etiqueta", "danger"); }
             finally { document.getElementById('scan-spinner').classList.add('d-none'); }
         }
 
-        // --- BUSCADORES ---
         const setupAuto = (id, boxId, key) => {
             const inp = document.getElementById(id); const box = document.getElementById(boxId);
             if(!inp || !box) return;
@@ -291,17 +312,20 @@
             box.onclick = (e) => {
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val; box.classList.add('d-none');
+                if (key === 'products') {
+                    const prod = state.products.find(p => p.nombre === item.dataset.val);
+                    if (prod) { document.getElementById('in-costo').value = prod.pCosto || ""; document.getElementById('in-precio').value = prod.pVenta || ""; syncPriceIfCristo(); }
+                } else if (key === 'clients') { syncPriceIfCristo(); }
             };
         };
 
-        // --- FIREBASE ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 document.getElementById('status-dot').className = 'status-indicator bg-success';
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
-                switchSubTab('sales', document.getElementById('btn-sub-sales'));
+                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
                 setTimeout(() => { document.getElementById('splash-screen').style.visibility = 'hidden'; }, 2000);
             }
         });
@@ -310,7 +334,9 @@
             ['sales', 'clients', 'stores', 'products'].forEach(n => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderEntregas(); renderCatalogList();
+                    if(n === 'sales') renderEntregas();
+                    updateFilterOptions();
+                    renderCatalogList();
                 });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
@@ -323,131 +349,161 @@
             if(btn) btn.classList.add('active');
         };
 
+        const updateFilterOptions = () => {
+            const storeFilter = document.getElementById('filter-store');
+            const clientFilter = document.getElementById('filter-client');
+            const ticketStore = document.getElementById('st-store');
+            const sOpt = [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
+            const cOpt = [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
+            if(storeFilter) { const current = storeFilter.value; storeFilter.innerHTML = `<option value="">-- TODAS TIENDAS --</option>${sOpt}`; storeFilter.value = current; }
+            if(clientFilter) { const current = clientFilter.value; clientFilter.innerHTML = `<option value="">-- TODOS CLIENTES --</option>${cOpt}`; clientFilter.value = current; }
+            if(ticketStore) { const current = ticketStore.value; ticketStore.innerHTML = `<option value="">-- ELIGE TIENDA --</option>${sOpt}`; ticketStore.value = current; }
+        };
+
         window.switchSubTab = (id, btn) => {
             activeSubTab = id;
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
-            
-            const storesOptions = [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
-
-            if(id === 'sales') {
-                fw.innerHTML = `
-                    <div class="row g-2">
-                        <div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"></div>
-                        <div class="col-6">
-                            <select id="filter-store" class="form-select" onchange="window.renderCatalogList()">
-                                <option value="">-- TODAS TIENDAS --</option>${storesOptions}
-                            </select>
-                        </div>
-                        <div class="col-6"><input type="text" id="filter-client" class="form-control" placeholder="Buscar Cliente..." oninput="window.renderCatalogList()"></div>
-                    </div>`;
+            const today = getISODate();
+            if(id === 'clientes' || id === 'productos') {
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar en catálogo..." oninput="window.renderCatalogList()">`;
+            } else if(id === 'sales' || id === 'ganancias') {
+                fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             } else if(id === 'ticketTienda') {
-                fw.innerHTML = `
-                    <div class="row g-2">
-                        <div class="col-6"><input type="date" id="st-date" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"></div>
-                        <div class="col-6">
-                            <select id="st-store" class="form-select" onchange="window.renderCatalogList()">
-                                <option value="">-- ELIGE TIENDA --</option>${storesOptions}
-                            </select>
-                        </div>
-                    </div>`;
+                fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             } else {
-                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${getISODate()}" onchange="window.renderCatalogList()"></div>`;
+                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             }
+            updateFilterOptions();
             renderCatalogList();
         };
 
-        window.toggleStatus = async (id, field, val) => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id), { [field]: val });
+        // --- SISTEMA DE INTEGRIDAD Y CASCADA v10.47 ---
+        window.editItem = async (col, id, currentData) => {
+            if (col === 'clients') {
+                const nuevo = prompt("Nuevo nombre del cliente:", currentData.nombre);
+                if (nuevo && nuevo.toUpperCase().trim() !== currentData.nombre) {
+                    const finalNewName = nuevo.toUpperCase().trim();
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clients', id), { nombre: finalNewName });
+                    // CASCADA: Actualizar todas las ventas con el nuevo nombre
+                    const salesToUpdate = state.sales.filter(s => s.cliente === currentData.nombre);
+                    for (const s of salesToUpdate) {
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { cliente: finalNewName });
+                    }
+                    showToast("Cliente y ventas actualizadas en cascada");
+                }
+            } else if (col === 'products') {
+                const n = prompt("Nuevo nombre del producto:", currentData.nombre);
+                const c = prompt("Nuevo costo:", currentData.pCosto);
+                const v = prompt("Nuevo precio:", currentData.pVenta);
+                if (n) {
+                    const finalNewName = n.toUpperCase().trim();
+                    const finalNewCosto = parseFloat(c) || 0;
+                    const finalNewVenta = parseFloat(v) || 0;
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', id), { 
+                        nombre: finalNewName, pCosto: finalNewCosto, pVenta: finalNewVenta 
+                    });
+                    // CASCADA: Si el nombre cambió, actualizar referencias en ventas
+                    if (finalNewName !== currentData.nombre) {
+                        const salesToUpdate = state.sales.filter(s => s.producto === currentData.nombre);
+                        for (const s of salesToUpdate) {
+                            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { producto: finalNewName });
+                        }
+                    }
+                    showToast("Producto y referencias actualizadas");
+                }
+            }
+        };
+
+        window.deleteItem = async (col, id) => {
+            const item = state[col].find(x => x.id === id);
+            if (!item) return;
+            const name = item.nombre;
+            
+            // VERIFICAR INTEGRIDAD: ¿Tiene ventas involucradas?
+            const isUsed = state.sales.some(s => col === 'clients' ? s.cliente === name : s.producto === name);
+            if (isUsed) {
+                showToast(`No se puede eliminar: el ${col === 'clients' ? 'cliente' : 'producto'} tiene ventas registradas`, "danger");
+                return;
+            }
+
+            if (confirm("¿Seguro que desea eliminar este registro del catálogo?")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
+            }
+        };
+
+        window.toggleClientStatus = async (clientName, targetDate, field, val) => {
+            const itemsToUpdate = state.sales.filter(s => s.cliente === clientName && s.fechaStr === targetDate);
+            for (const item of itemsToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id), { [field]: val }); }
         };
 
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas');
             if(!list) return;
-            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const targetDateInput = document.getElementById('entregas-date').value;
+            const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<div class="text-center py-5 opacity-40">Sin pedidos</div>'; return; }
-            
-            const grouped = filtered.reduce((acc, v) => {
-                const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]};
-                acc[c].t += v.total; acc[c].items.push(v); return acc;
-            }, {});
-
+            if(!filtered.length) { list.innerHTML = '<div class="text-center py-5 opacity-40">Sin pedidos hoy</div>'; return; }
+            const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => {
                 const items = grouped[cli].items;
                 const allDone = items.every(i => i.entregado && i.pagado);
                 return `<div class="card-custom ${allDone ? 'card-status-ok' : ''}">
-                    <div class="d-flex justify-content-between mb-2"><b>${cli}</b> <button class="btn btn-sm btn-success rounded-pill" onclick="window.shareTicket('${cli}', 'CLIENTE')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="small">
-                        ${items.map(i => `
-                            <div class="d-flex align-items-center gap-2 mb-2 border-bottom pb-1">
-                                <div class="flex-grow-1">${i.cantidad}x ${i.producto}</div>
-                                <div class="d-flex gap-2">
-                                    <input type="checkbox" ${i.entregado ? 'checked' : ''} onclick="window.toggleStatus('${i.id}', 'entregado', this.checked)"> <i class="fas fa-truck-loading opacity-50"></i>
-                                    <input type="checkbox" ${i.pagado ? 'checked' : ''} onclick="window.toggleStatus('${i.id}', 'pagado', this.checked)"> <i class="fas fa-dollar-sign opacity-50"></i>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="text-end fw-bold text-primary mt-1">$${grouped[cli].t.toFixed(2)}</div>
-                </div>`;
+                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase" style="font-size:0.9rem">${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}', 'CLIENTE')"><i class="fab fa-whatsapp"></i></button></div>
+                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label><div style="width:1px; height:15px; background:#cbd5e1"></div><label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label></div>
+                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div><div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`;
             }).join('');
         };
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos');
             if(!list) return;
-            
-            if(activeSubTab === 'sales') {
+            if(activeSubTab === 'clientes') {
+                const searchEl = document.getElementById('search-cat');
+                const query = searchEl ? searchEl.value.toUpperCase() : "";
+                const filtered = state.clients.filter(c => c.nombre.includes(query)).sort((a,b) => a.nombre.localeCompare(b.nombre));
+                list.innerHTML = filtered.map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b class="text-uppercase small">${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clients', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-5 opacity-40">Sin clientes</p>';
+            } else if(activeSubTab === 'productos') {
+                const searchEl = document.getElementById('search-cat');
+                const query = searchEl ? searchEl.value.toUpperCase() : "";
+                const filtered = state.products.filter(p => p.nombre.includes(query)).sort((a,b) => a.nombre.localeCompare(b.nombre));
+                list.innerHTML = filtered.map(p => `<div class="card-custom py-2 mb-1"><div class="d-flex justify-content-between align-items-start"><b class="text-uppercase small flex-grow-1">${p.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('products', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('products', '${p.id}')"><i class="fas fa-trash"></i></button></div></div><div class="d-flex justify-content-between mt-1 opacity-75" style="font-size:0.7rem"><span>Costo: $${(p.pCosto || 0).toFixed(2)}</span><span>Venta: $${(p.pVenta || 0).toFixed(2)}</span></div></div>`).join('') || '<p class="text-center py-5 opacity-40">Sin productos</p>';
+            } else if(activeSubTab === 'sales' || activeSubTab === 'ganancias') {
                 const dateEl = document.getElementById('hist-date');
                 const storeEl = document.getElementById('filter-store');
                 const clientEl = document.getElementById('filter-client');
-                if(!dateEl) return;
-                
+                if(!dateEl || !storeEl || !clientEl) return;
                 const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
                 let dv = state.sales.filter(s => s.fechaStr === fd);
-                
-                if(storeEl && storeEl.value) dv = dv.filter(s => s.tienda === storeEl.value);
-                if(clientEl && clientEl.value) dv = dv.filter(s => s.cliente.includes(clientEl.value.toUpperCase()));
-
-                list.innerHTML = dv.map(v => `
-                    <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
-                        <div class="small"><b>${v.cantidad}x ${v.producto}</b><br><span class="opacity-50">${v.tienda} • ${v.cliente}</span></div>
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="fw-bold text-primary">$${v.total.toFixed(2)}</span>
-                            <button class="btn btn-sm text-danger" onclick="window.delSale('${v.id}')"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                `).join('') || '<p class="text-center py-5 opacity-40">Sin resultados</p>';
-
+                if(storeEl.value) dv = dv.filter(s => s.tienda === storeEl.value);
+                if(clientEl.value) dv = dv.filter(s => s.cliente === clientEl.value);
+                const tp = dv.reduce((acc, v) => acc + v.total, 0);
+                const tf = dv.reduce((acc, v) => acc + (v.total - ((v.costo || 0) * v.cantidad)), 0);
+                let html = dv.map(v => {
+                    const profit = v.total - ((v.costo || 0) * v.cantidad);
+                    if(activeSubTab === 'sales') return `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><div class="small"><b>${v.cantidad}x ${v.producto}</b><br><span class="opacity-50">${v.tienda} • ${v.cliente}</span></div><div class="d-flex align-items-center gap-3"><span class="fw-bold text-primary">$${v.total.toFixed(2)}</span><button class="btn btn-sm text-danger" onclick="window.deleteItem('sales', '${v.id}')"><i class="fas fa-trash"></i></button></div></div>`;
+                    else return `<div class="card-custom mb-2 py-2 card-profit"><div class="d-flex justify-content-between align-items-start"><div class="small"><b class="text-uppercase">${v.cantidad}x ${v.producto}</b><br><span class="opacity-50">${v.tienda} • ${v.cliente}</span></div><div class="text-end"><div class="small fw-bold text-success">GANANCIA: $${profit.toFixed(2)}</div><button class="btn btn-sm text-danger p-0" onclick="window.deleteItem('sales', '${v.id}')"><i class="fas fa-trash" style="font-size:0.7rem"></i></button></div></div><div class="mt-2 border-top pt-1 d-flex justify-content-between opacity-75" style="font-size:0.7rem"><span>Costo: $${(v.costo || 0).toFixed(2)}</span><span>Venta: $${(v.precio || 0).toFixed(2)}</span><span>Total: $${v.total.toFixed(2)}</span></div></div>`;
+                }).join('') || '<p class="text-center py-5 opacity-40">Sin resultados</p>';
+                if (dv.length > 0) {
+                    if (activeSubTab === 'sales') html += `<div class="card-custom card-summary mt-3 shadow-sm"><div class="d-flex justify-content-between align-items-center"><span class="fw-bold">TOTAL VENTAS:</span><h4 class="m-0 fw-black">$${tp.toFixed(2)}</h4></div></div>`;
+                    else html += `<div class="card-custom card-summary mt-3 shadow-sm" style="background:var(--success)"><div class="d-flex justify-content-between align-items-center"><span class="fw-bold">GANANCIA TOTAL:</span><h4 class="m-0 fw-black">$${tf.toFixed(2)}</h4></div></div>`;
+                }
+                list.innerHTML = html;
             } else if(activeSubTab === 'ticketTienda') {
                 const dateEl = document.getElementById('st-date');
                 const storeEl = document.getElementById('st-store');
                 if(!dateEl || !storeEl || !storeEl.value) { list.innerHTML = '<p class="text-center py-5 opacity-40">Seleccione una tienda</p>'; return; }
-                
                 const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
                 const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === storeEl.value);
-                
-                if(!dv.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">No hay compras en esta tienda hoy</p>'; return; }
-                
-                const total = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
-                list.innerHTML = `
-                    <div class="card-custom">
-                        <div class="d-flex justify-content-between mb-3 align-items-center">
-                            <div><h6 class="m-0">${storeEl.value}</h6><small>${fd}</small></div>
-                            <button class="btn btn-sm btn-dark" onclick="window.shareTicket('${storeEl.value}', 'TIENDA')">GENERAR TICKET</button>
-                        </div>
-                        <div class="small">
-                            ${dv.map(i => `<div class="d-flex justify-content-between"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}
-                        </div>
-                        <div class="text-end fw-bold pt-2 border-top mt-2">COSTO TOTAL: $${total.toFixed(2)}</div>
-                    </div>`;
-
+                if(!dv.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">No hay compras registradas</p>'; return; }
+                const tc = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
+                const tu = dv.reduce((acc, v) => acc + v.cantidad, 0);
+                list.innerHTML = `<div class="card-custom"><div class="mb-3"><h6 class="m-0 text-uppercase">${storeEl.value}</h6><small class="text-muted">${fd}</small></div><div class="small">${dv.map(i => `<div class="d-flex justify-content-between py-1 border-bottom border-light"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}</div><div class="mt-3 border-top pt-2"><div class="d-flex justify-content-between small text-muted"><span>TOTAL PIEZAS:</span><b>${tu}</b></div><div class="d-flex justify-content-between fw-bold text-primary" style="font-size:1.1rem"><span>COSTO TOTAL:</span><span>$${tc.toFixed(2)}</span></div></div></div>`;
             } else {
                 const startEl = document.getElementById('d-start');
                 const endEl = document.getElementById('d-end');
-                if(!startEl || !endEl) return;
+                if(!startEl || !endEl || !startEl.value || !endEl.value) return;
                 const s = new Date(startEl.value + "T00:00:00");
                 const e = new Date(endEl.value + "T23:59:59");
                 const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
@@ -455,8 +511,6 @@
                 list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
             }
         };
-
-        window.delSale = async (id) => { if(confirm("¿Eliminar registro?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); };
 
         document.getElementById('btn-save').onclick = async () => {
             const data = {
@@ -473,8 +527,8 @@
             if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos", "danger");
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                const ck = async (col, val) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val }); };
-                await ck('stores', data.tienda); await ck('clients', data.cliente);
+                const ck = async (col, val, extra = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...extra }); };
+                await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
                 showToast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { showToast("Error de guardado", "danger"); }
@@ -483,32 +537,17 @@
         window.shareTicket = async (name, type) => {
             const header = document.getElementById('t-header');
             const itemsTable = document.getElementById('t-items');
+            const countEl = document.getElementById('t-count');
             const totalEl = document.getElementById('t-total');
-            
             header.innerText = `${type}: ${name}`;
-            
-            const dateStr = (type === 'CLIENTE') ? new Date().toLocaleDateString('es-MX') : document.getElementById('st-date').value;
-            const fd = (type === 'CLIENTE') ? dateStr : new Date(dateStr + "T12:00:00").toLocaleDateString('es-MX');
-
-            let filtered = [];
-            let total = 0;
-
+            let dateStr = (type === 'CLIENTE') ? document.getElementById('entregas-date').value : document.getElementById('st-date').value;
+            const fd = new Date(dateStr + "T12:00:00").toLocaleDateString('es-MX');
+            let filtered = []; let total = 0; let totalPieces = 0;
             if(type === 'CLIENTE') {
                 filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
-                itemsTable.innerHTML = filtered.map(i => {
-                    total += i.total;
-                    return `<tr><td>${i.cantidad}x ${i.producto}</td><td class="text-end">$${i.total.toFixed(2)}</td></tr>`;
-                }).join('');
-                totalEl.innerText = "TOTAL: $" + total.toFixed(2);
-            } else {
-                filtered = state.sales.filter(s => s.tienda === name && s.fechaStr === fd);
-                itemsTable.innerHTML = filtered.map(i => {
-                    total += (i.costo * i.cantidad);
-                    return `<tr><td>${i.cantidad}x ${i.producto}</td><td class="text-end">$${(i.costo * i.cantidad).toFixed(2)}</td></tr>`;
-                }).join('');
-                totalEl.innerText = "TOTAL COMPRA: $" + total.toFixed(2);
+                itemsTable.innerHTML = filtered.map(i => { total += i.total; totalPieces += i.cantidad; return `<tr><td>${i.cantidad}x ${i.producto}</td><td class="text-end">$${i.total.toFixed(2)}</td></tr>`; }).join('');
+                countEl.innerText = `${totalPieces} PRODUCTOS`; totalEl.innerText = "TOTAL: $" + total.toFixed(2);
             }
-
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3 });
             canvas.toBlob(blob => {
                 const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
