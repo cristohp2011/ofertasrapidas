@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.19</title>
+    <title>Ofertas Rápidas Yaute v10.20</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,7 +42,7 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- HEADER & UI --- */
+        /* --- UI STYLES --- */
         header { background: var(--primary); color: white; padding: 0.5rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
         .header-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .app-logo { height: 28px; width: auto; object-fit: contain; }
@@ -56,7 +56,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .form-control { padding: 0.5rem 0.7rem; font-size: 0.9rem; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .filter-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; font-size: 0.8rem; background: white; }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 8px 0 20px; border-top: 1px solid #e2e8f0; z-index: 2000; }
@@ -72,7 +71,7 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; }
 
-        /* --- CÁMARA OVERLAY CON FLASH --- */
+        /* --- CÁMARA OVERLAY --- */
         #camera-overlay {
             position: fixed; inset: 0; background: #000; z-index: 10000; display: none;
             flex-direction: column; align-items: center; justify-content: center;
@@ -80,37 +79,40 @@
         #camera-video { width: 100%; height: 100%; object-fit: cover; }
         
         .camera-guide {
-            position: absolute; width: 90%; height: 220px;
+            position: absolute; width: 92%; height: 240px;
             border: 2px solid #fff; border-radius: 15px;
-            box-shadow: 0 0 0 4000px rgba(0,0,0,0.5); pointer-events: none;
+            box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); pointer-events: none;
         }
         
         .camera-capture-btn {
-            position: absolute; bottom: 50px; width: 75px; height: 75px;
-            background: white; border: 6px solid rgba(59, 130, 246, 0.3);
+            position: absolute; bottom: 50px; width: 80px; height: 80px;
+            background: white; border: 8px solid rgba(255,255,255,0.3);
             border-radius: 50%; color: var(--primary);
             display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
         .camera-close {
-            position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.5);
-            color: white; border: none; width: 45px; height: 45px; border-radius: 50%;
+            position: absolute; top: 40px; right: 20px; background: rgba(0,0,0,0.6);
+            color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .camera-flash-btn {
-            position: absolute; top: 40px; left: 20px; background: rgba(0,0,0,0.5);
+            position: absolute; top: 40px; left: 20px; background: rgba(0,0,0,0.6);
             color: white; border: none; width: 45px; height: 45px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
-        .camera-flash-btn.on { color: #fbbf24; background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24; }
+        .camera-flash-btn.on { color: #fbbf24; background: rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24; }
 
         .btn-scan {
             background: #f1f5f9; color: var(--accent); border: 2px dashed #3b82f6; border-radius: 12px; padding: 15px;
-            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.85rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; font-weight: 800;
             width: 100%; margin-bottom: 20px;
         }
         .btn-scan.processing { background: #e2e8f0; color: #94a3b8; pointer-events: none; }
 
+        /* --- TICKETS --- */
         #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 20px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
         .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
         .ticket-header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
@@ -124,7 +126,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.19</div>
+        <div class="splash-version">CONTROL PRO v10.20</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -169,7 +171,7 @@
                 
                 <button id="btn-scan" class="btn-scan">
                     <i class="fas fa-camera"></i>
-                    <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
+                    <span id="scan-text">TOMAR FOTO A ETIQUETA</span>
                 </button>
 
                 <div class="row g-2 mb-3">
@@ -183,7 +185,7 @@
                         <input type="number" id="in-cantidad" class="form-control text-center" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Costo (IA)</label>
+                        <label class="text-uppercase">Costo (Extraído)</label>
                         <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
@@ -298,7 +300,7 @@
             });
         };
 
-        // --- LÓGICA DE ESCANEO CON FLASH (v10.19) ---
+        // --- LÓGICA DE ESCANEO CON FLASH REFORZADO (v10.20) ---
         const apiKey = ""; 
         const btnScan = document.getElementById('btn-scan');
         const camOverlay = document.getElementById('camera-overlay');
@@ -313,35 +315,41 @@
         btnScan.onclick = async () => {
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } 
+                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 }, focusMode: 'continuous' } 
                 });
                 video.srcObject = stream;
                 camOverlay.style.display = 'flex';
                 flashOn = false;
                 btnFlash.classList.remove('on');
-            } catch (e) { showToast("Error al abrir cámara", "danger"); }
+            } catch (e) { showToast("Error de acceso a cámara", "danger"); }
         };
 
         btnFlash.onclick = async () => {
             if (!stream) return;
             const track = stream.getVideoTracks()[0];
-            const caps = track.getCapabilities();
+            const caps = track.getCapabilities ? track.getCapabilities() : {};
             
             if (caps.torch) {
                 flashOn = !flashOn;
                 try {
                     await track.applyConstraints({ advanced: [{ torch: flashOn }] });
                     btnFlash.classList.toggle('on', flashOn);
-                } catch (err) { showToast("No se pudo controlar el flash", "warning"); }
+                } catch (err) { showToast("No se pudo activar el flash", "warning"); }
             } else {
-                showToast("Flash no disponible en este navegador", "warning");
+                showToast("Hardware de flash no detectado", "warning");
             }
         };
 
         document.getElementById('camera-close').onclick = stopCamera;
 
         function stopCamera() {
-            if (stream) stream.getTracks().forEach(t => t.stop());
+            if (stream) {
+                stream.getTracks().forEach(t => {
+                    // Apagar flash antes de cerrar
+                    if (t.applyConstraints) t.applyConstraints({ advanced: [{ torch: false }] });
+                    t.stop();
+                });
+            }
             camOverlay.style.display = 'none';
         }
 
@@ -352,8 +360,9 @@
 
         async function processCapture() {
             const ctx = canvas.getContext('2d');
-            canvas.width = video.videoWidth || 1024;
-            canvas.height = video.videoHeight || 768;
+            // Captura de alta fidelidad
+            canvas.width = video.videoWidth || 1280;
+            canvas.height = video.videoHeight || 960;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
             const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
@@ -367,32 +376,27 @@
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("Etiqueta detectada", "success");
+                    showToast("¡Etiqueta leída!", "success");
                     document.getElementById('in-cantidad').focus();
                 } else { throw new Error(); }
             } catch (e) {
                 playSignal('error');
-                showToast("Lectura fallida. Repita con más luz.", "danger");
+                showToast("No se detectó información. Use el flash.", "danger");
             } finally {
                 btnScan.classList.remove('processing');
-                document.getElementById('scan-text').innerText = "FOTOGRAFIAR ETIQUETA";
+                document.getElementById('scan-text').innerText = "TOMAR FOTO A ETIQUETA";
             }
         }
 
         async function callGeminiIA(base64, retry = 0) {
-            const prompt = `Extrae datos de esta etiqueta de anaquel:
-            1. El número más grande y destacado es el PRECIO ('unitCost').
-            2. El texto en la esquina superior izquierda es el NOMBRE.
-            3. El texto en la esquina superior derecha es la PRESENTACIÓN (ml, gr, kg, etc).
-            Responde en JSON con claves 'productName' (Nombre + Presentación) y 'unitCost' (Número).`;
+            const prompt = `Analiza esta etiqueta de anaquel:
+            1. El número más grande es 'unitCost'.
+            2. El texto arriba a la izquierda es el nombre.
+            3. El texto arriba a la derecha es la presentación.
+            Responde estrictamente en JSON: {"productName": "Nombre + Presentación", "unitCost": número}.`;
 
             const payload = {
-                contents: [{ 
-                    parts: [
-                        { text: prompt },
-                        { inlineData: { mimeType: "image/jpeg", data: base64 } }
-                    ] 
-                }],
+                contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                 generationConfig: { 
                     responseMimeType: "application/json",
                     responseSchema: {
@@ -408,19 +412,14 @@
 
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify(payload)
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
                 return content ? JSON.parse(content) : null;
             } catch (e) {
-                if (retry < 3) { 
-                    await new Promise(r => setTimeout(r, 1000)); 
-                    return callGeminiIA(base64, retry + 1); 
-                }
+                if (retry < 3) { await new Promise(r => setTimeout(r, 1000)); return callGeminiIA(base64, retry + 1); }
                 return null;
             }
         }
@@ -438,10 +437,6 @@
             box.onclick = (e) => {
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val.toUpperCase(); box.classList.add('d-none');
-                if(key === 'products') {
-                    const p = state.products.find(x => (x.nombre||"").toLowerCase() === item.dataset.val.toLowerCase());
-                    if(p) { document.getElementById('in-costo').value = p.pCosto || ""; document.getElementById('in-precio').value = p.pVenta || ""; }
-                }
             };
         };
         auto('in-tienda', 'sug-tienda', 'stores'); auto('in-cliente', 'sug-cliente', 'clients'); auto('in-producto', 'sug-producto', 'products');
