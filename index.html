@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.22</title>
+    <title>Ofertas Rápidas Yaute v10.26</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,7 +19,7 @@
             --warning: #f59e0b;
             --whatsapp: #25d366;
             --bg: #f8fafc;
-            --card-radius: 12px;
+            --card-radius: 14px;
         }
 
         body { 
@@ -36,47 +36,47 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
         }
-        .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.4rem; text-transform: uppercase; }
-        .splash-loader { margin-top: 30px; width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- HEADER & UI --- */
-        header { background: var(--primary); color: white; padding: 0.5rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
-        .header-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .app-logo { height: 28px; width: auto; object-fit: contain; }
-        .status-indicator { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px currentColor; }
+        /* --- UI STYLES --- */
+        header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .header-container { display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .app-logo { height: 30px; width: auto; object-fit: contain; }
+        .status-indicator { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
 
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid transparent; }
-        .card-entrega-completo { background-color: #ecfdf5 !important; border-left-color: #059669; }
-
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 280px; font-size: 0.85rem; animation: slideDown 0.3s ease; }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 15px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid transparent; transition: transform 0.2s; }
+        
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 14px 28px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; font-size: 0.9rem; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .form-control { padding: 0.5rem 0.7rem; font-size: 0.9rem; border-radius: 8px; border: 1px solid #e2e8f0; }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 8px 0 20px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .tab-btn i { font-size: 1.4rem; margin-bottom: 2px; }
+        .form-control { padding: 0.6rem 0.8rem; font-size: 0.95rem; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #fff; }
+        label.text-uppercase { font-size: 0.7rem; margin-bottom: 5px; font-weight: 800; color: #64748b; display: block; }
+
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
         .btn-scan {
-            background: #f0f9ff; color: var(--accent); border: 2px solid #bae6fd; border-radius: 12px; padding: 16px;
-            display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 0.9rem; font-weight: 900;
-            width: 100%; margin-bottom: 20px; transition: all 0.2s;
+            background: #f0f9ff; color: var(--accent); border: 2px solid #3b82f6; border-radius: 15px; padding: 18px;
+            display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1rem; font-weight: 900;
+            width: 100%; margin-bottom: 20px;
         }
-        .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; cursor: wait; }
+        .btn-scan.loading { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; cursor: wait; pointer-events: none; }
 
         .search-wrapper { position: relative; }
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
-        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; }
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 5px; border: 1px solid #f1f5f9; }
+        .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
 
-        #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 20px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
-        .ticket-logo { width: 160px; height: auto; display: block; margin: 0 auto 10px; object-fit: contain; }
+        #ticket-render { position: fixed; left: -10000px; width: 320px; background: white; padding: 25px; color: black; font-family: 'Courier New', Courier, monospace; text-align: center; }
+        .ticket-logo { width: 180px; height: auto; display: block; margin: 0 auto 15px; object-fit: contain; }
     </style>
 </head>
 <body>
@@ -85,7 +85,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.22</div>
+        <div class="splash-version">CONTROL PRO v10.26</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -93,89 +93,83 @@
 
     <header>
         <div class="header-container">
-            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.8rem;">Ofertas Rápidas Yaute</h5>
+            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem;">Ofertas Rápidas Yaute</h5>
             <img id="main-logo" src="logo.png" alt="Logo" class="app-logo" style="display:none;" onload="this.style.display='block'">
             <div id="status-dot" class="status-indicator bg-warning"></div>
         </div>
     </header>
 
-    <div class="container py-2">
+    <div class="container py-3">
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
-                <div class="row g-2 mb-2">
+                <div class="row g-2 mb-3">
                     <div class="col-6 search-wrapper">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Tienda">
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Ej. Walmart">
                         <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
                     <div class="col-6 search-wrapper">
                         <label class="text-uppercase">Cliente</label>
-                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Cliente">
+                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
                         <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
 
-                <hr class="my-3 opacity-10">
+                <hr class="my-3 opacity-25">
                 
                 <button id="btn-scan" class="btn-scan">
-                    <i class="fas fa-camera"></i>
+                    <i class="fas fa-camera fa-lg"></i>
                     <span id="scan-text">FOTOGRAFIAR ETIQUETA</span>
                 </button>
                 <input type="file" id="input-file" accept="image/*" capture="environment" style="display: none;">
 
-                <div class="row g-2 mb-3">
+                <div class="row g-2 mb-4">
                     <div class="col-9 search-wrapper">
                         <label class="text-uppercase">Producto + Presentación</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Producto">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Esperando escaneo...">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-3">
                         <label class="text-uppercase">Cant.</label>
-                        <input type="number" id="in-cantidad" class="form-control text-center" value="1">
+                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Costo Unit. (IA)</label>
-                        <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
+                        <label class="text-uppercase">Costo (Anaquel)</label>
+                        <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Venta</label>
-                        <input type="number" id="in-precio" class="form-control" placeholder="0.00" step="0.01">
+                        <label class="text-uppercase">Precio de Venta</label>
+                        <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                <button id="btn-save" class="btn btn-primary w-100 py-2 fw-bold shadow-sm" style="border-radius: 10px;">GUARDAR VENTA</button>
+                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow" style="border-radius: 12px;">GUARDAR REGISTRO</button>
             </div>
         </div>
 
-        <!-- OTRAS SECCIONES (ENTREGAS/CONTROL) -->
         <div id="tab-entregas" class="tab-content">
-            <div class="card-custom py-2 px-3 mb-2">
-                <input type="date" id="entregas-date" class="form-control" onchange="renderEntregas()">
+            <div class="card-custom py-3 text-center mb-3">
+                <input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="renderEntregas()">
             </div>
             <div id="lista-entregas"></div>
         </div>
 
         <div id="tab-control" class="tab-content">
-            <div id="lista-catalogos"></div>
+            <div id="lista-catalogos" class="px-1"></div>
         </div>
     </div>
 
-    <!-- TICKET OCULTO PARA IMPRESIÓN -->
-    <div id="ticket-render">
-        <img src="logo.png" alt="Logo" class="ticket-logo">
-        <hr>
-        <div id="t-cliente"></div>
-        <table style="width:100%" id="t-items"></table>
-        <hr>
-        <div id="t-total"></div>
-    </div>
-
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
-        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Entregas</button>
-        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-list-ul"></i>Control</button>
+        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-camera-retro"></i>Registro</button>
+        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-shipping-fast"></i>Reparto</button>
+        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-list-alt"></i>Historial</button>
     </nav>
 
     <script type="module">
+        // ==========================================
+        // --- PEGA TU API KEY DE GOOGLE AQUÍ (LÍNEA 174) ---
+        const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
+        // ==========================================
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -199,38 +193,38 @@
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 4000);
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>${msg}`;
+            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 5000);
         };
 
-        // --- LÓGICA DE ESCANEO REFORZADA (v10.22) ---
-        const apiKey = ""; // IMPORTANTE: En GitHub esto debe tener una clave válida de Google AI Studio
         const btnScan = document.getElementById('btn-scan');
         const inputFile = document.getElementById('input-file');
         const scanText = document.getElementById('scan-text');
 
-        btnScan.onclick = () => inputFile.click();
+        btnScan.onclick = () => {
+            if (!apiKey) {
+                showToast("Falta API KEY. Consíguela en Google AI Studio.", "danger");
+                return;
+            }
+            inputFile.click();
+        };
 
         inputFile.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
             btnScan.classList.add('loading');
-            scanText.innerText = "IA ANALIZANDO... REINTENTANDO SI FALLA";
-
+            scanText.innerText = "IA LEYENDO... ESPERE";
             try {
                 const base64 = await fileToBase64(file);
-                const result = await callGeminiIAWithRetry(base64);
-                
+                const result = await callGeminiIA(base64);
                 if (result && result.productName) {
                     document.getElementById('in-producto').value = result.productName.toUpperCase().trim();
                     if (result.unitCost) document.getElementById('in-costo').value = result.unitCost;
-                    showToast("Etiqueta leída con éxito", "success");
+                    showToast("¡Etiqueta identificada!");
                     document.getElementById('in-cantidad').focus();
-                } else {
-                    throw new Error("No se detectó el producto");
-                }
+                } else { throw new Error(); }
             } catch (err) {
-                showToast(err.message || "Error al leer. Intente con otra foto.", "danger");
+                showToast("Fallo de lectura. Revisa la luz o tu API Key.", "danger");
             } finally {
                 btnScan.classList.remove('loading');
                 scanText.innerText = "FOTOGRAFIAR ETIQUETA";
@@ -238,46 +232,18 @@
             }
         };
 
-        async function callGeminiIAWithRetry(base64, retryCount = 0) {
-            const maxRetries = 3;
-            const prompt = `Analiza la etiqueta de anaquel:
-            1. PRECIO UNITARIO: Es el número más grande.
-            2. NOMBRE: Texto arriba a la izquierda.
-            3. PRESENTACIÓN: Texto arriba a la derecha.
-            Responde JSON: {"productName": "Nombre + Presentación", "unitCost": número}.`;
-
+        async function callGeminiIA(base64) {
+            const prompt = `Analiza la etiqueta: unitCost es el número más grande. productName es texto arriba izq + arriba der. JSON: {"productName": "string", "unitCost": number}`;
             const payload = {
                 contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                generationConfig: { 
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: { productName: { type: "STRING" }, unitCost: { type: "NUMBER" } },
-                        required: ["productName"]
-                    }
-                }
+                generationConfig: { responseMimeType: "application/json" }
             };
-
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                
-                if (res.status === 403) throw new Error("Falta API Key o acceso denegado.");
-                if (!res.ok) throw new Error("Error en el servidor de IA.");
-
-                const data = await res.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if(!text) throw new Error("La IA no devolvió datos legibles.");
-                return JSON.parse(text);
-
-            } catch (e) {
-                if (retryCount < maxRetries) {
-                    const waitTime = Math.pow(2, retryCount) * 1000;
-                    await new Promise(r => setTimeout(r, waitTime));
-                    return callGeminiIAWithRetry(base64, retryCount + 1);
-                }
-                throw e;
-            }
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            return JSON.parse(data.candidates[0].content.parts[0].text);
         }
 
         const fileToBase64 = (file) => new Promise((resolve) => {
@@ -286,14 +252,13 @@
             reader.onload = () => resolve(reader.result.split(',')[1]);
         });
 
-        // --- FUNCIONES CORE ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 document.getElementById('status-dot').className = 'status-indicator bg-success';
                 document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
                 startSync();
-                setTimeout(() => { document.getElementById('splash-screen').style.visibility = 'hidden'; }, 2000);
+                setTimeout(() => { document.getElementById('splash-screen').style.opacity = '0'; setTimeout(() => document.getElementById('splash-screen').style.visibility = 'hidden', 800); }, 2500);
             }
         });
 
@@ -318,23 +283,24 @@
             if(!list) return;
             const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if (!filtered.length) { list.innerHTML = '<p class="text-center py-5 text-muted">Sin registros para esta fecha</p>'; return; }
-            
             const grouped = filtered.reduce((acc, v) => { 
-                const c = v.cliente || "GNR"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
+                const c = v.cliente || "GENERAL"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
                 acc[c].t += v.total; acc[c].items.push(v); return acc; 
             }, {});
-
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2"><b>${cli}</b> <button class="btn btn-sm btn-success" onclick="window.shareTicket('${cli}')">TICKET</button></div>
-                    <div class="small">${grouped[cli].items.map(i => `<div>${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold pt-1 border-top mt-1">$${grouped[cli].t.toFixed(2)}</div>
+                    <div class="d-flex justify-content-between mb-3 align-items-center">
+                        <span class="fw-bold text-uppercase">${cli}</span> 
+                        <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')">TICKET</button>
+                    </div>
+                    <div class="small fw-medium">${grouped[cli].items.map(i => `<div class="mb-1">⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="text-end fw-bold pt-2 border-top mt-2 text-primary" style="font-size: 1.1rem;">$${grouped[cli].t.toFixed(2)}</div>
                 </div>
-            `).join('');
+            `).join('') || '<div class="text-center py-5 opacity-40">No hay registros</div>';
         };
 
         document.getElementById('btn-save').onclick = async () => {
+            const btn = document.getElementById('btn-save');
             const data = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -345,21 +311,29 @@
                 fechaStr: new Date().toLocaleDateString('es-MX'),
                 total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0)
             };
-            if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos clave", "danger");
-            
+            if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos", "danger");
+            btn.disabled = true;
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                showToast("Venta guardada");
+                showToast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { showToast("Error al guardar", "danger"); }
+            } catch(e) { showToast("Error de conexión", "danger"); }
+            finally { btn.disabled = false; }
         };
 
         window.shareTicket = async (cli) => {
-            document.getElementById('t-cliente').innerText = cli;
-            const canvas = await html2canvas(document.getElementById('ticket-render'));
+            document.getElementById('t-cliente').innerText = "CLIENTE: " + cli.toUpperCase();
+            const filtered = state.sales.filter(s => s.cliente.toUpperCase() === cli.toUpperCase() && s.fechaStr === new Date().toLocaleDateString('es-MX'));
+            let total = 0;
+            document.getElementById('t-items').innerHTML = filtered.map(i => {
+                total += i.total;
+                return `<tr><td style="text-align:left; padding:5px 0;">${i.cantidad}x ${i.producto}</td><td style="text-align:right;">$${i.total.toFixed(2)}</td></tr>`;
+            }).join('');
+            document.getElementById('t-total').innerText = "TOTAL: $" + total.toFixed(2);
+            const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3 });
             canvas.toBlob(blob => {
                 const file = new File([blob], `Ticket_${cli}.png`, { type: 'image/png' });
-                if(navigator.share) navigator.share({ files: [file] });
+                if(navigator.share) navigator.share({ files: [file], title: 'Ticket' });
             });
         };
     </script>
