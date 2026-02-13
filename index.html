@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.31</title>
+    <title>Ofertas Rápidas Yaute v10.35</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,12 +22,27 @@
             --card-radius: 14px;
         }
 
+        /* --- ARREGLO DE ALTURA Y SCROLL --- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--bg);
+        }
+
         body { 
-            background-color: var(--bg); 
+            display: flex;
+            flex-direction: column;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding-bottom: 80px;
             user-select: none;
             color: #1e293b;
+        }
+
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 85px;
         }
 
         /* --- SPLASH SCREEN --- */
@@ -37,7 +52,7 @@
             z-index: 9999;
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; }
         .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -45,70 +60,85 @@
         /* --- UI STYLES --- */
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .header-container { display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .app-logo { height: 30px; width: auto; object-fit: contain; }
 
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid transparent; }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 5px solid transparent; }
+        .card-status-ok { background-color: #f0fdf4 !important; border-left-color: var(--success); }
+        .card-summary { background: var(--primary); color: white; border-left-color: var(--accent); padding: 12px; margin-top: 10px; }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 300px; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 280px; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .form-control { padding: 0.6rem 0.8rem; font-size: 0.95rem; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #fff; }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; }
+        .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #fff; }
+        label.text-uppercase { font-size: 0.6rem; margin-bottom: 3px; font-weight: 800; color: #64748b; display: block; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
+        .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+
+        .bottom-nav { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            background: #ffffff; 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 10px 0 20px; 
+            border-top: 1px solid #e2e8f0; 
+            z-index: 2000; 
+        }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        /* BOTÓN CÁMARA (VERSIÓN 10.31 - IZQUIERDA) */
-        .btn-cam-ia {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-weight: 700;
-            width: 100%;
-            margin-bottom: 15px;
-        }
+        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; justify-content: flex-start; }
+        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.65rem; white-space: nowrap; color: #64748b; font-weight: 600; }
+        .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* --- CÁMARA IN-APP --- */
-        #cam-container {
-            position: fixed; inset: 0; background: #000; z-index: 10010; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
+        #cam-container { position: fixed; inset: 0; background: #000; z-index: 10010; display: none; flex-direction: column; align-items: center; justify-content: center; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
         .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 75px; height: 75px; background: #fff; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; }
-        .btn-cam-close { position: absolute; top: 40px; right: 20px; color: #fff; background: rgba(0,0,0,0.4); border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem; }
 
-        /* --- BUSCADOR --- */
-        .search-wrapper { position: relative; }
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 4px; border: 1px solid #f1f5f9; }
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+
+        /* --- TICKET RENDERER (FORMATO TICKET OK) --- */
+        #ticket-render { 
+            position: absolute; 
+            top: -20000px; 
+            left: 0;
+            width: 380px; 
+            background: white; 
+            padding: 30px; 
+            color: black; 
+            font-family: 'Courier New', Courier, monospace; 
+        }
+        .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
+        .ticket-brand { text-align: center; font-size: 1.3rem; font-weight: 900; margin: 5px 0; }
+        .ticket-datetime { text-align: center; font-size: 1rem; margin-bottom: 15px; }
+        .ticket-line-solid { border-top: 3px solid #000; margin: 10px 0; }
+        .ticket-line-dashed { border-top: 2px dashed #000; margin: 15px 0; }
+        .ticket-client-row { font-size: 1.1rem; margin: 15px 0 25px 0; }
+        .ticket-table { width: 100%; font-size: 1rem; border-collapse: collapse; }
+        .ticket-table td { padding: 8px 0; vertical-align: top; }
+        .ticket-total-row { font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 10px; }
+        .ticket-footer { text-align: center; font-size: 0.9rem; color: #333; margin-top: 30px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
-        <div class="splash-title">Yaute Rápidas</div>
-        <div class="splash-version">v10.31</div>
+        <div class="splash-title">Ofertas Rápidas Yaute</div>
+        <div class="splash-version">CONTROL PRO v10.35</div>
         <div class="splash-loader"></div>
     </div>
 
-    <!-- CÁMARA -->
     <div id="cam-container">
         <video id="cam-preview" autoplay playsinline muted></video>
-        <button id="btn-cam-cancel" class="btn-cam-close"><i class="fas fa-times"></i></button>
+        <button id="btn-cam-cancel" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:45px; height:45px;"><i class="fas fa-times"></i></button>
         <div class="cam-controls">
             <button id="btn-do-capture" class="btn-capture"></button>
         </div>
@@ -119,73 +149,106 @@
 
     <header>
         <div class="header-container">
-            <h5 class="m-0 fw-extrabold text-uppercase">Yaute Rápidas</h5>
-            <div id="status-dot" class="status-indicator bg-warning" style="width:10px; height:10px; border-radius:50%"></div>
+            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem;">Ofertas Rápidas Yaute</h5>
+            <div id="status-dot" class="status-indicator bg-warning" style="width:10px; height:10px; border-radius:50%;"></div>
         </div>
     </header>
 
-    <div class="container py-3">
-        <!-- REGISTRO v10.31 -->
+    <main class="container py-3">
+        <!-- VENTA -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
-                <button id="btn-scan" class="btn-cam-ia mb-3">
-                    <i class="fas fa-camera"></i> ESCANEAR ETIQUETA IA
-                    <i class="fas fa-spinner fa-spin d-none" id="scan-spinner"></i>
-                </button>
-
                 <div class="row g-2 mb-3">
-                    <div class="col-6 search-wrapper">
+                    <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase" placeholder="Walmart">
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Walmart">
                         <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
-                    <div class="col-6 search-wrapper">
+                    <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Cliente</label>
                         <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
                         <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
 
-                <div class="search-wrapper mb-3">
-                    <label class="text-uppercase">PRODUCTO IA</label>
-                    <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Nombre del producto">
-                    <div id="sug-producto" class="sug-box d-none"></div>
+                <hr class="my-3 opacity-25">
+                
+                <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-2">
+                        <label class="text-uppercase">Cant.</label>
+                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold px-1" value="1">
+                    </div>
+                    <div class="col" style="position:relative">
+                        <label class="text-uppercase">PRODUCTO IA</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Escriba o use cámara">
+                        <div id="sug-producto" class="sug-box d-none"></div>
+                    </div>
+                    <div class="col-auto">
+                        <button id="btn-scan" class="btn-inline-cam">
+                            <i class="fas fa-camera"></i>
+                            <i class="fas fa-spinner fa-spin d-none" id="scan-spinner"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="row g-2 mb-4">
-                    <div class="col-4">
-                        <label class="text-uppercase">Cant.</label>
-                        <input type="number" id="in-cantidad" class="form-control text-center" value="1">
-                    </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <label class="text-uppercase">Costo</label>
-                        <input type="number" id="in-costo" class="form-control" placeholder="0.00" step="0.01">
+                        <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
                     </div>
-                    <div class="col-4">
-                        <label class="text-uppercase">Venta</label>
-                        <input type="number" id="in-precio" class="form-control" placeholder="0.00" step="0.01">
+                    <div class="col-6">
+                        <label class="text-uppercase">Precio Venta</label>
+                        <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                
-                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow">GUARDAR REGISTRO</button>
+                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow" style="border-radius: 12px;">GUARDAR REGISTRO</button>
             </div>
         </div>
 
         <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
+            <div class="card-custom py-2 text-center mb-3">
+                <input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()">
+            </div>
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- HISTORIAL -->
+        <!-- CONTROL -->
         <div id="tab-control" class="tab-content">
+            <div class="sub-nav">
+                <button class="sub-btn active" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn" id="btn-sub-store" onclick="switchSubTab('ticketTienda', this)">Ticket Tienda</button>
+                <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
+            </div>
+            <div id="filter-wrapper" class="mb-3"></div>
             <div id="lista-catalogos"></div>
         </div>
+    </main>
+
+    <!-- TICKET INVISIBLE PARA CAPTURA -->
+    <div id="ticket-render">
+        <img src="logo.png" alt="Logo" class="ticket-header-img">
+        <div class="ticket-brand">OFERTAS RAPIDAS YAUTE</div>
+        <div class="ticket-datetime" id="t-date-val"></div>
+        <div class="ticket-line-solid"></div>
+        <div class="ticket-client-row">
+            <b>CLIENTE:</b> <span id="t-cliente-name" style="text-transform: uppercase;"></span>
+        </div>
+        <table class="ticket-table">
+            <tbody id="t-body-items"></tbody>
+        </table>
+        <div class="ticket-line-dashed"></div>
+        <div class="ticket-total-row">
+            <span>TOTAL:</span>
+            <span>$<span id="t-grand-total"></span></span>
+        </div>
+        <div class="ticket-footer">¡GRACIAS POR SU PREFERENCIA!</div>
     </div>
 
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-plus-circle"></i>Registro</button>
+        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
-        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Historial</button>
+        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
     <script type="module">
@@ -210,75 +273,101 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
-        
+        let activeSubTab = 'sales';
+
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
+            if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerHTML = msg;
-            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
-        // --- CÁMARA ---
+        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
+
+        // --- REGLA CRISTO ---
+        const syncPriceIfCristo = () => {
+            const clientIn = document.getElementById('in-cliente');
+            const costIn = document.getElementById('in-costo');
+            const priceIn = document.getElementById('in-precio');
+            if (clientIn && clientIn.value.toUpperCase().trim() === "CRISTO") { priceIn.value = costIn.value; }
+        };
+
+        document.getElementById('in-cliente').addEventListener('input', syncPriceIfCristo);
+        document.getElementById('in-costo').addEventListener('input', syncPriceIfCristo);
+
+        // --- CÁMARA IA ---
         const btnScan = document.getElementById('btn-scan');
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
-        const btnDoCapture = document.getElementById('btn-do-capture');
-        const btnCamCancel = document.getElementById('btn-cam-cancel');
-        
         let stream = null;
 
         btnScan.onclick = async () => {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
                 camPreview.srcObject = stream;
                 camContainer.style.display = 'flex';
             } catch (e) { showToast("Error de cámara", "danger"); }
         };
 
-        btnCamCancel.onclick = stopCam;
+        document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
-        btnDoCapture.onclick = () => {
+        document.getElementById('btn-do-capture').onclick = () => {
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = camPreview.videoWidth;
-            camCanvas.height = camPreview.videoHeight;
+            camCanvas.width = camPreview.videoWidth; camCanvas.height = camPreview.videoHeight;
             ctx.drawImage(camPreview, 0, 0);
             const base64 = camCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            stopCam();
+            if(stream) stream.getTracks().forEach(t => t.stop());
+            camContainer.style.display = 'none';
             processIA(base64);
         };
-
-        function stopCam() {
-            if (stream) stream.getTracks().forEach(t => t.stop());
-            camContainer.style.display = 'none';
-        }
 
         async function processIA(base64) {
             document.getElementById('scan-spinner').classList.remove('d-none');
             try {
-                const prompt = "Extrae unitCost (número más grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}";
                 const payload = {
-                    contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }]
+                    contents: [{ parts: [{ text: "Extrae unitCost (número grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    generationConfig: { responseMimeType: "application/json" }
                 };
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
-                document.getElementById('in-producto').value = result.productName.toUpperCase();
-                document.getElementById('in-costo').value = result.unitCost;
-                showToast("Etiqueta procesada");
-            } catch (err) { showToast("Error de lectura", "danger"); }
+                document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
+                document.getElementById('in-costo').value = result.unitCost || "";
+                syncPriceIfCristo();
+                showToast("Etiqueta leída");
+            } catch (e) { showToast("Error al leer etiqueta", "danger"); }
             finally { document.getElementById('scan-spinner').classList.add('d-none'); }
         }
 
-        // --- CORE ---
+        // --- BUSCADORES ---
+        const setupAuto = (id, boxId, key) => {
+            const inp = document.getElementById(id); const box = document.getElementById(boxId);
+            if(!inp || !box) return;
+            inp.oninput = () => {
+                const val = inp.value.toUpperCase();
+                if(!val) { box.classList.add('d-none'); return; }
+                const ms = (state[key] || []).filter(x => (x.nombre || '').toUpperCase().includes(val)).slice(0, 5);
+                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre}</div>`).join('');
+                box.classList.toggle('d-none', ms.length === 0);
+            };
+            box.onclick = (e) => {
+                const item = e.target.closest('.sug-item'); if(!item) return;
+                inp.value = item.dataset.val; box.classList.add('d-none');
+            };
+        };
+
+        // --- FIREBASE CORE ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
             if (u) {
-                document.getElementById('status-dot').className = 'status-indicator bg-success';
+                document.getElementById('status-dot').className = "status-indicator bg-success";
+                document.getElementById('entregas-date').value = getISODate();
                 startSync();
-                setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 2000);
+                switchSubTab('sales', document.getElementById('btn-sub-sales'));
+                setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 1500);
             }
         });
 
@@ -286,8 +375,10 @@
             ['sales', 'clients', 'stores', 'products'].forEach(n => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderEntregas(); renderCatalogList();
                 });
             });
+            setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
         };
 
         window.showTab = (id, btn) => {
@@ -296,6 +387,82 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
         };
+
+        window.switchSubTab = (id, btn) => {
+            activeSubTab = id;
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            const fw = document.getElementById('filter-wrapper');
+            const today = getISODate();
+
+            const storesOptions = [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
+
+            if(id === 'sales') {
+                fw.innerHTML = `
+                    <div class="row g-2">
+                        <div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>
+                        <div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"><option value="">TODAS TIENDAS</option>${storesOptions}</select></div>
+                        <div class="col-6"><input type="text" id="filter-client" class="form-control" placeholder="Cliente..." oninput="window.renderCatalogList()"></div>
+                    </div>`;
+            } else if(id === 'ticketTienda') {
+                fw.innerHTML = `
+                    <div class="row g-2">
+                        <div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>
+                        <div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"><option value="">ELIJA TIENDA</option>${storesOptions}</select></div>
+                    </div>`;
+            } else {
+                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
+            }
+            renderCatalogList();
+        };
+
+        window.renderEntregas = () => {
+            const list = document.getElementById('lista-entregas');
+            if(!list) return;
+            const targetDateInput = document.getElementById('entregas-date').value;
+            const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
+            const filtered = state.sales.filter(s => s.fechaStr === targetDate);
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos</p>'; return; }
+            const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "GENERAL"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
+            list.innerHTML = Object.keys(grouped).map(cli => `
+                <div class="card-custom">
+                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b><button class="btn btn-sm btn-success rounded-pill" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
+                    <div class="small">${grouped[cli].items.map(i => `<div>${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="text-end fw-bold text-primary mt-2">$${grouped[cli].t.toFixed(2)}</div>
+                </div>`).join('');
+        };
+
+        window.renderCatalogList = () => {
+            const list = document.getElementById('lista-catalogos');
+            if(!list) return;
+            if(activeSubTab === 'sales') {
+                const dateVal = document.getElementById('hist-date').value;
+                const fd = new Date(dateVal + "T12:00:00").toLocaleDateString('es-MX');
+                const storeF = document.getElementById('filter-store').value;
+                const clientF = document.getElementById('filter-client').value.toUpperCase();
+                let dv = state.sales.filter(s => s.fechaStr === fd);
+                if(storeF) dv = dv.filter(s => s.tienda === storeF);
+                if(clientF) dv = dv.filter(s => s.cliente.includes(clientF));
+                const total = dv.reduce((acc, v) => acc + v.total, 0);
+                let html = dv.map(v => `<div class="card-custom d-flex justify-content-between py-2"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda} • ${v.cliente}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger p-0" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-4 opacity-40">Sin resultados</p>';
+                if(dv.length > 0) html += `<div class="card-custom card-summary text-center">TOTAL VENTAS: $${total.toFixed(2)}</div>`;
+                list.innerHTML = html;
+            } else if(activeSubTab === 'ticketTienda') {
+                const fd = new Date(document.getElementById('st-date').value + "T12:00:00").toLocaleDateString('es-MX');
+                const store = document.getElementById('st-store').value;
+                const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === store);
+                const tc = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
+                list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>COSTO TOTAL: $${tc.toFixed(2)}</b></div>` : '<p class="text-center py-4 opacity-40">Elija tienda</p>';
+            } else {
+                const s = new Date(document.getElementById('d-start').value + "T00:00:00");
+                const e = new Date(document.getElementById('d-end').value + "T23:59:59");
+                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
+                let profit = 0; fs.forEach(v => { profit += (v.total - ((v.costo || 0) * v.cantidad)); });
+                list.innerHTML = `<div class="card-custom card-summary text-center">DIEZMO (10%): $${(profit * 0.1).toFixed(2)}</div>`;
+            }
+        };
+
+        window.deleteSale = async (id) => { if(confirm("¿Eliminar registro?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); };
 
         document.getElementById('btn-save').onclick = async () => {
             const data = {
@@ -306,14 +473,50 @@
                 costo: parseFloat(document.getElementById('in-costo').value) || 0,
                 precio: parseFloat(document.getElementById('in-precio').value) || 0,
                 fechaStr: new Date().toLocaleDateString('es-MX'),
-                total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0)
+                total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0),
+                entregado: false, pagado: false
             };
             if(!data.tienda || !data.producto) return showToast("Faltan datos", "danger");
+            if(data.cliente === "CRISTO") data.precio = data.costo;
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                showToast("Guardado con éxito");
+                const ck = async (col, val) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val }); };
+                await ck('stores', data.tienda); await ck('clients', data.cliente);
+                showToast("Venta guardada");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { showToast("Error", "danger"); }
+        };
+
+        window.shareTicket = async (name) => {
+            const targetDateInput = document.getElementById('entregas-date').value;
+            const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
+            const filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === targetDate);
+            if (!filtered.length) return;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            document.getElementById('t-cliente-name').innerText = name;
+            document.getElementById('t-date-val').innerText = `${targetDate} ${timeStr}`;
+            
+            let total = 0;
+            document.getElementById('t-body-items').innerHTML = filtered.map(i => { 
+                total += i.total; 
+                return `<tr><td>${i.cantidad}x</td><td>${i.producto}</td><td style="text-align:right;">$${i.total.toFixed(2)}</td></tr>`; 
+            }).join('');
+            document.getElementById('t-grand-total').innerText = total.toFixed(2);
+
+            try {
+                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
+                canvas.toBlob(async blob => {
+                    const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
+                    if (navigator.share) {
+                        await navigator.share({ files: [file], title: 'Ticket' });
+                    } else {
+                        showToast("Navegador no soporta compartir", "danger");
+                    }
+                }, 'image/png');
+            } catch (err) { showToast("Error compartiendo", "danger"); }
         };
     </script>
 </body>
