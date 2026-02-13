@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.49</title>
+    <title>Ofertas Rápidas Yaute v10.50</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -37,7 +37,7 @@
             z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
         }
         .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; padding: 0 20px; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; }
         .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -94,7 +94,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-title">Ofertas Rápidas Yaute</div>
-        <div class="splash-version">CONTROL PRO v10.49</div>
+        <div class="splash-version">CONTROL PRO v10.50</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -258,7 +258,7 @@
             const toast = document.getElementById('toast-alert');
             if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3500);
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
@@ -536,7 +536,7 @@
             } catch(e) { showToast("Error de guardado", "danger"); }
         };
 
-        // --- COMPARTIR TICKET REFORZADO v10.49 ---
+        // --- COMPARTIR TICKET FORZADO (SOLO IMAGEN) v10.50 ---
         window.shareTicket = async (name) => {
             const targetDateInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
@@ -544,9 +544,7 @@
             
             if (!filtered.length) { showToast("Sin productos hoy", "warning"); return; }
 
-            // Lógica de Fallback de Texto por si falla la imagen en Xiaomi
-            const textTicket = `📦 TICKET YAUTE RAPIDAS\n👤 Cliente: ${name}\n📅 Fecha: ${targetDate}\n------------------\n${filtered.map(i => `${i.cantidad}x ${i.producto} -> $${i.total.toFixed(2)}`).join('\n')}\n------------------\n💰 TOTAL: $${filtered.reduce((acc,v)=>acc+v.total,0).toFixed(2)}`;
-
+            // Llenar datos en el ticket invisible
             document.getElementById('t-cliente-name').innerText = name;
             document.getElementById('t-date-val').innerText = targetDate;
             let total = 0; let pieces = 0;
@@ -558,7 +556,7 @@
             document.getElementById('t-grand-total').innerText = total.toFixed(2);
 
             try {
-                // Renderizado más rápido para evitar timeouts en Xiaomi
+                // Renderizado ultrarrápido para que Xiaomi no bloquee
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { 
                     scale: 2, 
                     logging: false, 
@@ -569,27 +567,18 @@
                 canvas.toBlob(async blob => {
                     const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
                     
-                    // Verificamos si el navegador realmente soporta compartir archivos
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file],
-                                title: 'Ticket Yaute Rápidas',
-                                text: `Su ticket de compra (${targetDate})`
-                            });
-                        } catch (err) {
-                            // Si falla compartir imagen (típico en Xiaomi/MIUI), intentamos texto
-                            await navigator.share({ text: textTicket });
-                        }
+                    // Solo usamos navigator.share si soporta archivos. Sin fallbacks de texto.
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Ticket Yaute Rápidas'
+                        });
                     } else {
-                        // Fallback inmediato a texto si no soporta archivos
-                        await navigator.share({ text: textTicket });
+                        showToast("Su navegador no permite compartir imágenes", "danger");
                     }
                 }, 'image/png');
             } catch (err) {
-                // Plan C: Abrir WhatsApp con texto si todo lo anterior falla
-                const waUrl = `https://wa.me/?text=${encodeURIComponent(textTicket)}`;
-                window.open(waUrl, '_blank');
+                showToast("Error al generar ticket", "danger");
             }
         };
     </script>
