@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.76</title>
+    <title>Yaute Rápidas Control Pro v10.50</title>
     
-    <!-- Librerías de confianza -->
+    <!-- Librerías Base -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -22,69 +22,136 @@
             --card-radius: 14px;
         }
 
-        /* --- CONTROL DE PANTALLA --- */
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
-        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
-        main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--bg);
+        }
+
+        body { 
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            user-select: none;
+            color: #1e293b;
+        }
+
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            padding-bottom: 85px; 
+        }
 
         /* --- SPLASH SCREEN --- */
-        #splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        .splash-logo { width: 120px; height: auto; margin-bottom: 20px; }
-        .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        #splash-screen {
+            position: fixed; inset: 0; background: #ffffff;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; text-align: center; }
+        .splash-version { font-weight: 700; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; }
+        .splash-loader { margin-top: 25px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- UI --- */
-        header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        /* --- UI STYLES --- */
+        header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .header-container { display: flex; align-items: center; justify-content: center; gap: 12px; }
+
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 5px solid transparent; }
+        .card-status-ok { background-color: #f0fdf4 !important; border-left-color: var(--success); }
+        .card-summary { background: var(--primary); color: white; border-left-color: var(--accent); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: opacity 0.3s; }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; min-width: 280px; animation: slideDown 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        @keyframes slideDown { from { transform: translate(-50%, -100px); } to { transform: translate(-50%, 0); } }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
+        .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; background: #fff; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 3px; font-weight: 800; color: #64748b; display: block; }
 
-        .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-        .btn-publish-wa { background: #dcfce7; color: #166534; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 0.85rem; width: 100%; }
+        .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 20px; border-top: 1px solid #e2e8f0; z-index: 2000; }
+        .bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; background: #ffffff; 
+            display: flex; justify-content: space-around; padding: 10px 0 25px; 
+            border-top: 1px solid #e2e8f0; z-index: 2000; 
+        }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
+        .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.65rem; white-space: nowrap; font-weight: 600; color: #64748b; }
+        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; justify-content: flex-start; }
+        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 600; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* --- MODAL --- */
-        #custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 11000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
-        .modal-card { background: white; border-radius: 20px; width: 100%; max-width: 380px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        /* --- MODAL PERSONALIZADO --- */
+        #custom-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
+            z-index: 11000; display: none; align-items: center; justify-content: center; padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .modal-card {
+            background: white; border-radius: 20px; width: 100%; max-width: 400px;
+            padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: zoomIn 0.2s ease;
+        }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* --- CÁMARA --- */
-        #cam-container { position: fixed; inset: 0; background: #000; z-index: 10500; display: none; }
+        #cam-container { position: fixed; inset: 0; background: #000; z-index: 10010; display: none; flex-direction: column; align-items: center; justify-content: center; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
-        .cam-controls { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: center; }
-        .btn-capture { width: 70px; height: 70px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
+        .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
+        .btn-capture { width: 75px; height: 75px; background: #fff; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-        /* --- TICKET RENDER --- */
-        #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
-        .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
-        
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+
+        .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 6px 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; color: #475569; }
+        .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
+
+        /* --- TICKET RENDERER --- */
+        #ticket-render { 
+            position: absolute; 
+            top: -10000px; 
+            left: 0;
+            width: 380px; 
+            background: white; 
+            padding: 30px; 
+            color: black; 
+            font-family: 'Courier New', Courier, monospace; 
+        }
+        .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
+        .ticket-brand { text-align: center; font-size: 1.3rem; font-weight: 900; margin: 5px 0; }
+        .ticket-datetime { text-align: center; font-size: 1rem; margin-bottom: 15px; }
+        .ticket-line-solid { border-top: 3px solid #000; margin: 10px 0; }
+        .ticket-line-dashed { border-top: 2px dashed #000; margin: 15px 0; }
+        .ticket-client-row { font-size: 1.1rem; margin: 15px 0 25px 0; }
+        .ticket-table { width: 100%; font-size: 1rem; border-collapse: collapse; }
+        .ticket-table td { padding: 8px 0; vertical-align: top; }
+        .ticket-total-row { font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 15px; }
+        .ticket-footer { text-align: center; font-size: 0.9rem; color: #333; margin-top: 40px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <img src="logo.png" alt="Yaute Logo" class="splash-logo">
+        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162456.png'">
+        <div class="splash-title">Yaute Rápidas</div>
+        <div class="splash-version">v10.50 - Control Pro</div>
         <div class="splash-loader"></div>
     </div>
 
+    <!-- MODAL PERSONALIZADO -->
     <div id="custom-modal">
         <div class="modal-card">
-            <h6 id="modal-title" class="fw-bold mb-3 text-uppercase text-primary">TÍTULO</h6>
+            <h6 id="modal-title" class="fw-bold mb-3 text-uppercase">Título</h6>
             <div id="modal-body" class="mb-4"></div>
             <div class="d-flex gap-2">
                 <button id="modal-cancel" class="btn btn-light flex-grow-1 fw-bold rounded-pill">CANCELAR</button>
@@ -95,58 +162,78 @@
 
     <div id="cam-container">
         <video id="cam-preview" autoplay playsinline muted></video>
-        <button id="btn-cam-cancel" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); border:none; border-radius:50%; width:44px; height:44px; color:white;"><i class="fas fa-times"></i></button>
-        <div class="cam-controls"><button id="btn-do-capture" class="btn-capture"></button></div>
+        <button id="btn-cam-cancel" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:45px; height:45px;"><i class="fas fa-times"></i></button>
+        <div class="cam-controls">
+            <button id="btn-do-capture" class="btn-capture"></button>
+        </div>
         <canvas id="cam-canvas" style="display:none;"></canvas>
     </div>
 
     <div id="toast-alert"></div>
 
     <header>
-        <h5 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span id="status-dot" style="display:inline-block; width:10px; height:10px; border-radius:50%;" class="bg-warning"></span></h5>
+        <div class="header-container">
+            <h5 class="m-0 fw-extrabold text-uppercase" style="font-size: 0.85rem;">Yaute Rápidas Pro</h5>
+            <div id="status-dot" class="status-indicator bg-warning" style="width:10px; height:10px; border-radius:50%;"></div>
+        </div>
     </header>
 
     <main>
-        <!-- VENTA -->
+        <!-- REGISTRO -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
-                <button id="btn-publish" class="btn-publish-wa mb-3 shadow-sm">
-                    <i class="fab fa-whatsapp"></i> PUBLICAR PRODUCTO EN GRUPO
-                </button>
-
                 <div class="row g-2 mb-3">
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold" placeholder="WALMART">
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Walmart">
                         <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Cliente</label>
-                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="NOMBRE">
+                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
                         <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
-                <hr class="opacity-10">
+
+                <hr class="my-3 opacity-25">
+                
                 <div class="row g-2 mb-3 align-items-end">
-                    <div class="col-2"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
+                    <div class="col-2">
+                        <label class="text-uppercase">Cant.</label>
+                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold px-1" value="1">
+                    </div>
                     <div class="col" style="position:relative">
-                        <label class="text-uppercase">Producto (Lector IA)</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR PRODUCTO">
+                        <label class="text-uppercase">PRODUCTO</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="IA Scanner">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
-                    <div class="col-auto"><button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button></div>
+                    <div class="col-auto">
+                        <button id="btn-scan" class="btn-inline-cam">
+                            <i class="fas fa-camera"></i>
+                            <i class="fas fa-spinner fa-spin d-none" id="scan-spinner"></i>
+                        </button>
+                    </div>
                 </div>
+
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><label class="text-uppercase">Costo (Anaquel)</label><input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01"></div>
-                    <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01"></div>
+                    <div class="col-6">
+                        <label class="text-uppercase">Costo (Anaquel)</label>
+                        <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="col-6">
+                        <label class="text-uppercase">Precio Venta</label>
+                        <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
+                    </div>
                 </div>
-                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm">GUARDAR REGISTRO</button>
+                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow" style="border-radius: 12px;">GUARDAR REGISTRO</button>
             </div>
         </div>
 
         <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
-            <div class="card-custom py-2 mb-3 shadow-sm"><input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()"></div>
+            <div class="card-custom py-3 text-center mb-3">
+                <input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()">
+            </div>
             <div id="lista-entregas"></div>
         </div>
 
@@ -157,7 +244,6 @@
                 <button class="sub-btn" id="btn-sub-products" onclick="switchSubTab('productos', this)">Productos</button>
                 <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
                 <button class="sub-btn" id="btn-sub-profit" onclick="switchSubTab('ganancias', this)">Ganancias</button>
-                <button class="sub-btn" id="btn-sub-history" onclick="switchSubTab('historial', this)">Historial</button>
                 <button class="sub-btn" id="btn-sub-store" onclick="switchSubTab('ticketTienda', this)">Ticket Tienda</button>
                 <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
             </div>
@@ -166,17 +252,24 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER -->
+    <!-- TICKET RENDERER -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
-        <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
-        <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
-        <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
-        <div style="font-size: 1.1rem; margin: 15px 0;"><b>CLIENTE:</b> <span id="t-cliente-name" style="text-transform: uppercase;"></span></div>
-        <table style="width: 100%; border-collapse: collapse;"><tbody id="t-body-items"></tbody></table>
-        <div style="border-top: 2px dashed #000; margin: 15px 0;"></div>
-        <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-grand-total"></span></div>
-        <div style="text-align: center; font-size: 0.9rem; color: #333; margin-top: 40px; text-transform: uppercase;">¡Gracias por su preferencia!</div>
+        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img">
+        <div class="ticket-brand">OFERTAS RAPIDAS YAUTE</div>
+        <div class="ticket-datetime" id="t-date-val"></div>
+        <div class="ticket-line-solid"></div>
+        <div class="ticket-client-row">
+            <b>CLIENTE:</b> <span id="t-cliente-name"></span>
+        </div>
+        <table class="ticket-table">
+            <tbody id="t-body-items"></tbody>
+        </table>
+        <div class="ticket-line-dashed"></div>
+        <div class="ticket-total-row">
+            <span>TOTAL:</span>
+            <span id="t-grand-total"></span>
+        </div>
+        <div class="ticket-footer">¡Gracias por su preferencia!</div>
     </div>
 
     <nav class="bottom-nav">
@@ -186,23 +279,28 @@
     </nav>
 
     <script type="module">
-        const apiKey = ""; 
+        const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
+            authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
+            projectId: "ofertas-rapidas-yautepec",
+            storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app",
+            messagingSenderId: "81339635207",
+            appId: "1:81339635207:web:26d180f92224d9a036fca2"
+        };
+
+        const appId = "yaute-v1-shared";
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
         let activeSubTab = 'clientes';
-        let lastCapturedBlob = null;
-        let currentScanMode = 'register';
-        let user = null;
 
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
@@ -212,6 +310,18 @@
         };
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
+
+        const hideSplash = () => {
+            const splash = document.getElementById('splash-screen');
+            if(splash && splash.style.display !== 'none') {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }
+        };
+
+        // --- SISTEMA ANTI-CONGELAMIENTO (Safety Net) ---
+        // Si en 6 segundos no se ha quitado el splash por éxito de carga, lo quitamos forzosamente.
+        setTimeout(hideSplash, 6000);
 
         const openModal = (title, bodyHtml, onOk) => {
             const modal = document.getElementById('custom-modal');
@@ -228,157 +338,51 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        // --- GEMINI API CON REINTENTOS ---
-        const callGemini = async (payload, retries = 5, delay = 1000) => {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (res.ok) return await res.json();
-                } catch (e) {}
-                await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
-            }
-            throw new Error("IA no disponible");
-        };
-
         // --- CÁMARA IA ---
+        const btnScan = document.getElementById('btn-scan');
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
         let stream = null;
 
-        const startCamera = async (mode) => {
-            currentScanMode = mode;
+        btnScan.onclick = async () => {
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
                 camPreview.srcObject = stream;
-                camContainer.style.display = 'block';
-            } catch (e) { showToast("Cámara no disponible", "danger"); }
+                camContainer.style.display = 'flex';
+            } catch (e) { showToast("Error de cámara", "danger"); }
         };
 
-        document.getElementById('btn-scan').onclick = () => startCamera('register');
-        document.getElementById('btn-publish').onclick = () => startCamera('publish');
         document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
         document.getElementById('btn-do-capture').onclick = () => {
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = 800; camCanvas.height = 600; 
-            ctx.drawImage(camPreview, 0, 0, 800, 600);
-            camCanvas.toBlob((blob) => {
-                lastCapturedBlob = blob;
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const base64 = reader.result.split(',')[1];
-                    if(stream) stream.getTracks().forEach(t => t.stop());
-                    camContainer.style.display = 'none';
-                    if(currentScanMode === 'publish') processPublishIA(base64);
-                    else processIA(base64);
-                };
-                reader.readAsDataURL(blob);
-            }, 'image/jpeg', 0.85);
+            camCanvas.width = camPreview.videoWidth; camCanvas.height = camPreview.videoHeight;
+            ctx.drawImage(camPreview, 0, 0);
+            const base64 = camCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            if(stream) stream.getTracks().forEach(t => t.stop());
+            camContainer.style.display = 'none';
+            processIA(base64);
         };
 
         async function processIA(base64) {
-            showToast("IA: Analizando etiqueta...");
+            document.getElementById('scan-spinner').classList.remove('d-none');
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analiza la etiqueta. Extrae unitCost (número grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Extrae unitCost (número grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
-                const data = await callGemini(payload);
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                });
+                const data = await res.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
                 document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
                 document.getElementById('in-costo').value = result.unitCost || "";
-                if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
-                showToast("Etiqueta procesada");
-            } catch (e) { showToast("Error de lectura IA", "danger"); }
+                showToast("Etiqueta leída");
+            } catch (e) { showToast("Error al leer etiqueta", "danger"); }
+            finally { document.getElementById('scan-spinner').classList.add('d-none'); }
         }
-
-        async function processPublishIA(base64) {
-            showToast("IA: Identificando producto...");
-            try {
-                const payload = {
-                    contents: [{ parts: [{ text: "Analiza producto comercial. Extrae nombre y presentación (ej: 1L, 500g). JSON: {'name': string, 'presentation': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                    generationConfig: { responseMimeType: "application/json" }
-                };
-                const data = await callGemini(payload);
-                const result = JSON.parse(data.candidates[0].content.parts[0].text);
-                
-                openModal("PUBLICAR EN GRUPO", `
-                    <label class="text-uppercase small fw-bold">Producto:</label>
-                    <input type="text" id="wa-name" class="form-control mb-2 text-uppercase" value="${result.name}">
-                    <label class="text-uppercase small fw-bold">Presentación:</label>
-                    <input type="text" id="wa-pres" class="form-control mb-2 text-uppercase" value="${result.presentation}">
-                    <label class="text-uppercase small fw-bold">Precio:</label>
-                    <input type="text" id="wa-price" class="form-control" placeholder="Ej: $35.00">
-                `, async () => {
-                    const name = document.getElementById('wa-name').value;
-                    const pres = document.getElementById('wa-pres').value;
-                    const price = document.getElementById('wa-price').value;
-                    const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${name.toUpperCase()}*\n⚖️ Presentación: ${pres.toUpperCase()}\n${price ? '💰 *Precio: ' + price + '*' : ''}\n\n🛒 ¡Disponible ahora!`;
-                    if (navigator.share && lastCapturedBlob) {
-                        try {
-                            const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
-                            await navigator.share({ files: [file], title: 'Oferta', text: msg });
-                        } catch(err) { showToast("Función solo disponible en celular", "warning"); }
-                    }
-                });
-            } catch (e) { showToast("Error de análisis IA", "danger"); }
-        }
-
-        // --- FIREBASE CORE (MANDATORIO RULE 3) ---
-        const initAuth = async () => {
-          try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-              await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-              await signInAnonymously(auth);
-            }
-          } catch (error) {
-            console.warn("Auth mismatch, falling back to anonymous...");
-            await signInAnonymously(auth);
-          }
-        };
-        
-        const startSync = () => {
-            if(!user) return;
-            ['sales', 'clients', 'stores', 'products'].forEach(n => {
-                // Implementación RULE 1 y Requisitos críticos de callbacks de error
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), 
-                    (s) => {
-                        state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                        if(n === 'sales') renderEntregas();
-                        renderCatalogList();
-                    }, 
-                    (err) => {
-                        console.error(`Error de permisos o conexión en ${n}:`, err);
-                    }
-                );
-            });
-            setupAuto('in-tienda', 'sug-tienda', 'stores'); 
-            setupAuto('in-cliente', 'sug-cliente', 'clients'); 
-            setupAuto('in-producto', 'sug-producto', 'products');
-        };
-
-        // Ejecutar Auth al cargar
-        initAuth();
-
-        onAuthStateChanged(auth, (u) => {
-            user = u;
-            if (u) {
-                document.getElementById('status-dot').className = 'bg-success';
-                document.getElementById('entregas-date').value = getISODate();
-                startSync();
-                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-                setTimeout(() => { 
-                    const splash = document.getElementById('splash-screen');
-                    if (splash) splash.style.display = 'none'; 
-                }, 1000);
-            }
-        });
 
         const setupAuto = (id, boxId, key) => {
             const inp = document.getElementById(id); const box = document.getElementById(boxId);
@@ -395,12 +399,32 @@
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
                     const prod = state.products.find(p => p.nombre === item.dataset.val);
-                    if (prod) { 
-                        document.getElementById('in-costo').value = prod.pCosto || ""; 
-                        document.getElementById('in-precio').value = prod.pVenta || ""; 
-                    }
+                    if (prod) { document.getElementById('in-costo').value = prod.pCosto || ""; document.getElementById('in-precio').value = prod.pVenta || ""; }
                 }
             };
+        };
+
+        signInAnonymously(auth);
+        onAuthStateChanged(auth, (u) => {
+            if (u) {
+                document.getElementById('status-dot').className = 'status-indicator bg-success';
+                document.getElementById('entregas-date').value = getISODate();
+                startSync();
+                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
+                // Si la conexión es exitosa, quitamos el splash en 1.5 segundos
+                setTimeout(hideSplash, 1500);
+            }
+        });
+
+        const startSync = () => {
+            ['sales', 'clients', 'stores', 'products'].forEach(n => {
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
+                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if(n === 'sales') renderEntregas();
+                    renderCatalogList();
+                });
+            });
+            setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
         };
 
         window.showTab = (id, btn) => {
@@ -421,19 +445,17 @@
             } else if(id === 'sales') {
                 fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             } else if(id === 'ganancias') {
-                fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            } else if(id === 'historial') {
-                fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial total por fecha</div>`;
+                fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             } else if(id === 'ticketTienda') {
                 fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             } else {
                 fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             }
             
+            // Llenar selects dinámicos si existen
             setTimeout(() => {
-                if (!document.getElementById('filter-store')) return;
-                const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
-                const cOpt = `<option value="">CLIENTES</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
+                const sOpt = `<option value="">-- TODAS TIENDAS --</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
+                const cOpt = `<option value="">-- TODOS CLIENTES --</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
                 if(document.getElementById('filter-store')) document.getElementById('filter-store').innerHTML = sOpt;
                 if(document.getElementById('filter-client')) document.getElementById('filter-client').innerHTML = cOpt;
                 if(document.getElementById('st-store')) document.getElementById('st-store').innerHTML = sOpt;
@@ -446,108 +468,79 @@
             const targetDateInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = `<p class="text-center py-5 opacity-40">Sin pedidos hoy</p>`; return; }
-            const grouped = filtered.reduce((acc, v) => { if(!acc[v.cliente]) acc[v.cliente] = {t:0, items:[]}; acc[v.cliente].t += v.total; acc[v.cliente].items.push(v); return acc; }, {});
-            list.innerHTML = Object.keys(grouped).map(cli => `
-                <div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'entregado', this.checked)"> ENTREGA</label><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'pagado', this.checked)"> PAGO</label></div>
-                    <div class="small">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`).join('');
+            if(!filtered.length) { list.innerHTML = '<div class="text-center py-5 opacity-40">Sin pedidos hoy</div>'; return; }
+            const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
+            list.innerHTML = Object.keys(grouped).map(cli => {
+                const items = grouped[cli].items;
+                const allDone = items.every(i => i.entregado && i.pagado);
+                return `<div class="card-custom ${allDone ? 'card-status-ok' : ''}">
+                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase" style="font-size:0.9rem">${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
+                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label><div style="width:1px; height:15px; background:#cbd5e1"></div><label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label></div>
+                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`;
+            }).join('');
         };
 
-        window.toggleStatus = async (cli, field, val) => {
-            if(!user) return;
-            const fdInput = document.getElementById('entregas-date').value;
-            const fd = new Date(fdInput + "T12:00:00").toLocaleDateString('es-MX');
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === fd);
-            for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
+        window.toggleClientStatus = async (clientName, targetDate, field, val) => {
+            const itemsToUpdate = state.sales.filter(s => s.cliente === clientName && s.fechaStr === targetDate);
+            for (const item of itemsToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id), { [field]: val }); }
         };
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const qInput = document.getElementById('search-cat');
-            const q = qInput ? qInput.value.toUpperCase() : "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clients', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
+                const filtered = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+                list.innerHTML = filtered.map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b class="text-uppercase small">${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clients', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-5 opacity-40">Sin clientes</p>';
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => (p.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><div class="d-flex justify-content-between mt-1 small opacity-75"><span>C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</span><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('products', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('products', '${p.id}')"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+                const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
+                const filtered = state.products.filter(p => p.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+                list.innerHTML = filtered.map(p => `<div class="card-custom py-2 mb-1"><div class="d-flex justify-content-between align-items-start"><b class="text-uppercase small flex-grow-1">${p.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('products', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('products', '${p.id}')"><i class="fas fa-trash"></i></button></div></div><div class="small opacity-75">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</div></div>`).join('') || '<p class="text-center py-5 opacity-40">Sin productos</p>';
             } else if(activeSubTab === 'sales') {
-                const histDateIn = document.getElementById('hist-date');
-                if(!histDateIn) return;
-                const fd = new Date(histDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
+                const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
+                const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
                 let dv = state.sales.filter(s => s.fechaStr === fd);
-                const filterStore = document.getElementById('filter-store');
-                const filterClient = document.getElementById('filter-client');
-                if(filterStore && filterStore.value) dv = dv.filter(s => s.tienda === filterStore.value);
-                if(filterClient && filterClient.value) dv = dv.filter(s => s.cliente === filterClient.value);
-                const total = dv.reduce((acc, v) => acc + v.total, 0);
-                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${total.toFixed(2)}</div>`;
+                if(document.getElementById('filter-store') && document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
+                if(document.getElementById('filter-client') && document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
+                const tp = dv.reduce((acc, v) => acc + v.total, 0);
+                let html = dv.map(v => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><div class="small"><b>${v.cantidad}x ${v.producto}</b><br><span class="opacity-50">${v.tienda} • ${v.cliente}</span></div><div class="d-flex align-items-center gap-3"><span class="fw-bold text-primary">$${v.total.toFixed(2)}</span><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') || '<p class="text-center py-5 opacity-40">Sin resultados</p>';
+                if (dv.length > 0) html += `<div class="card-custom card-summary mt-3 shadow-sm"><div class="d-flex justify-content-between align-items-center"><span class="fw-bold">TOTAL VENTAS:</span><h4 class="m-0 fw-black">$${tp.toFixed(2)}</h4></div></div>`;
+                list.innerHTML = html;
             } else if(activeSubTab === 'ganancias') {
-                const histDateIn = document.getElementById('hist-date');
-                if(!histDateIn) return;
-                const fd = new Date(histDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
-                const prof = state.sales.filter(s => s.fechaStr === fd).reduce((acc, v) => { acc[v.tienda] = (acc[v.tienda] || 0) + (v.total - (v.costo * v.cantidad)); return acc; }, {});
-                list.innerHTML = Object.keys(prof).map(s => `<div class="card-custom d-flex justify-content-between"><b>${s}</b><span class="text-success fw-bold">$${prof[s].toFixed(2)}</span></div>`).join('') + `<div class="card-custom bg-success text-white">TOTAL DÍA: $${Object.values(prof).reduce((a,b)=>a+b,0).toFixed(2)}</div>`;
-            } else if(activeSubTab === 'historial') {
-                const hist = state.sales.reduce((acc, v) => { if(!acc[v.fechaStr]) acc[v.fechaStr] = {s:0, p:0}; acc[v.fechaStr].s += v.total; acc[v.fechaStr].p += (v.total - (v.costo * v.cantidad)); return acc; }, {});
-                const sorted = Object.keys(hist).sort((a,b) => { const [da,ma,aa]=a.split('/').map(Number); const [db,mb,ab]=b.split('/').map(Number); return new Date(ab,mb-1,db) - new Date(aa,ma-1,da); });
-                list.innerHTML = sorted.map(d => `<div class="card-custom"><b>${d}</b><div class="d-flex justify-content-between small"><span>Venta: $${hist[d].s.toFixed(2)}</span><span class="text-success">Ganancia: $${hist[d].p.toFixed(2)}</span></div></div>`).join('');
+                const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
+                const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
+                let dv = state.sales.filter(s => s.fechaStr === fd);
+                if(document.getElementById('filter-store') && document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
+                if(document.getElementById('filter-client') && document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
+                let profit = 0;
+                let html = dv.map(v => { const p = (v.precio - v.costo) * v.cantidad; profit += p; return `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><div class="small"><b>${v.producto}</b><br><span class="opacity-50">${v.tienda}</span></div><span class="fw-bold text-success">$${p.toFixed(2)}</span></div>`; }).join('') || '<p class="text-center py-5 opacity-40">Sin resultados</p>';
+                if (dv.length > 0) html += `<div class="card-custom mt-3 shadow-sm" style="background:var(--success); color:white; border-left:none;"><div class="d-flex justify-content-between align-items-center"><span class="fw-bold">GANANCIA TOTAL:</span><h4 class="m-0 fw-black">$${profit.toFixed(2)}</h4></div></div>`;
+                list.innerHTML = html;
             } else if(activeSubTab === 'ticketTienda') {
-                const stDateIn = document.getElementById('st-date');
-                const stStoreIn = document.getElementById('st-store');
-                if(!stDateIn || !stStoreIn) return;
-                const fd = new Date(stDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
-                const store = stStoreIn.value;
+                const dateIn = document.getElementById('st-date'); const storeIn = document.getElementById('st-store');
+                if(!dateIn || !storeIn) return;
+                const fd = new Date(dateIn.value + "T12:00:00").toLocaleDateString('es-MX');
+                const store = storeIn.value;
                 const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === store);
                 const tc = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
-                list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${tc.toFixed(2)}</b></div>` : '';
+                list.innerHTML = `<div class="card-custom"><h6 class="text-uppercase mb-3">${store || "SELECCIONE TIENDA"}</h6>${dv.map(i => `<div class="d-flex justify-content-between border-bottom py-1 small"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<div class="text-end fw-bold mt-3 text-primary">COSTO TOTAL: $${tc.toFixed(2)}</div></div>`;
             } else {
-                const sVal = document.getElementById('d-start').value;
-                const eVal = document.getElementById('d-end').value;
-                const sDate = new Date(sVal + "T00:00:00");
-                const eDate = new Date(eVal + "T23:59:59");
-                const profit = state.sales.filter(v => {
-                    const d = v.fecha ? v.fecha.toDate() : new Date();
-                    return d >= sDate && d <= eDate;
-                }).reduce((acc, v) => acc + (v.total - (v.costo * v.cantidad)), 0);
+                const s = new Date(document.getElementById('d-start').value + "T00:00:00");
+                const e = new Date(document.getElementById('d-end').value + "T23:59:59");
+                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
+                let profit = 0; fs.forEach(v => { profit += ((v.precio - v.costo) * v.cantidad); });
                 list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
             }
         };
 
-        window.deleteSale = (id) => {
-          if(!user) return;
-          openModal("Eliminar", "¿Borrar venta?", async () => { 
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); 
-            showToast("Borrado"); 
-          });
-        };
-
-        window.editItem = (col, id, cur) => {
-            if(!user) return;
-            if(col === 'clients') openModal("Editar Cliente", `<input type="text" id="edit-n" class="form-control text-uppercase" value="${cur.nombre}">`, async (res) => {
-                const n = res[0].toUpperCase().trim();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clients', id), { nombre: n });
-                const items = state.sales.filter(s => s.cliente === cur.nombre);
-                for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { cliente: n });
-            }); else openModal("Editar Producto", `<input type="text" class="form-control text-uppercase mb-2" value="${cur.nombre}"><input type="number" class="form-control mb-2" value="${cur.pCosto}"><input type="number" class="form-control" value="${cur.pVenta}">`, async (res) => {
-                const [n, c, v] = res; const fn = n.toUpperCase().trim();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', id), { nombre: fn, pCosto: parseFloat(c), pVenta: parseFloat(v) });
-                const items = state.sales.filter(s => s.producto === cur.nombre);
-                for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { producto: fn });
+        window.deleteSale = async (id) => { 
+            openModal("Eliminar Registro", "¿Seguro que desea eliminar esta venta?", async () => {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id));
+                showToast("Venta eliminada");
             });
         };
 
-        window.deleteItem = (col, id) => {
-            if(!user) return;
-            const collectionName = col === 'clients' ? 'clients' : 'products';
-            const item = state[collectionName].find(x => x.id === id);
-            if(state.sales.some(s => collectionName === 'clients' ? s.cliente === item.nombre : s.producto === item.nombre)) return showToast("En uso", "danger");
-            openModal("Borrar", "¿Eliminar del catálogo?", async () => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id)));
-        };
-
         document.getElementById('btn-save').onclick = async () => {
-            if(!user) return;
             const data = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -559,44 +552,34 @@
                 total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0),
                 entregado: false, pagado: false
             };
-            if(!data.tienda || !data.producto || !data.cliente) return showToast("Faltan datos", "danger");
+            if(!data.tienda || !data.producto || data.precio <= 0) return showToast("Faltan datos", "danger");
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
-                await ck('stores', data.tienda); 
-                await ck('clients', data.cliente); 
-                await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
-                
-                // Limpieza de campos
-                document.getElementById('in-cliente').value = "";
-                document.getElementById('in-producto').value = "";
-                document.getElementById('in-costo').value = "";
-                document.getElementById('in-precio').value = "";
+                const ck = async (col, val, extra = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...extra }); };
+                await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
                 showToast("¡Venta guardada!");
+                document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { showToast("Error de guardado", "danger"); }
         };
 
         window.shareTicket = async (name) => {
-            const fdInput = document.getElementById('entregas-date').value;
-            const fd = new Date(fdInput + "T12:00:00").toLocaleDateString('es-MX');
+            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
             if (!filtered.length) return;
-            const formatName = name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
             document.getElementById('t-cliente-name').innerText = name;
-            document.getElementById('t-date-val').innerText = fd;
+            document.getElementById('t-date-val').innerText = `${fd} ${timeStr}`;
             let total = 0;
-            document.getElementById('t-body-items').innerHTML = filtered.map(i => { total += i.total; return `<tr><td style="width:40px">${i.cantidad}x</td><td>${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
+            document.getElementById('t-body-items').innerHTML = filtered.map(i => { total += i.total; return `<tr><td style="width: 40px;">${i.cantidad}x</td><td style="text-transform: uppercase;">${i.producto}</td><td style="text-align: right;">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-grand-total').innerText = total.toFixed(2);
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-                canvas.toBlob(async b => {
-                    const f = new File([b], `Ticket_${name}.png`, { type: 'image/png' });
-                    if (navigator.share) {
-                        const formattedClientName = name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                        await navigator.share({ files: [f], title: 'Ticket', text: `Hola ${formattedClientName}, te envio tu cuenta` });
-                    }
+                canvas.toBlob(async blob => {
+                    const file = new File([blob], `Ticket_${name}.png`, { type: 'image/png' });
+                    if (navigator.share) { await navigator.share({ files: [file], title: 'Ticket' }); }
                 }, 'image/png');
-            } catch (err) { showToast("Error compartiendo", "danger"); }
+            } catch (err) { showToast("Error al generar ticket", "danger"); }
         };
     </script>
 </body>
