@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.75</title>
+    <title>Yaute Rápidas Pro v10.76</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,6 +22,7 @@
             --card-radius: 14px;
         }
 
+        /* --- CONTROL DE PANTALLA --- */
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
@@ -36,7 +37,7 @@
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: opacity 0.3s; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -44,13 +45,11 @@
         .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 3px; font-weight: 800; color: #64748b; display: block; }
 
-        /* BOTONES IA */
         .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-        .btn-publish-wa { background: #dcfce7; color: #166534; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 0.85rem; width: 100%; transition: all 0.2s; }
-        .btn-publish-wa:active { transform: scale(0.98); background: #bbf7d0; }
+        .btn-publish-wa { background: #dcfce7; color: #166534; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 0.85rem; width: 100%; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 20px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
@@ -68,8 +67,8 @@
         .cam-controls { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 70px; height: 70px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-        /* --- TICKET RENDERER --- */
-        #ticket-render { position: absolute; top: -10000px; left: 0; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
+        /* --- TICKET RENDER --- */
+        #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
         .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
         
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
@@ -85,7 +84,7 @@
 
     <div id="custom-modal">
         <div class="modal-card">
-            <h6 id="modal-title" class="fw-bold mb-3 text-uppercase">TÍTULO</h6>
+            <h6 id="modal-title" class="fw-bold mb-3 text-uppercase text-primary">TÍTULO</h6>
             <div id="modal-body" class="mb-4"></div>
             <div class="d-flex gap-2">
                 <button id="modal-cancel" class="btn btn-light flex-grow-1 fw-bold rounded-pill">CANCELAR</button>
@@ -104,61 +103,50 @@
     <div id="toast-alert"></div>
 
     <header>
-        <h5 class="m-0 fw-bold">OFERTAS RÁPIDAS YAUTE <span id="status-dot" style="display:inline-block; width:10px; height:10px; border-radius:50%;" class="bg-warning"></span></h5>
+        <h5 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span id="status-dot" style="display:inline-block; width:10px; height:10px; border-radius:50%;" class="bg-warning"></span></h5>
     </header>
 
     <main>
         <!-- VENTA -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom">
-                <button id="btn-publish" class="btn-publish-wa mb-3">
+                <button id="btn-publish" class="btn-publish-wa mb-3 shadow-sm">
                     <i class="fab fa-whatsapp"></i> PUBLICAR PRODUCTO EN GRUPO
                 </button>
 
                 <div class="row g-2 mb-3">
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold" placeholder="Walmart">
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold" placeholder="WALMART">
                         <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Cliente</label>
-                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
+                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="NOMBRE">
                         <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
                 <hr class="opacity-10">
                 <div class="row g-2 mb-3 align-items-end">
-                    <div class="col-2">
-                        <label class="text-uppercase">Cant.</label>
-                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1">
-                    </div>
+                    <div class="col-2"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
                     <div class="col" style="position:relative">
                         <label class="text-uppercase">Producto (Lector IA)</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR O ESCRIBIR">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR PRODUCTO">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
-                    <div class="col-auto">
-                        <button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button>
-                    </div>
+                    <div class="col-auto"><button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button></div>
                 </div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6">
-                        <label class="text-uppercase">Costo</label>
-                        <input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01">
-                    </div>
-                    <div class="col-6">
-                        <label class="text-uppercase">Venta</label>
-                        <input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01">
-                    </div>
+                    <div class="col-6"><label class="text-uppercase">Costo (Anaquel)</label><input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01"></div>
+                    <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01"></div>
                 </div>
-                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold rounded-3">GUARDAR REGISTRO</button>
+                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm">GUARDAR REGISTRO</button>
             </div>
         </div>
 
         <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
-            <div class="card-custom py-2 mb-3"><input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()"></div>
+            <div class="card-custom py-2 mb-3 shadow-sm"><input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
@@ -180,7 +168,7 @@
 
     <!-- TICKET RENDER -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img">
+        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
         <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
         <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
@@ -198,14 +186,13 @@
     </nav>
 
     <script type="module">
-        const apiKey = ""; // API key se proporciona en tiempo de ejecución
+        const apiKey = ""; 
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = JSON.parse(__firebase_config);
-
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -219,6 +206,7 @@
 
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
+            if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
             toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
@@ -240,15 +228,23 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        const callGeminiIA = async (payload) => {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-            });
-            if (!res.ok) throw new Error("Error en respuesta IA");
-            return await res.json();
+        // --- GEMINI API CON REINTENTOS ---
+        const callGemini = async (payload, retries = 5, delay = 1000) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) return await res.json();
+                } catch (e) {}
+                await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+            }
+            throw new Error("IA no disponible");
         };
 
-        // --- CÁMARA ---
+        // --- CÁMARA IA ---
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
@@ -265,15 +261,12 @@
 
         document.getElementById('btn-scan').onclick = () => startCamera('register');
         document.getElementById('btn-publish').onclick = () => startCamera('publish');
-        document.getElementById('btn-cam-cancel').onclick = () => { 
-            if(stream) stream.getTracks().forEach(t => t.stop()); 
-            camContainer.style.display = 'none'; 
-        };
+        document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
         document.getElementById('btn-do-capture').onclick = () => {
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = 640; camCanvas.height = 480; 
-            ctx.drawImage(camPreview, 0, 0, 640, 480);
+            camCanvas.width = 800; camCanvas.height = 600; 
+            ctx.drawImage(camPreview, 0, 0, 800, 600);
             camCanvas.toBlob((blob) => {
                 lastCapturedBlob = blob;
                 const reader = new FileReader();
@@ -292,59 +285,86 @@
             showToast("IA: Analizando etiqueta...");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Extract unitCost and productName from this label. Return JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Analiza la etiqueta. Extrae unitCost (número grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
-                const data = await callGeminiIA(payload);
+                const data = await callGemini(payload);
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
                 document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
                 document.getElementById('in-costo').value = result.unitCost || "";
                 if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
-                showToast("Etiqueta leída");
-            } catch (e) { showToast("IA falló, reintente", "danger"); }
+                showToast("Etiqueta procesada");
+            } catch (e) { showToast("Error de lectura IA", "danger"); }
         }
 
         async function processPublishIA(base64) {
-            showToast("IA: Identificando...");
+            showToast("IA: Identificando producto...");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analyze commercial product. Extract name and presentation (e.g. 1L, 500g). Return JSON: {'name': string, 'presentation': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Analiza producto comercial. Extrae nombre y presentación (ej: 1L, 500g). JSON: {'name': string, 'presentation': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
-                const data = await callGeminiIA(payload);
+                const data = await callGemini(payload);
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
                 
                 openModal("PUBLICAR EN GRUPO", `
-                    <label class='text-uppercase small fw-bold'>Producto:</label>
-                    <input type='text' id='wa-name' class='form-control mb-2 text-uppercase' value='${result.name}'>
-                    <label class='text-uppercase small fw-bold'>Presentación:</label>
-                    <input type='text' id='wa-pres' class='form-control mb-2 text-uppercase' value='${result.presentation}'>
-                    <label class='text-uppercase small fw-bold'>Precio:</label>
-                    <input type='text' id='wa-price' class='form-control' placeholder='Ej: $35.00'>
+                    <label class="text-uppercase small fw-bold">Producto:</label>
+                    <input type="text" id="wa-name" class="form-control mb-2 text-uppercase" value="${result.name}">
+                    <label class="text-uppercase small fw-bold">Presentación:</label>
+                    <input type="text" id="wa-pres" class="form-control mb-2 text-uppercase" value="${result.presentation}">
+                    <label class="text-uppercase small fw-bold">Precio:</label>
+                    <input type="text" id="wa-price" class="form-control" placeholder="Ej: $35.00">
                 `, async () => {
                     const name = document.getElementById('wa-name').value;
                     const pres = document.getElementById('wa-pres').value;
                     const price = document.getElementById('wa-price').value;
-                    const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${name.toUpperCase()}*\n⚖️ Presentación: ${pres.toUpperCase()}\n${price ? '💰 *Precio: ' + price + '*' : ''}\n\n🛒 ¡Haz tu pedido ahora!`;
+                    const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${name.toUpperCase()}*\n⚖️ Presentación: ${pres.toUpperCase()}\n${price ? '💰 *Precio: ' + price + '*' : ''}\n\n🛒 ¡Disponible ahora!`;
                     if (navigator.share && lastCapturedBlob) {
-                        const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
-                        await navigator.share({ files: [file], title: 'Oferta', text: msg });
+                        try {
+                            const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
+                            await navigator.share({ files: [file], title: 'Oferta', text: msg });
+                        } catch(err) { showToast("Función solo disponible en celular", "warning"); }
                     }
                 });
-            } catch (e) { showToast("Error al identificar", "danger"); }
+            } catch (e) { showToast("Error de análisis IA", "danger"); }
         }
 
-        // --- AUTH & SYNC ---
-        const initSession = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (e) { await signInAnonymously(auth); }
+        // --- FIREBASE CORE (MANDATORIO RULE 3) ---
+        const initAuth = async () => {
+          try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (error) {
+            console.warn("Auth mismatch, falling back to anonymous...");
+            await signInAnonymously(auth);
+          }
         };
-        initSession();
+        
+        const startSync = () => {
+            if(!user) return;
+            ['sales', 'clients', 'stores', 'products'].forEach(n => {
+                // Implementación RULE 1 y Requisitos críticos de callbacks de error
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), 
+                    (s) => {
+                        state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                        if(n === 'sales') renderEntregas();
+                        renderCatalogList();
+                    }, 
+                    (err) => {
+                        console.error(`Error de permisos o conexión en ${n}:`, err);
+                    }
+                );
+            });
+            setupAuto('in-tienda', 'sug-tienda', 'stores'); 
+            setupAuto('in-cliente', 'sug-cliente', 'clients'); 
+            setupAuto('in-producto', 'sug-producto', 'products');
+        };
+
+        // Ejecutar Auth al cargar
+        initAuth();
 
         onAuthStateChanged(auth, (u) => {
             user = u;
@@ -353,23 +373,12 @@
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
                 switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-                setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 1000);
+                setTimeout(() => { 
+                    const splash = document.getElementById('splash-screen');
+                    if (splash) splash.style.display = 'none'; 
+                }, 1000);
             }
         });
-
-        const startSync = () => {
-            if (!user) return;
-            ['sales', 'clients', 'stores', 'products'].forEach(n => {
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
-                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    if(n === 'sales') renderEntregas();
-                    renderCatalogList();
-                });
-            });
-            setupAuto('in-tienda', 'sug-tienda', 'stores'); 
-            setupAuto('in-cliente', 'sug-cliente', 'clients'); 
-            setupAuto('in-producto', 'sug-producto', 'products');
-        };
 
         const setupAuto = (id, boxId, key) => {
             const inp = document.getElementById(id); const box = document.getElementById(boxId);
@@ -386,7 +395,10 @@
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
                     const prod = state.products.find(p => p.nombre === item.dataset.val);
-                    if (prod) { document.getElementById('in-costo').value = prod.pCosto || ""; document.getElementById('in-precio').value = prod.pVenta || ""; }
+                    if (prod) { 
+                        document.getElementById('in-costo').value = prod.pCosto || ""; 
+                        document.getElementById('in-precio').value = prod.pVenta || ""; 
+                    }
                 }
             };
         };
@@ -404,14 +416,22 @@
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             const today = getISODate();
-            if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
-            else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial total por fecha</div>`;
-            else if(id === 'ticketTienda') fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
+            if(id === 'clientes' || id === 'productos') {
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+            } else if(id === 'sales') {
+                fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            } else if(id === 'ganancias') {
+                fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
+            } else if(id === 'historial') {
+                fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial total por fecha</div>`;
+            } else if(id === 'ticketTienda') {
+                fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            } else {
+                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
+            }
             
             setTimeout(() => {
+                if (!document.getElementById('filter-store')) return;
                 const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
                 const cOpt = `<option value="">CLIENTES</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
                 if(document.getElementById('filter-store')) document.getElementById('filter-store').innerHTML = sOpt;
@@ -426,7 +446,7 @@
             const targetDateInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos hoy</p>'; return; }
+            if(!filtered.length) { list.innerHTML = `<p class="text-center py-5 opacity-40">Sin pedidos hoy</p>`; return; }
             const grouped = filtered.reduce((acc, v) => { if(!acc[v.cliente]) acc[v.cliente] = {t:0, items:[]}; acc[v.cliente].t += v.total; acc[v.cliente].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
@@ -446,21 +466,27 @@
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
+            const qInput = document.getElementById('search-cat');
+            const q = qInput ? qInput.value.toUpperCase() : "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clientes', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clientes', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clients', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => (p.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><div class="d-flex justify-content-between mt-1 small opacity-75"><span>C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</span><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('productos', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('productos', '${p.id}')"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+                list.innerHTML = state.products.filter(p => (p.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><div class="d-flex justify-content-between mt-1 small opacity-75"><span>C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</span><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('products', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('products', '${p.id}')"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
             } else if(activeSubTab === 'sales') {
-                const hDate = document.getElementById('hist-date'); if(!hDate) return;
-                const fd = new Date(hDate.value + "T12:00:00").toLocaleDateString('es-MX');
+                const histDateIn = document.getElementById('hist-date');
+                if(!histDateIn) return;
+                const fd = new Date(histDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
                 let dv = state.sales.filter(s => s.fechaStr === fd);
-                if(document.getElementById('filter-store') && document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
-                if(document.getElementById('filter-client') && document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
-                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
+                const filterStore = document.getElementById('filter-store');
+                const filterClient = document.getElementById('filter-client');
+                if(filterStore && filterStore.value) dv = dv.filter(s => s.tienda === filterStore.value);
+                if(filterClient && filterClient.value) dv = dv.filter(s => s.cliente === filterClient.value);
+                const total = dv.reduce((acc, v) => acc + v.total, 0);
+                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${total.toFixed(2)}</div>`;
             } else if(activeSubTab === 'ganancias') {
-                const hDate = document.getElementById('hist-date'); if(!hDate) return;
-                const fd = new Date(hDate.value + "T12:00:00").toLocaleDateString('es-MX');
+                const histDateIn = document.getElementById('hist-date');
+                if(!histDateIn) return;
+                const fd = new Date(histDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
                 const prof = state.sales.filter(s => s.fechaStr === fd).reduce((acc, v) => { acc[v.tienda] = (acc[v.tienda] || 0) + (v.total - (v.costo * v.cantidad)); return acc; }, {});
                 list.innerHTML = Object.keys(prof).map(s => `<div class="card-custom d-flex justify-content-between"><b>${s}</b><span class="text-success fw-bold">$${prof[s].toFixed(2)}</span></div>`).join('') + `<div class="card-custom bg-success text-white">TOTAL DÍA: $${Object.values(prof).reduce((a,b)=>a+b,0).toFixed(2)}</div>`;
             } else if(activeSubTab === 'historial') {
@@ -468,40 +494,56 @@
                 const sorted = Object.keys(hist).sort((a,b) => { const [da,ma,aa]=a.split('/').map(Number); const [db,mb,ab]=b.split('/').map(Number); return new Date(ab,mb-1,db) - new Date(aa,ma-1,da); });
                 list.innerHTML = sorted.map(d => `<div class="card-custom"><b>${d}</b><div class="d-flex justify-content-between small"><span>Venta: $${hist[d].s.toFixed(2)}</span><span class="text-success">Ganancia: $${hist[d].p.toFixed(2)}</span></div></div>`).join('');
             } else if(activeSubTab === 'ticketTienda') {
-                const tDate = document.getElementById('st-date'); const tStore = document.getElementById('st-store');
-                if(!tDate || !tStore) return;
-                const fd = new Date(tDate.value + "T12:00:00").toLocaleDateString('es-MX');
-                const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === tStore.value);
-                list.innerHTML = tStore.value ? `<div class="card-custom"><b>${tStore.value}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${dv.reduce((a,v)=>a+(v.costo*v.cantidad),0).toFixed(2)}</b></div>` : '';
+                const stDateIn = document.getElementById('st-date');
+                const stStoreIn = document.getElementById('st-store');
+                if(!stDateIn || !stStoreIn) return;
+                const fd = new Date(stDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
+                const store = stStoreIn.value;
+                const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === store);
+                const tc = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
+                list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${tc.toFixed(2)}</b></div>` : '';
             } else {
-                const sDate = new Date(document.getElementById('d-start').value + "T00:00:00");
-                const eDate = new Date(document.getElementById('d-end').value + "T23:59:59");
-                const pr = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= sDate && d <= eDate; }).reduce((a,v) => a + (v.total - (v.costo * v.cantidad)), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(pr * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+                const sVal = document.getElementById('d-start').value;
+                const eVal = document.getElementById('d-end').value;
+                const sDate = new Date(sVal + "T00:00:00");
+                const eDate = new Date(eVal + "T23:59:59");
+                const profit = state.sales.filter(v => {
+                    const d = v.fecha ? v.fecha.toDate() : new Date();
+                    return d >= sDate && d <= eDate;
+                }).reduce((acc, v) => acc + (v.total - (v.costo * v.cantidad)), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
             }
         };
 
-        window.deleteSale = (id) => openModal("Borrar", "¿Borrar venta?", async () => { if(!user) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); showToast("Borrado"); });
+        window.deleteSale = (id) => {
+          if(!user) return;
+          openModal("Eliminar", "¿Borrar venta?", async () => { 
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); 
+            showToast("Borrado"); 
+          });
+        };
 
         window.editItem = (col, id, cur) => {
             if(!user) return;
-            const collectionName = col === 'clientes' ? 'clients' : 'products';
-            if(col === 'clientes') openModal("Editar Cliente", `<input type="text" class="form-control text-uppercase" value="${cur.nombre}">`, async (res) => {
+            if(col === 'clients') openModal("Editar Cliente", `<input type="text" id="edit-n" class="form-control text-uppercase" value="${cur.nombre}">`, async (res) => {
                 const n = res[0].toUpperCase().trim();
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clients', id), { nombre: n });
-                const itemsToUpdate = state.sales.filter(s => s.cliente === cur.nombre);
-                for(const i of itemsToUpdate) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { cliente: n });
+                const items = state.sales.filter(s => s.cliente === cur.nombre);
+                for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { cliente: n });
             }); else openModal("Editar Producto", `<input type="text" class="form-control text-uppercase mb-2" value="${cur.nombre}"><input type="number" class="form-control mb-2" value="${cur.pCosto}"><input type="number" class="form-control" value="${cur.pVenta}">`, async (res) => {
                 const [n, c, v] = res; const fn = n.toUpperCase().trim();
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', id), { nombre: fn, pCosto: parseFloat(c), pVenta: parseFloat(v) });
+                const items = state.sales.filter(s => s.producto === cur.nombre);
+                for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { producto: fn });
             });
         };
 
         window.deleteItem = (col, id) => {
-            const collectionName = col === 'clientes' ? 'clients' : 'products';
+            if(!user) return;
+            const collectionName = col === 'clients' ? 'clients' : 'products';
             const item = state[collectionName].find(x => x.id === id);
-            if(state.sales.some(s => col === 'clientes' ? s.cliente === item.nombre : s.producto === item.nombre)) return showToast("En uso", "danger");
-            openModal("Borrar", "¿Eliminar del catálogo?", async () => { if(!user) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id)); });
+            if(state.sales.some(s => collectionName === 'clients' ? s.cliente === item.nombre : s.producto === item.nombre)) return showToast("En uso", "danger");
+            openModal("Borrar", "¿Eliminar del catálogo?", async () => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id)));
         };
 
         document.getElementById('btn-save').onclick = async () => {
@@ -520,15 +562,12 @@
             if(!data.tienda || !data.producto || !data.cliente) return showToast("Faltan datos", "danger");
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
+                const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
+                await ck('stores', data.tienda); 
+                await ck('clients', data.cliente); 
+                await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
                 
-                // Actualización Catálogo
-                if(!state.clients.some(x => x.nombre === data.cliente)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: data.cliente });
-                if(!state.stores.some(x => x.nombre === data.tienda)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: data.tienda });
-                
-                const existingProd = state.products.find(p => p.nombre === data.producto);
-                if(existingProd) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { pCosto: data.costo, pVenta: data.precio });
-                else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
-
+                // Limpieza de campos
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
@@ -538,21 +577,24 @@
         };
 
         window.shareTicket = async (name) => {
-            const fdIn = document.getElementById('entregas-date').value;
-            const fd = new Date(fdIn + "T12:00:00").toLocaleDateString('es-MX');
+            const fdInput = document.getElementById('entregas-date').value;
+            const fd = new Date(fdInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
             if (!filtered.length) return;
             const formatName = name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
             document.getElementById('t-cliente-name').innerText = name;
             document.getElementById('t-date-val').innerText = fd;
             let total = 0;
-            document.getElementById('t-body-items').innerHTML = filtered.map(i => { total += i.total; return `<tr><td style="width:40px">${i.cantidad}x</td><td style="text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
+            document.getElementById('t-body-items').innerHTML = filtered.map(i => { total += i.total; return `<tr><td style="width:40px">${i.cantidad}x</td><td>${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-grand-total').innerText = total.toFixed(2);
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
                 canvas.toBlob(async b => {
                     const f = new File([b], `Ticket_${name}.png`, { type: 'image/png' });
-                    if (navigator.share) await navigator.share({ files: [f], title: 'Ticket', text: `Hola ${formatName}, te envio tu cuenta` });
+                    if (navigator.share) {
+                        const formattedClientName = name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                        await navigator.share({ files: [f], title: 'Ticket', text: `Hola ${formattedClientName}, te envio tu cuenta` });
+                    }
                 }, 'image/png');
             } catch (err) { showToast("Error compartiendo", "danger"); }
         };
