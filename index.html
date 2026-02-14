@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.72</title>
+    <title>Yaute Rápidas Pro v10.73</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -71,14 +71,13 @@
         .cam-controls { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 70px; height: 70px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-        /* --- TICKET RENDER --- */
+        /* --- TICKET RENDER (OCULTO) --- */
         #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
         .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
@@ -128,8 +127,14 @@
                     <div class="col-auto"><button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button></div>
                 </div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><label class="text-uppercase">Costo (Anaquel)</label><input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01"></div>
-                    <div class="col-6"><label class="text-uppercase">Venta</label><input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01"></div>
+                    <div class="col-6">
+                        <label class="text-uppercase">Costo (Anaquel)</label>
+                        <input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="col-6">
+                        <label class="text-uppercase">Venta</label>
+                        <input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01">
+                    </div>
                 </div>
                 <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm">GUARDAR REGISTRO</button>
             </div>
@@ -157,9 +162,8 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER (OCULTO) -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Logo" class="ticket-header-img" onerror="this.style.display='none'">
+        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
         <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
         <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
@@ -183,11 +187,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DINÁMICA
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : { apiKey: "fallback", authDomain: "fallback", projectId: "fallback" };
-
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "fallback", authDomain: "fallback", projectId: "fallback" };
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -199,16 +199,10 @@
         let currentScanMode = 'register';
         let user = null;
 
-        // --- MANEJO DE SPLASH SCREEN (SAFETY NET) ---
         const removeSplash = () => {
             const splash = document.getElementById('splash-screen');
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 500);
-            }
+            if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
         };
-
-        // Si en 5 segundos no ha quitado el splash, forzarlo
         setTimeout(removeSplash, 5000);
 
         const showToast = (msg, type = 'success') => {
@@ -235,7 +229,6 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        // --- GEMINI API ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
@@ -249,7 +242,6 @@
             throw new Error("IA no disponible");
         };
 
-        // --- CÁMARA ---
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
@@ -290,16 +282,15 @@
             showToast("IA: Analizando...");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analiza etiqueta. Extrae unitCost y productName. JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Extrae unitCost y productName de esta etiqueta. JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
                 document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
                 document.getElementById('in-costo').value = result.unitCost || "";
-                if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
                 showToast("Etiqueta leída");
-            } catch (e) { showToast("IA falló, reintente", "danger"); }
+            } catch (e) { showToast("Error de IA", "danger"); }
         }
 
         async function processPublishIA(base64) {
@@ -324,18 +315,11 @@
             } catch (e) { showToast("IA: Error identificación", "danger"); }
         }
 
-        // --- AUTH ---
         const initAuth = async () => {
           try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-              await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-              await signInAnonymously(auth);
-            }
-          } catch (error) {
-            console.warn("Auth mismatch, using anonymous...");
-            await signInAnonymously(auth);
-          }
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await signInWithCustomToken(auth, __initial_auth_token); } 
+            else { await signInAnonymously(auth); }
+          } catch (error) { await signInAnonymously(auth); }
         };
         initAuth();
 
@@ -357,11 +341,9 @@
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
-                }, (err) => console.error("Snapshot error:", err));
+                });
             });
-            setupAuto('in-tienda', 'sug-tienda', 'stores'); 
-            setupAuto('in-cliente', 'sug-cliente', 'clients'); 
-            setupAuto('in-producto', 'sug-producto', 'products');
+            setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
         };
 
         const setupAuto = (id, boxId, key) => {
@@ -400,7 +382,7 @@
             if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Resumen histórico</div>`;
+            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial total por fecha</div>`;
             else if(id === 'ticketTienda') fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             else fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             
@@ -461,6 +443,11 @@
                 const store = document.getElementById('st-store').value;
                 const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === store);
                 list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${dv.reduce((a,v)=>a+(v.costo*v.cantidad),0).toFixed(2)}</b></div>` : '';
+            } else {
+                const sVal = document.getElementById('d-start').value; const eVal = document.getElementById('d-end').value;
+                const sDate = new Date(sVal + "T00:00:00"); const eDate = new Date(eVal + "T23:59:59");
+                const profit = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= sDate && d <= eDate; }).reduce((acc, v) => acc + (v.total - (v.costo * v.cantidad)), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
             }
         };
 
@@ -499,19 +486,31 @@
             };
             if(!data.tienda || !data.producto) return showToast("Faltan datos", "danger");
             try {
+                // GUARDAR VENTA (HISTORIAL INTACTO)
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
+                
+                // --- ACTUALIZACIÓN DE CATÁLOGO INTELIGENTE ---
                 if(!state.clients.some(x => x.nombre === data.cliente)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: data.cliente });
                 if(!state.stores.some(x => x.nombre === data.tienda)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: data.tienda });
+                
                 const existingProd = state.products.find(p => p.nombre === data.producto);
-                if(existingProd) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { pCosto: data.costo, pVenta: data.precio });
-                else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
+                if(existingProd) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), {
+                        pCosto: data.costo,
+                        pVenta: data.precio
+                    });
+                } else {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
+                        nombre: data.producto, pCosto: data.costo, pVenta: data.precio
+                    });
+                }
 
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
-                showToast("¡Venta registrada!");
-            } catch(e) { showToast("Error", "danger"); }
+                showToast("¡Registrado!");
+            } catch(e) { showToast("Error de guardado", "danger"); }
         };
 
         window.shareTicket = async (name) => {
