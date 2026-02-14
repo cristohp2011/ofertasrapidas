@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.73</title>
+    <title>Yaute Rápidas Pro v10.74</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,7 +22,6 @@
             --card-radius: 14px;
         }
 
-        /* --- CONTROL DE PANTALLA --- */
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
@@ -35,6 +34,7 @@
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-version { margin-top: 15px; font-weight: 800; color: #94a3b8; font-size: 0.8rem; letter-spacing: 1px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI --- */
@@ -71,9 +71,9 @@
         .cam-controls { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 70px; height: 70px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-        /* --- TICKET RENDER (OCULTO) --- */
-        #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
-        .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
+        /* --- TICKET --- */
+        #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
+        .ticket-header-img { width: 160px; display: block; margin: 0 auto 10px; }
     </style>
 </head>
 <body>
@@ -81,7 +81,8 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <p class="mt-3 small text-muted">Iniciando base de datos...</p>
+        <div class="splash-version">v10.74</div>
+        <p class="mt-3 small text-muted">Sincronizando datos...</p>
     </div>
 
     <div id="custom-modal">
@@ -132,7 +133,7 @@
                         <input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Venta</label>
+                        <label class="text-uppercase">Precio Venta</label>
                         <input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01">
                     </div>
                 </div>
@@ -162,6 +163,7 @@
         </div>
     </main>
 
+    <!-- TICKET RENDER -->
     <div id="ticket-render">
         <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
@@ -203,7 +205,7 @@
             const splash = document.getElementById('splash-screen');
             if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
         };
-        setTimeout(removeSplash, 5000);
+        setTimeout(removeSplash, 6000);
 
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
@@ -282,15 +284,16 @@
             showToast("IA: Analizando...");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Extrae unitCost y productName de esta etiqueta. JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Extrae unitCost y productName de etiqueta. JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
                 document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
                 document.getElementById('in-costo').value = result.unitCost || "";
+                if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
                 showToast("Etiqueta leída");
-            } catch (e) { showToast("Error de IA", "danger"); }
+            } catch (e) { showToast("Error IA", "danger"); }
         }
 
         async function processPublishIA(base64) {
@@ -312,9 +315,10 @@
                         await navigator.share({ files: [file], title: 'Oferta', text: msg });
                     }
                 });
-            } catch (e) { showToast("IA: Error identificación", "danger"); }
+            } catch (e) { showToast("Error identificación IA", "danger"); }
         }
 
+        // --- AUTH ---
         const initAuth = async () => {
           try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await signInWithCustomToken(auth, __initial_auth_token); } 
@@ -343,7 +347,9 @@
                     renderCatalogList();
                 });
             });
-            setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
+            setupAuto('in-tienda', 'sug-tienda', 'stores'); 
+            setupAuto('in-cliente', 'sug-cliente', 'clients'); 
+            setupAuto('in-producto', 'sug-producto', 'products');
         };
 
         const setupAuto = (id, boxId, key) => {
@@ -379,13 +385,22 @@
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             const today = getISODate();
-            if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
-            else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial total por fecha</div>`;
-            else if(id === 'ticketTienda') fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             
+            if(id === 'clientes' || id === 'productos') {
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+            } else if(id === 'sales') {
+                fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            } else if(id === 'ganancias') {
+                fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
+            } else if(id === 'historial') {
+                fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial por fecha</div>`;
+            } else if(id === 'ticketTienda') {
+                fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            } else {
+                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
+            }
+            
+            // Llenar filtros
             setTimeout(() => {
                 const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
                 const cOpt = `<option value="">CLIENTES</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
@@ -398,7 +413,8 @@
 
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); if(!list) return;
-            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const targetDateInput = document.getElementById('entregas-date').value;
+            const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
             if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { if(!acc[v.cliente]) acc[v.cliente] = {t:0, items:[]}; acc[v.cliente].t += v.total; acc[v.cliente].items.push(v); return acc; }, {});
@@ -412,26 +428,30 @@
 
         window.toggleStatus = async (cli, field, val) => {
             if(!user) return;
-            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === fd);
+            const targetDateInput = document.getElementById('entregas-date').value;
+            const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
+            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === targetDate);
             for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
         };
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
+            
             if(activeSubTab === 'clientes') {
                 list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clients', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
             } else if(activeSubTab === 'productos') {
                 list.innerHTML = state.products.filter(p => p.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><div class="d-flex justify-content-between mt-1 small opacity-75"><span>C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</span><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('products', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('products', '${p.id}')"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
             } else if(activeSubTab === 'sales') {
-                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
+                const fdIn = document.getElementById('hist-date'); if(!fdIn) return;
+                const fd = new Date(fdIn.value + "T12:00:00").toLocaleDateString('es-MX');
                 let dv = state.sales.filter(s => s.fechaStr === fd);
                 if(document.getElementById('filter-store') && document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
                 if(document.getElementById('filter-client') && document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
-                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
+                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             } else if(activeSubTab === 'ganancias') {
-                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
+                const fdIn = document.getElementById('hist-date'); if(!fdIn) return;
+                const fd = new Date(fdIn.value + "T12:00:00").toLocaleDateString('es-MX');
                 const prof = state.sales.filter(s => s.fechaStr === fd).reduce((acc, v) => { acc[v.tienda] = (acc[v.tienda] || 0) + (v.total - (v.costo * v.cantidad)); return acc; }, {});
                 list.innerHTML = Object.keys(prof).map(s => `<div class="card-custom d-flex justify-content-between"><b>${s}</b><span class="text-success fw-bold">$${prof[s].toFixed(2)}</span></div>`).join('') + `<div class="card-custom bg-success text-white">TOTAL DÍA: $${Object.values(prof).reduce((a,b)=>a+b,0).toFixed(2)}</div>`;
             } else if(activeSubTab === 'historial') {
@@ -439,15 +459,16 @@
                 const sorted = Object.keys(hist).sort((a,b) => { const [da,ma,aa]=a.split('/').map(Number); const [db,mb,ab]=b.split('/').map(Number); return new Date(ab,mb-1,db) - new Date(aa,ma-1,da); });
                 list.innerHTML = sorted.map(d => `<div class="card-custom"><b>${d}</b><div class="d-flex justify-content-between small"><span>Venta: $${hist[d].s.toFixed(2)}</span><span class="text-success">Ganancia: $${hist[d].p.toFixed(2)}</span></div></div>`).join('');
             } else if(activeSubTab === 'ticketTienda') {
-                const fd = new Date(document.getElementById('st-date').value + "T12:00:00").toLocaleDateString('es-MX');
-                const store = document.getElementById('st-store').value;
-                const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === store);
-                list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${dv.reduce((a,v)=>a+(v.costo*v.cantidad),0).toFixed(2)}</b></div>` : '';
+                const fdIn = document.getElementById('st-date'); const stIn = document.getElementById('st-store');
+                if(!fdIn || !stIn) return;
+                const fd = new Date(fdIn.value + "T12:00:00").toLocaleDateString('es-MX');
+                const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === stIn.value);
+                list.innerHTML = stIn.value ? `<div class="card-custom"><b>${stIn.value}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${dv.reduce((a,v)=>a+(v.costo*v.cantidad),0).toFixed(2)}</b></div>` : '';
             } else {
-                const sVal = document.getElementById('d-start').value; const eVal = document.getElementById('d-end').value;
-                const sDate = new Date(sVal + "T00:00:00"); const eDate = new Date(eVal + "T23:59:59");
-                const profit = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= sDate && d <= eDate; }).reduce((acc, v) => acc + (v.total - (v.costo * v.cantidad)), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+                const sD = new Date(document.getElementById('d-start').value + "T00:00:00");
+                const eD = new Date(document.getElementById('d-end').value + "T23:59:59");
+                const pr = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= sD && d <= eD; }).reduce((a,v) => a + (v.total - (v.costo * v.cantidad)), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(pr * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
             }
         };
 
@@ -486,36 +507,21 @@
             };
             if(!data.tienda || !data.producto) return showToast("Faltan datos", "danger");
             try {
-                // GUARDAR VENTA (HISTORIAL INTACTO)
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                
-                // --- ACTUALIZACIÓN DE CATÁLOGO INTELIGENTE ---
                 if(!state.clients.some(x => x.nombre === data.cliente)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: data.cliente });
                 if(!state.stores.some(x => x.nombre === data.tienda)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: data.tienda });
-                
-                const existingProd = state.products.find(p => p.nombre === data.producto);
-                if(existingProd) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), {
-                        pCosto: data.costo,
-                        pVenta: data.precio
-                    });
-                } else {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
-                        nombre: data.producto, pCosto: data.costo, pVenta: data.precio
-                    });
-                }
+                const ex = state.products.find(p => p.nombre === data.producto);
+                if(ex) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', ex.id), { pCosto: data.costo, pVenta: data.precio });
+                else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
 
-                document.getElementById('in-cliente').value = "";
-                document.getElementById('in-producto').value = "";
-                document.getElementById('in-costo').value = "";
-                document.getElementById('in-precio').value = "";
+                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
                 showToast("¡Registrado!");
-            } catch(e) { showToast("Error de guardado", "danger"); }
+            } catch(e) { showToast("Error guardado", "danger"); }
         };
 
         window.shareTicket = async (name) => {
-            const fdInput = document.getElementById('entregas-date').value;
-            const fd = new Date(fdInput + "T12:00:00").toLocaleDateString('es-MX');
+            const fdIn = document.getElementById('entregas-date').value;
+            const fd = new Date(fdIn + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
             if (!filtered.length) return;
             const formatName = name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
