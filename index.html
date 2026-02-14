@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.71</title>
+    <title>Yaute Rápidas Pro v10.72</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -28,7 +28,11 @@
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
 
         /* --- SPLASH SCREEN --- */
-        #splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        #splash-screen { 
+            position: fixed; inset: 0; background: #ffffff; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 9999; transition: opacity 0.5s ease;
+        }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -74,9 +78,11 @@
 </head>
 <body>
 
+    <!-- PANTALLA DE CARGA -->
     <div id="splash-screen">
-        <img src="logo.png" alt="Yaute Logo" class="splash-logo">
+        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
+        <p class="mt-3 small text-muted">Iniciando base de datos...</p>
     </div>
 
     <div id="custom-modal">
@@ -151,9 +157,9 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER -->
+    <!-- TICKET RENDER (OCULTO) -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img">
+        <img src="logo.png" alt="Logo" class="ticket-header-img" onerror="this.style.display='none'">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
         <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
         <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
@@ -177,7 +183,11 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // CONFIGURACIÓN DINÁMICA
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { apiKey: "fallback", authDomain: "fallback", projectId: "fallback" };
+
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -189,8 +199,21 @@
         let currentScanMode = 'register';
         let user = null;
 
+        // --- MANEJO DE SPLASH SCREEN (SAFETY NET) ---
+        const removeSplash = () => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }
+        };
+
+        // Si en 5 segundos no ha quitado el splash, forzarlo
+        setTimeout(removeSplash, 5000);
+
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
+            if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
             toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
@@ -212,7 +235,7 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        // --- GEMINI API CON REINTENTOS ---
+        // --- GEMINI API ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
@@ -226,7 +249,7 @@
             throw new Error("IA no disponible");
         };
 
-        // --- CÁMARA IA ---
+        // --- CÁMARA ---
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
@@ -301,7 +324,7 @@
             } catch (e) { showToast("IA: Error identificación", "danger"); }
         }
 
-        // --- FIREBASE CORE (MANDATORIO RULE 3) ---
+        // --- AUTH ---
         const initAuth = async () => {
           try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -310,6 +333,7 @@
               await signInAnonymously(auth);
             }
           } catch (error) {
+            console.warn("Auth mismatch, using anonymous...");
             await signInAnonymously(auth);
           }
         };
@@ -322,7 +346,7 @@
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
                 switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-                setTimeout(() => { const splash = document.getElementById('splash-screen'); if(splash) splash.style.display = 'none'; }, 1000);
+                setTimeout(removeSplash, 800);
             }
         });
 
@@ -333,7 +357,7 @@
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
-                });
+                }, (err) => console.error("Snapshot error:", err));
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); 
             setupAuto('in-cliente', 'sug-cliente', 'clients'); 
@@ -413,8 +437,7 @@
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const qInput = document.getElementById('search-cat');
-            const q = qInput ? qInput.value.toUpperCase() : "";
+            const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
             if(activeSubTab === 'clientes') {
                 list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clients', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
             } else if(activeSubTab === 'productos') {
@@ -476,34 +499,18 @@
             };
             if(!data.tienda || !data.producto) return showToast("Faltan datos", "danger");
             try {
-                // Guardar venta (No se altera nunca)
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                
-                // --- LÓGICA DE CATÁLOGO INTELIGENTE (VERIFICAR Y ACTUALIZAR) ---
                 if(!state.clients.some(x => x.nombre === data.cliente)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: data.cliente });
                 if(!state.stores.some(x => x.nombre === data.tienda)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: data.tienda });
-                
                 const existingProd = state.products.find(p => p.nombre === data.producto);
-                if(existingProd) {
-                    // Si ya existe, actualizamos sus datos en el catálogo pero NO en las ventas anteriores
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), {
-                        pCosto: data.costo,
-                        pVenta: data.precio
-                    });
-                } else {
-                    // Si es nuevo, lo agregamos normal
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
-                        nombre: data.producto,
-                        pCosto: data.costo,
-                        pVenta: data.precio
-                    });
-                }
+                if(existingProd) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { pCosto: data.costo, pVenta: data.precio });
+                else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
 
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
-                showToast("¡Venta registrada y catálogo actualizado!");
+                showToast("¡Venta registrada!");
             } catch(e) { showToast("Error", "danger"); }
         };
 
