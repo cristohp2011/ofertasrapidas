@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro2 v10.70</title>
+    <title>Yaute Rápidas Pro v10.71</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -122,14 +122,8 @@
                     <div class="col-auto"><button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button></div>
                 </div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6">
-                        <label class="text-uppercase">Costo (Anaquel)</label>
-                        <input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01">
-                    </div>
-                    <div class="col-6">
-                        <label class="text-uppercase">Precio Venta</label>
-                        <input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01">
-                    </div>
+                    <div class="col-6"><label class="text-uppercase">Costo (Anaquel)</label><input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01"></div>
+                    <div class="col-6"><label class="text-uppercase">Venta</label><input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01"></div>
                 </div>
                 <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm">GUARDAR REGISTRO</button>
             </div>
@@ -177,14 +171,13 @@
     </nav>
 
     <script type="module">
-        const apiKey = ""; // La API key se proporciona automáticamente por el entorno
+        const apiKey = ""; 
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { initializeFirestore, collection, doc, addDoc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = JSON.parse(__firebase_config);
-
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -198,7 +191,6 @@
 
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
-            if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
             toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
@@ -220,14 +212,12 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        // --- GEMINI API CON REINTENTOS EXPONENCIALES ---
+        // --- GEMINI API CON REINTENTOS ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                     });
                     if (res.ok) return await res.json();
                 } catch (e) {}
@@ -257,8 +247,8 @@
 
         document.getElementById('btn-do-capture').onclick = () => {
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = 800; camCanvas.height = 600; 
-            ctx.drawImage(camPreview, 0, 0, 800, 600);
+            camCanvas.width = 640; camCanvas.height = 480; 
+            ctx.drawImage(camPreview, 0, 0, 640, 480);
             camCanvas.toBlob((blob) => {
                 lastCapturedBlob = blob;
                 const reader = new FileReader();
@@ -274,10 +264,10 @@
         };
 
         async function processIA(base64) {
-            showToast("IA: Analizando etiqueta...");
+            showToast("IA: Analizando...");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analiza la etiqueta. Extrae unitCost (número grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Analiza etiqueta. Extrae unitCost y productName. JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
@@ -285,43 +275,33 @@
                 document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
                 document.getElementById('in-costo').value = result.unitCost || "";
                 if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
-                showToast("Etiqueta procesada");
-            } catch (e) { showToast("Error de lectura IA", "danger"); }
+                showToast("Etiqueta leída");
+            } catch (e) { showToast("IA falló, reintente", "danger"); }
         }
 
         async function processPublishIA(base64) {
-            showToast("IA: Identificando producto...");
+            showToast("IA: Identificando...");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analiza producto comercial. Extrae nombre y presentación (ej: 1L, 500g). JSON: {'name': string, 'presentation': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Analiza producto comercial. Extrae nombre y presentación. JSON: {'name': string, 'presentation': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
-                
-                openModal("PUBLICAR EN GRUPO", `
-                    <label class="text-uppercase small fw-bold">Producto:</label>
-                    <input type="text" id="wa-name" class="form-control mb-2 text-uppercase" value="${result.name}">
-                    <label class="text-uppercase small fw-bold">Presentación:</label>
-                    <input type="text" id="wa-pres" class="form-control mb-2 text-uppercase" value="${result.presentation}">
-                    <label class="text-uppercase small fw-bold">Precio:</label>
-                    <input type="text" id="wa-price" class="form-control" placeholder="Ej: $35.00">
-                `, async () => {
+                openModal("PUBLICAR EN GRUPO", `<label class='text-uppercase small fw-bold'>Producto:</label><input type='text' id='wa-name' class='form-control mb-2 text-uppercase' value='${result.name}'><label class='text-uppercase small fw-bold'>Presentación:</label><input type='text' id='wa-pres' class='form-control mb-2 text-uppercase' value='${result.presentation}'><label class='text-uppercase small fw-bold'>Precio:</label><input type='text' id='wa-price' class='form-control' placeholder='Ej: $35.00'>`, async () => {
                     const name = document.getElementById('wa-name').value;
                     const pres = document.getElementById('wa-pres').value;
                     const price = document.getElementById('wa-price').value;
                     const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${name.toUpperCase()}*\n⚖️ Presentación: ${pres.toUpperCase()}\n${price ? '💰 *Precio: ' + price + '*' : ''}\n\n🛒 ¡Disponible ahora!`;
                     if (navigator.share && lastCapturedBlob) {
-                        try {
-                            const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
-                            await navigator.share({ files: [file], title: 'Oferta', text: msg });
-                        } catch(err) { showToast("Función solo disponible en celular", "warning"); }
+                        const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
+                        await navigator.share({ files: [file], title: 'Oferta', text: msg });
                     }
                 });
-            } catch (e) { showToast("Error de análisis IA", "danger"); }
+            } catch (e) { showToast("IA: Error identificación", "danger"); }
         }
 
-        // --- FIREBASE CORE (MANDATORIO RULE 3 CON FIX PARA TOKEN MISMATCH) ---
+        // --- FIREBASE CORE (MANDATORIO RULE 3) ---
         const initAuth = async () => {
           try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -330,13 +310,7 @@
               await signInAnonymously(auth);
             }
           } catch (error) {
-            // Manejo silencioso de error de token para evitar bloqueos
-            if (error.code === 'auth/custom-token-mismatch' || error.code === 'auth/invalid-custom-token') {
-                await signInAnonymously(auth);
-            } else {
-                console.error("Auth initialization error:", error);
-                await signInAnonymously(auth);
-            }
+            await signInAnonymously(auth);
           }
         };
         initAuth();
@@ -348,10 +322,7 @@
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
                 switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-                setTimeout(() => { 
-                    const splash = document.getElementById('splash-screen');
-                    if (splash) splash.style.display = 'none'; 
-                }, 1000);
+                setTimeout(() => { const splash = document.getElementById('splash-screen'); if(splash) splash.style.display = 'none'; }, 1000);
             }
         });
 
@@ -362,7 +333,7 @@
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
-                }, (err) => console.error("Error sync:", err));
+                });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); 
             setupAuto('in-cliente', 'sug-cliente', 'clients'); 
@@ -384,10 +355,7 @@
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
                     const prod = state.products.find(p => p.nombre === item.dataset.val);
-                    if (prod) { 
-                        document.getElementById('in-costo').value = prod.pCosto || ""; 
-                        document.getElementById('in-precio').value = prod.pVenta || ""; 
-                    }
+                    if (prod) { document.getElementById('in-costo').value = prod.pCosto || ""; document.getElementById('in-precio').value = prod.pVenta || ""; }
                 }
             };
         };
@@ -405,19 +373,12 @@
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             const today = getISODate();
-            if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
-            } else if(id === 'sales') {
-                fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            } else if(id === 'ganancias') {
-                fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            } else if(id === 'historial') {
-                fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial total por fecha</div>`;
-            } else if(id === 'ticketTienda') {
-                fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            } else {
-                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
-            }
+            if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+            else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
+            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Resumen histórico</div>`;
+            else if(id === 'ticketTienda') fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            else fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             
             setTimeout(() => {
                 const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
@@ -426,15 +387,14 @@
                 if(document.getElementById('filter-client')) document.getElementById('filter-client').innerHTML = cOpt;
                 if(document.getElementById('st-store')) document.getElementById('st-store').innerHTML = sOpt;
                 renderCatalogList();
-            }, 50);
+            }, 100);
         };
 
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); if(!list) return;
-            const targetDateInput = document.getElementById('entregas-date').value;
-            const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
+            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos hoy</p>'; return; }
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { if(!acc[v.cliente]) acc[v.cliente] = {t:0, items:[]}; acc[v.cliente].t += v.total; acc[v.cliente].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
@@ -446,8 +406,7 @@
 
         window.toggleStatus = async (cli, field, val) => {
             if(!user) return;
-            const fdInput = document.getElementById('entregas-date').value;
-            const fd = new Date(fdInput + "T12:00:00").toLocaleDateString('es-MX');
+            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === fd);
             for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
         };
@@ -461,20 +420,13 @@
             } else if(activeSubTab === 'productos') {
                 list.innerHTML = state.products.filter(p => p.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><div class="d-flex justify-content-between mt-1 small opacity-75"><span>C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</span><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('products', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('products', '${p.id}')"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
             } else if(activeSubTab === 'sales') {
-                const histDateIn = document.getElementById('hist-date');
-                if(!histDateIn) return;
-                const fd = new Date(histDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
+                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
                 let dv = state.sales.filter(s => s.fechaStr === fd);
-                const filterStore = document.getElementById('filter-store');
-                const filterClient = document.getElementById('filter-client');
-                if(filterStore && filterStore.value) dv = dv.filter(s => s.tienda === filterStore.value);
-                if(filterClient && filterClient.value) dv = dv.filter(s => s.cliente === filterClient.value);
-                const total = dv.reduce((acc, v) => acc + v.total, 0);
-                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${total.toFixed(2)}</div>`;
+                if(document.getElementById('filter-store') && document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
+                if(document.getElementById('filter-client') && document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
+                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             } else if(activeSubTab === 'ganancias') {
-                const histDateIn = document.getElementById('hist-date');
-                if(!histDateIn) return;
-                const fd = new Date(histDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
+                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
                 const prof = state.sales.filter(s => s.fechaStr === fd).reduce((acc, v) => { acc[v.tienda] = (acc[v.tienda] || 0) + (v.total - (v.costo * v.cantidad)); return acc; }, {});
                 list.innerHTML = Object.keys(prof).map(s => `<div class="card-custom d-flex justify-content-between"><b>${s}</b><span class="text-success fw-bold">$${prof[s].toFixed(2)}</span></div>`).join('') + `<div class="card-custom bg-success text-white">TOTAL DÍA: $${Object.values(prof).reduce((a,b)=>a+b,0).toFixed(2)}</div>`;
             } else if(activeSubTab === 'historial') {
@@ -482,52 +434,28 @@
                 const sorted = Object.keys(hist).sort((a,b) => { const [da,ma,aa]=a.split('/').map(Number); const [db,mb,ab]=b.split('/').map(Number); return new Date(ab,mb-1,db) - new Date(aa,ma-1,da); });
                 list.innerHTML = sorted.map(d => `<div class="card-custom"><b>${d}</b><div class="d-flex justify-content-between small"><span>Venta: $${hist[d].s.toFixed(2)}</span><span class="text-success">Ganancia: $${hist[d].p.toFixed(2)}</span></div></div>`).join('');
             } else if(activeSubTab === 'ticketTienda') {
-                const stDateIn = document.getElementById('st-date');
-                const stStoreIn = document.getElementById('st-store');
-                if(!stDateIn || !stStoreIn) return;
-                const fd = new Date(stDateIn.value + "T12:00:00").toLocaleDateString('es-MX');
-                const store = stStoreIn.value;
+                const fd = new Date(document.getElementById('st-date').value + "T12:00:00").toLocaleDateString('es-MX');
+                const store = document.getElementById('st-store').value;
                 const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === store);
-                const tc = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
-                list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${tc.toFixed(2)}</b></div>` : '';
-            } else {
-                const sVal = document.getElementById('d-start').value;
-                const eVal = document.getElementById('d-end').value;
-                const sDate = new Date(sVal + "T00:00:00");
-                const eDate = new Date(eVal + "T23:59:59");
-                const profit = state.sales.filter(v => {
-                    const d = v.fecha ? v.fecha.toDate() : new Date();
-                    return d >= sDate && d <= eDate;
-                }).reduce((acc, v) => acc + (v.total - (v.costo * v.cantidad)), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+                list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${dv.reduce((a,v)=>a+(v.costo*v.cantidad),0).toFixed(2)}</b></div>` : '';
             }
         };
 
-        window.deleteSale = (id) => {
-          if(!user) return;
-          openModal("Eliminar", "¿Borrar venta?", async () => { 
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); 
-            showToast("Borrado"); 
-          });
-        };
+        window.deleteSale = (id) => openModal("Borrar", "¿Eliminar venta?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); showToast("Borrado"); });
 
         window.editItem = (col, id, cur) => {
             if(!user) return;
-            if(col === 'clients') openModal("Editar Cliente", `<input type="text" id="edit-n" class="form-control text-uppercase" value="${cur.nombre}">`, async (res) => {
+            if(col === 'clients') openModal("Editar Cliente", `<input type="text" class="form-control text-uppercase" value="${cur.nombre}">`, async (res) => {
                 const n = res[0].toUpperCase().trim();
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clients', id), { nombre: n });
-                const items = state.sales.filter(s => s.cliente === cur.nombre);
-                for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { cliente: n });
+                state.sales.filter(s => s.cliente === cur.nombre).forEach(async i => await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { cliente: n }));
             }); else openModal("Editar Producto", `<input type="text" class="form-control text-uppercase mb-2" value="${cur.nombre}"><input type="number" class="form-control mb-2" value="${cur.pCosto}"><input type="number" class="form-control" value="${cur.pVenta}">`, async (res) => {
                 const [n, c, v] = res; const fn = n.toUpperCase().trim();
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', id), { nombre: fn, pCosto: parseFloat(c), pVenta: parseFloat(v) });
-                const items = state.sales.filter(s => s.producto === cur.nombre);
-                for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { producto: fn });
             });
         };
 
         window.deleteItem = (col, id) => {
-            if(!user) return;
             const item = state[col].find(x => x.id === id);
             if(state.sales.some(s => col === 'clients' ? s.cliente === item.nombre : s.producto === item.nombre)) return showToast("En uso", "danger");
             openModal("Borrar", "¿Eliminar del catálogo?", async () => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)));
@@ -546,19 +474,37 @@
                 total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0),
                 entregado: false, pagado: false
             };
-            if(!data.tienda || !data.producto || !data.cliente) return showToast("Faltan datos", "danger");
+            if(!data.tienda || !data.producto) return showToast("Faltan datos", "danger");
             try {
+                // Guardar venta (No se altera nunca)
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
-                await ck('stores', data.tienda); 
-                await ck('clients', data.cliente); 
-                await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
+                
+                // --- LÓGICA DE CATÁLOGO INTELIGENTE (VERIFICAR Y ACTUALIZAR) ---
+                if(!state.clients.some(x => x.nombre === data.cliente)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: data.cliente });
+                if(!state.stores.some(x => x.nombre === data.tienda)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: data.tienda });
+                
+                const existingProd = state.products.find(p => p.nombre === data.producto);
+                if(existingProd) {
+                    // Si ya existe, actualizamos sus datos en el catálogo pero NO en las ventas anteriores
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), {
+                        pCosto: data.costo,
+                        pVenta: data.precio
+                    });
+                } else {
+                    // Si es nuevo, lo agregamos normal
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), {
+                        nombre: data.producto,
+                        pCosto: data.costo,
+                        pVenta: data.precio
+                    });
+                }
+
                 document.getElementById('in-cliente').value = "";
                 document.getElementById('in-producto').value = "";
                 document.getElementById('in-costo').value = "";
                 document.getElementById('in-precio').value = "";
-                showToast("¡Venta guardada!");
-            } catch(e) { showToast("Error de guardado", "danger"); }
+                showToast("¡Venta registrada y catálogo actualizado!");
+            } catch(e) { showToast("Error", "danger"); }
         };
 
         window.shareTicket = async (name) => {
@@ -576,12 +522,9 @@
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
                 canvas.toBlob(async b => {
                     const f = new File([b], `Ticket_${name}.png`, { type: 'image/png' });
-                    if (navigator.share) {
-                        const formattedClientName = name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                        await navigator.share({ files: [f], title: 'Ticket', text: `Hola ${formattedClientName}, te envio tu cuenta` });
-                    }
+                    if (navigator.share) await navigator.share({ files: [f], title: 'Ticket', text: `Hola ${formatName}, te envio tu cuenta` });
                 }, 'image/png');
-            } catch (err) { showToast("Error compartiendo", "danger"); }
+            } catch (err) { showToast("Error compartido", "danger"); }
         };
     </script>
 </body>
