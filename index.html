@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Control Pro v10.50</title>
+    <title>Yaute Rápidas Control Pro v10.51</title>
     
     <!-- Librerías Base -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -112,10 +112,6 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
 
-        .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 6px 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
-        .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; color: #475569; }
-        .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
-
         /* --- TICKET RENDERER --- */
         #ticket-render { 
             position: absolute; 
@@ -128,15 +124,6 @@
             font-family: 'Courier New', Courier, monospace; 
         }
         .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
-        .ticket-brand { text-align: center; font-size: 1.3rem; font-weight: 900; margin: 5px 0; }
-        .ticket-datetime { text-align: center; font-size: 1rem; margin-bottom: 15px; }
-        .ticket-line-solid { border-top: 3px solid #000; margin: 10px 0; }
-        .ticket-line-dashed { border-top: 2px dashed #000; margin: 15px 0; }
-        .ticket-client-row { font-size: 1.1rem; margin: 15px 0 25px 0; }
-        .ticket-table { width: 100%; font-size: 1rem; border-collapse: collapse; }
-        .ticket-table td { padding: 8px 0; vertical-align: top; }
-        .ticket-total-row { font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between; margin-top: 15px; }
-        .ticket-footer { text-align: center; font-size: 0.9rem; color: #333; margin-top: 40px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -144,7 +131,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162456.png'">
         <div class="splash-title">Yaute Rápidas</div>
-        <div class="splash-version">v10.50 - Control Pro</div>
+        <div class="splash-version">v10.51 - Producto IA</div>
         <div class="splash-loader"></div>
     </div>
 
@@ -203,8 +190,8 @@
                         <input type="number" id="in-cantidad" class="form-control text-center fw-bold px-1" value="1">
                     </div>
                     <div class="col" style="position:relative">
-                        <label class="text-uppercase">PRODUCTO</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="IA Scanner">
+                        <label class="text-uppercase">PRODUCTO (FOTO)</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="USA LA CÁMARA">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-auto">
@@ -217,12 +204,12 @@
 
                 <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="text-uppercase">Costo (Anaquel)</label>
-                        <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
+                        <label class="text-uppercase">Costo (Manual)</label>
+                        <input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Precio Venta</label>
-                        <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
+                        <label class="text-uppercase">Venta (Manual)</label>
+                        <input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01">
                     </div>
                 </div>
                 <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow" style="border-radius: 12px;">GUARDAR REGISTRO</button>
@@ -254,22 +241,15 @@
 
     <!-- TICKET RENDERER -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img">
-        <div class="ticket-brand">OFERTAS RAPIDAS YAUTE</div>
-        <div class="ticket-datetime" id="t-date-val"></div>
-        <div class="ticket-line-solid"></div>
-        <div class="ticket-client-row">
-            <b>CLIENTE:</b> <span id="t-cliente-name"></span>
-        </div>
-        <table class="ticket-table">
-            <tbody id="t-body-items"></tbody>
-        </table>
-        <div class="ticket-line-dashed"></div>
-        <div class="ticket-total-row">
-            <span>TOTAL:</span>
-            <span id="t-grand-total"></span>
-        </div>
-        <div class="ticket-footer">¡Gracias por su preferencia!</div>
+        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
+        <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
+        <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
+        <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
+        <div style="font-size: 1.1rem; margin: 15px 0;"><b>CLIENTE:</b> <span id="t-cliente-name"></span></div>
+        <table style="width: 100%; border-collapse: collapse;"><tbody id="t-body-items"></tbody></table>
+        <div style="border-top: 2px dashed #000; margin: 15px 0;"></div>
+        <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-grand-total"></span></div>
+        <div style="text-align: center; font-size: 0.9rem; color: #333; margin-top: 40px; text-transform: uppercase;">¡Gracias por su preferencia!</div>
     </div>
 
     <nav class="bottom-nav">
@@ -319,8 +299,6 @@
             }
         };
 
-        // --- SISTEMA ANTI-CONGELAMIENTO (Safety Net) ---
-        // Si en 6 segundos no se ha quitado el splash por éxito de carga, lo quitamos forzosamente.
         setTimeout(hideSplash, 6000);
 
         const openModal = (title, bodyHtml, onOk) => {
@@ -338,7 +316,7 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        // --- CÁMARA IA ---
+        // --- CÁMARA IA PARA PRODUCTOS ---
         const btnScan = document.getElementById('btn-scan');
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
@@ -368,8 +346,9 @@
         async function processIA(base64) {
             document.getElementById('scan-spinner').classList.remove('d-none');
             try {
+                // Nuevo Prompt enfocado en el producto y su presentación
                 const payload = {
-                    contents: [{ parts: [{ text: "Extrae unitCost (número grande) y productName (texto arriba). JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Analiza esta fotografía de un producto comercial. Extrae el nombre de la marca/producto y su presentación (ej: 1kg, 500ml, Pack de 4). Responde únicamente en JSON: {'productName': string, 'presentation': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
@@ -377,10 +356,15 @@
                 });
                 const data = await res.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
-                document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
-                document.getElementById('in-costo').value = result.unitCost || "";
-                showToast("Etiqueta leída");
-            } catch (e) { showToast("Error al leer etiqueta", "danger"); }
+                
+                // Unir nombre y presentación
+                const fullProduct = `${result.productName || ""} ${result.presentation || ""}`.trim();
+                document.getElementById('in-producto').value = fullProduct.toUpperCase();
+                
+                // Dejamos costo y precio en blanco para entrada manual
+                showToast("Producto identificado");
+                document.getElementById('in-costo').focus();
+            } catch (e) { showToast("Error al identificar producto", "danger"); }
             finally { document.getElementById('scan-spinner').classList.add('d-none'); }
         }
 
@@ -411,7 +395,6 @@
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
                 switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-                // Si la conexión es exitosa, quitamos el splash en 1.5 segundos
                 setTimeout(hideSplash, 1500);
             }
         });
@@ -452,7 +435,6 @@
                 fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             }
             
-            // Llenar selects dinámicos si existen
             setTimeout(() => {
                 const sOpt = `<option value="">-- TODAS TIENDAS --</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
                 const cOpt = `<option value="">-- TODOS CLIENTES --</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
