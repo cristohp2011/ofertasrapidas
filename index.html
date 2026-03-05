@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.80</title>
+    <title>Yaute Rápidas Pro v10.81</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -36,14 +36,14 @@
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         .splash-version { margin-top: 15px; font-weight: 800; color: #94a3b8; font-size: 0.8rem; }
-        #force-enter-btn { display: none; margin-top: 20px; border: 2px solid var(--accent); color: var(--accent); background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; }
+        #force-enter-btn { display: none; margin-top: 25px; border: 2px solid var(--accent); color: var(--accent); background: #eff6ff; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; cursor: pointer; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI --- */
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.85rem; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -87,8 +87,8 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div class="splash-version">v10.80 - Lector Inteligente</div>
-        <button id="force-enter-btn" onclick="removeSplash()">ENTRAR DE TODOS MODOS</button>
+        <div class="splash-version">v10.81 - Firefox Fix</div>
+        <button id="force-enter-btn" onclick="removeSplash()">Entrar de todos modos</button>
     </div>
 
     <div id="custom-modal">
@@ -223,14 +223,16 @@
             if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
             toast.innerText = msg; toast.style.display = 'block'; 
-            if(type !== 'warning') setTimeout(() => toast.style.display = 'none', 3000);
+            if(type !== 'warning') setTimeout(() => toast.style.display = 'none', 3500);
         };
 
         window.removeSplash = () => {
             const splash = document.getElementById('splash-screen');
             if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
         };
-        setTimeout(() => { if(!user) document.getElementById('force-enter-btn').style.display = 'block'; }, 7000);
+        
+        // Temporizador para Firefox Mobile lentitud/bloqueo
+        setTimeout(() => { if(!user) document.getElementById('force-enter-btn').style.display = 'block'; }, 7500);
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
@@ -249,11 +251,11 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        // --- GEMINI API CON REINTENTOS Y MENSAJES ---
+        // --- GEMINI API CON REINTENTOS ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
-                    if (i > 0) showToast(`Reintentando análisis (${i}/5)...`, 'warning');
+                    if (i > 0) showToast(`IA: Reintentando conexión...`, 'warning');
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                     });
@@ -272,10 +274,11 @@
         const startCamera = async (mode) => {
             currentScanMode = mode;
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 } } });
+                // Mayor resolución para lectura de letras pequeñas
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } });
                 camPreview.srcObject = stream;
                 camContainer.style.display = 'block';
-            } catch (e) { showToast("Cámara no disponible", "danger"); }
+            } catch (e) { showToast("Cámara bloqueada o no disponible", "danger"); }
         };
 
         document.getElementById('btn-scan').onclick = () => startCamera('register');
@@ -283,8 +286,9 @@
         document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
         document.getElementById('btn-do-capture').onclick = () => {
-            showToast("Capturando imagen...");
+            showToast("Capturando imagen...", "warning");
             const ctx = camCanvas.getContext('2d');
+            // Alta resolución vertical para productos
             camCanvas.width = 1080; camCanvas.height = 1440; 
             ctx.drawImage(camPreview, 0, 0, 1080, 1440);
             camCanvas.toBlob((blob) => {
@@ -304,50 +308,55 @@
         const cleanJSON = (text) => text.replace(/```json|```/g, "").trim();
 
         async function processIA(base64) {
-            showToast("Analizando producto con IA...");
+            showToast("Analizando empaque con IA...", "warning");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Identifica este producto comercial. Devuelve el nombre y su tamaño/presentación. Responde exclusivamente en JSON siguiendo este esquema: {'nombre': 'valor', 'presentacion': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                    generationConfig: { responseMimeType: "application/json" }
-                };
-                const data = await callGemini(payload);
-                const rawText = data.candidates[0].content.parts[0].text;
-                const result = JSON.parse(cleanJSON(rawText));
-                
-                // Mapeo directo al campo de producto
-                const finalName = `${result.nombre || ""} ${result.presentacion || ""}`.trim().toUpperCase();
-                document.getElementById('in-producto').value = finalName;
-                
-                showToast("¡Producto identificado!");
-                document.getElementById('in-costo').focus();
-            } catch (e) { 
-                showToast("Error al identificar. Intenta de nuevo.", "danger"); 
-                console.error(e);
-            }
-        }
-
-        async function processPublishIA(base64) {
-            showToast("Identificando para publicar...");
-            try {
-                const payload = {
-                    contents: [{ parts: [{ text: "Identifica este producto. Responde JSON: {'nombre': 'valor', 'presentacion': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Identifica este producto. Responde SOLO un JSON con este formato: {'nombre': 'marca y producto', 'presentacion': 'tamaño o peso'}. Ejemplo: {'nombre': 'Lala Entera', 'presentacion': '1L'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
                 const result = JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
                 
+                // Mapear campos (soporta variaciones de llaves)
+                const name = result.nombre || result.name || "";
+                const size = result.presentacion || result.size || result.presentation || "";
+                const fullName = `${name} ${size}`.trim().toUpperCase();
+                
+                if(fullName.length > 2) {
+                    document.getElementById('in-producto').value = fullName;
+                    showToast("¡Producto identificado!");
+                    document.getElementById('in-costo').focus();
+                } else {
+                    showToast("IA: No pude ver el producto claramente", "danger");
+                }
+            } catch (e) { showToast("Error al identificar. Intenta de nuevo.", "danger"); }
+        }
+
+        async function processPublishIA(base64) {
+            showToast("Identificando para grupo...", "warning");
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: "Identifica este producto. Responde JSON: {'nombre': 'marca y producto', 'presentacion': 'tamaño'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    generationConfig: { responseMimeType: "application/json" }
+                };
+                const data = await callGemini(payload);
+                const result = JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
+                
+                const name = result.nombre || result.name || "";
+                const pres = result.presentacion || result.presentation || "";
+
                 openModal("PUBLICAR EN GRUPO", `
                     <label class='text-uppercase small fw-bold'>Producto:</label>
-                    <input type='text' id='wa-name' class='form-control mb-2 text-uppercase' value='${result.nombre}'>
+                    <input type='text' id='wa-name' class='form-control mb-2 text-uppercase' value='${name}'>
                     <label class='text-uppercase small fw-bold'>Presentación:</label>
-                    <input type='text' id='wa-pres' class='form-control mb-2 text-uppercase' value='${result.presentacion}'>
+                    <input type='text' id='wa-pres' class='form-control mb-2 text-uppercase' value='${pres}'>
                     <label class='text-uppercase small fw-bold'>Precio:</label>
                     <input type='text' id='wa-price' class='form-control' placeholder='Ej: $35.00'>
                 `, async () => {
-                    const name = document.getElementById('wa-name').value;
-                    const pres = document.getElementById('wa-pres').value;
+                    const finalName = document.getElementById('wa-name').value;
+                    const finalPres = document.getElementById('wa-pres').value;
                     const price = document.getElementById('wa-price').value;
-                    const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${name.toUpperCase()}*\n⚖️ Presentación: ${pres.toUpperCase()}\n${price ? '💰 *Precio: ' + price + '*' : ''}\n\n🛒 ¡Haz tu pedido ahora!`;
+                    const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${finalName.toUpperCase()}*\n⚖️ Presentación: ${finalPres.toUpperCase()}\n${price ? '💰 *Precio: ' + price + '*' : ''}\n\n🛒 ¡Haz tu pedido ahora!`;
                     if (navigator.share && lastCapturedBlob) {
                         const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
                         await navigator.share({ files: [file], title: 'Oferta Yaute', text: msg });
@@ -383,7 +392,7 @@
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
-                });
+                }, (err) => console.error(err));
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
         };
@@ -424,7 +433,7 @@
             if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial acumulado</div>`;
+            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Resumen histórico de ventas</div>`;
             else if(id === 'ticketTienda') fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
             else fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             
@@ -455,8 +464,7 @@
 
         window.toggleStatus = async (cli, field, val) => {
             if(!user) return;
-            const fdInput = document.getElementById('entregas-date').value;
-            const fd = new Date(fdInput + "T12:00:00").toLocaleDateString('es-MX');
+            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === fd);
             for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
         };
@@ -464,6 +472,7 @@
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
+            
             if(activeSubTab === 'clientes') {
                 list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clientes', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clientes', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
             } else if(activeSubTab === 'productos') {
