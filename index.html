@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.79</title>
+    <title>Yaute Rápidas Pro v10.80</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +43,7 @@
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: opacity 0.3s; }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -87,7 +87,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div class="splash-version">v10.79 - Lector Optimizado</div>
+        <div class="splash-version">v10.80 - Lector Inteligente</div>
         <button id="force-enter-btn" onclick="removeSplash()">ENTRAR DE TODOS MODOS</button>
     </div>
 
@@ -218,18 +218,19 @@
         let currentScanMode = 'register';
         let user = null;
 
+        const showToast = (msg, type = 'success') => {
+            const toast = document.getElementById('toast-alert');
+            if(!toast) return;
+            toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
+            toast.innerText = msg; toast.style.display = 'block'; 
+            if(type !== 'warning') setTimeout(() => toast.style.display = 'none', 3000);
+        };
+
         window.removeSplash = () => {
             const splash = document.getElementById('splash-screen');
             if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
         };
         setTimeout(() => { if(!user) document.getElementById('force-enter-btn').style.display = 'block'; }, 7000);
-
-        const showToast = (msg, type = 'success') => {
-            const toast = document.getElementById('toast-alert');
-            if(!toast) return;
-            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
-        };
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
@@ -248,10 +249,11 @@
             btnCancel.onclick = () => modal.style.display = 'none';
         };
 
-        // --- LÓGICA IA SIMPLIFICADA (ESTILO V1) ---
+        // --- GEMINI API CON REINTENTOS Y MENSAJES ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
+                    if (i > 0) showToast(`Reintentando análisis (${i}/5)...`, 'warning');
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                     });
@@ -281,8 +283,8 @@
         document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
         document.getElementById('btn-do-capture').onclick = () => {
+            showToast("Capturando imagen...");
             const ctx = camCanvas.getContext('2d');
-            // Captura de alta resolución para que la IA lea bien
             camCanvas.width = 1080; camCanvas.height = 1440; 
             ctx.drawImage(camPreview, 0, 0, 1080, 1440);
             camCanvas.toBlob((blob) => {
@@ -299,37 +301,49 @@
             }, 'image/jpeg', 0.9);
         };
 
-        // Función auxiliar para limpiar la respuesta JSON de la IA
         const cleanJSON = (text) => text.replace(/```json|```/g, "").trim();
 
         async function processIA(base64) {
-            showToast("IA: Leyendo producto...");
+            showToast("Analizando producto con IA...");
             try {
-                // Prompt simplificado tipo V1
                 const payload = {
-                    contents: [{ parts: [{ text: "Dime qué producto es este y su tamaño o peso. Responde solo JSON: {'name': 'nombre', 'size': 'presentacion'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Identifica este producto comercial. Devuelve el nombre y su tamaño/presentación. Responde exclusivamente en JSON siguiendo este esquema: {'nombre': 'valor', 'presentacion': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
-                const result = JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
-                const fullName = `${result.name || ""} ${result.size || ""}`.trim().toUpperCase();
-                document.getElementById('in-producto').value = fullName;
-                showToast("Producto listo");
+                const rawText = data.candidates[0].content.parts[0].text;
+                const result = JSON.parse(cleanJSON(rawText));
+                
+                // Mapeo directo al campo de producto
+                const finalName = `${result.nombre || ""} ${result.presentacion || ""}`.trim().toUpperCase();
+                document.getElementById('in-producto').value = finalName;
+                
+                showToast("¡Producto identificado!");
                 document.getElementById('in-costo').focus();
-            } catch (e) { showToast("Error al identificar", "danger"); }
+            } catch (e) { 
+                showToast("Error al identificar. Intenta de nuevo.", "danger"); 
+                console.error(e);
+            }
         }
 
         async function processPublishIA(base64) {
-            showToast("IA: Identificando para grupo...");
+            showToast("Identificando para publicar...");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Identifica este producto. Responde JSON: {'nombre': 'nombre del producto', 'presentacion': 'tamaño o peso'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Identifica este producto. Responde JSON: {'nombre': 'valor', 'presentacion': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
                 const result = JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
                 
-                openModal("PUBLICAR EN GRUPO", `<label class='text-uppercase small fw-bold'>Producto:</label><input type='text' id='wa-name' class='form-control mb-2 text-uppercase' value='${result.nombre}'><label class='text-uppercase small fw-bold'>Presentación:</label><input type='text' id='wa-pres' class='form-control mb-2 text-uppercase' value='${result.presentacion}'><label class='text-uppercase small fw-bold'>Precio:</label><input type='text' id='wa-price' class='form-control' placeholder='Ej: $35.00'>`, async () => {
+                openModal("PUBLICAR EN GRUPO", `
+                    <label class='text-uppercase small fw-bold'>Producto:</label>
+                    <input type='text' id='wa-name' class='form-control mb-2 text-uppercase' value='${result.nombre}'>
+                    <label class='text-uppercase small fw-bold'>Presentación:</label>
+                    <input type='text' id='wa-pres' class='form-control mb-2 text-uppercase' value='${result.presentacion}'>
+                    <label class='text-uppercase small fw-bold'>Precio:</label>
+                    <input type='text' id='wa-price' class='form-control' placeholder='Ej: $35.00'>
+                `, async () => {
                     const name = document.getElementById('wa-name').value;
                     const pres = document.getElementById('wa-pres').value;
                     const price = document.getElementById('wa-price').value;
@@ -371,9 +385,7 @@
                     renderCatalogList();
                 });
             });
-            setupAuto('in-tienda', 'sug-tienda', 'stores'); 
-            setupAuto('in-cliente', 'sug-cliente', 'clients'); 
-            setupAuto('in-producto', 'sug-producto', 'products');
+            setupAuto('in-tienda', 'sug-tienda', 'stores'); setupAuto('in-cliente', 'sug-cliente', 'clients'); setupAuto('in-producto', 'sug-producto', 'products');
         };
 
         const setupAuto = (id, boxId, key) => {
@@ -409,20 +421,12 @@
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             const today = getISODate();
-            
-            if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
-            } else if(id === 'sales') {
-                fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            } else if(id === 'ganancias') {
-                fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            } else if(id === 'historial') {
-                fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial total acumulado</div>`;
-            } else if(id === 'ticketTienda') {
-                fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            } else {
-                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
-            }
+            if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+            else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
+            else if(id === 'historial') fw.innerHTML = `<div class="text-center small opacity-50 py-1">Historial acumulado</div>`;
+            else if(id === 'ticketTienda') fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
+            else fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             
             setTimeout(() => {
                 const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
@@ -460,7 +464,6 @@
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
-            
             if(activeSubTab === 'clientes') {
                 list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clientes', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clientes', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
             } else if(activeSubTab === 'productos') {
@@ -535,7 +538,7 @@
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
                 
-                // Actualizar catálogo
+                // Actualizar catálogo inteligente
                 if(!state.clients.some(x => x.nombre === data.cliente)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: data.cliente });
                 if(!state.stores.some(x => x.nombre === data.tienda)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: data.tienda });
                 
