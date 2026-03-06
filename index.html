@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v15.0</title>
+    <title>Ofertas Rápidas Yaute v15.1</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -70,7 +70,7 @@
         .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 80px; height: 80px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.85rem; }
+        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.25); transition: all 0.3s; font-size: 0.85rem; }
 
         .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid #e2e8f0; }
         .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
@@ -83,13 +83,50 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">SINCRONIZANDO v15.0...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">CARGANDO v15.1...</div>
     </div>
+
+    <!-- SCRIPT DE NAVEGACION (ESTE FUNCIONA SIEMPRE) -->
+    <script>
+        window.showTab = function(id, btn) {
+            console.log("Cambiando a pestaña:", id);
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            const target = document.getElementById('tab-' + id);
+            if (target) target.classList.add('active');
+            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        };
+
+        window.switchSubTab = function(id, btn) {
+            window.activeSubTab = id;
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            
+            const fw = document.getElementById('filter-wrapper');
+            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+            
+            if(id === 'clientes' || id === 'productos') {
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+            } else if(id === 'sales') {
+                fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
+            } else if(id === 'diezmo') {
+                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
+            }
+            
+            if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
+        };
+
+        window.removeSplash = function() {
+            const s = document.getElementById('splash-screen');
+            if (s) { s.style.opacity = '0'; setTimeout(() => s.style.display = 'none', 400); }
+        };
+    </script>
 
     <!-- UI -->
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v15.0</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v15.1</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -187,13 +224,12 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- LOGICA FIREBASE v15.0 -->
+    <!-- LOGICA FIREBASE v15.1 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CREDENCIALES YAUTEPEC (LAS BUENAS)
         const firebaseConfig = {
             apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
             authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
@@ -209,11 +245,10 @@
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        let state = { sales: [], clients: [], stores: [], products: [] };
-        let activeSubTab = 'clientes';
+        window.state = { sales: [], clients: [], stores: [], products: [] };
+        window.activeSubTab = 'clientes';
         let user = null;
 
-        // --- UTILIDADES ---
         const getVal = (x) => (x.nombre || x.name || x.cliente || x.producto || "S/N");
         const setIndicator = (s) => {
             const dot = document.getElementById('status-dot');
@@ -232,9 +267,11 @@
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
-                document.getElementById('splash-screen').style.display = 'none';
-                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                window.removeSplash();
+                const ed = document.getElementById('entregas-date');
+                if(ed) ed.value = new Intl.DateTimeFormat('en-CA').format(new Date());
                 startSync();
+                window.switchSubTab('clientes', document.querySelector('.sub-btn'));
             }
         });
 
@@ -242,7 +279,7 @@
             const cols = ['sales', 'clients', 'stores', 'products'];
             cols.forEach(name => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (snap) => {
-                    state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    window.state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     setIndicator('ok');
                     if(name === 'sales') window.renderEntregas();
                     window.renderCatalogList();
@@ -259,7 +296,7 @@
             inp.oninput = () => {
                 const val = inp.value.toUpperCase().trim();
                 if(!val) { box.classList.add('d-none'); return; }
-                const ms = state[key].filter(x => getVal(x).toUpperCase().includes(val)).slice(0, 5);
+                const ms = window.state[key].filter(x => getVal(x).toUpperCase().includes(val)).slice(0, 5);
                 box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${getVal(x)}">${getVal(x)}</div>`).join('');
                 box.classList.toggle('d-none', ms.length === 0);
             };
@@ -267,41 +304,21 @@
                 const it = e.target.closest('.sug-item'); if(!it) return;
                 inp.value = it.dataset.val; box.classList.add('d-none');
                 if(key === 'products') {
-                    const p = state.products.find(x => getVal(x) === it.dataset.val);
+                    const p = window.state.products.find(x => getVal(x) === it.dataset.val);
                     if(p) { document.getElementById('in-costo').value = p.pCosto || p.costo || ""; document.getElementById('in-precio').value = p.pVenta || p.precio || ""; }
                 }
             };
         };
 
-        // --- NAVEGACION ---
-        window.showTab = (id, btn) => {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById('tab-' + id).classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        };
-
-        window.switchSubTab = (id, btn) => {
-            activeSubTab = id;
-            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const fw = document.getElementById('filter-wrapper');
-            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
-            if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
-            else if(id === 'sales') fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
-            else if(id === 'diezmo') fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
-            window.renderCatalogList();
-        };
-
-        // --- REPARTO LOGIC ---
+        // --- RENDER LOGIC ---
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); if(!list) return;
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
             const [y, m, d] = selDate.split('-');
             const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-            const filtered = state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos</p>'; return; }
+            const filtered = window.state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos registrados</p>'; return; }
             
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
@@ -324,31 +341,30 @@
         };
 
         window.toggleStatus = async (cli, date, field, val) => {
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === date);
+            const items = window.state.sales.filter(s => s.cliente === cli && s.fechaStr === date);
             for(const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
         };
 
-        // --- CONTROL LOGIC ---
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
-            if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
+            if(window.activeSubTab === 'clientes') {
+                list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
                     <div class="card-custom d-flex justify-content-between py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
-            } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
+            } else if(window.activeSubTab === 'productos') {
+                list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
                     <div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | Venta: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
-            } else if(activeSubTab === 'sales') {
+            } else if(window.activeSubTab === 'sales') {
                 const dIn = document.getElementById('hist-date'); if(!dIn) return;
                 const [y, m, d] = dIn.value.split('-');
                 const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-                const dv = state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
+                const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
                 list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
-            } else if(activeSubTab === 'diezmo') {
+            } else if(window.activeSubTab === 'diezmo') {
                 const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
                 if(!sEl || !eEl) return;
                 const s = new Date(sEl.value + "T00:00:00"); const e = new Date(eEl.value + "T23:59:59");
-                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
+                const fs = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
                 const profit = fs.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
                 list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia real: $${profit.toFixed(2)}</div></div>`;
             }
@@ -374,7 +390,7 @@
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
                 const ck = async (col, val, ex = {}) => { 
-                    if(!state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); 
+                    if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); 
                 };
                 await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
                 toast("¡Venta Guardada!");
@@ -387,7 +403,7 @@
             const selD = document.getElementById('entregas-date').value;
             const [y, m, d] = selD.split('-');
             const f = `${d}/${m}/${y}`;
-            const items = state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === `${parseInt(d)}/${parseInt(m)}/${y}`));
+            const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === `${parseInt(d)}/${parseInt(m)}/${y}`));
             if(!items.length) return;
             document.getElementById('t-cliente').innerText = n;
             document.getElementById('t-fecha').innerText = f;
@@ -425,7 +441,7 @@
         async function processIA(base64) {
             toast("Analizando con IA...");
             try {
-                const apiKey = ""; // API KEY PROPORCIONADA POR EL ENTORNO
+                const apiKey = ""; 
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: "Dime qué producto es. Responde solo JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }], generationConfig: { responseMimeType: "application/json" } })
