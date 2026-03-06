@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v16.2</title>
+    <title>Ofertas Rápidas Yaute v16.6</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,16 +25,49 @@
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 110px; }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN REDISEÑADO --- */
         #splash-screen { 
-            position: fixed; inset: 0; background: #ffffff; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 9999; transition: opacity 0.4s ease;
+            position: fixed; 
+            inset: 0; 
+            background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 99999; 
+            transition: opacity 0.5s ease-out, visibility 0.5s;
         }
-        .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            width: 100%;
+        }
+        .splash-logo { 
+            width: 140px; 
+            height: auto; 
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            animation: pulse 2s infinite ease-in-out; 
+        }
+        .splash-loader { 
+            width: 32px; 
+            height: 32px; 
+            border: 3.5px solid #e2e8f0; 
+            border-top: 3.5px solid var(--accent); 
+            border-radius: 50%; 
+            animation: spin 0.8s linear infinite; 
+        }
+        #splash-status { 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            color: #94a3b8; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
         
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI CABECERA --- */
@@ -43,7 +76,6 @@
         
         .status-dot { width:14px; height:14px; border-radius:50%; transition: 0.4s; margin-left: 12px; border: 2.5px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
         .bg-success { background-color: var(--success) !important; box-shadow: 0 0 12px var(--success); }
-        .bg-danger { background-color: var(--danger) !important; }
         .bg-warning { background-color: var(--warning) !important; }
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
@@ -60,30 +92,44 @@
         .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 8px 18px; font-size: 0.75rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); }
 
-        /* --- CÁMARA & AUTOCOMPLETE --- */
-        .btn-camera-inline { background: #eff6ff; color: var(--accent); border: 2px solid #dbeafe; border-radius: 12px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
         .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; }
 
         #cam-container { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
-        .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
-        .btn-capture { width: 80px; height: 80px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.85rem; }
 
         .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid #e2e8f0; }
         .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
         .check-item input { width: 20px; height: 20px; accent-color: var(--success); }
+
+        #custom-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); display: none; align-items: center; justify-content: center; z-index: 15000; backdrop-filter: blur(4px); }
+        .modal-box { background: white; width: 85%; max-width: 320px; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen Optimizado -->
     <div id="splash-screen">
-        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
-        <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">LISTO v16.2...</div>
+        <div class="splash-content">
+            <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
+            <div class="splash-loader"></div>
+            <div id="splash-status">INICIANDO SISTEMA</div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div id="custom-modal-overlay">
+        <div class="modal-box">
+            <div class="text-danger mb-3" style="font-size: 3rem;"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="fw-bold mb-2" style="font-size: 1.1rem; color: var(--primary);">¿Eliminar registro?</div>
+            <div class="small text-muted mb-4">Esta acción no se puede deshacer en la nube.</div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-light flex-fill fw-bold" onclick="window.closeModal()">Cancelar</button>
+                <button class="btn btn-danger flex-fill fw-bold" id="btn-modal-confirm">Eliminar</button>
+            </div>
+        </div>
     </div>
 
     <!-- NAVEGACIÓN INDEPENDIENTE -->
@@ -112,21 +158,38 @@
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
-                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"></div>`;
+                fw.innerHTML = `
+                    <div class="d-flex flex-column gap-2">
+                        <label class="text-uppercase small fw-bold">Rango de Ganancia</label>
+                        <div class="d-flex gap-2">
+                            <input type="date" id="d-start" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">
+                            <input type="date" id="d-end" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">
+                        </div>
+                    </div>`;
+            } else if(id === 'tiendas') {
+                fw.innerHTML = `<input type="date" id="store-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
             }
             if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
         };
 
-        window.removeSplash = function() {
-            const s = document.getElementById('splash-screen');
-            if (s) { s.style.opacity = '0'; setTimeout(() => { s.style.display = 'none'; }, 400); }
+        window.pendingDelete = { col: null, id: null };
+        window.askDelete = function(col, id) { window.pendingDelete = { col, id }; document.getElementById('custom-modal-overlay').style.display = 'flex'; };
+        window.closeModal = function() { document.getElementById('custom-modal-overlay').style.display = 'none'; };
+        
+        window.removeSplash = function() { 
+            const s = document.getElementById('splash-screen'); 
+            if (s) { 
+                s.style.opacity = '0'; 
+                setTimeout(() => { s.style.display = 'none'; }, 500); 
+            } 
         };
+        // Paracaídas de seguridad a los 6 segundos
         setTimeout(window.removeSplash, 6000);
     </script>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.2</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.6</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -136,7 +199,7 @@
     <div id="cam-container">
         <video id="cam-preview" autoplay playsinline muted></video>
         <button onclick="window.closeCam()" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:44px; height:44px;"><i class="fas fa-times"></i></button>
-        <div class="cam-controls"><button id="btn-do-capture" class="btn-capture"></button></div>
+        <div style="position:absolute; bottom:50px; width:100%; display:flex; justify-content:center;"><button id="btn-do-capture" style="width:80px; height:80px; background:white; border:6px solid rgba(255,255,255,0.3); border-radius:50%;"></button></div>
         <canvas id="cam-canvas" style="display:none;"></canvas>
     </div>
 
@@ -164,11 +227,11 @@
                     </div>
                     <div class="col" style="position:relative">
                         <label class="text-uppercase">Producto</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCRIBIR...">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCRIBIR O ESCANEAR">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-auto">
-                        <button onclick="window.openCam()" class="btn-camera-inline"><i class="fas fa-camera"></i></button>
+                        <button onclick="window.openCam()" class="btn btn-primary" style="height:50px; width:50px; border-radius:12px;"><i class="fas fa-camera"></i></button>
                     </div>
                 </div>
                 <div class="row g-3 mb-4">
@@ -201,13 +264,14 @@
                 <button class="sub-btn" onclick="window.switchSubTab('productos', this)">Productos</button>
                 <button class="sub-btn" onclick="window.switchSubTab('sales', this)">Ventas Hoy</button>
                 <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
+                <button class="sub-btn" onclick="window.switchSubTab('tiendas', this)">Por Tienda</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
             <div id="lista-catalogos"></div>
         </div>
     </main>
 
-    <!-- TICKET DISEÑO HD -->
+    <!-- TICKET HD -->
     <div id="ticket-render" style="position: absolute; top: -3000px; width: 400px; background: white; padding: 40px; font-family: 'Courier New', Courier, monospace; color: black; border: 1px solid #eee;">
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="logo.png" alt="Logo" style="width: 140px; height: auto;" onerror="this.style.display='none'">
@@ -227,7 +291,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v16.2 (SALUDO PERSONALIZADO) -->
+    <!-- MOTOR FIREBASE v16.6 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -239,8 +303,7 @@
             projectId: "ofertas-rapidas-yautepec",
             storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app",
             messagingSenderId: "81339635207",
-            appId: "1:81339635207:web:26d180f92224d9a036fca2",
-            measurementId: "G-TW8T6E8Z0V"
+            appId: "1:81339635207:web:26d180f92224d9a036fca2"
         };
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
@@ -249,14 +312,10 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         window.state = { sales: [], clients: [], stores: [], products: [] };
-        window.activeSubTab = 'clientes';
         let currentUser = null;
 
-        const getVal = (x) => (x.nombre || x.name || x.cliente || x.producto || "S/N");
-        const setIndicator = (s) => {
-            const dot = document.getElementById('status-dot');
-            if (dot) dot.className = "status-dot " + (s === 'ok' ? 'bg-success' : 'bg-warning');
-        };
+        const getVal = (x) => (x.nombre || x.name || x.cliente || x.producto || x.tienda || "S/N");
+        const setIndicator = (s) => { const dot = document.getElementById('status-dot'); if (dot) dot.className = "status-dot " + (s === 'ok' ? 'bg-success' : 'bg-warning'); };
         const toast = (m, type = 'success') => {
             const el = document.getElementById('toast-alert');
             if(!el) return;
@@ -266,28 +325,38 @@
         };
 
         // --- AUTH ---
-        signInAnonymously(auth).catch(e => console.error("Error Auth:", e.code));
-
+        signInAnonymously(auth).catch(e => { console.error("Error Auth:", e.code); window.removeSplash(); });
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 window.removeSplash();
-                const ed = document.getElementById('entregas-date');
-                if(ed) ed.value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
                 startSync();
                 const subBtn = document.querySelector('.sub-btn');
                 if(subBtn) window.switchSubTab('clientes', subBtn);
+                initLogicCristo();
             }
         });
 
+        const initLogicCristo = () => {
+            const cIn = document.getElementById('in-cliente'), cost = document.getElementById('in-costo'), prec = document.getElementById('in-precio');
+            const sync = () => {
+                if ((cIn?.value || "").toUpperCase().trim() === "CRISTO") {
+                    cost.oninput = () => prec.value = cost.value;
+                    prec.oninput = () => cost.value = prec.value;
+                    if(cost.value) prec.value = cost.value;
+                } else { cost.oninput = null; prec.oninput = null; }
+            };
+            if(cIn) { cIn.addEventListener('input', sync); cIn.addEventListener('change', sync); }
+        };
+
         const startSync = () => {
-            const cols = ['sales', 'clients', 'stores', 'products'];
-            cols.forEach(name => {
+            ['sales', 'clients', 'stores', 'products'].forEach(name => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (snap) => {
                     window.state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     setIndicator('ok');
-                    if(name === 'sales' && typeof window.renderEntregas === 'function') window.renderEntregas();
-                    if(typeof window.renderCatalogList === 'function') window.renderCatalogList();
+                    if(name === 'sales' && window.renderEntregas) window.renderEntregas();
+                    if(window.renderCatalogList) window.renderCatalogList();
                 });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores');
@@ -308,14 +377,51 @@
             box.onclick = (e) => {
                 const it = e.target.closest('.sug-item'); if(!it) return;
                 inp.value = it.dataset.val; box.classList.add('d-none');
+                inp.dispatchEvent(new Event('input'));
                 if(key === 'products') {
                     const p = window.state.products.find(x => getVal(x) === it.dataset.val);
                     if(p) { 
-                        if(document.getElementById('in-costo')) document.getElementById('in-costo').value = p.pCosto || p.costo || ""; 
-                        if(document.getElementById('in-precio')) document.getElementById('in-precio').value = p.pVenta || p.precio || ""; 
+                        document.getElementById('in-costo').value = p.pCosto || p.costo || ""; 
+                        document.getElementById('in-precio').value = p.pVenta || p.precio || ""; 
+                        document.getElementById('in-costo').dispatchEvent(new Event('input'));
                     }
                 }
             };
+        };
+
+        // --- RENDER CATALOGOS & TOOLS ---
+        window.renderCatalogList = () => {
+            const list = document.getElementById('lista-catalogos'); if(!list) return;
+            const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
+            const mode = window.activeSubTab;
+
+            if(mode === 'clientes') {
+                list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
+                    <div class="card-custom d-flex justify-content-between py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.askDelete('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+            } else if(mode === 'productos') {
+                list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
+                    <div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | Venta: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+            } else if(mode === 'sales') {
+                const dIn = document.getElementById('hist-date'); if(!dIn) return;
+                const [y, m, d] = dIn.value.split('-');
+                const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${(v.total||0).toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+(v.total||0),0).toFixed(2)}</div>`;
+            } else if(mode === 'diezmo') {
+                const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
+                if(!sEl || !eEl) return;
+                const s = new Date(sEl.value + "T00:00:00"), e = new Date(eEl.value + "T23:59:59");
+                const fs = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
+                const profit = fs.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia total: $${profit.toFixed(2)}</div></div>`;
+            } else if(mode === 'tiendas') {
+                const sD = document.getElementById('store-date'); if(!sD) return;
+                const [y, m, d] = sD.value.split('-');
+                const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
+                const grouped = dv.reduce((acc, v) => { const t = v.tienda || "S/N"; acc[t] = (acc[t] || 0) + v.total; return acc; }, {});
+                list.innerHTML = Object.keys(grouped).map(t => `<div class="card-custom d-flex justify-content-between py-2"><b>${t}</b><b>$${grouped[t].toFixed(2)}</b></div>`).join('') || '<p class="text-center opacity-40">No hay ventas registradas</p>';
+            }
         };
 
         // --- REPARTO ---
@@ -355,66 +461,37 @@
             for(const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
         };
 
-        // --- CATALOGOS ---
-        window.renderCatalogList = () => {
-            const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
-            if(window.activeSubTab === 'clientes') {
-                list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
-                    <div class="card-custom d-flex justify-content-between py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
-            } else if(window.activeSubTab === 'productos') {
-                list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
-                    <div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
-            } else if(window.activeSubTab === 'sales') {
-                const dIn = document.getElementById('hist-date'); if(!dIn) return;
-                const [y, m, d] = dIn.value.split('-');
-                const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-                const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
-                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${(v.total||0).toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+(v.total||0),0).toFixed(2)}</div>`;
-            } else if(window.activeSubTab === 'diezmo') {
-                const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
-                if(!sEl || !eEl) return;
-                const s = new Date(sEl.value + "T00:00:00"); const e = new Date(eEl.value + "T23:59:59");
-                const fs = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
-                const profit = fs.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia real: $${profit.toFixed(2)}</div></div>`;
-            }
+        // --- BORRAR ---
+        document.getElementById('btn-modal-confirm').onclick = async () => {
+            const { col, id } = window.pendingDelete;
+            if(col && id) { try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); toast("Registro eliminado"); window.closeModal(); } catch(e) { toast("Error al eliminar", "danger"); } }
         };
 
-        window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
-
-        // --- BOTON GUARDAR ---
-        const btnSave = document.getElementById('btn-save-record');
-        if (btnSave) {
-            btnSave.onclick = async () => {
-                if(!currentUser) return toast("Esperando conexión...", "danger");
-                const d = {
-                    tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
-                    cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
-                    producto: (document.getElementById('in-producto')?.value || "").trim().toUpperCase(),
-                    cantidad: parseInt(document.getElementById('in-cantidad')?.value) || 1,
-                    costo: parseFloat(document.getElementById('in-costo')?.value) || 0,
-                    precio: parseFloat(document.getElementById('in-precio')?.value) || 0,
-                    fechaStr: new Date().toLocaleDateString('es-MX'),
-                    total: (parseInt(document.getElementById('in-cantidad')?.value) || 1) * (parseFloat(document.getElementById('in-precio')?.value) || 0),
-                    entregado: false, pagado: false, uid: currentUser.uid
-                };
-                if(!d.tienda || !d.producto || !d.cliente) return toast("Faltan datos", "danger");
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
-                    const ck = async (col, val, ex = {}) => { 
-                        if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); 
-                    };
-                    await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                    toast("¡Venta Guardada!");
-                    if(document.getElementById('in-producto')) document.getElementById('in-producto').value = ""; 
-                    if(document.getElementById('in-costo')) document.getElementById('in-costo').value = ""; 
-                    if(document.getElementById('in-precio')) document.getElementById('in-precio').value = "";
-                } catch(e) { toast("Error al guardar", "danger"); }
+        // --- GUARDAR ---
+        document.getElementById('btn-save-record').onclick = async () => {
+            if(!currentUser) return toast("Esperando conexión...", "danger");
+            const d = {
+                tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
+                cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
+                producto: (document.getElementById('in-producto')?.value || "").trim().toUpperCase(),
+                cantidad: parseInt(document.getElementById('in-cantidad')?.value) || 1,
+                costo: parseFloat(document.getElementById('in-costo')?.value) || 0,
+                precio: parseFloat(document.getElementById('in-precio')?.value) || 0,
+                fechaStr: new Date().toLocaleDateString('es-MX'),
+                total: (parseInt(document.getElementById('in-cantidad')?.value) || 1) * (parseFloat(document.getElementById('in-precio')?.value) || 0),
+                entregado: false, pagado: false, uid: currentUser.uid
             };
-        }
+            if(!d.tienda || !d.producto || !d.cliente) return toast("Faltan datos", "danger");
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
+                const ck = async (col, val, ex = {}) => { if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); };
+                await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
+                toast("¡Venta Guardada!");
+                document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
+            } catch(e) { toast("Error al guardar", "danger"); }
+        };
 
-        // --- WHATSAPP TICKET (SALUDO PERSONALIZADO v16.2) ---
+        // --- WHATSAPP ---
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             if(!dateInput || !dateInput.value) return;
@@ -422,22 +499,15 @@
             const f = `${d}/${m}/${y}`;
             const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === `${parseInt(d)}/${parseInt(m)}/${y}`));
             if(!items.length) return;
-            
-            document.getElementById('t-cliente').innerText = n;
-            document.getElementById('t-fecha').innerText = f;
+            document.getElementById('t-cliente').innerText = n; document.getElementById('t-fecha').innerText = f;
             let tot = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { tot += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding:0 10px;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
-            
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3, backgroundColor: '#ffffff', useCORS: true });
                 canvas.toBlob(async b => {
                     const file = new File([b], `Ticket_${n}.png`, { type: 'image/png' });
-                    const shareData = {
-                        files: [file],
-                        title: 'Ofertas Rápidas Yaute',
-                        text: `Hola ${n}, aquí tienes tu nota de venta de Ofertas Rápidas Yaute. ¡Gracias por tu compra!`
-                    };
+                    const shareData = { files: [file], title: 'Ofertas Rápidas Yaute', text: `Hola ${n}, aquí tienes tu nota de venta de Ofertas Rápidas Yaute. ¡Gracias por tu compra!` };
                     if(navigator.share) await navigator.share(shareData);
                 }, 'image/png');
             } catch(e) { toast("Error al generar ticket", "danger"); }
@@ -453,18 +523,15 @@
             } catch (e) { toast("Cámara no disponible", "danger"); }
         };
         window.closeCam = () => { if(stream) stream.getTracks().forEach(t => t.stop()); document.getElementById('cam-container').style.display = 'none'; };
-        const btnCapture = document.getElementById('btn-do-capture');
-        if (btnCapture) {
-            btnCapture.onclick = () => {
-                const ctx = document.getElementById('cam-canvas').getContext('2d');
-                const v = document.getElementById('cam-preview');
-                document.getElementById('cam-canvas').width = v.videoWidth; document.getElementById('cam-canvas').height = v.videoHeight;
-                ctx.drawImage(v, 0, 0);
-                const b64 = document.getElementById('cam-canvas').toDataURL('image/jpeg', 0.8).split(',')[1];
-                window.closeCam();
-                processIA(b64);
-            };
-        }
+        document.getElementById('btn-do-capture').onclick = () => {
+            const ctx = document.getElementById('cam-canvas').getContext('2d');
+            const v = document.getElementById('cam-preview');
+            document.getElementById('cam-canvas').width = v.videoWidth; document.getElementById('cam-canvas').height = v.videoHeight;
+            ctx.drawImage(v, 0, 0);
+            const b64 = document.getElementById('cam-canvas').toDataURL('image/jpeg', 0.8).split(',')[1];
+            window.closeCam();
+            processIA(b64);
+        };
         async function processIA(base64) {
             toast("Analizando con IA...");
             const apiKey = ""; 
@@ -477,8 +544,7 @@
                 const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
                 const result = JSON.parse(text.replace(/```json|```/g, "").trim());
                 if(result.nombre) {
-                    const prodInp = document.getElementById('in-producto');
-                    if(prodInp) prodInp.value = result.nombre.toUpperCase();
+                    document.getElementById('in-producto').value = result.nombre.toUpperCase();
                     toast("¡Producto detectado!");
                 }
             } catch (e) { toast("Error IA", "danger"); }
