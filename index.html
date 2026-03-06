@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v16.7</title>
+    <title>Ofertas Rápidas Yaute v16.8</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -87,7 +87,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">CORRIGIENDO v16.7...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">ESTABLECIENDO v16.8...</div>
     </div>
 
     <!-- NAVEGACIÓN INDEPENDIENTE -->
@@ -164,7 +164,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.7</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.8</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -241,7 +241,7 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER (RECUPERADO DE v16.0 TAL CUAL) -->
+    <!-- TICKET RENDER (RESTAURADO EXACTO v16.2) -->
     <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black;">
         <div style="text-align: center; font-size: 1.5rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RÁPIDAS YAUTE</div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px;"></div>
@@ -258,7 +258,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v16.7 -->
+    <!-- MOTOR FIREBASE v16.8 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -399,7 +399,6 @@
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const mode = window.activeSubTab;
-            
             if (mode === 'clientes') {
                 const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
                 list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
@@ -430,7 +429,6 @@
             const subTab = window.activeFinanceTab;
             const today = new Intl.DateTimeFormat('en-CA').format(new Date());
             let html = `<div class="finance-sub-nav"><button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">DETALLE VENTAS</button><button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button></div>`;
-
             if (subTab === 'ventas') {
                 html += `<div class="card-custom p-3 mb-3"><div class="row g-2"><div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}">${c}</option>`).join('')}</select></div></div></div><div class="card-custom"><table class="table-finance"><thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Total</th></tr></thead><tbody id="fin-sales-body"></tbody></table></div>`;
                 container.innerHTML = html;
@@ -472,49 +470,44 @@
             }
         };
 
-        const btnSave = document.getElementById('btn-save-record');
-        if (btnSave) {
-            btnSave.onclick = async () => {
-                if(!currentUser) return toast("Esperando conexión...", "danger");
-                const d = {
-                    tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
-                    cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
-                    producto: (document.getElementById('in-producto')?.value || "").trim().toUpperCase(),
-                    cantidad: parseInt(document.getElementById('in-cantidad')?.value) || 1,
-                    costo: parseFloat(document.getElementById('in-costo')?.value) || 0,
-                    precio: parseFloat(document.getElementById('in-precio')?.value) || 0,
-                    fechaStr: new Date().toLocaleDateString('es-MX'),
-                    total: (parseInt(document.getElementById('in-cantidad')?.value) || 1) * (parseFloat(document.getElementById('in-precio')?.value) || 0),
-                    entregado: false, pagado: false, uid: currentUser.uid
-                };
-                if(!d.tienda || !d.producto || !d.cliente) return toast("Completa los campos", "danger");
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
-                    const ck = async (col, val, ex = {}) => { if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); };
-                    await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                    toast("¡Registro guardado!");
-                    document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-                } catch(e) { toast("Error al guardar", "danger"); }
+        document.getElementById('btn-save-record').onclick = async () => {
+            if(!currentUser) return toast("Conectando...", "danger");
+            const d = {
+                tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
+                cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
+                producto: (document.getElementById('in-producto')?.value || "").trim().toUpperCase(),
+                cantidad: parseInt(document.getElementById('in-cantidad')?.value) || 1,
+                costo: parseFloat(document.getElementById('in-costo')?.value) || 0,
+                precio: parseFloat(document.getElementById('in-precio')?.value) || 0,
+                fechaStr: new Date().toLocaleDateString('es-MX'),
+                total: (parseInt(document.getElementById('in-cantidad')?.value) || 1) * (parseFloat(document.getElementById('in-precio')?.value) || 0),
+                entregado: false, pagado: false, uid: currentUser.uid
             };
-        }
+            if(!d.tienda || !d.producto || !d.cliente) return toast("Completa los campos", "danger");
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
+                const ck = async (col, val, ex = {}) => { if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); };
+                await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
+                toast("¡Registro guardado!");
+                document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
+            } catch(e) { toast("Error al guardar", "danger"); }
+        };
 
-        // --- MOTOR DE WHATSAPP (RECUPERADO v16.0 TAL CUAL) ---
+        // --- MOTOR DE WHATSAPP (RESTAURADO v16.2 TAL CUAL) ---
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             if(!dateInput || !dateInput.value) return;
             const [y, m, d] = dateInput.value.split('-');
-            const f = `${d}/${m}/${y}`;
-            const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === `${parseInt(d)}/${parseInt(m)}/${y}`));
+            const f = `${d}/${m}/${y}`, fZ = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === fZ));
             if(!items.length) return;
-            
             document.getElementById('t-cliente').innerText = n;
             document.getElementById('t-fecha').innerText = f;
             let tot = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { tot += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding:0 10px;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
-            
             try {
-                // Configuración exacta de la v16.0: scale 2 y sin mensaje de texto personalizado
+                // Lógica original de la v16.2: escala 2 y envío directo del archivo
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
                 canvas.toBlob(async b => {
                     const file = new File([b], `Ticket_${n}.png`, { type: 'image/png' });
