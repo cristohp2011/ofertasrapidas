@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.64</title>
+    <title>Yaute Rápidas Pro v10.82</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -29,13 +29,14 @@
         #splash-screen { position: fixed; inset: 0; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-version { margin-top: 15px; font-weight: 800; color: #94a3b8; font-size: 0.8rem; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI --- */
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: opacity 0.3s; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -43,7 +44,6 @@
         .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 3px; font-weight: 800; color: #64748b; display: block; }
 
-        /* BOTONES IA */
         .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
         .btn-publish-wa { background: #dcfce7; color: #166534; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 0.85rem; width: 100%; transition: all 0.2s; }
         .btn-publish-wa:active { transform: scale(0.98); background: #bbf7d0; }
@@ -57,18 +57,14 @@
         .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.65rem; white-space: nowrap; font-weight: 600; color: #64748b; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* --- MODAL --- */
-        #custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 11000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
-        .modal-card { background: white; border-radius: 20px; width: 100%; max-width: 380px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-
         /* --- CÁMARA --- */
         #cam-container { position: fixed; inset: 0; background: #000; z-index: 10500; display: none; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
         .cam-controls { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 70px; height: 70px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
-        /* --- TICKET RENDERER --- */
-        #ticket-render { position: absolute; top: -10000px; left: 0; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
+        /* --- TICKET --- */
+        #ticket-render { position: absolute; top: -10000px; left: 0; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
         .ticket-header-img { width: 160px; height: auto; display: block; margin: 0 auto 10px; }
     </style>
 </head>
@@ -77,17 +73,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo">
         <div class="splash-loader"></div>
-    </div>
-
-    <div id="custom-modal">
-        <div class="modal-card">
-            <h6 id="modal-title" class="fw-bold mb-3 text-uppercase">TÍTULO</h6>
-            <div id="modal-body" class="mb-4"></div>
-            <div class="d-flex gap-2">
-                <button id="modal-cancel" class="btn btn-light flex-grow-1 fw-bold rounded-pill">CANCELAR</button>
-                <button id="modal-ok" class="btn btn-primary flex-grow-1 fw-bold rounded-pill">ACEPTAR</button>
-            </div>
-        </div>
+        <div class="splash-version">v10.82 - IA Reparada</div>
     </div>
 
     <div id="cam-container">
@@ -128,7 +114,7 @@
                     </div>
                     <div class="col">
                         <label class="text-uppercase">Producto (Lector IA)</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR O ESCRIBIR">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR PRODUCTO">
                     </div>
                     <div class="col-auto">
                         <button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button>
@@ -149,7 +135,7 @@
         </div>
 
         <div id="tab-entregas" class="tab-content">
-            <div class="card-custom py-2 mb-3"><input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()"></div>
+            <div class="card-custom py-2 mb-3 shadow-sm"><input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
@@ -159,7 +145,6 @@
                 <button class="sub-btn" id="btn-sub-products" onclick="switchSubTab('productos', this)">Productos</button>
                 <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
                 <button class="sub-btn" id="btn-sub-profit" onclick="switchSubTab('ganancias', this)">Ganancias</button>
-                <button class="sub-btn" id="btn-sub-store" onclick="switchSubTab('ticketTienda', this)">Ticket Tienda</button>
                 <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
@@ -168,7 +153,7 @@
     </main>
 
     <div id="ticket-render">
-        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img">
+        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
         <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
         <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
@@ -186,7 +171,7 @@
     </nav>
 
     <script type="module">
-        const apiKey = "AIzaSyDrmLEcic1M6o8cwzvLF6yoHxP6bYVJhLc"; 
+        const apiKey = ""; // API Key insertada dinámicamente por el sistema
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -209,29 +194,31 @@
         let state = { sales: [], clients: [], stores: [], products: [] };
         let activeSubTab = 'clientes';
         let lastCapturedBlob = null;
-        let currentScanMode = 'register';
+        let user = null;
 
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
-            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
+            if(!toast) return;
+            toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3500);
         };
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
-        const openModal = (title, bodyHtml, onOk) => {
-            const modal = document.getElementById('custom-modal');
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-body').innerHTML = bodyHtml;
-            modal.style.display = 'flex';
-            const btnOk = document.getElementById('modal-ok');
-            const btnCancel = document.getElementById('modal-cancel');
-            btnOk.onclick = () => {
-                const results = Array.from(document.querySelectorAll('#modal-body input')).map(i => i.value);
-                onOk(results);
-                modal.style.display = 'none';
-            };
-            btnCancel.onclick = () => modal.style.display = 'none';
+        // --- GEMINI API CON REINTENTOS EXPONENCIALES ---
+        const callGemini = async (payload, retries = 5, delay = 1000) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) return await res.json();
+                } catch (e) {}
+                await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+            }
+            throw new Error("IA no disponible");
         };
 
         // --- CÁMARA ---
@@ -239,13 +226,14 @@
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
         let stream = null;
+        let scanMode = 'register';
 
         const startCamera = async (mode) => {
-            currentScanMode = mode;
+            scanMode = mode;
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 } } });
                 camPreview.srcObject = stream;
-                camContainer.style.display = 'flex';
+                camContainer.style.display = 'block';
             } catch (e) { showToast("Cámara no disponible", "danger"); }
         };
 
@@ -254,9 +242,10 @@
         document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
         document.getElementById('btn-do-capture').onclick = () => {
+            showToast("Procesando imagen...", "warning");
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = 640; camCanvas.height = 480; 
-            ctx.drawImage(camPreview, 0, 0, 640, 480);
+            camCanvas.width = 1080; camCanvas.height = 1440; 
+            ctx.drawImage(camPreview, 0, 0, 1080, 1440);
             camCanvas.toBlob((blob) => {
                 lastCapturedBlob = blob;
                 const reader = new FileReader();
@@ -264,75 +253,72 @@
                     const base64 = reader.result.split(',')[1];
                     if(stream) stream.getTracks().forEach(t => t.stop());
                     camContainer.style.display = 'none';
-                    if(currentScanMode === 'publish') processPublishIA(base64);
-                    else processIA(base64);
+                    if(scanMode === 'publish') processPublishIA(base64);
+                    else processRegisterIA(base64);
                 };
                 reader.readAsDataURL(blob);
-            }, 'image/jpeg', 0.85);
+            }, 'image/jpeg', 0.9);
         };
 
-        async function processIA(base64) {
-            showToast("IA: Analizando etiqueta...");
+        const cleanJSON = (text) => text.replace(/```json|```/g, "").trim();
+
+        async function processRegisterIA(base64) {
+            showToast("Analizando empaque...", "warning");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analiza la etiqueta de precio. Extrae unitCost (número) y productName (texto). Responde solo JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }]
+                    contents: [{ parts: [{ text: "Dime qué producto es este y su presentación comercial (peso o volumen). Responde solo JSON: {'nombre': 'marca y producto', 'presentacion': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    generationConfig: { responseMimeType: "application/json" }
                 };
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                const result = JSON.parse(data.candidates[0].content.parts[0].text);
-                document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
-                document.getElementById('in-costo').value = result.unitCost || "";
-                if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
-                showToast("Etiqueta leída");
+                const data = await callGemini(payload);
+                const result = JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
+                const fullName = `${result.nombre || ""} ${result.presentacion || ""}`.trim().toUpperCase();
+                document.getElementById('in-producto').value = fullName;
+                showToast("Producto identificado");
+                document.getElementById('in-costo').focus();
             } catch (e) { showToast("IA falló, reintente", "danger"); }
         }
 
         async function processPublishIA(base64) {
-            showToast("IA: Identificando...");
+            showToast("Preparando publicación...", "warning");
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analiza producto comercial. Extrae nombre y presentación. JSON: {'name': string, 'presentation': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }]
+                    contents: [{ parts: [{ text: "Identifica este producto comercial. Responde JSON: {'nombre': 'valor', 'presentacion': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    generationConfig: { responseMimeType: "application/json" }
                 };
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                const result = JSON.parse(data.candidates[0].content.parts[0].text);
+                const data = await callGemini(payload);
+                const result = JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
                 
-                openModal("PUBLICAR EN GRUPO", `<label class='text-uppercase small fw-bold'>Producto:</label><input type='text' id='wa-name' class='form-control mb-2 text-uppercase' value='${result.name}'><label class='text-uppercase small fw-bold'>Presentación:</label><input type='text' id='wa-pres' class='form-control mb-2 text-uppercase' value='${result.presentation}'><label class='text-uppercase small fw-bold'>Precio:</label><input type='text' id='wa-price' class='form-control' placeholder='Ej: $35.00'>`, async () => {
-                    const name = document.getElementById('wa-name').value;
-                    const pres = document.getElementById('wa-pres').value;
-                    const price = document.getElementById('wa-price').value;
-                    const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${name.toUpperCase()}*\n⚖️ Presentación: ${pres.toUpperCase()}\n${price ? '💰 *Precio: ' + price + '*' : ''}\n\n🛒 ¡Haz tu pedido ahora!`;
-                    if (navigator.share && lastCapturedBlob) {
-                        const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
-                        await navigator.share({ files: [file], title: 'Oferta', text: msg });
-                    }
-                });
+                const name = result.nombre || "";
+                const pres = result.presentacion || "";
+                const msg = `⚡ ¡NUEVA OFERTA! ⚡\n\n📦 *${name.toUpperCase()}*\n⚖️ Presentación: ${pres.toUpperCase()}\n\n🛒 ¡Haz tu pedido ahora!`;
+                
+                if (navigator.share && lastCapturedBlob) {
+                    const file = new File([lastCapturedBlob], `oferta.jpg`, { type: 'image/jpeg' });
+                    await navigator.share({ files: [file], title: 'Oferta', text: msg });
+                }
             } catch (e) { showToast("Error al identificar", "danger"); }
         }
 
-        // --- CORE ---
+        // --- CORE FIREBASE ---
         signInAnonymously(auth);
         onAuthStateChanged(auth, (u) => {
+            user = u;
             if (u) {
                 document.getElementById('status-dot').className = 'bg-success';
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
-                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
                 setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 1000);
             }
         });
 
         const startSync = () => {
+            if(!user) return;
             ['sales', 'clients', 'stores', 'products'].forEach(n => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
-                });
+                }, (err) => console.error(err));
             });
         };
 
@@ -347,22 +333,7 @@
             activeSubTab = id;
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
-            const fw = document.getElementById('filter-wrapper');
-            const today = getISODate();
-            if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
-            else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
-            else if(id === 'ticketTienda') fw.innerHTML = `<div class="row g-2"><div class="col-6"><input type="date" id="st-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="st-store" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
-            
-            setTimeout(() => {
-                const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
-                const cOpt = `<option value="">CLIENTES</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
-                if(document.getElementById('filter-store')) document.getElementById('filter-store').innerHTML = sOpt;
-                if(document.getElementById('filter-client')) document.getElementById('filter-client').innerHTML = cOpt;
-                if(document.getElementById('st-store')) document.getElementById('st-store').innerHTML = sOpt;
-                renderCatalogList();
-            }, 100);
+            renderCatalogList();
         };
 
         window.renderEntregas = () => {
@@ -374,72 +345,25 @@
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
                     <div class="d-flex justify-content-between mb-2"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'entregado', this.checked)"> ENTREGA</label><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'pagado', this.checked)"> PAGO</label></div>
                     <div class="small">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`).join('');
         };
 
-        window.toggleStatus = async (cli, field, val) => {
-            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === fd);
-            for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
-        };
-
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('clients', '${c.id}', {nombre: '${c.nombre}'})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                list.innerHTML = state.clients.sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom py-2">${c.nombre}</div>`).join('');
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => p.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><div class="d-flex justify-content-between mt-1 small opacity-75"><span>C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</span><div class="d-flex gap-2"><button class="btn btn-sm text-primary" onclick="window.editItem('productos', '${p.id}', {nombre: '${p.nombre}', pCosto: ${p.pCosto}, pVenta: ${p.pVenta}})"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="window.deleteItem('productos', '${p.id}')"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+                list.innerHTML = state.products.sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2">${p.nombre} <br><small class="opacity-50">C: $${p.pCosto} | V: $${p.pVenta}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
-                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
-                let dv = state.sales.filter(s => s.fechaStr === fd);
-                if(document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
-                if(document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
-                const total = dv.reduce((acc, v) => acc + v.total, 0);
-                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><div class="text-end"><b>$${v.total.toFixed(2)}</b><br><button class="btn btn-sm text-danger" onclick="window.deleteSale('${v.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${total.toFixed(2)}</div>`;
-            } else if(activeSubTab === 'ganancias') {
-                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
-                const prof = state.sales.filter(s => s.fechaStr === fd).reduce((acc, v) => { acc[v.tienda] = (acc[v.tienda] || 0) + (v.total - (v.costo * v.cantidad)); return acc; }, {});
-                list.innerHTML = Object.keys(prof).map(s => `<div class="card-custom d-flex justify-content-between"><b>${s}</b><span class="text-success fw-bold">$${prof[s].toFixed(2)}</span></div>`).join('') + `<div class="card-custom bg-success text-white">TOTAL DÍA: $${Object.values(prof).reduce((a,b)=>a+b,0).toFixed(2)}</div>`;
-            } else if(activeSubTab === 'ticketTienda') {
-                const fd = new Date(document.getElementById('st-date').value + "T12:00:00").toLocaleDateString('es-MX');
-                const store = document.getElementById('st-store').value;
-                const dv = state.sales.filter(s => s.fechaStr === fd && s.tienda === store);
-                const tc = dv.reduce((acc, v) => acc + (v.costo * v.cantidad), 0);
-                list.innerHTML = store ? `<div class="card-custom"><b>${store}</b><hr>${dv.map(i => `<div class="d-flex justify-content-between py-1"><span>${i.cantidad}x ${i.producto}</span><b>$${(i.costo * i.cantidad).toFixed(2)}</b></div>`).join('')}<hr><b>TOTAL: $${tc.toFixed(2)}</b></div>` : '';
-            } else {
-                const s = new Date(document.getElementById('d-start').value + "T00:00:00");
-                const e = new Date(document.getElementById('d-end').value + "T23:59:59");
-                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
-                let profit = 0; fs.forEach(v => { profit += ((v.precio - v.costo) * v.cantidad); });
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+                const fd = new Date().toLocaleDateString('es-MX');
+                const dv = state.sales.filter(s => s.fechaStr === fd);
+                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             }
         };
 
-        window.deleteSale = (id) => openModal("Eliminar", "¿Eliminar registro?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', id)); showToast("Borrado"); });
-
-        window.editItem = (col, id, cur) => {
-            if(col === 'clients') openModal("Editar Cliente", `<input type="text" class="form-control text-uppercase" value="${cur.nombre}">`, async (res) => {
-                const n = res[0].toUpperCase().trim();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clients', id), { nombre: n });
-                const items = state.sales.filter(s => s.cliente === cur.nombre);
-                for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { cliente: n });
-            }); else openModal("Editar Producto", `<input type="text" class="form-control text-uppercase mb-2" value="${cur.nombre}"><input type="number" class="form-control mb-2" value="${cur.pCosto}"><input type="number" class="form-control" value="${cur.pVenta}">`, async (res) => {
-                const [n, c, v] = res; const fn = n.toUpperCase().trim();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', id), { nombre: fn, pCosto: parseFloat(c), pVenta: parseFloat(v) });
-            });
-        };
-
-        window.deleteItem = (col, id) => {
-            const path = col === 'clients' ? 'clients' : 'products';
-            const item = state[path].find(x => x.id === id);
-            if(state.sales.some(s => col === 'clients' ? s.cliente === item.nombre : s.producto === item.nombre)) return showToast("En uso", "danger");
-            openModal("Borrar", "¿Eliminar del catálogo?", async () => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', path, id)));
-        };
-
         document.getElementById('btn-save').onclick = async () => {
+            if(!user) return;
             const data = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -456,7 +380,7 @@
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
                 const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
                 await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
-                document.getElementById('in-producto').value = "";
+                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
                 showToast("¡Venta guardada!");
             } catch(e) { showToast("Error de guardado", "danger"); }
         };
