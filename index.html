@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v19.2 - Scanner Trasero</title>
+    <title>Ofertas Rápidas Yaute v19.3 - Logo Restaurado</title>
     
     <!-- Librerías -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -77,7 +77,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Yaute v19.2 IA...</div>
+        <div style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Yaute v19.3 IA...</div>
     </div>
 
     <!-- MÓDULO SCANNER IA -->
@@ -131,7 +131,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Yaute <span class="version-badge">v19.2</span></h6>
+            <h6 class="m-0 fw-bold">Yaute <span class="version-badge">v19.3</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -188,8 +188,12 @@
         <div id="tab-control" class="tab-content" style="display: none;"><div id="lista-catalogos"></div></div>
     </main>
 
-    <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black;">
-        <div style="text-align: center; margin-bottom: 20px;"><div style="font-size: 1.5rem; font-weight: 900;">OFERTAS RÁPIDAS YAUTE</div></div>
+    <!-- TICKET RENDER (LOGO RESTAURADO) -->
+    <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black; border: 1px solid #eee;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
+            <div style="font-size: 1.5rem; font-weight: 900; margin-top: 10px;">OFERTAS RÁPIDAS YAUTE</div>
+        </div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px;"></div>
         <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
         <div style="margin-bottom: 20px;"><b>CLIENTE:</b> <span id="t-cliente" style="text-transform: uppercase;"></span></div>
@@ -277,7 +281,7 @@
             box.onclick = (e) => { const it = e.target.closest('.sug-item'); if(!it) return; inp.value = it.dataset.val; box.classList.add('d-none'); };
         };
 
-        // --- SCANNER IA MEJORADO v19.2 (CÁMARA TRASERA) ---
+        // --- SCANNER IA MEJORADO v19.3 (CÁMARA TRASERA) ---
         const video = document.getElementById('cam-video');
         const vSelect = document.getElementById('video-source-select');
         let currentStream = null;
@@ -286,7 +290,6 @@
             document.getElementById('ia-scanner-modal').style.display = 'flex';
             window.resetIA();
             try {
-                // Pedimos cámara trasera específicamente con facingMode: "environment"
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                 stream.getTracks().forEach(t => t.stop()); 
                 
@@ -294,7 +297,6 @@
                 const videoDevices = devices.filter(d => d.kind === 'videoinput');
                 vSelect.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Fuente'}</option>`).join('');
                 
-                // Intentamos encontrar una cámara que explícitamente diga "back" o "rear"
                 const backCam = videoDevices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('rear') || d.label.toLowerCase().includes('trasera'));
                 startCameraIA(backCam ? backCam.deviceId : videoDevices[0].deviceId);
             } catch (e) { 
