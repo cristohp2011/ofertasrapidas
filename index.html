@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.50.8</title>
+    <title>Yaute Rápidas Pro v10.60</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,7 +25,7 @@
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
 
-        /* --- SPLASH SCREEN (SISTEMA DE DESBLOQUEO) --- */
+        /* --- SPLASH SCREEN --- */
         #splash-screen { 
             position: fixed; inset: 0; background: #ffffff; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -42,7 +42,7 @@
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.8rem; }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -72,28 +72,26 @@
         .check-group { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 8px 12px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
         .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
         .check-item input { width: 18px; height: 18px; accent-color: var(--success); }
+        
+        #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
+        .ticket-header-img { width: 160px; display: block; margin: 0 auto 10px; }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen con Paracaídas -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status">Iniciando v10.50.8...</div>
+        <div id="splash-status">Iniciando v10.60...</div>
     </div>
 
-    <!-- Script de Desbloqueo (Paracaídas) -->
     <script>
-        window.removeSplash = function() {
-            const splash = document.getElementById('splash-screen');
-            if (splash && splash.style.display !== 'none') {
-                splash.style.opacity = '0';
-                setTimeout(function() { splash.style.display = 'none'; }, 500);
-            }
-        };
-        // Forzar liberación a los 3.5 segundos si la base de datos tarda
-        setTimeout(window.removeSplash, 3500);
+        // Paracaídas: Quitar splash a los 4 segundos si falla Firebase
+        setTimeout(function() {
+            const s = document.getElementById('splash-screen');
+            if(s) { s.style.opacity = '0'; setTimeout(() => s.style.display = 'none', 500); }
+        }, 4000);
     </script>
 
     <div id="toast-alert"></div>
@@ -169,18 +167,17 @@
         <!-- CONTROL -->
         <div id="tab-control" class="tab-content">
             <div class="sub-nav">
-                <button class="sub-btn active" id="btn-sub-clients" onclick="switchSubTab('clientes', this)">Clientes</button>
-                <button class="sub-btn" id="btn-sub-products" onclick="switchSubTab('productos', this)">Productos</button>
-                <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
-                <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
+                <button class="sub-btn active" id="btn-sub-clients" onclick="window.switchSubTab('clientes', this)">Clientes</button>
+                <button class="sub-btn" id="btn-sub-products" onclick="window.switchSubTab('productos', this)">Productos</button>
+                <button class="sub-btn" id="btn-sub-sales" onclick="window.switchSubTab('sales', this)">Ventas</button>
+                <button class="sub-btn" id="btn-sub-diezmo" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
             <div id="lista-catalogos"></div>
         </div>
     </main>
 
-    <!-- TICKET RENDER -->
-    <div id="ticket-render" style="position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace;">
+    <div id="ticket-render">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">YAUTE RÁPIDAS</div>
         <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
         <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
@@ -191,9 +188,9 @@
     </div>
 
     <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
-        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
-        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Control</button>
+        <button class="tab-btn active" onclick="window.showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
+        <button class="tab-btn" onclick="window.showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
+        <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
     <script type="module">
@@ -201,6 +198,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Global environment provided variables
         const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
@@ -252,27 +250,27 @@
         };
 
         async function processIA(base64) {
-            showToast("IA: Escaneando producto...");
+            showToast("IA: Analizando...");
             const apiKey = ""; 
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Dime nombre del producto y costo si se ve. Responde JSON: {'nombre': string, 'costo': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Dime qué producto es este comercialmente. Responde solo JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
                 const data = await res.json();
-                const result = JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json|```/g, "").trim() || "{}");
+                const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+                const result = JSON.parse(textResult.replace(/```json|```/g, "").trim());
                 if(result.nombre) {
                     document.getElementById('in-producto').value = result.nombre.toUpperCase();
-                    if(result.costo) document.getElementById('in-costo').value = result.costo;
                     showToast("¡Listo!");
                 }
-            } catch (e) { showToast("IA no disponible", "danger"); }
+            } catch (e) { showToast("Error IA", "danger"); }
         }
 
-        // --- AUTH & SYNC (REGLA 3) ---
+        // --- AUTH & SYNC ---
         const initAuth = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -288,12 +286,17 @@
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
-                window.removeSplash(); 
+                const splash = document.getElementById('splash-screen');
+                if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
+                
                 const dot = document.getElementById('status-dot');
                 if (dot) dot.className = 'status-indicator bg-success';
-                document.getElementById('entregas-date').value = getISODate();
+                
+                const ed = document.getElementById('entregas-date');
+                if(ed) ed.value = getISODate();
+                
                 startSync();
-                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
+                window.switchSubTab('clientes', document.getElementById('btn-sub-clients'));
             }
         });
 
@@ -303,9 +306,9 @@
             collections.forEach(n => {
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    if(n === 'sales') renderEntregas();
-                    renderCatalogList();
-                }, (err) => console.error("Snapshot error:", n, err));
+                    if(n === 'sales') window.renderEntregas();
+                    window.renderCatalogList();
+                }, (err) => console.error("Error en " + n, err));
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); 
             setupAuto('in-cliente', 'sug-cliente', 'clients'); 
@@ -318,21 +321,27 @@
             inp.oninput = () => {
                 const val = inp.value.toUpperCase();
                 if(!val) { box.classList.add('d-none'); return; }
-                const ms = (state[key] || []).filter(x => (x.nombre || '').toUpperCase().includes(val)).slice(0, 5);
-                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre}</div>`).join('');
+                const ms = (state[key] || []).filter(x => {
+                    const name = (x.nombre || x.name || x.productName || '').toUpperCase();
+                    return name.includes(val);
+                }).slice(0, 5);
+                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre || x.name || x.productName}">${x.nombre || x.name || x.productName}</div>`).join('');
                 box.classList.toggle('d-none', ms.length === 0);
             };
             box.onclick = (e) => {
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
-                    const prod = state.products.find(p => p.nombre === item.dataset.val);
-                    if (prod) { document.getElementById('in-costo').value = prod.pCosto || ""; document.getElementById('in-precio').value = prod.pVenta || ""; }
+                    const prod = state.products.find(p => (p.nombre || p.name || p.productName) === item.dataset.val);
+                    if (prod) { 
+                        document.getElementById('in-costo').value = prod.pCosto || prod.costo || ""; 
+                        document.getElementById('in-precio').value = prod.pVenta || prod.precio || ""; 
+                    }
                 }
             };
         };
 
-        // --- NAVEGACIÓN ---
+        // --- NAVEGACIÓN BLINDADA ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             const tab = document.getElementById(`tab-${id}`);
@@ -345,24 +354,28 @@
             activeSubTab = id;
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
+            
             const fw = document.getElementById('filter-wrapper');
+            if(!fw) return;
+            
             const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Filtrar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
                 fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
             } else { fw.innerHTML = ''; }
-            renderCatalogList();
+            window.renderCatalogList();
         };
 
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); if(!list) return;
-            const selInput = document.getElementById('entregas-date').value;
+            const selInput = document.getElementById('entregas-date')?.value;
+            if(!selInput) return;
             const targetDate = new Date(selInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-30">Sin pedidos</p>'; return; }
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-30">Sin pedidos para esta fecha</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
@@ -381,22 +394,26 @@
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
+            
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients','${c.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
+                list.innerHTML = state.clients.filter(c => (c.nombre || c.name || '').toUpperCase().includes(q)).sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${c.nombre || c.name}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => p.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+                list.innerHTML = state.products.filter(p => (p.nombre || p.name || p.productName || '').toUpperCase().includes(q)).sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(p => `<div class="card-custom py-2"><b>${p.nombre || p.name || p.productName}</b><br><small class="opacity-50">C: $${(p.pCosto||p.costo||0).toFixed(2)} | V: $${(p.pVenta||p.precio||0).toFixed(2)}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
-                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
+                const dateEl = document.getElementById('hist-date');
+                if(!dateEl) return;
+                const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
                 const dv = state.sales.filter(s => s.fechaStr === fd);
-                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL DÍA: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             } else if(activeSubTab === 'diezmo') {
-                const sVal = document.getElementById('d-start').value;
-                const eVal = document.getElementById('d-end').value;
-                const s = new Date(sVal + "T00:00:00");
-                const e = new Date(eVal + "T23:59:59");
+                const startEl = document.getElementById('d-start');
+                const endEl = document.getElementById('d-end');
+                if(!startEl || !endEl) return;
+                const s = new Date(startEl.value + "T00:00:00");
+                const e = new Date(endEl.value + "T23:59:59");
                 const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
-                const profit = fs.reduce((a,v)=> a + (v.total - (v.costo * v.cantidad)), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+                const profit = fs.reduce((a,v)=> a + (v.total - ((v.costo || v.pCosto || 0) * v.cantidad)), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10% de ganancia)</div></div>`;
             }
         };
 
@@ -418,9 +435,13 @@
             if(!data.tienda || !data.producto || !data.cliente) return showToast("Faltan datos", "danger");
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
+                const ck = async (col, val, ext = {}) => { 
+                    if(!state[col].some(x => (x.nombre || x.name || '').toUpperCase() === val)) {
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); 
+                    }
+                };
                 await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
-                showToast("¡Guardado!");
+                showToast("Venta guardada");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { showToast("Error al guardar", "danger"); }
         };
@@ -434,7 +455,7 @@
             document.getElementById('t-date-val').innerText = fd;
             let total = 0;
             document.getElementById('t-body-items').innerHTML = items.map(i => { total += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding-left:10px; text-transform:uppercase;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
-            document.getElementById('t-grand-total').innerText = total.toFixed(2);
+            document.getElementById('t-grand-total').innerText = "$" + total.toFixed(2);
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
                 canvas.toBlob(async b => {
