@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v16.0</title>
+    <title>Ofertas Rápidas Yaute v16.2</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -60,21 +60,17 @@
         .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 8px 18px; font-size: 0.75rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); }
 
-        /* --- CÁMARA & AUTOCOMPLETE --- */
-        .btn-camera-inline { background: #eff6ff; color: var(--accent); border: 2px solid #dbeafe; border-radius: 12px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+        /* --- AUTOCOMPLETE SUGGESTIONS --- */
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
         .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; }
-
-        #cam-container { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; }
-        #cam-preview { width: 100%; height: 100%; object-fit: cover; }
-        .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
-        .btn-capture { width: 80px; height: 80px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.85rem; }
 
         .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid #e2e8f0; }
         .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
         .check-item input { width: 20px; height: 20px; accent-color: var(--success); }
+
+        .list-title { font-size: 0.7rem; font-weight: 800; color: #94a3b8; margin-bottom: 10px; display: block; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -83,7 +79,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">SINCRO v16.0...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">SINCRO v16.2...</div>
     </div>
 
     <!-- NAVEGACIÓN INDEPENDIENTE -->
@@ -126,19 +122,12 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.0</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.2</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
     <div id="toast-alert"></div>
-
-    <div id="cam-container">
-        <video id="cam-preview" autoplay playsinline muted></video>
-        <button onclick="window.closeCam()" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:44px; height:44px;"><i class="fas fa-times"></i></button>
-        <div class="cam-controls"><button id="btn-do-capture" class="btn-capture"></button></div>
-        <canvas id="cam-canvas" style="display:none;"></canvas>
-    </div>
 
     <main>
         <!-- VENTA -->
@@ -147,12 +136,12 @@
                 <div class="row g-3 mb-3">
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="WALMART">
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="EJ: WALMART">
                         <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Cliente</label>
-                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="NOMBRE">
+                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="EJ: JUAN PEREZ">
                         <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
@@ -164,11 +153,8 @@
                     </div>
                     <div class="col" style="position:relative">
                         <label class="text-uppercase">Producto</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCRIBIR...">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="NOMBRE DEL ARTÍCULO">
                         <div id="sug-producto" class="sug-box d-none"></div>
-                    </div>
-                    <div class="col-auto">
-                        <button onclick="window.openCam()" class="btn-camera-inline"><i class="fas fa-camera"></i></button>
                     </div>
                 </div>
                 <div class="row g-3 mb-4">
@@ -182,6 +168,12 @@
                     </div>
                 </div>
                 <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
+            </div>
+
+            <!-- Listado de corrección rápida -->
+            <div id="quick-delete-list" class="mt-4">
+                <span class="list-title">Ventas de Hoy (Recientes)</span>
+                <div id="lista-ventas-hoy"></div>
             </div>
         </div>
 
@@ -207,6 +199,7 @@
         </div>
     </main>
 
+    <!-- TICKET RENDER -->
     <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black;">
         <div style="text-align: center; font-size: 1.5rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RÁPIDAS YAUTE</div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px;"></div>
@@ -223,7 +216,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v16.0 (CREDENTIALS YAUTEPEC) -->
+    <!-- MOTOR FIREBASE v16.2 (NATIVO MANUAL) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -282,7 +275,10 @@
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (snap) => {
                     window.state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     setIndicator('ok');
-                    if(name === 'sales' && typeof window.renderEntregas === 'function') window.renderEntregas();
+                    if(name === 'sales') {
+                        if(typeof window.renderEntregas === 'function') window.renderEntregas();
+                        window.renderVentasHoy();
+                    }
                     if(typeof window.renderCatalogList === 'function') window.renderCatalogList();
                 });
             });
@@ -312,6 +308,29 @@
                     }
                 }
             };
+        };
+
+        // --- RENDER VENTA (Ventas de Hoy Recientes) ---
+        window.renderVentasHoy = () => {
+            const list = document.getElementById('lista-ventas-hoy'); if(!list) return;
+            const todayStr = new Date().toLocaleDateString('es-MX');
+            const dv = window.state.sales.filter(s => s.fechaStr === todayStr).reverse();
+            
+            if(dv.length === 0) {
+                list.innerHTML = '<p class="small opacity-50 text-center py-3">Sin registros hoy.</p>';
+                return;
+            }
+
+            list.innerHTML = dv.slice(0, 5).map(v => `
+                <div class="card-custom py-2 mb-2 d-flex justify-content-between align-items-center" style="border-left: 4px solid var(--accent); padding: 10px 15px;">
+                    <div style="flex: 1; overflow: hidden;">
+                        <div class="fw-bold small text-uppercase text-truncate">${v.producto}</div>
+                        <div class="small opacity-60">${v.cliente} | $${v.total.toFixed(2)}</div>
+                    </div>
+                    <button class="btn btn-sm text-danger" onclick="window.delItem('sales','${v.id}')">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>`).join('');
         };
 
         // --- RENDER REPARTO ---
@@ -375,13 +394,18 @@
             }
         };
 
-        window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
+        window.delItem = async (c, id) => { 
+            if(confirm("¿Seguro que quieres eliminar este registro?")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id));
+                toast("Registro borrado.");
+            }
+        };
 
         // --- BOTON GUARDAR ---
         const btnSave = document.getElementById('btn-save-record');
         if (btnSave) {
             btnSave.onclick = async () => {
-                if(!currentUser) return toast("Esperando conexión...", "danger");
+                if(!currentUser) return toast("Conectando...", "danger");
                 const d = {
                     tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
                     cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
@@ -393,17 +417,17 @@
                     total: (parseInt(document.getElementById('in-cantidad')?.value) || 1) * (parseFloat(document.getElementById('in-precio')?.value) || 0),
                     entregado: false, pagado: false, uid: currentUser.uid
                 };
-                if(!d.tienda || !d.producto || !d.cliente) return toast("Faltan datos", "danger");
+                if(!d.tienda || !d.producto || !d.cliente) return toast("Completa los campos", "danger");
                 try {
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
                     const ck = async (col, val, ex = {}) => { 
                         if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); 
                     };
                     await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                    toast("¡Venta Guardada!");
-                    if(document.getElementById('in-producto')) document.getElementById('in-producto').value = ""; 
-                    if(document.getElementById('in-costo')) document.getElementById('in-costo').value = ""; 
-                    if(document.getElementById('in-precio')) document.getElementById('in-precio').value = "";
+                    toast("¡Registro guardado!");
+                    document.getElementById('in-producto').value = ""; 
+                    document.getElementById('in-costo').value = ""; 
+                    document.getElementById('in-precio').value = "";
                 } catch(e) { toast("Error al guardar", "danger"); }
             };
         }
@@ -427,49 +451,8 @@
                     const file = new File([b], `Ticket_${n}.png`, { type: 'image/png' });
                     if(navigator.share) await navigator.share({ files: [file], title: 'Nota de Venta' });
                 }, 'image/png');
-            } catch(e) { toast("Error al generar ticket", "danger"); }
+            } catch(e) { toast("Error al generar nota", "danger"); }
         };
-
-        // --- CÁMARA IA ---
-        let stream = null;
-        window.openCam = async () => {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
-                const prev = document.getElementById('cam-preview');
-                if(prev) { prev.srcObject = stream; document.getElementById('cam-container').style.display = 'block'; }
-            } catch (e) { toast("Cámara no disponible", "danger"); }
-        };
-        window.closeCam = () => { if(stream) stream.getTracks().forEach(t => t.stop()); document.getElementById('cam-container').style.display = 'none'; };
-        const btnCapture = document.getElementById('btn-do-capture');
-        if (btnCapture) {
-            btnCapture.onclick = () => {
-                const ctx = document.getElementById('cam-canvas').getContext('2d');
-                const v = document.getElementById('cam-preview');
-                document.getElementById('cam-canvas').width = v.videoWidth; document.getElementById('cam-canvas').height = v.videoHeight;
-                ctx.drawImage(v, 0, 0);
-                const b64 = document.getElementById('cam-canvas').toDataURL('image/jpeg', 0.8).split(',')[1];
-                window.closeCam();
-                processIA(b64);
-            };
-        }
-        async function processIA(base64) {
-            toast("Analizando con IA...");
-            const apiKey = ""; 
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "Dime qué producto es. Responde solo JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }], generationConfig: { responseMimeType: "application/json" } })
-                });
-                const data = await res.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-                const result = JSON.parse(text.replace(/```json|```/g, "").trim());
-                if(result.nombre) {
-                    const prodInp = document.getElementById('in-producto');
-                    if(prodInp) prodInp.value = result.nombre.toUpperCase();
-                    toast("¡Producto detectado!");
-                }
-            } catch (e) { toast("Error IA", "danger"); }
-        }
     </script>
 </body>
 </html>
