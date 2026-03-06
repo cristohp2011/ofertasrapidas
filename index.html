@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v18.1</title>
+    <title>Ofertas Rápidas Yaute v18.3</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,13 +56,15 @@
         .tab-btn i { font-size: 1.6rem; margin-bottom: 5px; }
         .tab-btn.active { color: var(--accent); }
 
-        .sub-nav { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; border-bottom: 1px solid #f1f5f9; margin-bottom: 15px; }
-        .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 8px 18px; font-size: 0.75rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; margin-bottom: 5px; }
+        /* SUB NAV PRINCIPAL (CATÁLOGO / FINANZAS) */
+        .sub-nav { display: flex; gap: 10px; border-bottom: 1px solid #f1f5f9; margin-bottom: 15px; }
+        .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 10px 20px; font-size: 0.8rem; white-space: nowrap; color: #64748b; font-weight: 800; transition: 0.2s; flex: 1; margin-bottom: 10px;}
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); }
 
-        .finance-sub-nav { display: flex; gap: 5px; background: #f1f5f9; padding: 5px; border-radius: 12px; margin-bottom: 15px; }
-        .fin-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.75rem; font-weight: 800; border-radius: 8px; color: #64748b; }
-        .fin-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* SUB NAV SECUNDARIA (Clientes / Productos / Tiendas) */
+        .inner-sub-nav { display: flex; gap: 5px; background: #f1f5f9; padding: 5px; border-radius: 12px; margin-bottom: 15px; }
+        .inner-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.7rem; font-weight: 800; border-radius: 8px; color: #64748b; text-transform: uppercase; }
+        .inner-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         /* --- AUTOCOMPLETE --- */
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
@@ -96,7 +98,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Iniciando v18.1...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Iniciando v18.3...</div>
     </div>
 
     <!-- Modal para Editar Item -->
@@ -164,8 +166,9 @@
             }
         }, 5000);
 
-        window.activeSubTab = 'clientes';
-        window.activeFinanceTab = 'ventas';
+        window.activeSubTab = 'catalogo'; 
+        window.activeDataTab = 'clientes'; 
+        window.activeFinanceTab = 'ventas'; 
 
         window.showTab = function(tabId, btnElement) {
             const contents = document.getElementsByClassName('tab-content');
@@ -191,11 +194,16 @@
             if (btn) btn.classList.add('active');
             
             const fw = document.getElementById('filter-wrapper');
-            if(id === 'clientes' || id === 'productos' || id === 'tiendas') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="if(window.renderCatalogList) window.renderCatalogList()">`;
-            } else if(id === 'finanzas') {
-                fw.innerHTML = '';
-            }
+            if(fw) fw.innerHTML = ''; 
+
+            if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
+        };
+
+        window.switchDataTab = function(id, btn) {
+            window.activeDataTab = id;
+            const innerBtns = document.getElementsByClassName('inner-btn-data');
+            for(let i=0; i<innerBtns.length; i++) { innerBtns[i].classList.remove('active'); }
+            if (btn) btn.classList.add('active');
             if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
         };
 
@@ -254,7 +262,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v18.1</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v18.3</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -320,17 +328,15 @@
         <!-- CONTROL -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
-                <button class="sub-btn active" onclick="window.switchSubTab('clientes', this)">Clientes</button>
-                <button class="sub-btn" onclick="window.switchSubTab('productos', this)">Productos</button>
-                <button class="sub-btn" onclick="window.switchSubTab('tiendas', this)">Tiendas</button>
-                <button class="sub-btn" onclick="window.switchSubTab('finanzas', this)">Finanzas</button>
+                <button class="sub-btn active" onclick="window.switchSubTab('catalogo', this)">CATÁLOGO</button>
+                <button class="sub-btn" onclick="window.switchSubTab('finanzas', this)">FINANZAS</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
             <div id="lista-catalogos"></div>
         </div>
     </main>
 
-    <!-- TICKET RENDER (BLOQUE ESTABLE v16.2) -->
+    <!-- TICKET RENDER (SÍMBOLO DE ESTABILIDAD v16.2) -->
     <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black; border: 1px solid #eee;">
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
@@ -350,7 +356,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v18.1 -->
+    <!-- MOTOR FIREBASE v18.3 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -440,7 +446,7 @@
             const list = document.getElementById('lista-ventas-hoy'); if(!list) return;
             const todayStr = new Date().toLocaleDateString('es-MX');
             const dv = window.state.sales.filter(s => s.fechaStr === todayStr).reverse();
-            if(dv.length === 0) { list.innerHTML = '<p class="small opacity-50 text-center py-3">Sin registros.</p>'; return; }
+            if(dv.length === 0) { list.innerHTML = '<p class="small opacity-50 text-center py-3">Sin registros hoy.</p>'; return; }
             list.innerHTML = dv.slice(0, 5).map(v => `
                 <div class="card-custom py-2 mb-2 d-flex justify-content-between align-items-center" style="border-left: 4px solid var(--accent); padding: 10px 15px;">
                     <div style="flex: 1; overflow: hidden;"><div class="fw-bold small text-uppercase text-truncate">${v.producto}</div><div class="small opacity-60">${v.cliente} | $${v.total.toFixed(2)}</div></div>
@@ -482,11 +488,32 @@
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const mode = window.activeSubTab;
-            const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
+            const mainMode = window.activeSubTab;
 
-            if (mode === 'clientes') {
-                list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
+            if (mainMode === 'catalogo') {
+                renderCatalogo(list);
+            } else if (mainMode === 'finanzas') {
+                renderFinanzas(list);
+            }
+        };
+
+        const renderCatalogo = (container) => {
+            const subTab = window.activeDataTab;
+            let html = `<div class="inner-sub-nav">
+                <button class="inner-btn inner-btn-data ${subTab === 'clientes' ? 'active' : ''}" onclick="window.switchDataTab('clientes', this)">CLIENTES</button>
+                <button class="inner-btn inner-btn-data ${subTab === 'productos' ? 'active' : ''}" onclick="window.switchDataTab('productos', this)">PRODUCTOS</button>
+                <button class="inner-btn inner-btn-data ${subTab === 'tiendas' ? 'active' : ''}" onclick="window.switchDataTab('tiendas', this)">TIENDAS</button>
+            </div>`;
+            
+            html += `<input type="text" id="search-cat" class="form-control mb-3" placeholder="Buscar en ${subTab}..." oninput="window.renderCatalogList()">`;
+            html += `<div id="data-list-container"></div>`;
+            container.innerHTML = html;
+
+            const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
+            const dataList = document.getElementById('data-list-container');
+
+            if (subTab === 'clientes') {
+                dataList.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
                     <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
                         <b>${getVal(c)}</b>
                         <div class="d-flex gap-2">
@@ -494,8 +521,8 @@
                             <button class="btn btn-sm btn-outline-danger" onclick="window.openDeleteModal('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>`).join('');
-            } else if (mode === 'productos') {
-                list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
+            } else if (subTab === 'productos') {
+                dataList.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
                     <div class="card-custom py-2">
                         <div class="d-flex justify-content-between">
                             <b>${getVal(p)}</b>
@@ -506,8 +533,8 @@
                         </div>
                         <small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | Venta: $${(p.pVenta||0).toFixed(2)}</small>
                     </div>`).join('');
-            } else if (mode === 'tiendas') {
-                list.innerHTML = window.state.stores.filter(s => getVal(s).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(s => `
+            } else if (subTab === 'tiendas') {
+                dataList.innerHTML = window.state.stores.filter(s => getVal(s).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(s => `
                     <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
                         <b class="text-uppercase">${getVal(s)}</b>
                         <div class="d-flex gap-2">
@@ -515,8 +542,6 @@
                             <button class="btn btn-sm btn-outline-danger" onclick="window.openDeleteModal('stores','${s.id}')"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>`).join('');
-            } else if (mode === 'finanzas') {
-                renderFinanzas(list);
             }
         };
 
@@ -625,6 +650,7 @@
             } catch(e) { toast("Error al guardar", "danger"); }
         };
 
+        // --- MOTOR TICKET v16.2 (BLINDADO) ---
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             if(!dateInput || !dateInput.value) return;
