@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.83</title>
+    <title>Yaute Rápidas Pro v10.84</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,8 +34,7 @@
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        .splash-version { margin-top: 15px; font-weight: 800; color: #94a3b8; font-size: 0.8rem; }
-        #force-enter-btn { display: none; margin-top: 25px; border: 2px solid var(--accent); color: var(--accent); background: #eff6ff; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; cursor: pointer; }
+        .splash-version { margin-top: 15px; font-weight: 800; color: #94a3b8; font-size: 0.8rem; letter-spacing: 1px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI --- */
@@ -80,8 +79,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div class="splash-version">v10.83 - Foco Lector</div>
-        <button id="force-enter-btn" onclick="removeSplash()">Entrar de todos modos</button>
+        <div class="splash-version">v10.84 - Estable</div>
     </div>
 
     <div id="cam-container">
@@ -94,7 +92,7 @@
     <div id="toast-alert"></div>
 
     <header>
-        <h5 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span id="status-dot" style="display:inline-block; width:10px; height:10px; border-radius:50%;" class="bg-warning"></span></h5>
+        <h5 class="m-0 fw-bold text-uppercase">Yaute Rápidas <span id="status-dot" style="display:inline-block; width:10px; height:10px; border-radius:50%;" class="bg-warning"></span></h5>
     </header>
 
     <main>
@@ -116,19 +114,19 @@
                 <div class="row g-2 mb-3 align-items-end">
                     <div class="col-2"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
                     <div class="col" style="position:relative">
-                        <label class="text-uppercase">Producto (Extracción IA)</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR EMPAQUE">
+                        <label class="text-uppercase">Producto (Foto IA)</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-auto"><button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button></div>
                 </div>
                 <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="text-uppercase">Costo (Anaquel)</label>
+                        <label class="text-uppercase">Costo</label>
                         <input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Precio Venta</label>
+                        <label class="text-uppercase">Venta</label>
                         <input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01">
                     </div>
                 </div>
@@ -146,7 +144,6 @@
                 <button class="sub-btn active" id="btn-sub-clients" onclick="switchSubTab('clientes', this)">Clientes</button>
                 <button class="sub-btn" id="btn-sub-products" onclick="switchSubTab('productos', this)">Productos</button>
                 <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
-                <button class="sub-btn" id="btn-sub-profit" onclick="switchSubTab('ganancias', this)">Ganancias</button>
                 <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
@@ -192,24 +189,22 @@
         const showToast = (msg, type = 'success') => {
             const toast = document.getElementById('toast-alert');
             if(!toast) return;
-            toast.style.background = type === 'success' ? 'var(--success)' : (type === 'warning' ? 'var(--warning)' : 'var(--danger)');
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
             toast.innerText = msg; toast.style.display = 'block'; 
-            if(type !== 'warning') setTimeout(() => toast.style.display = 'none', 3000);
+            setTimeout(() => toast.style.display = 'none', 3000);
         };
 
-        window.removeSplash = () => {
+        const removeSplash = () => {
             const splash = document.getElementById('splash-screen');
             if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
         };
-        setTimeout(() => { if(!user) document.getElementById('force-enter-btn').style.display = 'block'; }, 7500);
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
-        // --- GEMINI API CON REINTENTOS ---
+        // --- GEMINI API ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
-                    if (i > 0) showToast(`Reintentando análisis (${i}/5)...`, 'warning');
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                     });
@@ -227,63 +222,56 @@
 
         const startCamera = async () => {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 } } });
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
                 camPreview.srcObject = stream;
                 camContainer.style.display = 'block';
-            } catch (e) { showToast("Cámara no disponible", "danger"); }
+            } catch (e) { showToast("Error de cámara", "danger"); }
         };
 
         document.getElementById('btn-scan').onclick = startCamera;
         document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
         document.getElementById('btn-do-capture').onclick = () => {
-            showToast("Capturando producto...", "warning");
+            showToast("Procesando...");
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = 1080; camCanvas.height = 1440; 
-            ctx.drawImage(camPreview, 0, 0, 1080, 1440);
+            camCanvas.width = 800; camCanvas.height = 1000; 
+            ctx.drawImage(camPreview, 0, 0, 800, 1000);
             camCanvas.toBlob((blob) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const base64 = reader.result.split(',')[1];
                     if(stream) stream.getTracks().forEach(t => t.stop());
                     camContainer.style.display = 'none';
-                    processProductIA(base64);
+                    processIA(base64);
                 };
                 reader.readAsDataURL(blob);
-            }, 'image/jpeg', 0.9);
+            }, 'image/jpeg', 0.85);
         };
 
-        const cleanJSON = (text) => text.replace(/```json|```/g, "").trim();
-
-        async function processProductIA(base64) {
-            showToast("IA: Extrayendo información...", "warning");
+        async function processIA(base64) {
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Dime qué producto es este y su presentación (ej: Coca Cola 2.5L, Gansito 50g). Responde SOLO un JSON con este formato: {'nombre': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Dime nombre y presentación del producto. Responde SOLO JSON: {'nombre': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
-                const result = JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
-                
-                const fullName = (result.nombre || "").trim().toUpperCase();
-                
-                if(fullName.length > 2) {
-                    document.getElementById('in-producto').value = fullName;
-                    showToast("¡Datos extraídos!");
-                    document.getElementById('in-costo').focus();
-                } else {
-                    showToast("IA: No pude leer bien el producto", "danger");
-                }
-            } catch (e) { showToast("Fallo de identificación", "danger"); }
+                const result = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim());
+                document.getElementById('in-producto').value = (result.nombre || "").toUpperCase();
+                showToast("¡Listo!");
+            } catch (e) { showToast("IA: Reintente", "danger"); }
         }
 
         // --- AUTH & SYNC ---
         const initAuth = async () => {
           try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await signInWithCustomToken(auth, __initial_auth_token); } 
-            else { await signInAnonymously(auth); }
-          } catch (error) { await signInAnonymously(auth); }
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (e) { await signInAnonymously(auth); }
         };
+
         initAuth();
 
         onAuthStateChanged(auth, (u) => {
@@ -292,7 +280,8 @@
                 document.getElementById('status-dot').className = 'status-indicator bg-success';
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
-                setTimeout(removeSplash, 800);
+                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
+                setTimeout(removeSplash, 1000);
             }
         });
 
@@ -343,44 +332,43 @@
             const today = getISODate();
             if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else if(id === 'ganancias') fw.innerHTML = `<input type="date" id="hist-date" class="form-control text-center" value="${today}" onchange="window.renderCatalogList()">`;
             else if(id === 'diezmo') fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
-            renderCatalogList();
+            
+            setTimeout(() => {
+                const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
+                const cOpt = `<option value="">CLIENTES</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
+                if(document.getElementById('filter-store')) document.getElementById('filter-store').innerHTML = sOpt;
+                if(document.getElementById('filter-client')) document.getElementById('filter-client').innerHTML = cOpt;
+                renderCatalogList();
+            }, 50);
         };
 
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); if(!list) return;
-            const targetDateInput = document.getElementById('entregas-date').value;
-            const targetDate = new Date(targetDateInput + "T12:00:00").toLocaleDateString('es-MX');
+            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
             if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { if(!acc[v.cliente]) acc[v.cliente] = {t:0, items:[]}; acc[v.cliente].t += v.total; acc[v.cliente].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
                     <div class="d-flex justify-content-between mb-2"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'entregado', this.checked)"> ENTREGA</label><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'pagado', this.checked)"> PAGO</label></div>
                     <div class="small">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`).join('');
-        };
-
-        window.toggleStatus = async (cli, field, val) => {
-            if(!user) return;
-            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === fd);
-            for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
         };
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><div class="d-flex gap-2"><button class="btn btn-sm text-danger" onclick="window.deleteItem('clientes', '${c.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clientes', '${c.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => (p.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><div class="d-flex justify-content-between mt-1 small opacity-75"><span>C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</span><button class="btn btn-sm text-danger" onclick="window.deleteItem('productos', '${p.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                list.innerHTML = state.products.filter(p => (p.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><br><small class="opacity-50">C: $${p.pCosto} | V: $${p.pVenta}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
                 const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
                 let dv = state.sales.filter(s => s.fechaStr === fd);
-                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
+                if(document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
+                if(document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
+                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             } else {
                 const sD = new Date(document.getElementById('d-start').value + "T00:00:00");
                 const eD = new Date(document.getElementById('d-end').value + "T23:59:59");
@@ -390,12 +378,9 @@
         };
 
         window.deleteItem = (col, id) => {
+            if(!user) return;
             const collectionName = col === 'clientes' ? 'clients' : 'products';
-            openModal("Borrar", "¿Eliminar del catálogo?", async () => { if(!user) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id)); });
-        };
-
-        const openModal = (title, bodyHtml, onOk) => {
-            const results = [true]; onOk(results);
+            deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id));
         };
 
         document.getElementById('btn-save').onclick = async () => {
