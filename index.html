@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ofertas Rápidas Yaute v17.1</title>
+    <title>Ofertas Rápidas Yaute v17.2</title>
     
     <!-- Meta tags para apariencia de App Nativa -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,7 +57,7 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- UI --- */
+        /* --- UI CABECERA --- */
         header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 900; margin-left: 10px; vertical-align: middle; }
         
@@ -81,6 +81,9 @@
 
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.85rem; }
 
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
+        .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; }
+
         #cam-container { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
 
@@ -99,7 +102,7 @@
         <div class="splash-content">
             <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
             <div class="splash-loader"></div>
-            <div id="splash-status" style="font-size:0.75rem; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:2px;">ESCÁNER DE PRODUCTOS v17.1</div>
+            <div id="splash-status">RESTAURANDO FUNCIONES v17.2</div>
         </div>
     </div>
 
@@ -147,11 +150,18 @@
             if(id === 'clientes' || id === 'productos') {
                 fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="if(window.renderCatalogList) window.renderCatalogList()">`;
             } else if(id === 'sales') {
-                fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
+                fw.innerHTML = `<label class="text-uppercase small fw-bold mb-1">Ver día:</label><input type="date" id="hist-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
-                fw.innerHTML = `<div class="d-flex flex-column gap-2"><div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"></div></div>`;
+                fw.innerHTML = `
+                    <div class="d-flex flex-column gap-2">
+                        <label class="text-uppercase small fw-bold">Rango de Ganancia</label>
+                        <div class="d-flex gap-2">
+                            <input type="date" id="d-start" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">
+                            <input type="date" id="d-end" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">
+                        </div>
+                    </div>`;
             } else if(id === 'tiendas') {
-                fw.innerHTML = `<input type="date" id="store-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
+                fw.innerHTML = `<label class="text-uppercase small fw-bold mb-1">Ventas por día:</label><input type="date" id="store-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
             }
             if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
         };
@@ -165,7 +175,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v17.1</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v17.2</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -180,6 +190,7 @@
     </div>
 
     <main>
+        <!-- VENTA -->
         <div id="tab-operaciones" class="tab-content active" style="display: block;">
             <div class="card-custom">
                 <div class="row g-3 mb-3">
@@ -201,8 +212,8 @@
                         <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1" min="1">
                     </div>
                     <div class="col" style="position:relative">
-                        <label class="text-uppercase">Producto (Escanea nombre/tamaño)</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="DESCRIBIR O FOTO">
+                        <label class="text-uppercase">Producto (Escanea para nombre)</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="PRODUCTO">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-auto">
@@ -223,6 +234,7 @@
             </div>
         </div>
 
+        <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content" style="display: none;">
             <div class="card-custom py-2 mb-3 text-center">
                 <label class="text-uppercase small fw-bold">Fecha de Reparto</label>
@@ -231,6 +243,7 @@
             <div id="lista-entregas"></div>
         </div>
 
+        <!-- CONTROL -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
                 <button class="sub-btn active" onclick="window.switchSubTab('clientes', this)">Clientes</button>
@@ -263,7 +276,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v17.1 (IA DE PRODUCTO MEJORADA) -->
+    <!-- MOTOR FIREBASE v17.2 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -361,7 +374,7 @@
             };
         };
 
-        // --- CATALOGOS ---
+        // --- RENDER CATALOGOS Y HERRAMIENTAS (RESTAURADO) ---
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
@@ -378,21 +391,29 @@
                 const [y, m, d] = dIn.value.split('-');
                 const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
                 const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
-                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${(v.total||0).toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+(v.total||0),0).toFixed(2)}</div>`;
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between align-items-center"><div><b>${v.producto}</b><br><small class="text-uppercase">${v.cliente}</small></div><b>$${(v.total||0).toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white text-center">TOTAL DÍA: $${dv.reduce((a,v)=>a+(v.total||0),0).toFixed(2)}</div>`;
             } else if(mode === 'diezmo') {
                 const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
                 if(!sEl || !eEl) return;
                 const s = new Date(sEl.value + "T00:00:00"), e = new Date(eEl.value + "T23:59:59");
                 const fs = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
                 const profit = fs.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia total: $${profit.toFixed(2)}</div></div>`;
+                list.innerHTML = `
+                    <div class="card-custom bg-success text-white text-center py-4 mb-2">
+                        <div class="small text-uppercase opacity-80">Ganancia Real Acumulada</div>
+                        <h2 class="fw-black mb-0">$${profit.toFixed(2)}</h2>
+                    </div>
+                    <div class="card-custom bg-primary text-white text-center py-4">
+                        <div class="small text-uppercase opacity-80">10% Diezmo Sugerido</div>
+                        <h1 class="fw-black mb-0">$${(profit * 0.1).toFixed(2)}</h1>
+                    </div>`;
             } else if(mode === 'tiendas') {
                 const sD = document.getElementById('store-date'); if(!sD) return;
                 const [y, m, d] = sD.value.split('-');
                 const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
                 const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
                 const grouped = dv.reduce((acc, v) => { const t = v.tienda || "S/N"; acc[t] = (acc[t] || 0) + v.total; return acc; }, {});
-                list.innerHTML = Object.keys(grouped).map(t => `<div class="card-custom d-flex justify-content-between py-2"><b>${t}</b><b>$${grouped[t].toFixed(2)}</b></div>`).join('') || '<p class="text-center opacity-40">Sin ventas hoy</p>';
+                list.innerHTML = Object.keys(grouped).map(t => `<div class="card-custom d-flex justify-content-between py-3"><b class="text-uppercase">${t}</b><b class="text-primary">$${grouped[t].toFixed(2)}</b></div>`).join('') || '<p class="text-center py-5 opacity-40">Sin ventas hoy</p>';
             }
         };
 
@@ -432,12 +453,12 @@
         // --- BORRAR ---
         document.getElementById('btn-modal-confirm').onclick = async () => {
             const { col, id } = window.pendingDelete;
-            if(col && id) { try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); toast("Registro eliminado"); window.closeModal(); } catch(e) { toast("Error al eliminar", "danger"); } }
+            if(col && id) { try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); toast("Eliminado"); window.closeModal(); } catch(e) { toast("Error al eliminar", "danger"); } }
         };
 
         // --- GUARDAR ---
         document.getElementById('btn-save-record').onclick = async () => {
-            if(!currentUser) return toast("Esperando conexión...", "danger");
+            if(!currentUser) return toast("Conectando...", "danger");
             const d = {
                 tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
                 cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
@@ -454,14 +475,14 @@
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
                 const ck = async (col, val, ex = {}) => { if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); };
                 await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                toast("¡Venta Guardada!");
+                toast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { toast("Error al guardar", "danger"); }
         };
 
         // --- WHATSAPP (FOTO DIRECTA) ---
         window.shareTicket = async (n) => {
-            toast("Preparando foto...");
+            toast("Capturando nota...");
             const dateIn = document.getElementById('entregas-date');
             if(!dateIn?.value) return;
             const [y, m, d] = dateIn.value.split('-');
@@ -481,7 +502,7 @@
                     canvas.toBlob(async blob => {
                         if (!blob) return toast("Error de captura", "danger");
                         const imageFile = new File([blob], `NotaYaute_${n.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
-                        const shareData = { files: [imageFile], title: 'Nota de Venta Yaute', text: `Hola ${n}, aquí tienes tu nota de venta de Ofertas Rápidas Yaute. ¡Gracias por tu compra!` };
+                        const shareData = { files: [imageFile], title: 'Nota Yaute', text: `Hola ${n}, aquí tienes tu nota de venta de Ofertas Rápidas Yaute. ¡Gracias por tu compra!` };
                         if (navigator.canShare && navigator.canShare({ files: [imageFile] })) {
                             try { await navigator.share(shareData); } catch (sErr) { console.warn("Share cancelado"); }
                         } else {
@@ -494,7 +515,7 @@
             }, 100);
         };
 
-        // --- CÁMARA E IA DE PRODUCTO (NUEVA LÓGICA v17.1) ---
+        // --- CÁMARA E IA ---
         let stream = null;
         window.openCam = async () => {
             try {
@@ -520,26 +541,15 @@
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        contents: [{ 
-                            parts: [
-                                { text: "Identifica el nombre del producto y su presentación (contenido neto, peso o piezas) a partir de la imagen. Responde estrictamente en formato JSON: {'nombre': 'marca y producto', 'presentacion': 'cantidad/tamaño'}" }, 
-                                { inlineData: { mimeType: "image/jpeg", data: base64 } }
-                            ] 
-                        }], 
-                        generationConfig: { responseMimeType: "application/json" } 
-                    })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "Identifica el nombre del producto y su presentación (contenido neto, peso o piezas) a partir de la imagen. Responde estrictamente JSON: {'nombre': 'marca y producto', 'presentacion': 'cantidad'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }], generationConfig: { responseMimeType: "application/json" } })
                 });
                 const data = await res.json();
                 const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
                 const result = JSON.parse(text.replace(/```json|```/g, "").trim());
-                
                 if(result.nombre) {
                     const finalName = `${result.nombre} ${result.presentacion || ""}`.trim().toUpperCase();
                     document.getElementById('in-producto').value = finalName;
-                    toast("¡Producto escaneado!");
-                    
-                    // Buscar si ya existe para cargar costos históricos
+                    toast("¡Escaneado!");
                     const prodFound = window.state.products.find(p => getVal(p).toUpperCase() === finalName);
                     if(prodFound) {
                         document.getElementById('in-costo').value = prodFound.pCosto || prodFound.costo || "";
@@ -547,10 +557,7 @@
                         document.getElementById('in-costo').dispatchEvent(new Event('input'));
                     }
                 }
-            } catch (e) { 
-                console.error(e);
-                toast("Error al analizar foto", "danger"); 
-            }
+            } catch (e) { toast("Error IA", "danger"); }
         }
     </script>
 </body>
