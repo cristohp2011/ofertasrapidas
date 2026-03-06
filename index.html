@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v11.1</title>
+    <title>Ofertas Rápidas Yaute v11.5</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 85%; }
+        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -53,8 +53,6 @@
         .form-control { padding: 0.7rem 0.8rem; font-size: 0.95rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; letter-spacing: 0.5px; }
 
-        .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; transition: 0.2s; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
@@ -66,19 +64,19 @@
 
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; }
-
-        .check-group { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 10px 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .check-item { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 800; color: #475569; }
-        .check-item input { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
+        
+        .check-group { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 8px 12px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+        .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
+        .check-item input { width: 18px; height: 18px; accent-color: var(--success); }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen con Desbloqueo Forzado -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status">AUTENTICANDO PROYECTO...</div>
+        <div id="splash-status">CONECTANDO v11.5...</div>
     </div>
 
     <script>
@@ -89,16 +87,16 @@
                 setTimeout(() => { if(splash) splash.style.display = 'none'; }, 400);
             }
         };
-        // DESBLOQUEO GARANTIZADO A LOS 3 SEGUNDOS
-        setTimeout(window.removeSplash, 3000);
+        // Paracaídas para asegurar que la app cargue en 4 segundos máximo
+        setTimeout(window.removeSplash, 4000);
     </script>
 
     <div id="toast-alert"></div>
 
     <header>
         <div class="d-flex align-items-center justify-content-center gap-1">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v11.1</span></h6>
-            <div id="status-dot" class="bg-warning" style="width:10px; height:10px; border-radius:50%; transition: 0.3s; margin-left: 5px;"></div>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v11.5</span></h6>
+            <div id="status-dot" class="bg-warning" style="width:12px; height:12px; border-radius:50%; transition: 0.3s; margin-left: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
         </div>
     </header>
 
@@ -147,8 +145,8 @@
         <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-2 mb-3 text-center">
-                <label class="text-uppercase small fw-bold">Fecha de Reparto</label>
-                <input type="date" id="entregas-date" class="form-control text-center fw-bold border-0">
+                <label class="text-uppercase small fw-bold">Repartos del día</label>
+                <input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()">
             </div>
             <div id="lista-entregas"></div>
         </div>
@@ -172,29 +170,17 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR DE FIREBASE v11.1 (FORZADO) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE RESPALDO (TUS DATOS DE FIREBASE)
-        const backupConfig = {
-            apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA",
-            authDomain: "prueba-5e215.firebaseapp.com",
-            projectId: "prueba-5e215",
-            storageBucket: "prueba-5e215.firebasestorage.app",
-            messagingSenderId: "898868587449",
-            appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
-        };
-
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : backupConfig;
+        // Configuración dinámica inyectada por el entorno
+        const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
-        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
-        // REGLA DE ORO: Forzar Long Polling para entornos con restricciones (Canvas/GitHub)
+        // Long polling para evitar bloqueos de red
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
@@ -205,8 +191,7 @@
             const dot = document.getElementById('status-dot');
             if (!dot) return;
             dot.className = s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : 'bg-warning');
-            if(s === 'ok') dot.style.boxShadow = '0 0 12px #10b981';
-            if(s === 'err') dot.style.boxShadow = '0 0 12px #ef4444';
+            if(s === 'ok') dot.style.boxShadow = '0 0 15px #10b981';
         };
 
         const toast = (m, type = 'success') => {
@@ -217,91 +202,86 @@
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
-        const updateStatusText = (m) => {
-            const el = document.getElementById('splash-status');
-            if(el) el.innerText = m;
+        // Ayudante para obtener nombres sin importar el campo usado en versiones previas
+        const getName = (obj) => {
+            return obj.nombre || obj.name || obj.cliente || obj.producto || obj.tienda || "S/N";
         };
 
-        // --- AUTH ---
+        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
+
+        // --- AUTENTICACIÓN ---
         const startApp = async () => {
             try {
-                updateStatusText("CONECTANDO A GOOGLE...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (e) { 
-                console.warn("Reintentando conexión...");
-                await signInAnonymously(auth).catch(() => {
-                    updateStatusText("ERROR DE RED. REINTENTE.");
-                    setIndicator('err');
-                });
-            }
+            } catch (e) { await signInAnonymously(auth); }
         };
         startApp();
 
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
-                updateStatusText("SINCRONIZANDO DATOS...");
-                window.removeSplash();
-                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
-                startSync();
+                window.removeSplash(); 
+                document.getElementById('entregas-date').value = getISODate();
+                startDataSync();
             }
         });
 
-        // REGLA 1: Estructura de rutas /artifacts/{appId}/public/data/{collectionName}
-        const startSync = () => {
+        // REGLA 1: Rutas estrictas obligatorias artifacts/{appId}/public/data/...
+        const startDataSync = () => {
             if(!user) return;
             const cols = ['sales', 'clients', 'stores', 'products'];
-            cols.forEach(n => {
-                const ref = collection(db, 'artifacts', appId, 'public', 'data', n);
-                onSnapshot(ref, (s) => {
-                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            let collectionsReady = 0;
+
+            cols.forEach(collectionName => {
+                const path = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
+                
+                onSnapshot(path, (snapshot) => {
+                    state[collectionName] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     
-                    // Indicador VERDE solo si hay datos reales
-                    if (state.clients.length > 0 || state.products.length > 0) {
-                        setIndicator('ok');
-                    }
+                    collectionsReady++;
+                    if (collectionsReady >= 1) setIndicator('ok');
                     
-                    if(n === 'sales') window.renderEntregas();
+                    if(collectionName === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
-                    console.error("ERROR DE PERMISOS:", err.code);
+                    console.error("Error en " + collectionName, err);
                     setIndicator('err');
-                    if(err.code === 'permission-denied') {
-                        toast("Permisos de Firebase denegados", "danger");
-                    }
                 });
             });
-            setupAuto('in-tienda', 'sug-tienda', 'stores');
-            setupAuto('in-cliente', 'sug-cliente', 'clients');
-            setupAuto('in-producto', 'sug-producto', 'products');
+
+            setupAutoComplete('in-tienda', 'sug-tienda', 'stores');
+            setupAutoComplete('in-cliente', 'sug-cliente', 'clients');
+            setupAutoComplete('in-producto', 'sug-producto', 'products');
             
-            // Forzar carga de pestaña inicial
             window.switchSubTab('clientes', document.getElementById('sub-clients'));
         };
 
-        const setupAuto = (id, boxId, key) => {
-            const inp = document.getElementById(id); const box = document.getElementById(boxId);
+        const setupAutoComplete = (inputId, boxId, key) => {
+            const inp = document.getElementById(inputId); 
+            const box = document.getElementById(boxId);
             if (!inp || !box) return;
+
             inp.oninput = () => {
-                const val = inp.value.toUpperCase();
+                const val = inp.value.toUpperCase().trim();
                 if(!val) { box.classList.add('d-none'); return; }
-                const items = state[key] || [];
-                const ms = items.filter(x => {
-                    const name = (x.nombre || x.name || '').toUpperCase();
-                    return name.includes(val);
+                const matches = (state[key] || []).filter(x => {
+                    const n = getName(x).toUpperCase();
+                    return n.includes(val);
                 }).slice(0, 5);
-                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre || x.name}">${x.nombre || x.name}</div>`).join('');
-                box.classList.toggle('d-none', ms.length === 0);
+                
+                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${getName(x)}">${getName(x)}</div>`).join('');
+                box.classList.toggle('d-none', matches.length === 0);
             };
+
             box.onclick = (e) => {
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
-                    const prod = state.products.find(p => (p.nombre || p.name) === item.dataset.val);
+                    const prod = state.products.find(p => getName(p) === item.dataset.val);
                     if (prod) { 
                         document.getElementById('in-costo').value = prod.pCosto || prod.costo || ""; 
                         document.getElementById('in-precio').value = prod.pVenta || prod.precio || ""; 
@@ -310,6 +290,7 @@
             };
         };
 
+        // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             const target = document.getElementById('tab-' + id);
@@ -324,7 +305,7 @@
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             if(!fw) return;
-            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+            const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
                 fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
@@ -339,37 +320,50 @@
             const list = document.getElementById('lista-entregas'); if(!list) return;
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
+            
+            // Convertir fecha de input (yyyy-mm-dd) a formato local (d/m/yyyy o dd/mm/yyyy)
             const [y, m, d] = selDate.split('-');
-            const target = `${d}/${m}/${y}`;
-            const filtered = state.sales.filter(s => s.fechaStr === target);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos para hoy</p>'; return; }
-            const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
+            const targetWithZeros = `${d}/${m}/${y}`;
+            const targetNoZeros = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            
+            // Filtrar comparando ambos formatos posibles para mayor seguridad
+            const filtered = state.sales.filter(s => s.fechaStr === targetWithZeros || s.fechaStr === targetNoZeros);
+            
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos para esta fecha</p>'; return; }
+            
+            const grouped = filtered.reduce((acc, v) => { 
+                const c = v.cliente || "S/N"; 
+                if(!acc[c]) acc[c] = {t:0, items:[]}; 
+                acc[c].t += (v.total || 0); 
+                acc[c].items.push(v); 
+                return acc; 
+            }, {});
+
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b></div>
-                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleS('${cli}', '${target}', 'entregado', this.checked)"> ENTREGA</label><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleS('${cli}', '${target}', 'pagado', this.checked)"> PAGO</label></div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <b class="text-uppercase">${cli}</b>
+                    </div>
                     <div class="small opacity-75">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`).join('');
-        };
-
-        window.toggleS = async (cli, date, f, v) => {
-            if(!user) return;
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === date);
-            for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [f]: v });
+                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div>
+                </div>`).join('');
         };
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => (c.nombre || c.name || '').toUpperCase().includes(q)).sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${c.nombre || c.name}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+                const filtered = state.clients.filter(c => getName(c).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${getName(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => (p.nombre || p.name || '').toUpperCase().includes(q)).sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(p => `<div class="card-custom py-2"><b>${p.nombre || p.name}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+                const filtered = state.products.filter(p => getName(p).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(p => `<div class="card-custom py-2"><b>${getName(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
                 const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
                 const [year, month, day] = dateEl.value.split('-');
-                const fd = `${day}/${month}/${year}`;
-                const dv = state.sales.filter(s => s.fechaStr === fd);
+                const targetWithZeros = `${day}/${month}/${year}`;
+                const targetNoZeros = `${parseInt(day)}/${parseInt(month)}/${year}`;
+                const dv = state.sales.filter(s => s.fechaStr === targetWithZeros || s.fechaStr === targetNoZeros);
                 list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL DÍA: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             }
         };
@@ -393,14 +387,14 @@
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
                 const ck = async (c, v, ex = {}) => { 
-                    if(!state[c].some(x => (x.nombre || x.name || '').toUpperCase() === v)) {
+                    if(!state[c].some(x => getName(x).toUpperCase() === v)) {
                         await addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: v, ...ex }); 
                     }
                 };
                 await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                toast("¡Venta guardada!");
+                toast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { toast("Error al guardar", "danger"); }
+            } catch(e) { toast("Error de guardado", "danger"); }
         };
     </script>
 </body>
