@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.85</title>
+    <title>Ofertas Rápidas Yaute v10.90</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,22 +25,22 @@
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN (CONTROL ABSOLUTO) --- */
         #splash-screen { 
             position: fixed; inset: 0; background: #ffffff; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 9999; transition: opacity 0.4s ease;
+            z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s;
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        #splash-status { margin-top: 15px; font-size: 0.7rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- UI --- */
+        /* --- UI CABECERA --- */
         header { background: var(--primary); color: white; padding: 0.8rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
-        .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 2px 8px; border-radius: 6px; font-weight: 900; margin-left: 8px; vertical-align: middle; }
+        .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 2px 8px; border-radius: 6px; font-weight: 900; margin-left: 8px; vertical-align: middle; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         
@@ -56,7 +56,7 @@
         .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; transition: 0.2s; }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
@@ -79,19 +79,47 @@
 </head>
 <body>
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen con Desbloqueo Garantizado -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status">CONECTANDO AL SERVIDOR...</div>
-        <button id="btn-rescue" onclick="window.removeSplash()" style="display:none; margin-top:20px; border:none; background:none; color:var(--accent); font-weight:800; font-size:0.7rem; text-decoration:underline;">SALTAR CARGA</button>
+        <div id="splash-status">INICIANDO SISTEMA...</div>
     </div>
+
+    <!-- Script de Paracaídas MEJORADO (Se ejecuta primero y fuera de cualquier módulo) -->
+    <script>
+        // Función mejorada para eliminar splash
+        window.removeSplash = function() {
+            console.log("Intentando remover splash...");
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => { 
+                    if(splash && splash.parentNode) {
+                        splash.style.display = 'none'; 
+                        console.log("Splash removido");
+                    }
+                }, 300);
+            }
+        };
+        
+        // DESBLOQUEO FORZADO ABSOLUTO - Múltiples tiempos de respaldo
+        setTimeout(window.removeSplash, 1500);  // Intento rápido
+        setTimeout(window.removeSplash, 3000);  // Respaldo
+        setTimeout(window.removeSplash, 5000);  // Respaldo final
+        
+        // Si todo falla, este es el as bajo la manga
+        window.addEventListener('load', function() {
+            setTimeout(window.removeSplash, 500);
+        });
+    </script>
 
     <div id="toast-alert"></div>
 
     <header>
         <div class="d-flex align-items-center justify-content-center gap-1">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v10.85</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v10.90</span></h6>
             <div id="status-dot" class="bg-warning" style="width:10px; height:10px; border-radius:50%; transition: 0.3s; margin-left: 5px;"></div>
         </div>
     </header>
@@ -104,7 +132,7 @@
     </div>
 
     <main>
-        <!-- VENTA -->
+        <!-- PESTAÑA 1: VENTA -->
         <div id="tab-operaciones" class="tab-content active">
             <div class="card-custom" style="border-left-color: var(--accent);">
                 <div class="row g-2 mb-3">
@@ -144,11 +172,11 @@
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                <button id="btn-save-action" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
+                <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
             </div>
         </div>
 
-        <!-- REPARTO -->
+        <!-- PESTAÑA 2: REPARTO -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-2 mb-3 text-center">
                 <label class="text-uppercase small fw-bold">Fecha de Reparto</label>
@@ -157,7 +185,7 @@
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- CONTROL -->
+        <!-- PESTAÑA 3: CONTROL -->
         <div id="tab-control" class="tab-content">
             <div class="sub-nav">
                 <button class="sub-btn active" id="sub-clients" onclick="window.switchSubTab('clientes', this)">Clientes</button>
@@ -170,6 +198,7 @@
         </div>
     </main>
 
+    <!-- TICKET INVISIBLE PARA COMPARTIR -->
     <div id="ticket-render" style="position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace;">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
         <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
@@ -180,46 +209,71 @@
         <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-grand-total"></span></div>
     </div>
 
+    <!-- NAVEGACIÓN INFERIOR -->
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="window.showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
         <button class="tab-btn" onclick="window.showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- UI SCRIPTS (ALWAYS RESPONSIVE) -->
+    <!-- CONFIGURACIÓN DE FIREBASE (¡IMPORTANTE! Debes reemplazar con tus datos) -->
     <script>
-        window.removeSplash = function() {
-            const splash = document.getElementById('splash-screen');
-            if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
+        // ===== CONFIGURACIÓN REQUERIDA =====
+        // Reemplaza estos valores con los de tu proyecto Firebase
+        window.__firebase_config = {
+            apiKey: "AIzaSyXXXXXXXXXXXXXXX",  // <-- REEMPLAZA CON TU API KEY
+            authDomain: "tu-proyecto.firebaseapp.com",  // <-- REEMPLAZA
+            projectId: "tu-proyecto",  // <-- REEMPLAZA
+            storageBucket: "tu-proyecto.appspot.com",  // <-- REEMPLAZA
+            messagingSenderId: "000000000000",  // <-- REEMPLAZA
+            appId: "1:000000000000:web:xxxxxxxxxx"  // <-- REEMPLAZA
         };
-        setTimeout(() => { document.getElementById('btn-rescue').style.display = 'block'; }, 4000);
-
-        window.showTab = function(id, btn) {
+        
+        window.__app_id = 'yaute-v1-shared';
+        window.__initial_auth_token = null;  // Déjalo así si usas auth anónima
+        
+        // API Key de Gemini (opcional, para la cámara)
+        window.__gemini_api_key = ""; // <-- OPCIONAL: Tu API key de Gemini
+        
+        // Función para cambiar pestañas
+        window.showTab = function(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            const tab = document.getElementById('tab-' + id);
-            if (tab) tab.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
         };
     </script>
 
-    <!-- DATA MOTOR -->
+    <!-- MOTOR DE FIREBASE Y LÓGICA -->
     <script type="module">
+        // Importaciones de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global environment provided variables
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
+        // Verificar configuración
+        if (!window.__firebase_config || !window.__firebase_config.apiKey) {
+            console.error("ERROR: Configuración de Firebase no encontrada");
+            document.getElementById('splash-status').innerText = "ERROR: Configura Firebase";
+            setTimeout(() => window.removeSplash(), 2000);
+            throw new Error("Firebase config missing");
+        }
+
+        // Inicializar Firebase
+        const firebaseConfig = window.__firebase_config;
+        const appId = window.__app_id || 'yaute-v1-shared';
+        
+        console.log("Inicializando Firebase...");
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Estado de la aplicación
         let state = { sales: [], clients: [], stores: [], products: [] };
         let activeSubTab = 'clientes';
         let user = null;
 
+        // Utilidades
         const setIndicator = (status) => {
             const dot = document.getElementById('status-dot');
             if (!dot) return;
@@ -231,217 +285,539 @@
             const el = document.getElementById('toast-alert');
             if(!el) return;
             el.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            el.innerText = m; el.style.display = 'block';
+            el.innerText = m; 
+            el.style.display = 'block';
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
-        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
-
-        // --- AUTH (REGLA 3) ---
-        const start = async () => {
+        // --- AUTENTICACIÓN ---
+        const initAuth = async () => {
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
+                setIndicator('warn');
+                document.getElementById('splash-status').innerText = "CONECTANDO...";
+                
+                if (window.__initial_auth_token) {
+                    await signInWithCustomToken(auth, window.__initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (e) { await signInAnonymously(auth); }
+            } catch (e) {
+                console.warn("Error en auth, intentando anónimo:", e);
+                try {
+                    await signInAnonymously(auth);
+                } catch(e2) {
+                    console.error("Error fatal de auth:", e2);
+                    document.getElementById('splash-status').innerText = "ERROR DE RED";
+                    setTimeout(() => window.removeSplash(), 2000);
+                }
+            }
         };
-        start();
+        
+        initAuth();
 
         onAuthStateChanged(auth, (u) => {
             if (u) {
+                console.log("Usuario autenticado:", u.uid);
                 user = u;
-                window.removeSplash();
+                window.removeSplash(); // QUITAMOS SPLASH INMEDIATAMENTE
+                
                 const ed = document.getElementById('entregas-date');
-                if(ed) ed.value = getISODate();
+                if(ed) ed.value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                
                 startSync();
-                window.switchSubTab('clientes', document.getElementById('sub-clients'));
+                
+                // Cambiar a pestaña clientes por defecto
+                setTimeout(() => {
+                    if(document.getElementById('sub-clients')) {
+                        window.switchSubTab('clientes', document.getElementById('sub-clients'));
+                    }
+                }, 100);
             }
         });
 
         const startSync = () => {
             if(!user) return;
-            const cols = ['sales', 'clients', 'stores', 'products'];
-            cols.forEach(n => {
-                // REGLA 1: Ruta pública estricta
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
-                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            
+            console.log("Iniciando sincronización...");
+            const collections = ['sales', 'clients', 'stores', 'products'];
+            
+            collections.forEach(collectionName => {
+                // Usar una estructura más simple para las colecciones
+                const collectionRef = collection(db, 'apps', appId, collectionName);
+                
+                onSnapshot(collectionRef, (snapshot) => {
+                    console.log(`Datos recibidos de ${collectionName}:`, snapshot.size);
+                    state[collectionName] = snapshot.docs.map(d => ({ 
+                        id: d.id, 
+                        ...d.data() 
+                    }));
+                    
                     setIndicator('ok');
-                    if(n === 'sales') window.renderEntregas();
-                    window.renderCatalogList();
+                    
+                    // Renderizar según corresponda
+                    if(collectionName === 'sales') {
+                        if(typeof window.renderEntregas === 'function') window.renderEntregas();
+                    }
+                    if(typeof window.renderCatalogList === 'function') window.renderCatalogList();
+                    
                 }, (err) => {
-                    console.error("Firebase Error:", n, err);
+                    console.error(`Error en ${collectionName}:`, err);
                     setIndicator('err');
                 });
             });
-            setupAuto('in-tienda', 'sug-tienda', 'stores');
-            setupAuto('in-cliente', 'sug-cliente', 'clients');
-            setupAuto('in-producto', 'sug-producto', 'products');
+            
+            // Configurar autocompletados después de un pequeño delay
+            setTimeout(() => {
+                setupAuto('in-tienda', 'sug-tienda', 'stores');
+                setupAuto('in-cliente', 'sug-cliente', 'clients');
+                setupAuto('in-producto', 'sug-producto', 'products');
+            }, 1000);
         };
 
-        const setupAuto = (id, boxId, key) => {
-            const inp = document.getElementById(id); const box = document.getElementById(boxId);
-            if (!inp || !box) return;
+        const setupAuto = (inputId, boxId, key) => {
+            const inp = document.getElementById(inputId); 
+            const box = document.getElementById(boxId);
+            
+            if (!inp || !box) {
+                console.warn(`Elementos no encontrados: ${inputId}, ${boxId}`);
+                return;
+            }
+            
             inp.oninput = () => {
-                const val = inp.value.toUpperCase();
-                if(!val) { box.classList.add('d-none'); return; }
-                const ms = state[key].filter(x => (x.nombre || x.name || '').toUpperCase().includes(val)).slice(0, 5);
-                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre || x.name}">${x.nombre || x.name}</div>`).join('');
-                box.classList.toggle('d-none', ms.length === 0);
+                const val = inp.value.toUpperCase().trim();
+                if(!val) { 
+                    box.classList.add('d-none'); 
+                    return; 
+                }
+                
+                const items = state[key] || [];
+                const matches = items
+                    .filter(x => (x.nombre || x.name || '').toUpperCase().includes(val))
+                    .slice(0, 5);
+                
+                if(matches.length === 0) {
+                    box.classList.add('d-none');
+                    return;
+                }
+                
+                box.innerHTML = matches.map(x => {
+                    const nombre = x.nombre || x.name || '';
+                    return `<div class="sug-item" data-val="${nombre}">${nombre}</div>`;
+                }).join('');
+                
+                box.classList.remove('d-none');
             };
+            
+            // Cerrar sugerencias al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                if(!inp.contains(e.target) && !box.contains(e.target)) {
+                    box.classList.add('d-none');
+                }
+            });
+            
             box.onclick = (e) => {
-                const item = e.target.closest('.sug-item'); if(!item) return;
-                inp.value = item.dataset.val; box.classList.add('d-none');
+                const item = e.target.closest('.sug-item'); 
+                if(!item) return;
+                
+                inp.value = item.dataset.val; 
+                box.classList.add('d-none');
+                
                 if (key === 'products') {
-                    const prod = state.products.find(p => (p.nombre || p.name) === item.dataset.val);
-                    if (prod) { document.getElementById('in-costo').value = prod.pCosto || prod.costo || ""; document.getElementById('in-precio').value = prod.pVenta || prod.precio || ""; }
+                    const prod = state.products.find(p => 
+                        (p.nombre || p.name || '') === item.dataset.val
+                    );
+                    
+                    if (prod) { 
+                        const costoInp = document.getElementById('in-costo');
+                        const precioInp = document.getElementById('in-precio');
+                        
+                        if(costoInp) costoInp.value = prod.pCosto || prod.costo || ""; 
+                        if(precioInp) precioInp.value = prod.pVenta || prod.precio || ""; 
+                    }
                 }
             };
         };
 
+        // --- NAVEGACIÓN Y RENDERIZADO ---
         window.switchSubTab = (id, btn) => {
             activeSubTab = id;
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
+            
             const fw = document.getElementById('filter-wrapper');
             if(!fw) return;
-            const today = getISODate();
+            
+            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+            
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Escriba para buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
                 fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
-            } else { fw.innerHTML = ''; }
+            } else { 
+                fw.innerHTML = ''; 
+            }
+            
             window.renderCatalogList();
         };
 
         window.renderEntregas = () => {
-            const list = document.getElementById('lista-entregas'); if(!list) return;
+            const list = document.getElementById('lista-entregas'); 
+            if(!list) return;
+            
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
-            const target = new Date(selDate + "T12:00:00").toLocaleDateString('es-MX');
+            
+            // Convertir fecha correctamente
+            const [year, month, day] = selDate.split('-');
+            const target = `${day}/${month}/${year}`;
+            
             const filtered = state.sales.filter(s => s.fechaStr === target);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">No hay pedidos</p>'; return; }
-            const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
+            
+            if(!filtered.length) { 
+                list.innerHTML = '<p class="text-center py-5 opacity-40">No hay pedidos para esta fecha</p>'; 
+                return; 
+            }
+            
+            const grouped = filtered.reduce((acc, v) => { 
+                const c = v.cliente || "S/N"; 
+                if(!acc[c]) acc[c] = {t:0, items:[]}; 
+                acc[c].t += v.total || 0; 
+                acc[c].items.push(v); 
+                return acc; 
+            }, {});
+            
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleS('${cli}', '${target}', 'entregado', this.checked)"> ENTREGA</label><label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleS('${cli}', '${target}', 'pagado', this.checked)"> PAGO</label></div>
-                    <div class="small opacity-75">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`).join('');
+                    <div class="d-flex justify-content-between mb-2">
+                        <b class="text-uppercase">${cli}</b>
+                        <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" onclick="window.shareTicket('${cli}')">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </div>
+                    <div class="check-group mb-2">
+                        <label class="check-item">
+                            <input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} 
+                                   onchange="window.toggleS('${cli}', '${target}', 'entregado', this.checked)"> ENTREGA
+                        </label>
+                        <label class="check-item">
+                            <input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} 
+                                   onchange="window.toggleS('${cli}', '${target}', 'pagado', this.checked)"> PAGO
+                        </label>
+                    </div>
+                    <div class="small opacity-75">
+                        ${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad || 1}x ${i.producto || ''}</div>`).join('')}
+                    </div>
+                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">
+                        $${(grouped[cli].t || 0).toFixed(2)}
+                    </div>
+                </div>`).join('');
         };
 
         window.toggleS = async (cli, date, f, v) => {
+            if(!user) return;
             const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === date);
-            for (const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [f]: v });
-        };
-
-        window.renderCatalogList = () => {
-            const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
-            if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => (c.nombre || c.name || '').toUpperCase().includes(q)).sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${c.nombre || c.name}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
-            } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => (p.nombre || p.name || '').toUpperCase().includes(q)).sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(p => `<div class="card-custom py-2"><b>${p.nombre || p.name}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
-            } else if(activeSubTab === 'sales') {
-                const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
-                const fd = new Date(dateEl.value + "T12:00:00").toLocaleDateString('es-MX');
-                const dv = state.sales.filter(s => s.fechaStr === fd);
-                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
-            } else if(activeSubTab === 'diezmo') {
-                const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
-                if(!sEl || !eEl) return;
-                const s = new Date(sEl.value + "T00:00:00");
-                const e = new Date(eEl.value + "T23:59:59");
-                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
-                const profit = fs.reduce((a,v)=> a + (v.total - ((v.costo || v.pCosto || 0) * v.cantidad)), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% de ganancia acumulada</div></div>`;
+            for (const i of items) {
+                try {
+                    await updateDoc(doc(db, 'apps', appId, 'sales', i.id), { [f]: v });
+                } catch(e) {
+                    console.error("Error actualizando:", e);
+                    toast("Error al actualizar", "danger");
+                }
             }
         };
 
-        window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
-
-        document.getElementById('btn-save-action').onclick = async () => {
-            if(!user) return toast("No hay conexión", "danger");
-            const d = {
-                tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
-                cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
-                producto: document.getElementById('in-producto').value.trim().toUpperCase(),
-                cantidad: parseInt(document.getElementById('in-cantidad').value) || 1,
-                costo: parseFloat(document.getElementById('in-costo').value) || 0,
-                precio: parseFloat(document.getElementById('in-precio').value) || 0,
-                fechaStr: new Date().toLocaleDateString('es-MX'),
-                total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0),
-                entregado: false, pagado: false
-            };
-            if(!d.tienda || !d.producto || !d.cliente) return toast("Faltan datos", "danger");
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
-                const ck = async (c, v, ex = {}) => { if(!state[c].some(x => (x.nombre || x.name || '').toUpperCase() === v)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: v, ...ex }); };
-                await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                toast("¡Guardado!");
-                document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { toast("Error al guardar", "danger"); }
+        window.renderCatalogList = () => {
+            const list = document.getElementById('lista-catalogos'); 
+            if(!list) return;
+            
+            const searchInput = document.getElementById('search-cat');
+            const q = searchInput ? searchInput.value.toUpperCase() : "";
+            
+            if(activeSubTab === 'clientes') {
+                list.innerHTML = (state.clients || [])
+                    .filter(c => (c.nombre || c.name || '').toUpperCase().includes(q))
+                    .sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || ''))
+                    .map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
+                        <b>${c.nombre || c.name || ''}</b>
+                        <button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>`).join('');
+                    
+            } else if(activeSubTab === 'productos') {
+                list.innerHTML = (state.products || [])
+                    .filter(p => (p.nombre || p.name || '').toUpperCase().includes(q))
+                    .sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || ''))
+                    .map(p => `<div class="card-custom py-2">
+                        <b>${p.nombre || p.name || ''}</b><br>
+                        <small class="opacity-50">Costo: $${(p.pCosto||p.costo||0).toFixed(2)} | Venta: $${(p.pVenta||p.precio||0).toFixed(2)}</small>
+                    </div>`).join('');
+                    
+            } else if(activeSubTab === 'sales') {
+                const dateEl = document.getElementById('hist-date'); 
+                if(!dateEl) return;
+                
+                const [year, month, day] = dateEl.value.split('-');
+                const fd = `${day}/${month}/${year}`;
+                const dv = (state.sales || []).filter(s => s.fechaStr === fd);
+                const total = dv.reduce((a,v) => a + (v.total || 0), 0);
+                
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between">
+                    <div>${v.producto || ''}<br><small>${v.cliente || ''}</small></div>
+                    <b>$${(v.total || 0).toFixed(2)}</b>
+                </div>`).join('') + 
+                `<div class="card-custom bg-primary text-white">
+                    TOTAL DÍA: $${total.toFixed(2)}
+                </div>`;
+                
+            } else if(activeSubTab === 'diezmo') {
+                const sEl = document.getElementById('d-start'); 
+                const eEl = document.getElementById('d-end');
+                if(!sEl || !eEl) return;
+                
+                const s = new Date(sEl.value + "T00:00:00");
+                const e = new Date(eEl.value + "T23:59:59");
+                
+                const fs = (state.sales || []).filter(v => { 
+                    const d = v.fecha ? v.fecha.toDate() : new Date(); 
+                    return d >= s && d <= e; 
+                });
+                
+                const profit = fs.reduce((a,v) => a + ((v.total || 0) - ((v.costo || v.pCosto || 0) * (v.cantidad || 1))), 0);
+                
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4">
+                    <h3>$${(profit * 0.1).toFixed(2)}</h3>
+                    <div class="small opacity-80">10% de ganancia acumulada</div>
+                </div>`;
+            }
         };
 
-        window.shareTicket = async (n) => {
-            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
-            const items = state.sales.filter(s => s.cliente === n && s.fechaStr === fd);
-            if (!items.length) return;
-            document.getElementById('t-cliente-name').innerText = n;
-            document.getElementById('t-date-val').innerText = fd;
-            let tot = 0;
-            document.getElementById('t-body-items').innerHTML = items.map(i => { tot += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding-left:10px; text-transform:uppercase;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
-            document.getElementById('t-grand-total').innerText = "$" + tot.toFixed(2);
+        window.delItem = async (collectionName, id) => { 
+            if(!user) return;
+            if(confirm("¿Eliminar?")) {
+                try {
+                    await deleteDoc(doc(db, 'apps', appId, collectionName, id));
+                    toast("Eliminado correctamente");
+                } catch(e) {
+                    console.error("Error eliminando:", e);
+                    toast("Error al eliminar", "danger");
+                }
+            }
+        };
+
+        // Guardar venta
+        document.getElementById('btn-save-record').onclick = async () => {
+            if(!user) {
+                toast("No hay conexión", "danger");
+                return;
+            }
+            
+            const cantidad = parseInt(document.getElementById('in-cantidad').value) || 1;
+            const precio = parseFloat(document.getElementById('in-precio').value) || 0;
+            
+            const d = {
+                tienda: (document.getElementById('in-tienda').value || '').trim().toUpperCase(),
+                cliente: (document.getElementById('in-cliente').value || '').trim().toUpperCase(),
+                producto: (document.getElementById('in-producto').value || '').trim().toUpperCase(),
+                cantidad: cantidad,
+                costo: parseFloat(document.getElementById('in-costo').value) || 0,
+                precio: precio,
+                fechaStr: new Date().toLocaleDateString('es-MX'),
+                total: cantidad * precio,
+                entregado: false, 
+                pagado: false,
+                userId: user.uid
+            };
+            
+            if(!d.tienda || !d.producto || !d.cliente) {
+                toast("Faltan datos", "danger");
+                return;
+            }
+            
             try {
-                const c = await html2canvas(document.getElementById('ticket-render'), { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
-                c.toBlob(async b => {
-                    const f = new File([b], `Ticket_${n}.png`, { type: 'image/png' });
-                    if (navigator.share) await navigator.share({ files: [f], title: 'Ticket' });
+                // Guardar venta
+                await addDoc(collection(db, 'apps', appId, 'sales'), { 
+                    ...d, 
+                    fecha: serverTimestamp() 
+                });
+                
+                // Guardar/actualizar catálogos
+                const upsert = async (col, valor, extra = {}) => { 
+                    if(!valor) return;
+                    const exists = (state[col] || []).some(x => 
+                        (x.nombre || x.name || '').toUpperCase() === valor
+                    );
+                    
+                    if(!exists) {
+                        await addDoc(collection(db, 'apps', appId, col), { 
+                            nombre: valor, 
+                            ...extra 
+                        }); 
+                    }
+                };
+                
+                await upsert('stores', d.tienda);
+                await upsert('clients', d.cliente);
+                await upsert('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
+                
+                toast("¡Venta guardada!");
+                
+                // Limpiar campos
+                document.getElementById('in-producto').value = "";
+                document.getElementById('in-costo').value = "";
+                document.getElementById('in-precio').value = "";
+                
+            } catch(e) { 
+                console.error("Error guardando:", e);
+                toast("Error al guardar", "danger"); 
+            }
+        };
+
+        // Compartir ticket
+        window.shareTicket = async (nombreCliente) => {
+            const fdIn = document.getElementById('entregas-date').value;
+            if(!fdIn) return;
+            
+            const [year, month, day] = fdIn.split('-');
+            const fd = `${day}/${month}/${year}`;
+            
+            const items = (state.sales || []).filter(s => 
+                s.cliente === nombreCliente && s.fechaStr === fd
+            );
+            
+            if (!items.length) return;
+            
+            // Llenar ticket
+            document.getElementById('t-cliente-name').innerText = nombreCliente;
+            document.getElementById('t-date-val').innerText = fd;
+            
+            let tot = 0;
+            document.getElementById('t-body-items').innerHTML = items.map(i => { 
+                tot += i.total || 0; 
+                return `<tr>
+                    <td style="width: 40px;">${i.cantidad || 1}x</td>
+                    <td style="padding: 5px 10px; text-transform:uppercase;">${i.producto || ''}</td>
+                    <td style="text-align:right">$${(i.total || 0).toFixed(2)}</td>
+                </tr>`; 
+            }).join('');
+            
+            document.getElementById('t-grand-total').innerText = "$" + tot.toFixed(2);
+            
+            try {
+                const canvas = await html2canvas(document.getElementById('ticket-render'), { 
+                    scale: 2, 
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+                
+                canvas.toBlob(async blob => {
+                    if (!blob) return;
+                    
+                    const file = new File([blob], `Ticket_${nombreCliente}.png`, { type: 'image/png' });
+                    
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({ 
+                            files: [file], 
+                            title: 'Nota de Yaute',
+                            text: `Pedido de ${nombreCliente}`
+                        });
+                    } else {
+                        // Fallback: abrir en nueva ventana
+                        const url = URL.createObjectURL(blob);
+                        window.open(url, '_blank');
+                        setTimeout(() => URL.revokeObjectURL(url), 10000);
+                    }
                 }, 'image/png');
-            } catch (err) { toast("Error al generar imagen", "danger"); }
+                
+            } catch (err) { 
+                console.error("Error compartiendo:", err);
+                toast("Error al compartir", "danger"); 
+            }
         };
 
         // --- CÁMARA ---
         let stream = null;
+        
         window.openCam = async () => {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
                 document.getElementById('cam-preview').srcObject = stream;
                 document.getElementById('cam-container').style.display = 'block';
-            } catch (e) { toast("Sin acceso a cámara", "danger"); }
+            } catch (e) { 
+                console.error("Error cámara:", e);
+                toast("Sin acceso a cámara", "danger"); 
+            }
         };
-        window.closeCam = () => { if(stream) stream.getTracks().forEach(t => t.stop()); document.getElementById('cam-container').style.display = 'none'; };
+        
+        window.closeCam = () => { 
+            if(stream) {
+                stream.getTracks().forEach(t => t.stop());
+                stream = null;
+            }
+            document.getElementById('cam-container').style.display = 'none'; 
+        };
 
         document.getElementById('btn-do-capture').onclick = () => {
-            const ctx = document.getElementById('cam-canvas').getContext('2d');
+            const canvas = document.getElementById('cam-canvas');
             const video = document.getElementById('cam-preview');
-            document.getElementById('cam-canvas').width = video.videoWidth;
-            document.getElementById('cam-canvas').height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0);
-            const b64 = document.getElementById('cam-canvas').toDataURL('image/jpeg', 0.8).split(',')[1];
+            
+            const b64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            
             window.closeCam();
-            processIA(b64);
+            
+            if(window.__gemini_api_key) {
+                processIA(b64);
+            } else {
+                toast("API Key de Gemini no configurada", "warning");
+            }
         };
 
         async function processIA(base64) {
+            if(!window.__gemini_api_key) return;
+            
             toast("Analizando producto...");
+            
             try {
-                const apiKey = ""; 
                 const payload = {
-                    contents: [{ parts: [{ text: "Dime nombre del producto comercial. Responde JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                    generationConfig: { responseMimeType: "application/json" }
+                    contents: [{ 
+                        parts: [
+                            { text: "Dime nombre del producto comercial. Responde SOLO con el nombre, sin explicaciones." }, 
+                            { inlineData: { mimeType: "image/jpeg", data: base64 } }
+                        ] 
+                    }]
                 };
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.__gemini_api_key}`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(payload)
                 });
+                
                 const data = await res.json();
-                const result = JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text || "{}");
-                if(result.nombre) document.getElementById('in-producto').value = result.nombre.toUpperCase();
-                toast("¡Detectado!");
-            } catch (e) { toast("Error IA", "danger"); }
+                const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                
+                if(textResult) {
+                    document.getElementById('in-producto').value = textResult.trim().toUpperCase();
+                    toast("¡Detectado!");
+                }
+                
+            } catch (e) { 
+                console.error("Error IA:", e);
+                toast("Error IA", "danger"); 
+            }
         }
     </script>
 </body>
