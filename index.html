@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v11.5</title>
+    <title>Ofertas Rápidas Yaute v12.0</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -72,14 +72,15 @@
 </head>
 <body>
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen con Desbloqueo Seguro -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status">CONECTANDO v11.5...</div>
+        <div id="splash-status">CONECTANDO AL SERVIDOR...</div>
     </div>
 
     <script>
+        // Paracaídas de emergencia mejorado
         window.removeSplash = function() {
             const splash = document.getElementById('splash-screen');
             if (splash) {
@@ -87,7 +88,7 @@
                 setTimeout(() => { if(splash) splash.style.display = 'none'; }, 400);
             }
         };
-        // Paracaídas para asegurar que la app cargue en 4 segundos máximo
+        // DESBLOQUEO GARANTIZADO A LOS 4 SEGUNDOS
         setTimeout(window.removeSplash, 4000);
     </script>
 
@@ -95,7 +96,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center gap-1">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v11.5</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v12.0</span></h6>
             <div id="status-dot" class="bg-warning" style="width:12px; height:12px; border-radius:50%; transition: 0.3s; margin-left: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
         </div>
     </header>
@@ -170,17 +171,28 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
+    <!-- MOTOR DE FIREBASE v12.0 (RECONSTRUIDO) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Configuración dinámica inyectada por el entorno
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // CONFIGURACIÓN DE SEGURIDAD (RESPALDO PARA EXTERNOS)
+        const backupConfig = {
+            apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA",
+            authDomain: "prueba-5e215.firebaseapp.com",
+            projectId: "prueba-5e215",
+            storageBucket: "prueba-5e215.firebasestorage.app",
+            messagingSenderId: "898868587449",
+            appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
+        };
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : backupConfig;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        // Long polling para evitar bloqueos de red
+        // REGLA FUNDAMENTAL: Forzar Long Polling para saltar firewalls en móviles y Chrome
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
@@ -202,14 +214,9 @@
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
-        // Ayudante para obtener nombres sin importar el campo usado en versiones previas
-        const getName = (obj) => {
-            return obj.nombre || obj.name || obj.cliente || obj.producto || obj.tienda || "S/N";
-        };
-
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
-        // --- AUTENTICACIÓN ---
+        // --- INICIO DE SESIÓN ---
         const startApp = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -217,7 +224,10 @@
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (e) { await signInAnonymously(auth); }
+            } catch (e) { 
+                console.warn("Auth retry...");
+                await signInAnonymously(auth).catch(() => setIndicator('err'));
+            }
         };
         startApp();
 
@@ -234,7 +244,9 @@
         const startDataSync = () => {
             if(!user) return;
             const cols = ['sales', 'clients', 'stores', 'products'];
-            let collectionsReady = 0;
+            
+            // EL PUNTO PASA A VERDE AL ABRIR LA PRIMERA ESCUCHA EXITOSA
+            let firstConnectionDone = false;
 
             cols.forEach(collectionName => {
                 const path = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
@@ -242,13 +254,16 @@
                 onSnapshot(path, (snapshot) => {
                     state[collectionName] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     
-                    collectionsReady++;
-                    if (collectionsReady >= 1) setIndicator('ok');
+                    // Activación inmediata del indicador verde
+                    if (!firstConnectionDone) {
+                        setIndicator('ok');
+                        firstConnectionDone = true;
+                    }
                     
                     if(collectionName === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
-                    console.error("Error en " + collectionName, err);
+                    console.error("Firestore Permission Error:", err.code);
                     setIndicator('err');
                 });
             });
@@ -268,12 +283,17 @@
             inp.oninput = () => {
                 const val = inp.value.toUpperCase().trim();
                 if(!val) { box.classList.add('d-none'); return; }
+                
+                // Mapeo flexible de nombres (nombre, name, o producto)
                 const matches = (state[key] || []).filter(x => {
-                    const n = getName(x).toUpperCase();
+                    const n = (x.nombre || x.name || x.cliente || x.producto || '').toUpperCase();
                     return n.includes(val);
                 }).slice(0, 5);
                 
-                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${getName(x)}">${getName(x)}</div>`).join('');
+                box.innerHTML = matches.map(x => {
+                    const label = x.nombre || x.name || x.cliente || x.producto || '';
+                    return `<div class="sug-item" data-val="${label}">${label}</div>`;
+                }).join('');
                 box.classList.toggle('d-none', matches.length === 0);
             };
 
@@ -281,7 +301,7 @@
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
-                    const prod = state.products.find(p => getName(p) === item.dataset.val);
+                    const prod = state.products.find(p => (p.nombre || p.name || p.producto) === item.dataset.val);
                     if (prod) { 
                         document.getElementById('in-costo').value = prod.pCosto || prod.costo || ""; 
                         document.getElementById('in-precio').value = prod.pVenta || prod.precio || ""; 
@@ -290,7 +310,7 @@
             };
         };
 
-        // --- NAVEGACIÓN ---
+        // --- FUNCIONES GLOBALES ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             const target = document.getElementById('tab-' + id);
@@ -307,7 +327,7 @@
             if(!fw) return;
             const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Escriba para buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -321,15 +341,12 @@
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
             
-            // Convertir fecha de input (yyyy-mm-dd) a formato local (d/m/yyyy o dd/mm/yyyy)
             const [y, m, d] = selDate.split('-');
             const targetWithZeros = `${d}/${m}/${y}`;
             const targetNoZeros = `${parseInt(d)}/${parseInt(m)}/${y}`;
             
-            // Filtrar comparando ambos formatos posibles para mayor seguridad
             const filtered = state.sales.filter(s => s.fechaStr === targetWithZeros || s.fechaStr === targetNoZeros);
-            
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos para esta fecha</p>'; return; }
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos hoy</p>'; return; }
             
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; 
@@ -341,9 +358,7 @@
 
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2">
-                        <b class="text-uppercase">${cli}</b>
-                    </div>
+                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b></div>
                     <div class="small opacity-75">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div>
                 </div>`).join('');
@@ -353,25 +368,33 @@
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
             if(activeSubTab === 'clientes') {
-                const filtered = state.clients.filter(c => getName(c).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${getName(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+                const filtered = state.clients.filter(c => (c.nombre || c.name || c.cliente || '').toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(c => `
+                    <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
+                        <b>${c.nombre || c.name || c.cliente}</b>
+                        <button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button>
+                    </div>`).join('');
             } else if(activeSubTab === 'productos') {
-                const filtered = state.products.filter(p => getName(p).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(p => `<div class="card-custom py-2"><b>${getName(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+                const filtered = state.products.filter(p => (p.nombre || p.name || p.producto || '').toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(p => `
+                    <div class="card-custom py-2">
+                        <b>${p.nombre || p.name || p.producto}</b><br>
+                        <small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small>
+                    </div>`).join('');
             } else if(activeSubTab === 'sales') {
                 const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
-                const [year, month, day] = dateEl.value.split('-');
-                const targetWithZeros = `${day}/${month}/${year}`;
-                const targetNoZeros = `${parseInt(day)}/${parseInt(month)}/${year}`;
-                const dv = state.sales.filter(s => s.fechaStr === targetWithZeros || s.fechaStr === targetNoZeros);
-                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL DÍA: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
+                const [y, m, d] = dateEl.value.split('-');
+                const fd1 = `${d}/${m}/${y}`;
+                const fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                const dv = state.sales.filter(s => s.fechaStr === fd1 || s.fechaStr === fd2);
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             }
         };
 
         window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
 
         document.getElementById('btn-save-record').onclick = async () => {
-            if(!user) return toast("No hay conexión", "danger");
+            if(!user) return toast("Sin conexión", "danger");
             const d = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -385,16 +408,20 @@
             };
             if(!d.tienda || !d.producto || !d.cliente) return toast("Faltan datos", "danger");
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
+                const salesRef = collection(db, 'artifacts', appId, 'public', 'data', 'sales');
+                await addDoc(salesRef, { ...d, fecha: serverTimestamp() });
+                
                 const ck = async (c, v, ex = {}) => { 
-                    if(!state[c].some(x => getName(x).toUpperCase() === v)) {
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', c), { nombre: v, ...ex }); 
+                    const exists = state[c].some(x => (x.nombre || x.name || x.cliente || x.producto || '').toUpperCase() === v);
+                    if(!exists) {
+                        const colRef = collection(db, 'artifacts', appId, 'public', 'data', c);
+                        await addDoc(colRef, { nombre: v, ...ex }); 
                     }
                 };
                 await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
                 toast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { toast("Error de guardado", "danger"); }
+            } catch(e) { toast("Error al guardar", "danger"); }
         };
     </script>
 </body>
