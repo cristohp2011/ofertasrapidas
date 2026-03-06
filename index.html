@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v16.5</title>
+    <title>Ofertas Rápidas Yaute v16.7</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -64,7 +64,7 @@
         .fin-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.75rem; font-weight: 800; border-radius: 8px; color: #64748b; }
         .fin-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* --- AUTOCOMPLETE SUGGESTIONS --- */
+        /* --- AUTOCOMPLETE --- */
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
         .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; }
 
@@ -83,16 +83,16 @@
 </head>
 <body>
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen (Mínimo 5 Segundos) -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">PREPARANDO ENTORNO v16.5...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">CORRIGIENDO v16.7...</div>
     </div>
 
     <!-- NAVEGACIÓN INDEPENDIENTE -->
     <script>
-        const appStartTime = Date.now(); // Marca de tiempo al iniciar la carga
+        const appStartTime = Date.now();
         let splashDismissed = false;
 
         window.activeSubTab = 'clientes';
@@ -142,14 +142,11 @@
             if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
         };
 
-        // Función mejorada para respetar el tiempo mínimo de 5 segundos
         window.removeSplash = function() {
             if (splashDismissed) return;
-            
             const now = Date.now();
             const elapsed = now - appStartTime;
-            const minimumDuration = 5000; // 5 segundos
-            
+            const minimumDuration = 5000; 
             const remaining = Math.max(0, minimumDuration - elapsed);
             
             setTimeout(() => {
@@ -162,13 +159,12 @@
             }, remaining);
         };
 
-        // Paracaídas de seguridad extendido (8 segundos máximo si algo falla)
         setTimeout(window.removeSplash, 8000);
     </script>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.5</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.7</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -245,7 +241,7 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER -->
+    <!-- TICKET RENDER (RECUPERADO DE v16.0 TAL CUAL) -->
     <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black;">
         <div style="text-align: center; font-size: 1.5rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RÁPIDAS YAUTE</div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px;"></div>
@@ -262,7 +258,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v16.5 -->
+    <!-- MOTOR FIREBASE v16.7 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -299,13 +295,11 @@
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
-        // --- AUTH ---
         signInAnonymously(auth).catch(e => console.error("Error Auth:", e.code));
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                // Intentamos quitar el splash, pero la función interna de script tradicional respetará los 5s
                 window.removeSplash();
                 document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
                 startSync();
@@ -386,7 +380,7 @@
                 <div class="card-custom">
                     <div class="d-flex justify-content-between">
                         <b class="text-uppercase">${cli}</b>
-                        <button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button>
+                        <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button>
                     </div>
                     <div class="check-group">
                         <label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', '${f1}', 'entregado', this.checked)"> ENTREGA</label>
@@ -435,97 +429,38 @@
         const renderFinanzas = (container) => {
             const subTab = window.activeFinanceTab;
             const today = new Intl.DateTimeFormat('en-CA').format(new Date());
-            
-            let html = `
-                <div class="finance-sub-nav">
-                    <button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">DETALLE VENTAS</button>
-                    <button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button>
-                </div>
-            `;
+            let html = `<div class="finance-sub-nav"><button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">DETALLE VENTAS</button><button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button></div>`;
 
             if (subTab === 'ventas') {
-                html += `
-                    <div class="card-custom p-3 mb-3">
-                        <div class="row g-2">
-                            <div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>
-                            <div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>
-                            <div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}">${c}</option>`).join('')}</select></div>
-                        </div>
-                    </div>
-                    <div class="card-custom">
-                        <table class="table-finance">
-                            <thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Total</th></tr></thead>
-                            <tbody id="fin-sales-body"></tbody>
-                        </table>
-                    </div>
-                `;
+                html += `<div class="card-custom p-3 mb-3"><div class="row g-2"><div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}">${c}</option>`).join('')}</select></div></div></div><div class="card-custom"><table class="table-finance"><thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Total</th></tr></thead><tbody id="fin-sales-body"></tbody></table></div>`;
                 container.innerHTML = html;
-                
                 const fDate = document.getElementById('f-date')?.value;
                 const fStore = document.getElementById('f-store')?.value;
                 const fClient = document.getElementById('f-client')?.value;
-                
                 if (fDate) {
                     const [y, m, d] = fDate.split('-');
                     const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-                    const filtered = window.state.sales.filter(s => {
-                        const matchDate = (s.fechaStr === fd || s.fechaStr === fd2);
-                        const matchStore = (fStore === 'ALL' || s.tienda === fStore);
-                        const matchClient = (fClient === 'ALL' || s.cliente === fClient);
-                        return matchDate && matchStore && matchClient;
-                    });
-
+                    const filtered = window.state.sales.filter(s => (s.fechaStr === fd || s.fechaStr === fd2) && (fStore === 'ALL' || s.tienda === fStore) && (fClient === 'ALL' || s.cliente === fClient));
                     const tbody = document.getElementById('fin-sales-body');
-                    if (tbody) {
-                        tbody.innerHTML = filtered.map(v => `
-                            <tr>
-                                <td>${v.cantidad}x</td>
-                                <td class="fw-bold text-uppercase">${v.producto}</td>
-                                <td class="text-end fw-bold">$${((v.costo || 0) * (v.cantidad || 1)).toFixed(2)}</td>
-                            </tr>
-                        `).join('');
-                        if (filtered.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="text-center opacity-50 py-4">No hay datos para estos filtros</td></tr>';
-                    }
+                    if (tbody) tbody.innerHTML = filtered.map(v => `<tr><td>${v.cantidad}x</td><td class="fw-bold text-uppercase">${v.producto}</td><td class="text-end fw-bold">$${((v.costo || 0) * (v.cantidad || 1)).toFixed(2)}</td></tr>`).join('') || '<tr><td colspan="3" class="text-center opacity-50 py-4">No hay datos</td></tr>';
                 }
             } else {
-                html += `
-                    <div class="card-custom p-3 mb-3">
-                        <label class="text-uppercase">Seleccionar Fecha para Comparar</label>
-                        <input type="date" id="g-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">
-                    </div>
-                    <div id="ganancias-list"></div>
-                `;
+                html += `<div class="card-custom p-3 mb-3"><label class="text-uppercase">Seleccionar Fecha para Comparar</label><input type="date" id="g-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div id="ganancias-list"></div>`;
                 container.innerHTML = html;
-                
                 const gDate = document.getElementById('g-date')?.value;
                 if (gDate) {
                     const [y, m, d] = gDate.split('-');
                     const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
                     const daily = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
-                    
                     const stores = [...new Set(daily.map(s => s.tienda))];
                     const listContainer = document.getElementById('ganancias-list');
-                    if (listContainer) {
-                        listContainer.innerHTML = stores.map(st => {
-                            const stSales = daily.filter(s => s.tienda === st);
-                            const totalVenta = stSales.reduce((a,b) => a + b.total, 0);
-                            const totalCosto = stSales.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 1)), 0);
-                            const ganancia = totalVenta - totalCosto;
-                            
-                            return `
-                                <div class="card-custom py-3 d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <b class="text-primary text-uppercase">${st}</b><br>
-                                        <small class="opacity-50">Total Venta: $${totalVenta.toFixed(2)}</small>
-                                    </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-success" style="font-size: 0.9rem;">+ $${ganancia.toFixed(2)}</span>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
-                        if (stores.length === 0) listContainer.innerHTML = '<p class="text-center opacity-50 py-4">Sin ventas para esta fecha</p>';
-                    }
+                    if (listContainer) listContainer.innerHTML = stores.map(st => {
+                        const stSales = daily.filter(s => s.tienda === st);
+                        const totalVenta = stSales.reduce((a,b) => a + b.total, 0);
+                        const totalCosto = stSales.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 1)), 0);
+                        const ganancia = totalVenta - totalCosto;
+                        return `<div class="card-custom py-3 d-flex justify-content-between align-items-center"><div><b class="text-primary text-uppercase">${st}</b><br><small class="opacity-50">Total Venta: $${totalVenta.toFixed(2)}</small></div><div class="text-end"><span class="badge bg-success" style="font-size: 0.9rem;">+ $${ganancia.toFixed(2)}</span></div></div>`;
+                    }).join('') || '<p class="text-center opacity-50 py-4">Sin ventas</p>';
                 }
             }
         };
@@ -555,18 +490,15 @@
                 if(!d.tienda || !d.producto || !d.cliente) return toast("Completa los campos", "danger");
                 try {
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
-                    const ck = async (col, val, ex = {}) => { 
-                        if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); 
-                    };
+                    const ck = async (col, val, ex = {}) => { if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); };
                     await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
                     toast("¡Registro guardado!");
-                    document.getElementById('in-producto').value = ""; 
-                    document.getElementById('in-costo').value = ""; 
-                    document.getElementById('in-precio').value = "";
+                    document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
                 } catch(e) { toast("Error al guardar", "danger"); }
             };
         }
 
+        // --- MOTOR DE WHATSAPP (RECUPERADO v16.0 TAL CUAL) ---
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             if(!dateInput || !dateInput.value) return;
@@ -574,12 +506,15 @@
             const f = `${d}/${m}/${y}`;
             const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === `${parseInt(d)}/${parseInt(m)}/${y}`));
             if(!items.length) return;
+            
             document.getElementById('t-cliente').innerText = n;
             document.getElementById('t-fecha').innerText = f;
             let tot = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { tot += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding:0 10px;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
+            
             try {
+                // Configuración exacta de la v16.0: scale 2 y sin mensaje de texto personalizado
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
                 canvas.toBlob(async b => {
                     const file = new File([b], `Ticket_${n}.png`, { type: 'image/png' });
