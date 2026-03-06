@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.50.4</title>
+    <title>Yaute Rápidas Pro v10.50.5</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,7 +17,6 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --whatsapp: #25d366;
             --bg: #f8fafc;
             --card-radius: 14px;
         }
@@ -31,53 +30,53 @@
         #splash-screen { 
             position: fixed; inset: 0; background: #ffffff; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 9999; transition: opacity 0.4s;
+            z-index: 9999; transition: opacity 0.5s ease;
         }
-        .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; }
-        .splash-loader { margin-top: 30px; width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
+        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.4rem; text-transform: uppercase; }
+        .splash-loader { margin-top: 25px; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
         
         #force-entry-btn { 
-            display: none; margin-top: 25px; border: 2.5px solid var(--accent); 
-            color: var(--accent); background: white; padding: 12px 30px; 
-            border-radius: 50px; font-weight: 800; font-size: 0.8rem; 
+            display: none; margin-top: 25px; border: 2px solid #e2e8f0; 
+            color: #64748b; background: white; padding: 10px 24px; 
+            border-radius: 50px; font-weight: 800; font-size: 0.7rem; 
             text-transform: uppercase; cursor: pointer;
         }
 
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI --- */
-        header { background: var(--primary); color: white; padding: 0.8rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.8rem; }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .tab-content.active { display: block; }
 
-        .form-control { padding: 0.65rem 0.8rem; font-size: 0.95rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; }
+        .form-control { padding: 0.65rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
+        label.text-uppercase { font-size: 0.6rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; }
 
-        .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
+        .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
         .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
-        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 600; }
+        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.65rem; white-space: nowrap; color: #64748b; font-weight: 600; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 180px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
+        .sug-item { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; }
 
         #cam-container { position: fixed; inset: 0; background: #000; z-index: 10010; display: none; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
         .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
-        .btn-capture { width: 75px; height: 75px; background: #fff; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
+        .btn-capture { width: 70px; height: 70px; background: #fff; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
         #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
         .ticket-header-img { width: 160px; display: block; margin: 0 auto 10px; }
@@ -89,13 +88,13 @@
 </head>
 <body>
 
-    <!-- Splash Screen con botón de rescate -->
+    <!-- Splash Screen Dinámico -->
     <div id="splash-screen">
-        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/130?text=Yaute'">
-        <div class="splash-title text-uppercase">Yaute Rápidas</div>
-        <div style="font-weight: 700; color: #94a3b8; font-size: 0.85rem; margin-top: 5px;">VERSIÓN v10.50.4</div>
-        <div class="splash-loader" id="main-loader"></div>
-        <button id="force-entry-btn" onclick="removeSplash()">Forzar Entrada Manual</button>
+        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
+        <div class="splash-title">Yaute Rápidas</div>
+        <div id="splash-status">Iniciando sistema...</div>
+        <div class="splash-loader"></div>
+        <button id="force-entry-btn" onclick="window.removeSplash()">Acceso Manual</button>
     </div>
 
     <div id="toast-alert"></div>
@@ -109,7 +108,7 @@
 
     <div id="cam-container">
         <video id="cam-preview" autoplay playsinline muted></video>
-        <button id="btn-cam-cancel" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:45px; height:45px;"><i class="fas fa-times"></i></button>
+        <button id="btn-cam-cancel" style="position:absolute; top:40px; right:20px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:44px; height:44px;"><i class="fas fa-times"></i></button>
         <div class="cam-controls"><button id="btn-do-capture" class="btn-capture"></button></div>
         <canvas id="cam-canvas" style="display:none;"></canvas>
     </div>
@@ -138,7 +137,7 @@
                     </div>
                     <div class="col" style="position:relative">
                         <label class="text-uppercase">Producto</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR...">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Escanear...">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                     <div class="col-auto">
@@ -173,7 +172,7 @@
             <div class="sub-nav">
                 <button class="sub-btn active" id="btn-sub-clients" onclick="switchSubTab('clientes', this)">Clientes</button>
                 <button class="sub-btn" id="btn-sub-products" onclick="switchSubTab('productos', this)">Productos</button>
-                <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas Hoy</button>
+                <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
                 <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
@@ -191,7 +190,7 @@
         <table style="width: 100%; border-collapse: collapse;"><tbody id="t-body-items"></tbody></table>
         <div style="border-top: 2px dashed #000; margin: 15px 0;"></div>
         <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-grand-total"></span></div>
-        <div style="text-align: center; font-size: 0.9rem; color: #333; margin-top: 40px; text-transform: uppercase;">¡Gracias por su compra!</div>
+        <div style="text-align: center; font-size: 0.8rem; color: #666; margin-top: 40px; text-transform: uppercase;">¡Gracias por su preferencia!</div>
     </div>
 
     <nav class="bottom-nav">
@@ -226,21 +225,26 @@
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
+        const updateSplashStatus = (msg) => {
+            const el = document.getElementById('splash-status');
+            if(el) el.innerText = msg;
+        };
+
         window.removeSplash = () => {
             const splash = document.getElementById('splash-screen');
             if (splash) { 
                 splash.style.opacity = '0'; 
-                setTimeout(() => { splash.style.display = 'none'; }, 400); 
+                setTimeout(() => { splash.style.display = 'none'; }, 500); 
             }
         };
 
-        // Si tarda más de 5 segundos, mostrar botón de emergencia
+        // Mostrar botón de emergencia a los 6 segundos
         setTimeout(() => {
             const btn = document.getElementById('force-entry-btn');
             if(btn && !user) btn.style.display = 'block';
-        }, 5000);
+        }, 6000);
 
-        // --- CÁMARA & IA (LÓGICA BLINDADA) ---
+        // --- CÁMARA & IA ---
         const btnScan = document.getElementById('btn-scan');
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
@@ -252,7 +256,7 @@
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
                 camPreview.srcObject = stream;
                 camContainer.style.display = 'block';
-            } catch (e) { showToast("Error al abrir cámara", "danger"); }
+            } catch (e) { showToast("Cámara no disponible", "danger"); }
         };
 
         document.getElementById('btn-cam-cancel').onclick = () => { 
@@ -271,11 +275,11 @@
         };
 
         async function processIA(base64) {
-            showToast("IA: Analizando producto...");
-            const apiKey = ""; // API Key dinámica
+            showToast("Analizando...");
+            const apiKey = ""; 
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Extrae el nombre del producto comercial y su precio aproximado si se ve. Responde SOLO JSON: {'nombre': string, 'costo': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Extrae el nombre del producto comercial. Responde SOLO JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
@@ -284,25 +288,28 @@
                 const data = await res.json();
                 const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
                 const result = JSON.parse(textResult.replace(/```json|```/g, "").trim());
-                if(result.nombre) document.getElementById('in-producto').value = result.nombre.toUpperCase();
-                if(result.costo) document.getElementById('in-costo').value = result.costo;
-                showToast("Análisis completado");
-            } catch (e) { showToast("IA no disponible temporalmente", "danger"); }
+                if(result.nombre) {
+                    document.getElementById('in-producto').value = result.nombre.toUpperCase();
+                    showToast("¡Listo!");
+                }
+            } catch (e) { showToast("Error IA", "danger"); }
         }
 
-        // --- AUTH & SYNC (MANDATORY RULES) ---
+        // --- AUTH & SYNC (ESTRICTO REGLA 3) ---
         const startSync = () => {
-            if (!user) return; // REGLA 3: Guardar contra acceso sin usuario
+            if (!user) return; // REGLA 3
             
+            updateSplashStatus("Cargando base de datos...");
             const collections = ['sales', 'clients', 'stores', 'products'];
+            
             collections.forEach(n => {
-                // REGLA 1: Rutas estrictas para permisos públicos
+                // REGLA 1: Ruta estricta obligatoria
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
                 }, (err) => {
-                    console.error(`Error de permisos en ${n}. Verifica reglas Firestore.`);
+                    console.error("Firebase Error Permissions:", n, err);
                 });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); 
@@ -330,37 +337,36 @@
             };
         };
 
-        // --- INICIO DE SESIÓN SECUENCIAL (REGLA 3) ---
         const initAuth = async () => {
           try {
-            // Esperar estrictamente a la autenticación antes de cualquier otra cosa
+            updateSplashStatus("Validando acceso...");
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
               await signInWithCustomToken(auth, __initial_auth_token);
             } else {
               await signInAnonymously(auth);
             }
           } catch (error) {
-            console.warn("Autenticación fallida, reintentando anónimamente...");
-            await signInAnonymously(auth).catch(e => console.error("Error crítico de seguridad."));
+            console.warn("Retrying login...");
+            await signInAnonymously(auth);
           }
         };
 
-        // Ejecutar inicio de sesión
         initAuth();
 
         onAuthStateChanged(auth, (u) => {
             user = u;
             if (u) {
+                // Una vez autenticado, quitar splash de inmediato
+                window.removeSplash();
                 const dot = document.getElementById('status-dot');
-                if (dot) { dot.className = 'bg-success'; dot.style.boxShadow = '0 0 8px #10b981'; }
+                if (dot) dot.className = 'status-indicator bg-success';
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
                 switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-                setTimeout(removeSplash, 1000);
             }
         });
 
-        // --- NAVEGACIÓN Y RENDER ---
+        // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             const tab = document.getElementById(`tab-${id}`);
@@ -376,7 +382,7 @@
             const fw = document.getElementById('filter-wrapper');
             const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar en catálogo..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Filtrar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -390,14 +396,14 @@
             const selInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(selInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<div class="text-center py-5 opacity-30"><i class="fas fa-box-open fa-3x mb-3"></i><p>Sin pedidos hoy</p></div>'; return; }
+            if(!filtered.length) { list.innerHTML = '<div class="text-center py-5 opacity-30">Sin pedidos</div>'; return; }
             const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => {
                 const items = grouped[cli].items;
                 return `<div class="card-custom" style="border-left-color: ${items.every(i=>i.pagado)?'var(--success)':'var(--warning)'}">
                     <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
                     <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label><label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label></div>
-                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="small opacity-75">${items.map(i => `<div>${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`;
             }).join('');
         };
@@ -412,7 +418,7 @@
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+                list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients','${c.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
                 list.innerHTML = state.products.filter(p => p.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
@@ -430,7 +436,7 @@
             }
         };
 
-        window.deleteItem = async (col, id) => { if(confirm("¿Eliminar del catálogo?")) { if(!user) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); } };
+        window.deleteItem = async (col, id) => { if(confirm("¿Eliminar?")) { if(!user) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); } };
 
         document.getElementById('btn-save').onclick = async () => {
             if(!user) return;
@@ -450,9 +456,9 @@
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
                 const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
                 await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
-                showToast("¡Registro guardado!");
+                showToast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { showToast("Error al guardar en la nube", "danger"); }
+            } catch(e) { showToast("Error al guardar", "danger"); }
         };
 
         window.shareTicket = async (name) => {
