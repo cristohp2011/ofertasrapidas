@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ofertas Rápidas Yaute v17.1</title>
+    
+    <!-- Librerías de confianza -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card-radius: 16px;
+        }
+
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
+        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
+        main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 110px; }
+
+        /* --- SPLASH SCREEN (CONTROL ABSOLUTO) --- */
+        #splash-screen { 
+            position: fixed; inset: 0; background: #ffffff; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 99999; opacity: 1; transition: opacity 0.5s ease;
+        }
+        .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
+        .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- UI CABECERA --- */
+        header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 900; margin-left: 10px; vertical-align: middle; }
+        
+        .status-dot { width:14px; height:14px; border-radius:50%; transition: 0.4s; margin-left: 12px; border: 2.5px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
+        .bg-success { background-color: var(--success) !important; box-shadow: 0 0 12px var(--success); }
+        .bg-danger { background-color: var(--danger) !important; }
+        .bg-warning { background-color: var(--warning) !important; }
+
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
+        .form-control, .form-select { padding: 0.75rem 1rem; font-size: 1rem; border-radius: 12px; border: 2px solid #f1f5f9; }
+        label.text-uppercase { font-size: 0.65rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1px; }
+
+        /* --- NAVEGACIÓN --- */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 12px 0 35px; border-top: 1px solid #f1f5f9; z-index: 2000; }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; transition: 0.3s; font-weight: 600; }
+        .tab-btn i { font-size: 1.6rem; margin-bottom: 5px; }
+        .tab-btn.active { color: var(--accent); }
+
+        .sub-nav { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; border-bottom: 1px solid #f1f5f9; margin-bottom: 15px; }
+        .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 8px 18px; font-size: 0.75rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; margin-bottom: 5px; }
+        .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); }
+
+        .finance-sub-nav { display: flex; gap: 5px; background: #f1f5f9; padding: 5px; border-radius: 12px; margin-bottom: 15px; }
+        .fin-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.75rem; font-weight: 800; border-radius: 8px; color: #64748b; }
+        .fin-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        /* --- AUTOCOMPLETE --- */
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
+        .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; }
+
+        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.85rem; }
+
+        .check-group { display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid #e2e8f0; }
+        .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
+        .check-item input { width: 20px; height: 20px; accent-color: var(--success); }
+
+        .list-title { font-size: 0.7rem; font-weight: 800; color: #94a3b8; margin-bottom: 10px; display: block; text-transform: uppercase; }
+        
+        .table-finance { font-size: 0.85rem; width: 100%; }
+        .table-finance th { color: #94a3b8; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; border-bottom: 2px solid #f1f5f9; padding: 10px 5px; }
+        .table-finance td { padding: 12px 5px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen (Fijo 5 Segundos) -->
+    <div id="splash-screen">
+        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
+        <div class="splash-loader"></div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Cargando v17.1...</div>
+    </div>
+
+    <script>
+        // Lógica de apertura inmediata: No depende de eventos complejos
+        setTimeout(function() {
+            var splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(function() { splash.style.display = 'none'; }, 600);
+            }
+        }, 5000);
+
+        window.activeSubTab = 'clientes';
+        window.activeFinanceTab = 'ventas';
+
+        window.showTab = function(tabId, btnElement) {
+            const contents = document.getElementsByClassName('tab-content');
+            for(let i=0; i<contents.length; i++) { contents[i].style.display = 'none'; contents[i].classList.remove('active'); }
+            const target = document.getElementById('tab-' + tabId);
+            if (target) { target.style.display = 'block'; target.classList.add('active'); }
+            const buttons = document.getElementsByClassName('tab-btn');
+            for(let i=0; i<buttons.length; i++) { buttons[i].classList.remove('active'); }
+            if (btnElement) btnElement.classList.add('active');
+
+            if (tabId === 'control' && typeof window.renderCatalogList === 'function') {
+                window.renderCatalogList();
+            }
+        };
+
+        window.switchSubTab = function(id, btn) {
+            window.activeSubTab = id;
+            const subBtns = document.getElementsByClassName('sub-btn');
+            for(let i=0; i<subBtns.length; i++) { subBtns[i].classList.remove('active'); }
+            if (btn) btn.classList.add('active');
+            
+            const fw = document.getElementById('filter-wrapper');
+            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+            
+            if(id === 'clientes' || id === 'productos') {
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="if(window.renderCatalogList) window.renderCatalogList()">`;
+            } else if(id === 'sales') {
+                fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
+            } else if(id === 'diezmo') {
+                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"></div>`;
+            } else if(id === 'finanzas') {
+                fw.innerHTML = '';
+            }
+            if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
+        };
+
+        window.switchFinanceTab = function(id, btn) {
+            window.activeFinanceTab = id;
+            const finBtns = document.getElementsByClassName('fin-btn');
+            for(let i=0; i<finBtns.length; i++) { finBtns[i].classList.remove('active'); }
+            if (btn) btn.classList.add('active');
+            if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
+        };
+    </script>
+
+    <header>
+        <div class="d-flex align-items-center justify-content-center">
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v17.1</span></h6>
+            <div id="status-dot" class="status-dot bg-warning"></div>
+        </div>
+    </header>
+
+    <div id="toast-alert"></div>
+
+    <main>
+        <!-- VENTA -->
+        <div id="tab-operaciones" class="tab-content active" style="display: block;">
+            <div class="card-custom">
+                <div class="row g-3 mb-3">
+                    <div class="col-6" style="position:relative">
+                        <label class="text-uppercase">Tienda</label>
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="TIENDA">
+                        <div id="sug-tienda" class="sug-box d-none"></div>
+                    </div>
+                    <div class="col-6" style="position:relative">
+                        <label class="text-uppercase">Cliente</label>
+                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="CLIENTE">
+                        <div id="sug-cliente" class="sug-box d-none"></div>
+                    </div>
+                </div>
+                <hr class="my-3 opacity-10">
+                <div class="row g-3 mb-3 align-items-end">
+                    <div class="col-3">
+                        <label class="text-uppercase">Cant.</label>
+                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1" min="1">
+                    </div>
+                    <div class="col" style="position:relative">
+                        <label class="text-uppercase">Producto</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="PRODUCTO">
+                        <div id="sug-producto" class="sug-box d-none"></div>
+                    </div>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <label class="text-uppercase">Costo Anaquel</label>
+                        <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="col-6">
+                        <label class="text-uppercase">Precio Venta</label>
+                        <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+                <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
+            </div>
+
+            <div id="quick-delete-list" class="mt-4">
+                <span class="list-title">Recientes (Corrección)</span>
+                <div id="lista-ventas-hoy"></div>
+            </div>
+        </div>
+
+        <!-- REPARTO -->
+        <div id="tab-entregas" class="tab-content" style="display: none;">
+            <div class="card-custom py-2 mb-3 text-center">
+                <label class="text-uppercase small fw-bold">Fecha de Reparto</label>
+                <input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="if(window.renderEntregas) window.renderEntregas()">
+            </div>
+            <div id="lista-entregas"></div>
+        </div>
+
+        <!-- CONTROL -->
+        <div id="tab-control" class="tab-content" style="display: none;">
+            <div class="sub-nav">
+                <button class="sub-btn active" onclick="window.switchSubTab('clientes', this)">Clientes</button>
+                <button class="sub-btn" onclick="window.switchSubTab('productos', this)">Productos</button>
+                <button class="sub-btn" onclick="window.switchSubTab('sales', this)">Ventas Hoy</button>
+                <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
+                <button class="sub-btn" onclick="window.switchSubTab('finanzas', this)">Finanzas</button>
+            </div>
+            <div id="filter-wrapper" class="mb-3"></div>
+            <div id="lista-catalogos"></div>
+        </div>
+    </main>
+
+    <!-- TICKET RENDER (RESTABLECIDO EXACTO v16.2) -->
+    <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black;">
+        <div style="text-align: center; font-size: 1.5rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RÁPIDAS YAUTE</div>
+        <div id="t-fecha" style="text-align: center; margin-bottom: 20px;"></div>
+        <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
+        <div style="margin-bottom: 20px;"><b>CLIENTE:</b> <span id="t-cliente" style="text-transform: uppercase;"></span></div>
+        <table style="width: 100%; border-collapse: collapse;"><tbody id="t-items"></tbody></table>
+        <div style="border-top: 2px dashed #000; margin: 20px 0;"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.6rem; font-weight: 900;"><span>TOTAL:</span><span id="t-total"></span></div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="tab-btn active" onclick="window.showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
+        <button class="tab-btn" onclick="window.showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
+        <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
+    </nav>
+
+    <!-- MOTOR FIREBASE v17.1 (ULTRA-RESILIENTE) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
+            authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
+            projectId: "ofertas-rapidas-yautepec",
+            storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app",
+            messagingSenderId: "81339635207",
+            appId: "1:81339635207:web:26d180f92224d9a036fca2",
+            measurementId: "G-TW8T6E8Z0V"
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+        window.state = { sales: [], clients: [], stores: [], products: [] };
+        let currentUser = null;
+
+        const getVal = (x) => (x.nombre || x.name || x.cliente || x.producto || "S/N");
+        const setIndicator = (s) => {
+            const dot = document.getElementById('status-dot');
+            if (dot) dot.className = "status-dot " + (s === 'ok' ? 'bg-success' : 'bg-warning');
+        };
+        const toast = (m, type = 'success') => {
+            const el = document.getElementById('toast-alert');
+            if(!el) return;
+            el.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            el.innerText = m; el.style.display = 'block';
+            setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
+        };
+
+        signInAnonymously(auth).catch(e => console.error("Error Auth:", e.code));
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                startSync();
+            }
+        });
+
+        const startSync = () => {
+            ['sales', 'clients', 'stores', 'products'].forEach(name => {
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (snap) => {
+                    window.state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    setIndicator('ok');
+                    if(name === 'sales') {
+                        if(typeof window.renderEntregas === 'function') window.renderEntregas();
+                        window.renderVentasHoy();
+                    }
+                    if(typeof window.renderCatalogList === 'function') window.renderCatalogList();
+                });
+            });
+            setupAuto('in-tienda', 'sug-tienda', 'stores');
+            setupAuto('in-cliente', 'sug-cliente', 'clients');
+            setupAuto('in-producto', 'sug-producto', 'products');
+        };
+
+        const setupAuto = (inpId, boxId, key) => {
+            const inp = document.getElementById(inpId); const box = document.getElementById(boxId);
+            if(!inp || !box) return;
+            inp.oninput = () => {
+                const val = inp.value.toUpperCase().trim();
+                if(!val) { box.classList.add('d-none'); return; }
+                const ms = window.state[key].filter(x => getVal(x).toUpperCase().includes(val)).slice(0, 5);
+                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${getVal(x)}">${getVal(x)}</div>`).join('');
+                box.classList.toggle('d-none', ms.length === 0);
+            };
+            box.onclick = (e) => {
+                const it = e.target.closest('.sug-item'); if(!it) return;
+                inp.value = it.dataset.val; box.classList.add('d-none');
+                if(key === 'products') {
+                    const p = window.state.products.find(x => getVal(x) === it.dataset.val);
+                    if(p) { 
+                        if(document.getElementById('in-costo')) document.getElementById('in-costo').value = p.pCosto || p.costo || ""; 
+                        if(document.getElementById('in-precio')) document.getElementById('in-precio').value = p.pVenta || p.precio || ""; 
+                    }
+                }
+            };
+        };
+
+        window.renderVentasHoy = () => {
+            const list = document.getElementById('lista-ventas-hoy'); if(!list) return;
+            const todayStr = new Date().toLocaleDateString('es-MX');
+            const dv = window.state.sales.filter(s => s.fechaStr === todayStr).reverse();
+            if(dv.length === 0) { list.innerHTML = '<p class="small opacity-50 text-center py-3">Sin registros.</p>'; return; }
+            list.innerHTML = dv.slice(0, 5).map(v => `
+                <div class="card-custom py-2 mb-2 d-flex justify-content-between align-items-center" style="border-left: 4px solid var(--accent); padding: 10px 15px;">
+                    <div style="flex: 1; overflow: hidden;"><div class="fw-bold small text-uppercase text-truncate">${v.producto}</div><div class="small opacity-60">${v.cliente} | $${v.total.toFixed(2)}</div></div>
+                    <button class="btn btn-sm text-danger" onclick="window.delItem('sales','${v.id}')"><i class="fas fa-trash-alt"></i></button>
+                </div>`).join('');
+        };
+
+        window.renderEntregas = () => {
+            const list = document.getElementById('lista-entregas'); if(!list) return;
+            const selDate = document.getElementById('entregas-date')?.value;
+            if(!selDate) return;
+            const [y, m, d] = selDate.split('-');
+            const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const filtered = window.state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Vacío</p>'; return; }
+            const grouped = filtered.reduce((acc, v) => { 
+                const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
+                acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; 
+            }, {});
+            list.innerHTML = Object.keys(grouped).map(cli => `
+                <div class="card-custom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <b class="text-uppercase">${cli}</b>
+                        <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i> Mandar Nota</button>
+                    </div>
+                    <div class="check-group">
+                        <label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', '${f1}', 'entregado', this.checked)"> ENTREGA</label>
+                        <label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', '${f1}', 'pagado', this.checked)"> PAGO</label>
+                    </div>
+                    <div class="small opacity-75 mt-2">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div>
+                </div>`).join('');
+        };
+
+        window.toggleStatus = async (cli, date, field, val) => {
+            const items = window.state.sales.filter(s => s.cliente === cli && s.fechaStr === date);
+            for(const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
+        };
+
+        window.renderCatalogList = () => {
+            const list = document.getElementById('lista-catalogos'); if(!list) return;
+            const mode = window.activeSubTab;
+            if (mode === 'clientes') {
+                const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
+                list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `<div class="card-custom d-flex justify-content-between py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+            } else if (mode === 'productos') {
+                const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
+                list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `<div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | Venta: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+            } else if (mode === 'sales') {
+                const dIn = document.getElementById('hist-date'); if(!dIn) return;
+                const [y, m, d] = dIn.value.split('-');
+                const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${(v.total||0).toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+(v.total||0),0).toFixed(2)}</div>`;
+            } else if (mode === 'diezmo') {
+                const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
+                if(!sEl || !eEl) return;
+                const s = new Date(sEl.value + "T00:00:00"); const e = new Date(eEl.value + "T23:59:59");
+                const fs = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
+                const profit = fs.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia: $${profit.toFixed(2)}</div></div>`;
+            } else if (mode === 'finanzas') {
+                renderFinanzas(list);
+            }
+        };
+
+        const renderFinanzas = (container) => {
+            const subTab = window.activeFinanceTab;
+            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+            let html = `<div class="finance-sub-nav"><button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">DETALLE VENTAS</button><button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button></div>`;
+            if (subTab === 'ventas') {
+                html += `<div class="card-custom p-3 mb-3"><div class="row g-2"><div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}">${c}</option>`).join('')}</select></div></div></div><div class="card-custom"><table class="table-finance"><thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Total</th></tr></thead><tbody id="fin-sales-body"></tbody></table></div>`;
+                container.innerHTML = html;
+                const fDate = document.getElementById('f-date')?.value;
+                const fStore = document.getElementById('f-store')?.value;
+                const fClient = document.getElementById('f-client')?.value;
+                if (fDate) {
+                    const [y, m, d] = fDate.split('-');
+                    const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                    const filtered = window.state.sales.filter(s => (s.fechaStr === fd || s.fechaStr === fd2) && (fStore === 'ALL' || s.tienda === fStore) && (fClient === 'ALL' || s.cliente === fClient));
+                    const tbody = document.getElementById('fin-sales-body');
+                    if (tbody) tbody.innerHTML = filtered.map(v => `<tr><td>${v.cantidad}x</td><td class="fw-bold text-uppercase">${v.producto}</td><td class="text-end fw-bold">$${((v.costo || 0) * (v.cantidad || 1)).toFixed(2)}</td></tr>`).join('') || '<tr><td colspan="3" class="text-center py-4">No hay datos</td></tr>';
+                }
+            } else {
+                html += `<div class="card-custom p-3 mb-3"><label class="text-uppercase">Comparativa por Tienda</label><input type="date" id="g-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div id="ganancias-list"></div>`;
+                container.innerHTML = html;
+                const gDate = document.getElementById('g-date')?.value;
+                if (gDate) {
+                    const [y, m, d] = gDate.split('-');
+                    const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                    const daily = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
+                    const stores = [...new Set(daily.map(s => s.tienda))];
+                    const listContainer = document.getElementById('ganancias-list');
+                    if (listContainer) listContainer.innerHTML = stores.map(st => {
+                        const stSales = daily.filter(s => s.tienda === st);
+                        const totalVenta = stSales.reduce((a,b) => a + b.total, 0);
+                        const totalCosto = stSales.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 1)), 0);
+                        const ganancia = totalVenta - totalCosto;
+                        return `<div class="card-custom py-3 d-flex justify-content-between align-items-center"><div><b class="text-primary text-uppercase">${st}</b><br><small class="opacity-50">Total Venta: $${totalVenta.toFixed(2)}</small></div><div class="text-end"><span class="badge bg-success" style="font-size: 0.9rem;">+ $${ganancia.toFixed(2)}</span></div></div>`;
+                    }).join('') || '<p class="text-center py-4">Sin datos</p>';
+                }
+            }
+        };
+
+        window.delItem = async (c, id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
+
+        document.getElementById('btn-save-record').onclick = async () => {
+            if(!currentUser) return toast("Esperando conexión...", "danger");
+            const d = {
+                tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
+                cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
+                producto: (document.getElementById('in-producto')?.value || "").trim().toUpperCase(),
+                cantidad: parseInt(document.getElementById('in-cantidad')?.value) || 1,
+                costo: parseFloat(document.getElementById('in-costo')?.value) || 0,
+                precio: parseFloat(document.getElementById('in-precio')?.value) || 0,
+                fechaStr: new Date().toLocaleDateString('es-MX'),
+                total: (parseInt(document.getElementById('in-cantidad')?.value) || 1) * (parseFloat(document.getElementById('in-precio')?.value) || 0),
+                entregado: false, pagado: false, uid: currentUser.uid
+            };
+            if(!d.tienda || !d.producto || !d.cliente) return toast("Faltan datos", "danger");
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
+                const ck = async (col, val, ex = {}) => { if(!window.state[col].some(x => getVal(x).toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ex }); };
+                await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
+                toast("¡Guardado!");
+                document.getElementById('in-producto').value = "";
+            } catch(e) { toast("Error", "danger"); }
+        };
+
+        // --- MOTOR TICKET v16.2 (RESTAURADO) ---
+        window.shareTicket = async (n) => {
+            const dateInput = document.getElementById('entregas-date');
+            if(!dateInput || !dateInput.value) return;
+            const [y, m, d] = dateInput.value.split('-');
+            const f = `${d}/${m}/${y}`, fZ = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === fZ));
+            if(!items.length) { toast("Vacío", "warning"); return; }
+            
+            document.getElementById('t-cliente').innerText = n;
+            document.getElementById('t-fecha').innerText = f;
+            let tot = 0;
+            document.getElementById('t-items').innerHTML = items.map(i => { tot += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding:0 10px;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
+            document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
+            
+            try {
+                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
+                canvas.toBlob(async b => {
+                    const fileName = `Ticket_${n.replace(/\s+/g, '_')}.png`;
+                    const file = new File([b], fileName, { type: 'image/png' });
+                    if(navigator.share) {
+                        try { await navigator.share({ files: [file], title: 'Nota de Venta' }); } catch(err) { console.warn("Share Cancelado"); }
+                    } else { toast("Navegador no compatible", "danger"); }
+                }, 'image/png');
+            } catch(e) { toast("Error ticket", "danger"); }
+        };
+    </script>
+</body>
+</html>
