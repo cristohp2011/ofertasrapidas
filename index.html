@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.35</title>
+    <title>Yaute Rápidas Pro v10.37</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -88,7 +88,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div class="splash-version">VERSIÓN 10.35</div>
+        <div class="splash-version">VERSIÓN 10.37 - ESTABLE</div>
     </div>
 
     <div id="cam-container">
@@ -187,7 +187,7 @@
     </nav>
 
     <script type="module">
-        const apiKey = ""; // API Key dinámica proporcionada por el entorno
+        const apiKey = ""; 
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -214,8 +214,14 @@
 
         const removeSplash = () => {
             const splash = document.getElementById('splash-screen');
-            if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
+            if (splash && splash.style.display !== 'none') { 
+                splash.style.opacity = '0'; 
+                setTimeout(() => splash.style.display = 'none', 500); 
+            }
         };
+
+        // SAFETY TIMEOUT: Si en 6 segundos no ha cargado, forzar la entrada.
+        setTimeout(removeSplash, 6000);
 
         // --- GEMINI API CON REINTENTOS ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
@@ -268,7 +274,7 @@
         async function processIA(base64) {
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Analiza la etiqueta de precio o el producto. Extrae 'productName' y 'unitCost' (si aparece). Responde solo JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Analiza la etiqueta de precio o el producto. Extrae 'productName' y 'unitCost'. Responde solo JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
@@ -280,7 +286,7 @@
                     if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
                 }
                 showToast("¡Lectura IA completada!");
-            } catch (e) { showToast("Error IA, reintente", "danger"); }
+            } catch (e) { showToast("IA: Intenta de nuevo", "danger"); }
         }
 
         // --- AUTH & SYNC ---
@@ -299,13 +305,13 @@
         onAuthStateChanged(auth, (u) => {
             user = u;
             if (u) {
-                const statusDot = document.getElementById('status-dot');
-                if (statusDot) statusDot.className = 'status-indicator bg-success shadow-sm';
+                const dot = document.getElementById('status-dot');
+                if (dot) dot.className = 'status-indicator bg-success shadow-sm';
                 
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
                 switchSubTab('clientes', document.querySelector('.sub-btn'));
-                setTimeout(removeSplash, 1000);
+                setTimeout(removeSplash, 800);
             }
         });
 
@@ -344,7 +350,8 @@
 
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab-${id}`).classList.add('active');
+            const target = document.getElementById(`tab-${id}`);
+            if(target) target.classList.add('active');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
         };
@@ -416,7 +423,7 @@
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
                 const ck = async (col, val, ext = {}) => { if(!state[col].some(x => (x.nombre||'').toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
-                await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
+                await checkAndAdd('stores', data.tienda); await checkAndAdd('clients', data.cliente); await checkAndAdd('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
                 showToast("¡Venta guardada!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { showToast("Error de guardado", "danger"); }
