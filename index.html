@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.50.6</title>
+    <title>Yaute Rápidas Pro v10.50.7</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,33 +17,23 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --whatsapp: #25d366;
             --bg: #f8fafc;
             --card-radius: 14px;
         }
 
-        /* --- CONTROL DE PANTALLA --- */
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN CRÍTICO --- */
         #splash-screen { 
             position: fixed; inset: 0; background: #ffffff; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             z-index: 9999; transition: opacity 0.5s ease;
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-title { font-weight: 900; color: var(--primary); font-size: 1.4rem; text-transform: uppercase; }
-        .splash-loader { margin-top: 25px; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 80%; }
-        
-        #force-entry-btn { 
-            display: none; margin-top: 25px; border: 2px solid #e2e8f0; 
-            color: #64748b; background: white; padding: 10px 24px; 
-            border-radius: 50px; font-weight: 800; font-size: 0.7rem; 
-            text-transform: uppercase; cursor: pointer;
-        }
+        .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        #splash-status { margin-top: 15px; font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -52,7 +42,7 @@
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.8rem; }
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -82,20 +72,31 @@
 </head>
 <body>
 
-    <!-- Splash Screen con Desbloqueo Automático -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
-        <div class="splash-title">Yaute Rápidas</div>
-        <div id="splash-status">Verificando conexión...</div>
-        <div class="splash-loader" id="loader-icon"></div>
-        <button id="force-entry-btn" onclick="window.removeSplash()">Continuar de todos modos</button>
+        <div class="splash-loader"></div>
+        <div id="splash-status">CARGANDO v10.50.7...</div>
     </div>
+
+    <!-- SCRIPT DE DESBLOQUEO GARANTIZADO (NO MÓDULO) -->
+    <script>
+        window.removeSplash = function() {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(function() { splash.style.display = 'none'; }, 500);
+            }
+        };
+        // Paracaídas: Quitar splash a los 3.5 segundos pase lo que pase
+        setTimeout(window.removeSplash, 3500);
+    </script>
 
     <div id="toast-alert"></div>
 
     <header>
         <div class="d-flex align-items-center justify-content-center gap-2">
-            <h6 class="m-0 fw-bold text-uppercase" style="letter-spacing: 1px;">Yaute Rápidas Pro</h6>
+            <h6 class="m-0 fw-bold text-uppercase">Yaute Rápidas Pro</h6>
             <div id="status-dot" class="bg-warning" style="width:10px; height:10px; border-radius:50%;"></div>
         </div>
     </header>
@@ -148,14 +149,14 @@
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold shadow-sm" style="border-radius: 12px;">GUARDAR VENTA</button>
+                <button id="btn-save" class="btn btn-primary w-100 py-3 fw-bold rounded-3">GUARDAR VENTA</button>
             </div>
         </div>
 
         <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-2 mb-3 text-center">
-                <label class="text-uppercase small fw-bold mb-1">Fecha de Reparto</label>
+                <label class="text-uppercase small fw-bold">Repartos del día</label>
                 <input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()">
             </div>
             <div id="lista-entregas"></div>
@@ -174,28 +175,12 @@
         </div>
     </main>
 
-    <div id="ticket-render" style="position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace;">
-        <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">YAUTE RÁPIDAS</div>
-        <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
-        <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
-        <div style="margin: 15px 0;"><b>CLIENTE:</b> <span id="t-cliente-name" style="text-transform: uppercase;"></span></div>
-        <table style="width: 100%; border-collapse: collapse;"><tbody id="t-body-items"></tbody></table>
-        <div style="border-top: 2px dashed #000; margin: 15px 0;"></div>
-        <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-grand-total"></span></div>
-    </div>
-
-    <nav class="bottom-nav">
-        <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
-        <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
-        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Control</button>
-    </nav>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DINÁMICA
+        // CONFIGURACIÓN DINÁMICA FIREBASE
         const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
@@ -206,23 +191,73 @@
         let activeSubTab = 'clientes';
         let user = null;
 
-        const updateSplashStatus = (msg) => {
+        const showToast = (msg, type = 'success') => {
+            const toast = document.getElementById('toast-alert');
+            if(!toast) return;
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.innerText = msg; toast.style.display = 'block'; 
+            setTimeout(() => { if(toast) toast.style.display = 'none'; }, 3000);
+        };
+
+        const updateStatus = (msg) => {
             const el = document.getElementById('splash-status');
             if(el) el.innerText = msg;
         };
 
-        window.removeSplash = () => {
-            const splash = document.getElementById('splash-screen');
-            if (splash) { 
-                splash.style.opacity = '0'; 
-                setTimeout(() => { splash.style.display = 'none'; }, 400); 
-            }
+        // --- CÁMARA & IA ---
+        const btnScan = document.getElementById('btn-scan');
+        const camContainer = document.getElementById('cam-container');
+        const camPreview = document.getElementById('cam-preview');
+        const camCanvas = document.getElementById('cam-canvas');
+        let stream = null;
+
+        btnScan.onclick = async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
+                camPreview.srcObject = stream;
+                camContainer.style.display = 'block';
+            } catch (e) { showToast("Cámara bloqueada", "danger"); }
         };
 
-        // --- AUTENTICACIÓN (REGLA 3) ---
-        const startApp = async () => {
+        document.getElementById('btn-cam-cancel').onclick = () => { 
+            if(stream) stream.getTracks().forEach(t => t.stop()); 
+            camContainer.style.display = 'none'; 
+        };
+
+        document.getElementById('btn-do-capture').onclick = () => {
+            const ctx = camCanvas.getContext('2d');
+            camCanvas.width = camPreview.videoWidth; camCanvas.height = camPreview.videoHeight;
+            ctx.drawImage(camPreview, 0, 0);
+            const base64 = camCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            if(stream) stream.getTracks().forEach(t => t.stop());
+            camContainer.style.display = 'none';
+            processIA(base64);
+        };
+
+        async function processIA(base64) {
+            showToast("IA: Escaneando...");
+            const apiKey = ""; 
             try {
-                updateSplashStatus("Validando permisos...");
+                const payload = {
+                    contents: [{ parts: [{ text: "Dime qué producto es este. Responde solo JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    generationConfig: { responseMimeType: "application/json" }
+                };
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                const result = JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json|```/g, "").trim() || "{}");
+                if(result.nombre) {
+                    document.getElementById('in-producto').value = result.nombre.toUpperCase();
+                    showToast("Producto detectado");
+                }
+            } catch (e) { showToast("Error de lectura IA", "danger"); }
+        }
+
+        // --- AUTH & SYNC ---
+        const initAuth = async () => {
+            try {
+                updateStatus("Conectando...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
@@ -230,25 +265,16 @@
                 }
             } catch (error) {
                 console.error("Auth Fail:", error);
-                updateSplashStatus("Error de conexión. Reintentando...");
-                // Intentar anónimo de respaldo
-                await signInAnonymously(auth).catch(() => {
-                    updateSplashStatus("Error crítico. Pulse Acceso Manual.");
-                    document.getElementById('force-entry-btn').style.display = 'block';
-                });
+                await signInAnonymously(auth);
             }
         };
 
-        // Ejecutar inicio
-        startApp();
+        initAuth();
 
-        // Escuchar cambios de estado (Libera el Splash de inmediato)
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
-                updateSplashStatus("Sincronizando catálogos...");
-                window.removeSplash(); // LIBERACIÓN INMEDIATA
-                
+                window.removeSplash(); // Quitar splash al tener usuario
                 const dot = document.getElementById('status-dot');
                 if (dot) dot.className = 'status-indicator bg-success';
                 
@@ -258,21 +284,15 @@
             }
         });
 
-        // Seguro de vida: Si en 4 segundos no ha cargado, quitar el splash pase lo que pase
-        setTimeout(window.removeSplash, 4000);
-
         const startSync = () => {
             if (!user) return;
             const collections = ['sales', 'clients', 'stores', 'products'];
             collections.forEach(n => {
-                // REGLA 1: Ruta estricta
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
-                }, (err) => {
-                    console.error("Permission Error:", n, err);
-                });
+                }, (err) => console.error("Error Firestore:", err));
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); 
             setupAuto('in-cliente', 'sug-cliente', 'clients'); 
@@ -315,7 +335,7 @@
             const fw = document.getElementById('filter-wrapper');
             const today = new Intl.DateTimeFormat('en-CA').format(new Date());
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Filtrar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -329,28 +349,26 @@
             const selInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(selInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-30">Sin pedidos</p>'; return; }
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-30">Sin pedidos hoy</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
-            list.innerHTML = Object.keys(grouped).map(cli => {
-                const items = grouped[cli].items;
-                return `<div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b></div>
-                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
-                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`;
-            }).join('');
+            list.innerHTML = Object.keys(grouped).map(cli => `
+                <div class="card-custom">
+                    <b class="text-uppercase">${cli}</b>
+                    <div class="small opacity-75 mt-1">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`).join('');
         };
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients','${c.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
+                list.innerHTML = state.clients.filter(c => c.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients','${c.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
                 list.innerHTML = state.products.filter(p => p.nombre.includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
                 const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
                 const dv = state.sales.filter(s => s.fechaStr === fd);
-                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small class="opacity-50">${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             }
         };
 
@@ -375,6 +393,7 @@
                 const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
                 await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
+                showToast("Venta guardada");
             } catch(e) { }
         };
     </script>
