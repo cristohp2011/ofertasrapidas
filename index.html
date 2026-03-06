@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v13.0</title>
+    <title>Ofertas Rápidas Yaute v13.1</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -72,7 +72,7 @@
 </head>
 <body>
 
-    <!-- Splash Screen Dinámico -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/130?text=Yaute'">
         <div class="splash-loader"></div>
@@ -80,7 +80,6 @@
     </div>
 
     <script>
-        // Paracaídas de emergencia: Liberar interfaz tras 6 segundos pase lo que pase
         window.removeSplash = function() {
             const splash = document.getElementById('splash-screen');
             if (splash && splash.style.display !== 'none') {
@@ -88,14 +87,15 @@
                 setTimeout(() => { if(splash) splash.style.display = 'none'; }, 400);
             }
         };
-        setTimeout(window.removeSplash, 6000);
+        // Desbloqueo a los 5 segundos
+        setTimeout(window.removeSplash, 5000);
     </script>
 
     <div id="toast-alert"></div>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase" style="letter-spacing: 0.5px;">Ofertas Rápidas Yaute <span class="version-badge">v13.0</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v13.1</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -170,19 +170,32 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR DE FIREBASE v13.0 (ARQUITECTURA BLINDADA) -->
+    <!-- MOTOR FIREBASE v13.1 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DINÁMICA ABSOLUTA
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // CONFIGURACIÓN ROBUSTA
+        const backupConfig = {
+            apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA",
+            authDomain: "prueba-5e215.firebaseapp.com",
+            projectId: "prueba-5e215",
+            storageBucket: "prueba-5e215.firebasestorage.app",
+            messagingSenderId: "898868587449",
+            appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
+        };
+
+        let firebaseConfig;
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : backupConfig;
+        } catch (e) {
+            firebaseConfig = backupConfig;
+        }
+
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
-        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        // REGLA FUNDAMENTAL: Forzar Long Polling para entornos con firewalls (Móviles)
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
@@ -193,8 +206,7 @@
             const dot = document.getElementById('status-dot');
             if (!dot) return;
             dot.className = "status-dot " + (s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : 'bg-warning'));
-            if(s === 'ok') dot.style.boxShadow = '0 0 12px #10b981';
-            if(s === 'err') dot.style.boxShadow = '0 0 12px #ef4444';
+            if(s === 'ok') dot.style.boxShadow = '0 0 15px #10b981';
         };
 
         const updateStatusText = (m) => {
@@ -212,22 +224,18 @@
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
-        // --- INICIO DE SESIÓN SECUENCIAL (REGLA 3) ---
+        // --- AUTH ---
         const startApp = async () => {
             try {
-                updateStatusText("CONECTANDO AL PROYECTO...");
+                updateStatusText("CONECTANDO A LA NUBE...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (e) { 
-                console.error("Auth Error:", e.code);
-                updateStatusText("REINTENTANDO ACCESO...");
-                await signInAnonymously(auth).catch(() => {
-                    updateStatusText("ERROR CRÍTICO: RECARGUE LA APP");
-                    setIndicator('err');
-                });
+            } catch (e) {
+                console.warn("Reintento anónimo...");
+                await signInAnonymously(auth).catch(() => setIndicator('err'));
             }
         };
         startApp();
@@ -235,15 +243,14 @@
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
-                updateStatusText("ACCESO CONCEDIDO");
+                updateStatusText("SESIÓN INICIADA");
+                setIndicator('ok'); // CAMBIO INMEDIATO A VERDE AL AUTENTICAR
                 window.removeSplash(); 
                 document.getElementById('entregas-date').value = getISODate();
-                // INICIAR ESCUCHAS SOLO DESPUÉS DE AUTENTICAR (REGLA 3)
                 startDataSync();
             }
         });
 
-        // REGLA 1: Estructura de rutas artifacts/{appId}/public/data/...
         const startDataSync = () => {
             if(!user) return;
             const cols = ['sales', 'clients', 'stores', 'products'];
@@ -252,14 +259,10 @@
                 const path = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
                 onSnapshot(path, (snapshot) => {
                     state[collectionName] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    
-                    // Indicador verde al confirmar que hay una vía abierta
-                    setIndicator('ok');
-                    
                     if(collectionName === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
-                    console.error("Firebase Sync Error:", err.code);
+                    console.error("Error en " + collectionName, err.code);
                     if(err.code === 'permission-denied') setIndicator('err');
                 });
             });
@@ -304,7 +307,7 @@
             };
         };
 
-        // --- NAVEGACIÓN ---
+        // --- FUNCIONES GLOBALES ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             const target = document.getElementById('tab-' + id);
@@ -335,10 +338,10 @@
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
             const [y, m, d] = selDate.split('-');
-            const fd1 = `${d}/${m}/${y}`;
-            const fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const f1 = `${d}/${m}/${y}`;
+            const f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
             
-            const filtered = state.sales.filter(s => s.fechaStr === fd1 || s.fechaStr === fd2);
+            const filtered = state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
             if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">No hay pedidos registrados</p>'; return; }
             
             const grouped = filtered.reduce((acc, v) => { 
@@ -370,14 +373,14 @@
             } else if(activeSubTab === 'sales') {
                 const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
                 const [y, m, d] = dateEl.value.split('-');
-                const fd1 = `${d}/${m}/${y}`;
-                const fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-                const dv = state.sales.filter(s => s.fechaStr === fd1 || s.fechaStr === fd2);
+                const f1 = `${d}/${m}/${y}`;
+                const f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                const dv = state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
                 list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             }
         };
 
-        window.delItem = async (c, id) => { if(confirm("¿Eliminar del catálogo?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
+        window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
 
         document.getElementById('btn-save-record').onclick = async () => {
             if(!user) return toast("Conexión en progreso...", "danger");
