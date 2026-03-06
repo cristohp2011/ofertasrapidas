@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v17.4</title>
+    <title>Ofertas Rápidas Yaute v17.6</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -81,6 +81,10 @@
         .table-finance td { padding: 12px 5px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
 
         #entregas-date { cursor: pointer; -webkit-appearance: none; }
+
+        /* --- MODAL EDIT --- */
+        #edit-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 15000; backdrop-filter: blur(3px); }
+        .modal-content-custom { background: white; width: 90%; max-width: 400px; border-radius: 20px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
     </style>
 </head>
 <body>
@@ -89,7 +93,34 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Iniciando v17.4...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Iniciando v17.6...</div>
+    </div>
+
+    <!-- Modal para Editar Item -->
+    <div id="edit-modal">
+        <div class="modal-content-custom">
+            <h5 class="fw-bold mb-3" id="edit-modal-title">Editar Registro</h5>
+            <div class="mb-3">
+                <label class="text-uppercase small fw-bold text-muted">Nuevo Nombre</label>
+                <input type="text" id="edit-input-name" class="form-control text-uppercase">
+            </div>
+            <div id="edit-product-extras" style="display:none;">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <label class="text-uppercase small fw-bold text-muted">Costo</label>
+                        <input type="number" id="edit-input-cost" class="form-control" step="0.01">
+                    </div>
+                    <div class="col-6">
+                        <label class="text-uppercase small fw-bold text-muted">Venta</label>
+                        <input type="number" id="edit-input-price" class="form-control" step="0.01">
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-light flex-fill fw-bold" onclick="window.closeEditModal()">Cancelar</button>
+                <button class="btn btn-primary flex-fill fw-bold" id="btn-save-edit">Actualizar</button>
+            </div>
+        </div>
     </div>
 
     <!-- NAVEGACIÓN INDEPENDIENTE -->
@@ -101,7 +132,9 @@
             vDate: todayStr,
             vStore: 'ALL',
             vClient: 'ALL',
-            gDate: todayStr
+            gDate: todayStr,
+            dStart: todayStr,
+            dEnd: todayStr
         };
 
         setTimeout(function() {
@@ -145,12 +178,10 @@
             const fw = document.getElementById('filter-wrapper');
             const today = new Intl.DateTimeFormat('en-CA').format(new Date());
             
-            if(id === 'clientes' || id === 'productos') {
+            if(id === 'clientes' || id === 'productos' || id === 'tiendas') {
                 fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="if(window.renderCatalogList) window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
-            } else if(id === 'diezmo') {
-                fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"></div>`;
             } else if(id === 'finanzas') {
                 fw.innerHTML = '';
             }
@@ -165,25 +196,48 @@
             if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
         };
 
-        // Función para actualizar memoria de filtros desde la UI
         window.updateFinanceFilters = function() {
             const vd = document.getElementById('f-date');
             const vs = document.getElementById('f-store');
             const vc = document.getElementById('f-client');
             const gd = document.getElementById('g-date');
+            const ds = document.getElementById('d-start');
+            const de = document.getElementById('d-end');
 
             if (vd) window.financeFilters.vDate = vd.value;
             if (vs) window.financeFilters.vStore = vs.value;
             if (vc) window.financeFilters.vClient = vc.value;
             if (gd) window.financeFilters.gDate = gd.value;
+            if (ds) window.financeFilters.dStart = ds.value;
+            if (de) window.financeFilters.dEnd = de.value;
 
             window.renderCatalogList();
         };
+
+        // --- LÓGICA MODAL EDITAR ---
+        window.currentEditData = null;
+        window.openEditModal = (col, id, currentName, cost = null, price = null) => {
+            window.currentEditData = { col, id };
+            document.getElementById('edit-modal-title').innerText = "Editar " + (col === 'clients' ? 'Cliente' : col === 'products' ? 'Producto' : 'Tienda');
+            document.getElementById('edit-input-name').value = currentName;
+            
+            const extras = document.getElementById('edit-product-extras');
+            if(col === 'products') {
+                extras.style.display = 'block';
+                document.getElementById('edit-input-cost').value = cost;
+                document.getElementById('edit-input-price').value = price;
+            } else {
+                extras.style.display = 'none';
+            }
+            
+            document.getElementById('edit-modal').style.display = 'flex';
+        };
+        window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
     </script>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v17.4</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v17.6</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -251,8 +305,8 @@
             <div class="sub-nav">
                 <button class="sub-btn active" onclick="window.switchSubTab('clientes', this)">Clientes</button>
                 <button class="sub-btn" onclick="window.switchSubTab('productos', this)">Productos</button>
+                <button class="sub-btn" onclick="window.switchSubTab('tiendas', this)">Tiendas</button>
                 <button class="sub-btn" onclick="window.switchSubTab('sales', this)">Ventas Hoy</button>
-                <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
                 <button class="sub-btn" onclick="window.switchSubTab('finanzas', this)">Finanzas</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
@@ -260,7 +314,7 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER (RESTABLECIDO EXACTO v16.2 - SIN TOCAR) -->
+    <!-- TICKET RENDER (SÍMBOLO DE ESTABILIDAD - NO TOCAR) -->
     <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black; border: 1px solid #eee;">
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
@@ -280,7 +334,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v17.4 -->
+    <!-- MOTOR FIREBASE v17.6 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -385,7 +439,7 @@
             const [y, m, d] = selDate.split('-');
             const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
             const filtered = window.state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos.</p>'; return; }
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos registrados.</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
                 acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; 
@@ -413,25 +467,44 @@
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const mode = window.activeSubTab;
+            const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
+
             if (mode === 'clientes') {
-                const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
-                list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `<div class="card-custom d-flex justify-content-between py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+                list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
+                    <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
+                        <b>${getVal(c)}</b>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="window.openEditModal('clients','${c.id}','${getVal(c)}')"><i class="fas fa-pen"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>`).join('');
             } else if (mode === 'productos') {
-                const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
-                list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `<div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | Venta: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+                list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
+                    <div class="card-custom py-2">
+                        <div class="d-flex justify-content-between">
+                            <b>${getVal(p)}</b>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="window.openEditModal('products','${p.id}','${getVal(p)}',${p.pCosto||0},${p.pVenta||0})"><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="window.delItem('products','${p.id}')"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        <small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | Venta: $${(p.pVenta||0).toFixed(2)}</small>
+                    </div>`).join('');
+            } else if (mode === 'tiendas') {
+                list.innerHTML = window.state.stores.filter(s => getVal(s).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(s => `
+                    <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
+                        <b class="text-uppercase">${getVal(s)}</b>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="window.openEditModal('stores','${s.id}','${getVal(s)}')"><i class="fas fa-pen"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="window.delItem('stores','${s.id}')"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>`).join('');
             } else if (mode === 'sales') {
                 const dIn = document.getElementById('hist-date'); if(!dIn) return;
                 const [y, m, d] = dIn.value.split('-');
                 const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
                 const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
                 list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${(v.total||0).toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+(v.total||0),0).toFixed(2)}</div>`;
-            } else if (mode === 'diezmo') {
-                const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
-                if(!sEl || !eEl) return;
-                const s = new Date(sEl.value + "T00:00:00"); const e = new Date(eEl.value + "T23:59:59");
-                const fs = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
-                const profit = fs.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia: $${profit.toFixed(2)}</div></div>`;
             } else if (mode === 'finanzas') {
                 renderFinanzas(list);
             }
@@ -440,35 +513,19 @@
         const renderFinanzas = (container) => {
             const subTab = window.activeFinanceTab;
             const filters = window.financeFilters;
-            
-            let html = `<div class="finance-sub-nav"><button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">DETALLE VENTAS</button><button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button></div>`;
+            let html = `<div class="finance-sub-nav"><button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">VENTAS</button><button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button><button class="fin-btn ${subTab === 'diezmos' ? 'active' : ''}" onclick="window.switchFinanceTab('diezmos', this)">DIEZMOS</button></div>`;
             
             if (subTab === 'ventas') {
-                html += `
-                <div class="card-custom p-3 mb-3">
-                    <div class="row g-2">
-                        <div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${filters.vDate}" onchange="window.updateFinanceFilters()"></div>
-                        <div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.updateFinanceFilters()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${filters.vStore === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
-                        <div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.updateFinanceFilters()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${filters.vClient === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
-                    </div>
-                </div>
-                <div class="card-custom"><table class="table-finance"><thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Anaquel</th></tr></thead><tbody id="fin-sales-body"></tbody></table></div>`;
+                html += `<div class="card-custom p-3 mb-3"><div class="row g-2"><div class="col-12"><label class="text-uppercase">Fecha</label><input type="date" id="f-date" class="form-control" value="${filters.vDate}" onchange="window.updateFinanceFilters()"></div><div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.updateFinanceFilters()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${filters.vStore === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.updateFinanceFilters()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${filters.vClient === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div></div><div class="card-custom"><table class="table-finance"><thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Anaquel</th></tr></thead><tbody id="fin-sales-body"></tbody></table></div>`;
                 container.innerHTML = html;
-
                 const [y, m, d] = filters.vDate.split('-');
                 const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-                const filtered = window.state.sales.filter(s => 
-                    (s.fechaStr === fd || s.fechaStr === fd2) && 
-                    (filters.vStore === 'ALL' || s.tienda === filters.vStore) && 
-                    (filters.vClient === 'ALL' || s.cliente === filters.vClient)
-                );
+                const filtered = window.state.sales.filter(s => (s.fechaStr === fd || s.fechaStr === fd2) && (filters.vStore === 'ALL' || s.tienda === filters.vStore) && (filters.vClient === 'ALL' || s.cliente === filters.vClient));
                 const tbody = document.getElementById('fin-sales-body');
-                if (tbody) tbody.innerHTML = filtered.map(v => `<tr><td>${v.cantidad}x</td><td class="fw-bold text-uppercase">${v.producto}</td><td class="text-end fw-bold">$${((v.costo || 0) * (v.cantidad || 1)).toFixed(2)}</td></tr>`).join('') || '<tr><td colspan="3" class="text-center py-4">Sin datos</td></tr>';
-            
-            } else {
-                html += `<div class="card-custom p-3 mb-3"><label class="text-uppercase">Comparativa por Tienda</label><input type="date" id="g-date" class="form-control" value="${filters.gDate}" onchange="window.updateFinanceFilters()"></div><div id="ganancias-list"></div>`;
+                if (tbody) tbody.innerHTML = filtered.map(v => `<tr><td>${v.cantidad}x</td><td class="fw-bold text-uppercase">${v.producto}</td><td class="text-end fw-bold">$${((v.costo || 0) * (v.cantidad || 1)).toFixed(2)}</td></tr>`).join('') || '<tr><td colspan="3" class="text-center py-4">No hay datos</td></tr>';
+            } else if (subTab === 'ganancias') {
+                html += `<div class="card-custom p-3 mb-3"><label class="text-uppercase">Fecha para Comparar</label><input type="date" id="g-date" class="form-control" value="${filters.gDate}" onchange="window.updateFinanceFilters()"></div><div id="ganancias-list"></div>`;
                 container.innerHTML = html;
-                
                 const [y, m, d] = filters.gDate.split('-');
                 const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
                 const daily = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
@@ -478,13 +535,46 @@
                     const stSales = daily.filter(s => s.tienda === st);
                     const totalVenta = stSales.reduce((a,b) => a + b.total, 0);
                     const totalCosto = stSales.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 1)), 0);
-                    const ganancia = totalVenta - totalCosto;
-                    return `<div class="card-custom py-3 d-flex justify-content-between align-items-center"><div><b class="text-primary text-uppercase">${st}</b><br><small class="opacity-50">Total Venta: $${totalVenta.toFixed(2)}</small></div><div class="text-end"><span class="badge bg-success" style="font-size: 0.9rem;">+ $${ganancia.toFixed(2)}</span></div></div>`;
+                    return `<div class="card-custom py-3 d-flex justify-content-between align-items-center"><div><b class="text-primary text-uppercase">${st}</b><br><small class="opacity-50">Venta: $${totalVenta.toFixed(2)}</small></div><div class="text-end"><span class="badge bg-success" style="font-size: 0.9rem;">+ $${(totalVenta - totalCosto).toFixed(2)}</span></div></div>`;
                 }).join('') || '<p class="text-center py-4">Sin datos</p>';
+            } else {
+                html += `<div class="card-custom p-3 mb-3"><div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" id="d-start" class="form-control" value="${filters.dStart}" onchange="window.updateFinanceFilters()"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" id="d-end" class="form-control" value="${filters.dEnd}" onchange="window.updateFinanceFilters()"></div></div></div><div id="diezmo-result"></div>`;
+                container.innerHTML = html;
+                const start = new Date(filters.dStart + "T00:00:00");
+                const end = new Date(filters.dEnd + "T23:59:59");
+                const rangeSales = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= start && d <= end; });
+                const profit = rangeSales.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
+                const dzResult = document.getElementById('diezmo-result');
+                if (dzResult) dzResult.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia real: $${profit.toFixed(2)}</div></div>`;
             }
         };
 
-        window.delItem = async (c, id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
+        window.delItem = async (c, id) => { 
+            if(confirm("¿Estás seguro de borrar este registro del catálogo? (No afectará al historial de ventas)")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id));
+                toast("Registro eliminado del catálogo.");
+            }
+        };
+
+        // --- ACCIÓN GUARDAR EDICIÓN ---
+        document.getElementById('btn-save-edit').onclick = async () => {
+            const { col, id } = window.currentEditData;
+            const newName = document.getElementById('edit-input-name').value.trim().toUpperCase();
+            
+            if(!newName) return toast("El nombre es obligatorio", "danger");
+
+            let updateObj = { nombre: newName };
+            if(col === 'products') {
+                updateObj.pCosto = parseFloat(document.getElementById('edit-input-cost').value) || 0;
+                updateObj.pVenta = parseFloat(document.getElementById('edit-input-price').value) || 0;
+            }
+
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), updateObj);
+                toast("Catálogo actualizado");
+                window.closeEditModal();
+            } catch(e) { toast("Error al actualizar", "danger"); }
+        };
 
         document.getElementById('btn-save-record').onclick = async () => {
             if(!currentUser) return toast("Esperando conexión...", "danger");
@@ -509,7 +599,6 @@
             } catch(e) { toast("Error", "danger"); }
         };
 
-        // --- MOTOR TICKET v16.2 (RESTAURADO + LOGO + MENSAJE) ---
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             if(!dateInput || !dateInput.value) return;
@@ -517,25 +606,17 @@
             const f = `${d}/${m}/${y}`, fZ = `${parseInt(d)}/${parseInt(m)}/${y}`;
             const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === fZ));
             if(!items.length) { toast("Sin datos", "warning"); return; }
-            
             document.getElementById('t-cliente').innerText = n;
             document.getElementById('t-fecha').innerText = f;
             let tot = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { tot += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding:0 10px;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
-            
             try {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff', useCORS: true });
                 canvas.toBlob(async b => {
                     const fileName = `Ticket_${n.replace(/\s+/g, '_')}.png`;
                     const file = new File([b], fileName, { type: 'image/png' });
-                    
-                    const shareData = {
-                        files: [file],
-                        title: 'Nota de Venta Yaute',
-                        text: `Hola ${n}, aquí tienes tu nota de venta de Ofertas Rápidas Yaute. ¡Gracias por tu compra!`
-                    };
-
+                    const shareData = { files: [file], title: 'Nota de Venta Yaute', text: `Hola ${n}, aquí tienes tu nota de venta de Ofertas Rápidas Yaute. ¡Gracias por tu compra!` };
                     if(navigator.share) {
                         try { await navigator.share(shareData); } catch(err) { console.warn("Cancelado"); }
                     } else { toast("Navegador no compatible", "danger"); }
