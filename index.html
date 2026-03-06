@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.50.5</title>
+    <title>Yaute Rápidas Pro v10.50.6</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,6 +17,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --whatsapp: #25d366;
             --bg: #f8fafc;
             --card-radius: 14px;
         }
@@ -35,7 +36,7 @@
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-title { font-weight: 900; color: var(--primary); font-size: 1.4rem; text-transform: uppercase; }
         .splash-loader { margin-top: 25px; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 80%; }
         
         #force-entry-btn { 
             display: none; margin-top: 25px; border: 2px solid #e2e8f0; 
@@ -67,7 +68,7 @@
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
         .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
-        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.65rem; white-space: nowrap; color: #64748b; font-weight: 600; }
+        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 600; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 180px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
@@ -77,24 +78,17 @@
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
         .cam-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 70px; height: 70px; background: #fff; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
-
-        #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
-        .ticket-header-img { width: 160px; display: block; margin: 0 auto 10px; }
-        
-        .check-group { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 8px 12px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
-        .check-item input { width: 18px; height: 18px; accent-color: var(--success); }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen Dinámico -->
+    <!-- Splash Screen con Desbloqueo Automático -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-title">Yaute Rápidas</div>
-        <div id="splash-status">Iniciando sistema...</div>
-        <div class="splash-loader"></div>
-        <button id="force-entry-btn" onclick="window.removeSplash()">Acceso Manual</button>
+        <div id="splash-status">Verificando conexión...</div>
+        <div class="splash-loader" id="loader-icon"></div>
+        <button id="force-entry-btn" onclick="window.removeSplash()">Continuar de todos modos</button>
     </div>
 
     <div id="toast-alert"></div>
@@ -180,9 +174,7 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER -->
-    <div id="ticket-render">
-        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
+    <div id="ticket-render" style="position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace;">
         <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">YAUTE RÁPIDAS</div>
         <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
         <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
@@ -190,7 +182,6 @@
         <table style="width: 100%; border-collapse: collapse;"><tbody id="t-body-items"></tbody></table>
         <div style="border-top: 2px dashed #000; margin: 15px 0;"></div>
         <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-grand-total"></span></div>
-        <div style="text-align: center; font-size: 0.8rem; color: #666; margin-top: 40px; text-transform: uppercase;">¡Gracias por su preferencia!</div>
     </div>
 
     <nav class="bottom-nav">
@@ -204,7 +195,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global environment provided variables
+        // CONFIGURACIÓN DINÁMICA
         const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
@@ -215,16 +206,6 @@
         let activeSubTab = 'clientes';
         let user = null;
 
-        const showToast = (msg, type = 'success') => {
-            const toast = document.getElementById('toast-alert');
-            if(!toast) return;
-            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; 
-            setTimeout(() => { if(toast) toast.style.display = 'none'; }, 3000);
-        };
-
-        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
-
         const updateSplashStatus = (msg) => {
             const el = document.getElementById('splash-status');
             if(el) el.innerText = msg;
@@ -234,82 +215,63 @@
             const splash = document.getElementById('splash-screen');
             if (splash) { 
                 splash.style.opacity = '0'; 
-                setTimeout(() => { splash.style.display = 'none'; }, 500); 
+                setTimeout(() => { splash.style.display = 'none'; }, 400); 
             }
         };
 
-        // Mostrar botón de emergencia a los 6 segundos
-        setTimeout(() => {
-            const btn = document.getElementById('force-entry-btn');
-            if(btn && !user) btn.style.display = 'block';
-        }, 6000);
-
-        // --- CÁMARA & IA ---
-        const btnScan = document.getElementById('btn-scan');
-        const camContainer = document.getElementById('cam-container');
-        const camPreview = document.getElementById('cam-preview');
-        const camCanvas = document.getElementById('cam-canvas');
-        let stream = null;
-
-        btnScan.onclick = async () => {
+        // --- AUTENTICACIÓN (REGLA 3) ---
+        const startApp = async () => {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
-                camPreview.srcObject = stream;
-                camContainer.style.display = 'block';
-            } catch (e) { showToast("Cámara no disponible", "danger"); }
-        };
-
-        document.getElementById('btn-cam-cancel').onclick = () => { 
-            if(stream) stream.getTracks().forEach(t => t.stop()); 
-            camContainer.style.display = 'none'; 
-        };
-
-        document.getElementById('btn-do-capture').onclick = () => {
-            const ctx = camCanvas.getContext('2d');
-            camCanvas.width = camPreview.videoWidth; camCanvas.height = camPreview.videoHeight;
-            ctx.drawImage(camPreview, 0, 0);
-            const base64 = camCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            if(stream) stream.getTracks().forEach(t => t.stop());
-            camContainer.style.display = 'none';
-            processIA(base64);
-        };
-
-        async function processIA(base64) {
-            showToast("Analizando...");
-            const apiKey = ""; 
-            try {
-                const payload = {
-                    contents: [{ parts: [{ text: "Extrae el nombre del producto comercial. Responde SOLO JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
-                    generationConfig: { responseMimeType: "application/json" }
-                };
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-                const result = JSON.parse(textResult.replace(/```json|```/g, "").trim());
-                if(result.nombre) {
-                    document.getElementById('in-producto').value = result.nombre.toUpperCase();
-                    showToast("¡Listo!");
+                updateSplashStatus("Validando permisos...");
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
                 }
-            } catch (e) { showToast("Error IA", "danger"); }
-        }
+            } catch (error) {
+                console.error("Auth Fail:", error);
+                updateSplashStatus("Error de conexión. Reintentando...");
+                // Intentar anónimo de respaldo
+                await signInAnonymously(auth).catch(() => {
+                    updateSplashStatus("Error crítico. Pulse Acceso Manual.");
+                    document.getElementById('force-entry-btn').style.display = 'block';
+                });
+            }
+        };
 
-        // --- AUTH & SYNC (ESTRICTO REGLA 3) ---
+        // Ejecutar inicio
+        startApp();
+
+        // Escuchar cambios de estado (Libera el Splash de inmediato)
+        onAuthStateChanged(auth, (u) => {
+            if (u) {
+                user = u;
+                updateSplashStatus("Sincronizando catálogos...");
+                window.removeSplash(); // LIBERACIÓN INMEDIATA
+                
+                const dot = document.getElementById('status-dot');
+                if (dot) dot.className = 'status-indicator bg-success';
+                
+                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                startSync();
+                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
+            }
+        });
+
+        // Seguro de vida: Si en 4 segundos no ha cargado, quitar el splash pase lo que pase
+        setTimeout(window.removeSplash, 4000);
+
         const startSync = () => {
-            if (!user) return; // REGLA 3
-            
-            updateSplashStatus("Cargando base de datos...");
+            if (!user) return;
             const collections = ['sales', 'clients', 'stores', 'products'];
-            
             collections.forEach(n => {
-                // REGLA 1: Ruta estricta obligatoria
+                // REGLA 1: Ruta estricta
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
                     if(n === 'sales') renderEntregas();
                     renderCatalogList();
                 }, (err) => {
-                    console.error("Firebase Error Permissions:", n, err);
+                    console.error("Permission Error:", n, err);
                 });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores'); 
@@ -337,35 +299,6 @@
             };
         };
 
-        const initAuth = async () => {
-          try {
-            updateSplashStatus("Validando acceso...");
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-              await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-              await signInAnonymously(auth);
-            }
-          } catch (error) {
-            console.warn("Retrying login...");
-            await signInAnonymously(auth);
-          }
-        };
-
-        initAuth();
-
-        onAuthStateChanged(auth, (u) => {
-            user = u;
-            if (u) {
-                // Una vez autenticado, quitar splash de inmediato
-                window.removeSplash();
-                const dot = document.getElementById('status-dot');
-                if (dot) dot.className = 'status-indicator bg-success';
-                document.getElementById('entregas-date').value = getISODate();
-                startSync();
-                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
-            }
-        });
-
         // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -380,9 +313,9 @@
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
-            const today = getISODate();
+            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Filtrar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -396,22 +329,15 @@
             const selInput = document.getElementById('entregas-date').value;
             const targetDate = new Date(selInput + "T12:00:00").toLocaleDateString('es-MX');
             const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<div class="text-center py-5 opacity-30">Sin pedidos</div>'; return; }
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-30">Sin pedidos</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += v.total; acc[c].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => {
                 const items = grouped[cli].items;
-                return `<div class="card-custom" style="border-left-color: ${items.every(i=>i.pagado)?'var(--success)':'var(--warning)'}">
-                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="check-group mb-2"><label class="check-item"><input type="checkbox" ${items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'entregado', this.checked)"> ENTREGA</label><label class="check-item"><input type="checkbox" ${items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleClientStatus('${cli}', '${targetDate}', 'pagado', this.checked)"> PAGO</label></div>
-                    <div class="small opacity-75">${items.map(i => `<div>${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                return `<div class="card-custom">
+                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b></div>
+                    <div class="small opacity-75">${items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`;
             }).join('');
-        };
-
-        window.toggleClientStatus = async (clientName, targetDate, field, val) => {
-            if(!user) return;
-            const items = state.sales.filter(s => s.cliente === clientName && s.fechaStr === targetDate);
-            for (const item of items) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id), { [field]: val }); }
         };
 
         window.renderCatalogList = () => {
@@ -424,15 +350,7 @@
             } else if(activeSubTab === 'sales') {
                 const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
                 const dv = state.sales.filter(s => s.fechaStr === fd);
-                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small class="opacity-50">${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL DÍA: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
-            } else if(activeSubTab === 'diezmo') {
-                const sVal = document.getElementById('d-start').value;
-                const eVal = document.getElementById('d-end').value;
-                const s = new Date(sVal + "T00:00:00");
-                const e = new Date(eVal + "T23:59:59");
-                const fs = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
-                const profit = fs.reduce((a,v)=> a + (v.total - (v.costo * v.cantidad)), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small class="opacity-50">${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             }
         };
 
@@ -451,33 +369,13 @@
                 total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0),
                 entregado: false, pagado: false
             };
-            if(!data.tienda || !data.producto || !data.cliente) return showToast("Faltan datos", "danger");
+            if(!data.tienda || !data.producto || !data.cliente) return;
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
                 const ck = async (col, val, ext = {}) => { if(!state[col].some(x => x.nombre === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
                 await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
-                showToast("¡Guardado!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { showToast("Error al guardar", "danger"); }
-        };
-
-        window.shareTicket = async (name) => {
-            const fdIn = document.getElementById('entregas-date').value;
-            const fd = new Date(fdIn + "T12:00:00").toLocaleDateString('es-MX');
-            const items = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
-            if (!items.length) return;
-            document.getElementById('t-cliente-name').innerText = name;
-            document.getElementById('t-date-val').innerText = fd;
-            let total = 0;
-            document.getElementById('t-body-items').innerHTML = items.map(i => { total += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding-left:10px; text-transform:uppercase;">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
-            document.getElementById('t-grand-total').innerText = total.toFixed(2);
-            try {
-                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
-                canvas.toBlob(async b => {
-                    const f = new File([b], `Ticket_${name}.png`, { type: 'image/png' });
-                    if (navigator.share) await navigator.share({ files: [f], title: 'Ticket' });
-                }, 'image/png');
-            } catch (err) { showToast("Error visual al generar ticket", "danger"); }
+            } catch(e) { }
         };
     </script>
 </body>
