@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v16.2</title>
+    <title>Ofertas Rápidas Yaute v16.5</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -47,7 +47,7 @@
         .bg-warning { background-color: var(--warning) !important; }
 
         .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
-        .form-control { padding: 0.75rem 1rem; font-size: 1rem; border-radius: 12px; border: 2px solid #f1f5f9; }
+        .form-control, .form-select { padding: 0.75rem 1rem; font-size: 1rem; border-radius: 12px; border: 2px solid #f1f5f9; }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1px; }
 
         /* --- NAVEGACIÓN --- */
@@ -56,9 +56,13 @@
         .tab-btn i { font-size: 1.6rem; margin-bottom: 5px; }
         .tab-btn.active { color: var(--accent); }
 
-        .sub-nav { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
-        .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 8px 18px; font-size: 0.75rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; }
+        .sub-nav { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; border-bottom: 1px solid #f1f5f9; margin-bottom: 15px; }
+        .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 8px 18px; font-size: 0.75rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; margin-bottom: 5px; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); }
+
+        .finance-sub-nav { display: flex; gap: 5px; background: #f1f5f9; padding: 5px; border-radius: 12px; margin-bottom: 15px; }
+        .fin-btn { flex: 1; border: none; background: none; padding: 8px; font-size: 0.75rem; font-weight: 800; border-radius: 8px; color: #64748b; }
+        .fin-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
         /* --- AUTOCOMPLETE SUGGESTIONS --- */
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
@@ -71,6 +75,10 @@
         .check-item input { width: 20px; height: 20px; accent-color: var(--success); }
 
         .list-title { font-size: 0.7rem; font-weight: 800; color: #94a3b8; margin-bottom: 10px; display: block; text-transform: uppercase; }
+        
+        .table-finance { font-size: 0.85rem; width: 100%; }
+        .table-finance th { color: #94a3b8; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; border-bottom: 2px solid #f1f5f9; padding: 10px 5px; }
+        .table-finance td { padding: 12px 5px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -79,11 +87,17 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">SINCRO v16.2...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8;">PREPARANDO ENTORNO v16.5...</div>
     </div>
 
     <!-- NAVEGACIÓN INDEPENDIENTE -->
     <script>
+        const appStartTime = Date.now(); // Marca de tiempo al iniciar la carga
+        let splashDismissed = false;
+
+        window.activeSubTab = 'clientes';
+        window.activeFinanceTab = 'ventas';
+
         window.showTab = function(tabId, btnElement) {
             const contents = document.getElementsByClassName('tab-content');
             for(let i=0; i<contents.length; i++) { contents[i].style.display = 'none'; contents[i].classList.remove('active'); }
@@ -92,6 +106,10 @@
             const buttons = document.getElementsByClassName('tab-btn');
             for(let i=0; i<buttons.length; i++) { buttons[i].classList.remove('active'); }
             if (btnElement) btnElement.classList.add('active');
+
+            if (tabId === 'control' && typeof window.renderCatalogList === 'function') {
+                window.renderCatalogList();
+            }
         };
 
         window.switchSubTab = function(id, btn) {
@@ -109,20 +127,48 @@
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
                 fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="if(window.renderCatalogList) window.renderCatalogList()"></div>`;
+            } else if(id === 'finanzas') {
+                fw.innerHTML = '';
             }
+            
             if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
         };
 
-        window.removeSplash = function() {
-            const s = document.getElementById('splash-screen');
-            if (s) { s.style.opacity = '0'; setTimeout(() => { s.style.display = 'none'; }, 400); }
+        window.switchFinanceTab = function(id, btn) {
+            window.activeFinanceTab = id;
+            const finBtns = document.getElementsByClassName('fin-btn');
+            for(let i=0; i<finBtns.length; i++) { finBtns[i].classList.remove('active'); }
+            if (btn) btn.classList.add('active');
+            if (typeof window.renderCatalogList === 'function') window.renderCatalogList();
         };
-        setTimeout(window.removeSplash, 6000);
+
+        // Función mejorada para respetar el tiempo mínimo de 5 segundos
+        window.removeSplash = function() {
+            if (splashDismissed) return;
+            
+            const now = Date.now();
+            const elapsed = now - appStartTime;
+            const minimumDuration = 5000; // 5 segundos
+            
+            const remaining = Math.max(0, minimumDuration - elapsed);
+            
+            setTimeout(() => {
+                const s = document.getElementById('splash-screen');
+                if (s) { 
+                    s.style.opacity = '0'; 
+                    setTimeout(() => { s.style.display = 'none'; }, 400); 
+                    splashDismissed = true;
+                }
+            }, remaining);
+        };
+
+        // Paracaídas de seguridad extendido (8 segundos máximo si algo falla)
+        setTimeout(window.removeSplash, 8000);
     </script>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.2</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v16.5</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -170,7 +216,6 @@
                 <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
             </div>
 
-            <!-- Listado de corrección rápida -->
             <div id="quick-delete-list" class="mt-4">
                 <span class="list-title">Ventas de Hoy (Recientes)</span>
                 <div id="lista-ventas-hoy"></div>
@@ -193,6 +238,7 @@
                 <button class="sub-btn" onclick="window.switchSubTab('productos', this)">Productos</button>
                 <button class="sub-btn" onclick="window.switchSubTab('sales', this)">Ventas Hoy</button>
                 <button class="sub-btn" onclick="window.switchSubTab('diezmo', this)">Diezmo</button>
+                <button class="sub-btn" onclick="window.switchSubTab('finanzas', this)">Finanzas</button>
             </div>
             <div id="filter-wrapper" class="mb-3"></div>
             <div id="lista-catalogos"></div>
@@ -216,7 +262,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v16.2 (NATIVO MANUAL) -->
+    <!-- MOTOR FIREBASE v16.5 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -238,7 +284,6 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         window.state = { sales: [], clients: [], stores: [], products: [] };
-        window.activeSubTab = 'clientes';
         let currentUser = null;
 
         const getVal = (x) => (x.nombre || x.name || x.cliente || x.producto || "S/N");
@@ -260,9 +305,9 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
+                // Intentamos quitar el splash, pero la función interna de script tradicional respetará los 5s
                 window.removeSplash();
-                const ed = document.getElementById('entregas-date');
-                if(ed) ed.value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
                 startSync();
                 const subBtn = document.querySelector('.sub-btn');
                 if(subBtn) window.switchSubTab('clientes', subBtn);
@@ -310,30 +355,21 @@
             };
         };
 
-        // --- RENDER VENTA (Ventas de Hoy Recientes) ---
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy'); if(!list) return;
             const todayStr = new Date().toLocaleDateString('es-MX');
             const dv = window.state.sales.filter(s => s.fechaStr === todayStr).reverse();
-            
-            if(dv.length === 0) {
-                list.innerHTML = '<p class="small opacity-50 text-center py-3">Sin registros hoy.</p>';
-                return;
-            }
-
+            if(dv.length === 0) { list.innerHTML = '<p class="small opacity-50 text-center py-3">Sin registros hoy.</p>'; return; }
             list.innerHTML = dv.slice(0, 5).map(v => `
                 <div class="card-custom py-2 mb-2 d-flex justify-content-between align-items-center" style="border-left: 4px solid var(--accent); padding: 10px 15px;">
                     <div style="flex: 1; overflow: hidden;">
                         <div class="fw-bold small text-uppercase text-truncate">${v.producto}</div>
                         <div class="small opacity-60">${v.cliente} | $${v.total.toFixed(2)}</div>
                     </div>
-                    <button class="btn btn-sm text-danger" onclick="window.delItem('sales','${v.id}')">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <button class="btn btn-sm text-danger" onclick="window.delItem('sales','${v.id}')"><i class="fas fa-trash-alt"></i></button>
                 </div>`).join('');
         };
 
-        // --- RENDER REPARTO ---
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); if(!list) return;
             const selDate = document.getElementById('entregas-date')?.value;
@@ -342,12 +378,10 @@
             const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
             const filtered = window.state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
             if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos registrados</p>'; return; }
-            
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
                 acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; 
             }, {});
-
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
                     <div class="d-flex justify-content-between">
@@ -368,29 +402,131 @@
             for(const i of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val });
         };
 
-        // --- RENDER CATALOGOS ---
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
-            if(window.activeSubTab === 'clientes') {
+            const mode = window.activeSubTab;
+            
+            if (mode === 'clientes') {
+                const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
                 list.innerHTML = window.state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `
                     <div class="card-custom d-flex justify-content-between py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
-            } else if(window.activeSubTab === 'productos') {
+            } else if (mode === 'productos') {
+                const q = (document.getElementById('search-cat')?.value || "").toUpperCase();
                 list.innerHTML = window.state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `
                     <div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">Costo: $${(p.pCosto||0).toFixed(2)} | Venta: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
-            } else if(window.activeSubTab === 'sales') {
+            } else if (mode === 'sales') {
                 const dIn = document.getElementById('hist-date'); if(!dIn) return;
                 const [y, m, d] = dIn.value.split('-');
                 const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
                 const dv = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
                 list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${(v.total||0).toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+(v.total||0),0).toFixed(2)}</div>`;
-            } else if(window.activeSubTab === 'diezmo') {
+            } else if (mode === 'diezmo') {
                 const sEl = document.getElementById('d-start'); const eEl = document.getElementById('d-end');
                 if(!sEl || !eEl) return;
                 const s = new Date(sEl.value + "T00:00:00"); const e = new Date(eEl.value + "T23:59:59");
                 const fs = window.state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= s && d <= e; });
                 const profit = fs.reduce((a,v)=> a + ((v.total || 0) - ((v.costo || 0) * (v.cantidad || 1))), 0);
                 list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(profit * 0.1).toFixed(2)}</h3><div class="small opacity-80">10% del diezmo acumulado</div><div class="mt-2 small">Ganancia real: $${profit.toFixed(2)}</div></div>`;
+            } else if (mode === 'finanzas') {
+                renderFinanzas(list);
+            }
+        };
+
+        const renderFinanzas = (container) => {
+            const subTab = window.activeFinanceTab;
+            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+            
+            let html = `
+                <div class="finance-sub-nav">
+                    <button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">DETALLE VENTAS</button>
+                    <button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button>
+                </div>
+            `;
+
+            if (subTab === 'ventas') {
+                html += `
+                    <div class="card-custom p-3 mb-3">
+                        <div class="row g-2">
+                            <div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>
+                            <div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>
+                            <div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}">${c}</option>`).join('')}</select></div>
+                        </div>
+                    </div>
+                    <div class="card-custom">
+                        <table class="table-finance">
+                            <thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Total</th></tr></thead>
+                            <tbody id="fin-sales-body"></tbody>
+                        </table>
+                    </div>
+                `;
+                container.innerHTML = html;
+                
+                const fDate = document.getElementById('f-date')?.value;
+                const fStore = document.getElementById('f-store')?.value;
+                const fClient = document.getElementById('f-client')?.value;
+                
+                if (fDate) {
+                    const [y, m, d] = fDate.split('-');
+                    const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                    const filtered = window.state.sales.filter(s => {
+                        const matchDate = (s.fechaStr === fd || s.fechaStr === fd2);
+                        const matchStore = (fStore === 'ALL' || s.tienda === fStore);
+                        const matchClient = (fClient === 'ALL' || s.cliente === fClient);
+                        return matchDate && matchStore && matchClient;
+                    });
+
+                    const tbody = document.getElementById('fin-sales-body');
+                    if (tbody) {
+                        tbody.innerHTML = filtered.map(v => `
+                            <tr>
+                                <td>${v.cantidad}x</td>
+                                <td class="fw-bold text-uppercase">${v.producto}</td>
+                                <td class="text-end fw-bold">$${((v.costo || 0) * (v.cantidad || 1)).toFixed(2)}</td>
+                            </tr>
+                        `).join('');
+                        if (filtered.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="text-center opacity-50 py-4">No hay datos para estos filtros</td></tr>';
+                    }
+                }
+            } else {
+                html += `
+                    <div class="card-custom p-3 mb-3">
+                        <label class="text-uppercase">Seleccionar Fecha para Comparar</label>
+                        <input type="date" id="g-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">
+                    </div>
+                    <div id="ganancias-list"></div>
+                `;
+                container.innerHTML = html;
+                
+                const gDate = document.getElementById('g-date')?.value;
+                if (gDate) {
+                    const [y, m, d] = gDate.split('-');
+                    const fd = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                    const daily = window.state.sales.filter(s => s.fechaStr === fd || s.fechaStr === fd2);
+                    
+                    const stores = [...new Set(daily.map(s => s.tienda))];
+                    const listContainer = document.getElementById('ganancias-list');
+                    if (listContainer) {
+                        listContainer.innerHTML = stores.map(st => {
+                            const stSales = daily.filter(s => s.tienda === st);
+                            const totalVenta = stSales.reduce((a,b) => a + b.total, 0);
+                            const totalCosto = stSales.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 1)), 0);
+                            const ganancia = totalVenta - totalCosto;
+                            
+                            return `
+                                <div class="card-custom py-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <b class="text-primary text-uppercase">${st}</b><br>
+                                        <small class="opacity-50">Total Venta: $${totalVenta.toFixed(2)}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-success" style="font-size: 0.9rem;">+ $${ganancia.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                        if (stores.length === 0) listContainer.innerHTML = '<p class="text-center opacity-50 py-4">Sin ventas para esta fecha</p>';
+                    }
+                }
             }
         };
 
@@ -401,11 +537,10 @@
             }
         };
 
-        // --- BOTON GUARDAR ---
         const btnSave = document.getElementById('btn-save-record');
         if (btnSave) {
             btnSave.onclick = async () => {
-                if(!currentUser) return toast("Conectando...", "danger");
+                if(!currentUser) return toast("Esperando conexión...", "danger");
                 const d = {
                     tienda: (document.getElementById('in-tienda')?.value || "").trim().toUpperCase(),
                     cliente: (document.getElementById('in-cliente')?.value || "").trim().toUpperCase(),
@@ -432,7 +567,6 @@
             };
         }
 
-        // --- WHATSAPP TICKET ---
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             if(!dateInput || !dateInput.value) return;
