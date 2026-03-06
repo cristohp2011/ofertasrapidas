@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v14.2</title>
+    <title>Ofertas Rápidas Yaute v14.4</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,7 +17,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --violet: #a855f7; /* Color para llave inválida */
+            --violet: #a855f7;
             --bg: #f8fafc;
             --card-radius: 16px;
         }
@@ -69,10 +69,11 @@
 </head>
 <body>
 
+    <!-- Splash Screen con Desbloqueo Seguro -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/130?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status">VERIFICANDO CREDENCIALES...</div>
+        <div id="splash-status">CONECTANDO A GOOGLE...</div>
     </div>
 
     <script>
@@ -80,12 +81,13 @@
             const s = document.getElementById('splash-screen');
             if (s) { s.style.opacity = '0'; setTimeout(() => s.style.display = 'none', 400); }
         };
-        setTimeout(window.removeSplash, 6000);
+        // Paracaídas de seguridad 7 seg
+        setTimeout(window.removeSplash, 7000);
     </script>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v14.2</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v14.4</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -162,39 +164,34 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v14.2 (VALIDACIÓN DE LLAVE) -->
+    <!-- MOTOR FIREBASE v14.4 (FIX TOKEN MISMATCH) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- VERIFICACIÓN DE CREDENCIALES ---
-        // Compara estos valores con tu consola de Firebase:
-        const CONFIG_MANUAL = {
-            apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA".trim(),
-            authDomain: "prueba-5e215.firebaseapp.com",
-            projectId: "prueba-5e215",
-            storageBucket: "prueba-5e215.firebasestorage.app",
-            messagingSenderId: "898868587449",
-            appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
+        // CREDENCIALES DEL PROYECTO ACTUAL
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
+            authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
+            projectId: "ofertas-rapidas-yautepec",
+            storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app",
+            messagingSenderId: "81339635207",
+            appId: "1:81339635207:web:26d180f92224d9a036fca2",
+            measurementId: "G-TW8T6E8Z0V"
         };
 
-        const configToUse = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : CONFIG_MANUAL;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
 
-        let app, auth, db;
-        try {
-            app = initializeApp(configToUse);
-            auth = getAuth(app);
-            db = initializeFirestore(app, { experimentalForceLongPolling: true });
-        } catch (e) {
-            console.error("Fallo crítico de inicio:", e);
-        }
+        // Inicialización
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
+        let activeSubTab = 'clientes';
         let user = null;
 
-        // Función de utilidad para nombres
         const getVal = (x) => (x.nombre || x.name || x.cliente || x.producto || "S/N");
 
         const setIndicator = (s) => {
@@ -216,24 +213,21 @@
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
-        // --- INICIO DE SESIÓN ---
+        // --- AUTH SECUENCIAL (CORREGIDO) ---
         const startApp = async () => {
-            if (!auth) return;
             try {
                 updateStatusText("CONECTANDO A GOOGLE...");
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                // Eliminamos el uso de custom token del servidor para evitar mismatch
+                // con tu proyecto de Firebase personalizado.
+                await signInAnonymously(auth);
             } catch (e) {
                 console.error("Auth Fail:", e.code);
                 if (e.code === 'auth/api-key-not-valid') {
-                    updateStatusText("LLAVE RECHAZADA POR GOOGLE.\nREVISA LA API KEY EN TU CONSOLA.");
-                    setIndicator('key'); // Violeta
+                    updateStatusText("API KEY INVÁLIDA.\nREVISA TU CONSOLA FIREBASE.");
+                    setIndicator('key');
                 } else {
-                    updateStatusText("REINTENTANDO ACCESO...");
-                    await signInAnonymously(auth).catch(() => setIndicator('err'));
+                    updateStatusText("FALLO DE CONEXIÓN.\nREINTENTANDO...");
+                    setTimeout(startApp, 2000);
                 }
             }
         };
@@ -242,14 +236,14 @@
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
-                updateStatusText("ACCESO CONCEDIDO");
+                updateStatusText("SESIÓN INICIADA");
                 window.removeSplash(); 
                 document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
-                startDataSync();
+                startSync();
             }
         });
 
-        const startDataSync = () => {
+        const startSync = () => {
             if(!user) return;
             const cols = ['sales', 'clients', 'stores', 'products'];
             
@@ -257,12 +251,12 @@
                 const path = collection(db, 'artifacts', appId, 'public', 'data', name);
                 onSnapshot(path, (snap) => {
                     state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                    setIndicator('ok'); // VERDE
+                    setIndicator('ok');
                     if(name === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
                     console.error(`Error en ${name}:`, err.code);
-                    if(err.code === 'permission-denied') setIndicator('err'); // ROJO
+                    if(err.code === 'permission-denied') setIndicator('err');
                 });
             });
 
@@ -309,13 +303,14 @@
         };
 
         window.switchSubTab = (id, btn) => {
+            activeSubTab = id;
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             if(!fw) return;
             const today = new Intl.DateTimeFormat('en-CA').format(new Date());
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Escribir..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -330,10 +325,8 @@
             if(!selDate) return;
             const [y, m, d] = selDate.split('-');
             const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-            
             const filtered = state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
             if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos</p>'; return; }
-            
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; 
                 if(!acc[c]) acc[c] = {t:0, items:[]}; 
@@ -341,7 +334,6 @@
                 acc[c].items.push(v); 
                 return acc; 
             }, {});
-
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
                     <b class="text-uppercase">${cli}</b>
@@ -354,18 +346,15 @@
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
             const active = document.querySelector('.sub-btn.active')?.innerText;
-
             if(active === 'Clientes') {
-                const filtered = state.clients.filter(c => getVal(c).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+                list.innerHTML = state.clients.filter(c => getVal(c).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${getVal(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
             } else if(active === 'Productos') {
-                const filtered = state.products.filter(p => getVal(p).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `<div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+                list.innerHTML = state.products.filter(p => getVal(p).toUpperCase().includes(q)).sort((a,b)=>getVal(a).localeCompare(getVal(b))).map(p => `<div class="card-custom py-2"><b>${getVal(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
             } else if(active === 'Ventas Hoy') {
                 const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
                 const [y, m, d] = dateEl.value.split('-');
-                const fd1 = `${d}/${m}/${y}`, fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-                const dv = state.sales.filter(s => s.fechaStr === fd1 || s.fechaStr === fd2);
+                const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                const dv = state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
                 list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             }
         };
@@ -373,7 +362,7 @@
         window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
 
         document.getElementById('btn-save-record').onclick = async () => {
-            if(!user) return toast("Permisos insuficientes", "danger");
+            if(!user) return toast("Esperando conexión...", "danger");
             const d = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
