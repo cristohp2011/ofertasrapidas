@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Rápidas Pro v10.84</title>
+    <title>Yaute Rápidas Pro v10.35</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,11 +17,12 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --whatsapp: #25d366;
             --bg: #f8fafc;
             --card-radius: 14px;
         }
 
-        /* --- CONTROL DE PANTALLA --- */
+        /* --- ESTRUCTURA --- */
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
@@ -34,11 +35,12 @@
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        .splash-version { margin-top: 15px; font-weight: 800; color: #94a3b8; font-size: 0.8rem; letter-spacing: 1px; }
+        .splash-version { margin-top: 15px; font-weight: 800; color: #94a3b8; font-size: 0.8rem; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI --- */
         header { background: var(--primary); color: white; padding: 0.7rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
+        .header-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         
         #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.85rem; }
@@ -46,18 +48,19 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.9rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
+        .form-control, .form-select { padding: 0.65rem; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 0.9rem; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 3px; font-weight: 800; color: #64748b; display: block; }
 
+        /* BOTONES IA */
         .btn-inline-cam { background: #eff6ff; color: var(--accent); border: 1.5px solid #dbeafe; border-radius: 10px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 20px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
-        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.65rem; white-space: nowrap; font-weight: 600; color: #64748b; }
+        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 12px; scrollbar-width: none; }
+        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 6px 14px; font-size: 0.7rem; white-space: nowrap; font-weight: 600; color: #64748b; }
         .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
         /* --- CÁMARA --- */
@@ -66,12 +69,18 @@
         .cam-controls { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: center; }
         .btn-capture { width: 70px; height: 70px; background: white; border: 6px solid rgba(255,255,255,0.3); border-radius: 50%; }
 
+        /* --- SUGGESTIONS --- */
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 160px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.8rem; text-transform: uppercase; font-weight: 600; }
+
+        /* --- REPARTO --- */
+        .check-group { display: flex; gap: 15px; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+        .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
+        .check-item input { width: 16px; height: 16px; accent-color: var(--success); }
+
         /* --- TICKET RENDER --- */
-        #ticket-render { position: absolute; top: -10000px; width: 380px; background: white; padding: 30px; color: black; font-family: 'Courier New', monospace; }
-        .ticket-header-img { width: 160px; display: block; margin: 0 auto 10px; }
-        
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
-        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+        #ticket-render { position: absolute; top: -10000px; width: 360px; background: white; padding: 30px; color: black; font-family: 'Courier New', Courier, monospace; }
+        .ticket-header-img { width: 140px; display: block; margin: 0 auto 10px; }
     </style>
 </head>
 <body>
@@ -79,7 +88,7 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div class="splash-version">v10.84 - Estable</div>
+        <div class="splash-version">VERSIÓN 10.35</div>
     </div>
 
     <div id="cam-container">
@@ -92,21 +101,25 @@
     <div id="toast-alert"></div>
 
     <header>
-        <h5 class="m-0 fw-bold text-uppercase">Yaute Rápidas <span id="status-dot" style="display:inline-block; width:10px; height:10px; border-radius:50%;" class="bg-warning"></span></h5>
+        <div class="header-container">
+            <h5 class="m-0 fw-bold text-uppercase">Yaute Rápidas Pro</h5>
+            <div id="status-dot" class="status-indicator bg-warning" style="width:10px; height:10px; border-radius:50%;"></div>
+        </div>
     </header>
 
     <main>
+        <!-- VENTA -->
         <div id="tab-operaciones" class="tab-content active">
-            <div class="card-custom">
+            <div class="card-custom" style="border-left-color: var(--accent);">
                 <div class="row g-2 mb-3">
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold" placeholder="WALMART">
+                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="Walmart">
                         <div id="sug-tienda" class="sug-box d-none"></div>
                     </div>
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Cliente</label>
-                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="NOMBRE">
+                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="Nombre">
                         <div id="sug-cliente" class="sug-box d-none"></div>
                     </div>
                 </div>
@@ -114,19 +127,21 @@
                 <div class="row g-2 mb-3 align-items-end">
                     <div class="col-2"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
                     <div class="col" style="position:relative">
-                        <label class="text-uppercase">Producto (Foto IA)</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ESCANEAR">
+                        <label class="text-uppercase">Producto (Lector IA)</label>
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Escribir o Escanear">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
-                    <div class="col-auto"><button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button></div>
+                    <div class="col-auto">
+                        <button id="btn-scan" class="btn-inline-cam"><i class="fas fa-camera"></i></button>
+                    </div>
                 </div>
                 <div class="row g-2 mb-4">
                     <div class="col-6">
-                        <label class="text-uppercase">Costo</label>
+                        <label class="text-uppercase">Costo Anaquel</label>
                         <input type="number" id="in-costo" class="form-control fw-bold text-danger" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
-                        <label class="text-uppercase">Venta</label>
+                        <label class="text-uppercase">Precio Venta</label>
                         <input type="number" id="in-precio" class="form-control fw-bold text-success" placeholder="0.00" step="0.01">
                     </div>
                 </div>
@@ -134,49 +149,51 @@
             </div>
         </div>
 
+        <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
-            <div class="card-custom py-2 mb-3 shadow-sm"><input type="date" id="entregas-date" class="form-control text-center fw-bold" onchange="window.renderEntregas()"></div>
+            <div class="card-custom py-2 mb-3 shadow-sm" style="border-left-color: var(--success);"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
+        <!-- CONTROL -->
         <div id="tab-control" class="tab-content">
             <div class="sub-nav">
-                <button class="sub-btn active" id="btn-sub-clients" onclick="switchSubTab('clientes', this)">Clientes</button>
-                <button class="sub-btn" id="btn-sub-products" onclick="switchSubTab('productos', this)">Productos</button>
-                <button class="sub-btn" id="btn-sub-sales" onclick="switchSubTab('sales', this)">Ventas</button>
-                <button class="sub-btn" id="btn-sub-diezmo" onclick="switchSubTab('diezmo', this)">Diezmo</button>
+                <button class="sub-btn active" onclick="switchSubTab('clientes', this)">Clientes</button>
+                <button class="sub-btn" onclick="switchSubTab('productos', this)">Productos</button>
+                <button class="sub-btn" onclick="switchSubTab('ventas', this)">Ventas Hoy</button>
+                <button class="sub-btn" onclick="switchSubTab('diezmo', this)">Diezmo</button>
             </div>
-            <div id="filter-wrapper" class="mb-3"></div>
             <div id="lista-catalogos"></div>
         </div>
     </main>
 
+    <!-- TICKET RENDER -->
     <div id="ticket-render">
-        <img src="logo.png" alt="Yaute Logo" class="ticket-header-img" onerror="this.style.display='none'">
-        <div style="text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RAPIDAS YAUTE</div>
-        <div id="t-date-val" style="text-align: center; font-size: 1rem; margin-bottom: 15px;"></div>
+        <img src="logo.png" alt="Logo" class="ticket-header-img" onerror="this.style.display='none'">
+        <div style="text-align: center; font-weight: 900; font-size: 1.3rem; margin-bottom: 5px;">YAUTE RÁPIDAS</div>
+        <div id="t-date" style="text-align: center; font-size: 0.95rem; margin-bottom: 10px;"></div>
         <div style="border-top: 3px solid #000; margin: 10px 0;"></div>
-        <div style="font-size: 1.1rem; margin: 15px 0;"><b>CLIENTE:</b> <span id="t-cliente-name" style="text-transform: uppercase;"></span></div>
-        <table style="width: 100%; border-collapse: collapse;"><tbody id="t-body-items"></tbody></table>
-        <div style="border-top: 2px dashed #000; margin: 15px 0;"></div>
-        <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-grand-total"></span></div>
-        <div style="text-align: center; font-size: 0.9rem; color: #333; margin-top: 40px; text-transform: uppercase;">¡Gracias por su preferencia!</div>
+        <div style="margin: 15px 0;"><b>CLIENTE:</b> <span id="t-cliente" style="text-transform: uppercase;"></span></div>
+        <table style="width: 100%; border-collapse: collapse;"><tbody id="t-items"></tbody></table>
+        <div style="border-top: 2px dashed #000; margin: 20px 0;"></div>
+        <div style="font-size: 1.5rem; font-weight: 900; display: flex; justify-content: space-between;"><span>TOTAL:</span><span id="t-total"></span></div>
+        <div style="text-align: center; font-size: 0.9rem; margin-top: 40px; text-transform: uppercase;">¡Gracias por su preferencia!</div>
     </div>
 
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Venta</button>
         <button class="tab-btn" onclick="showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
-        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-history"></i>Control</button>
+        <button class="tab-btn" onclick="showTab('control', this)"><i class="fas fa-chart-line"></i>Control</button>
     </nav>
 
     <script type="module">
-        const apiKey = ""; 
+        const apiKey = ""; // API Key dinámica proporcionada por el entorno
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeFirestore, collection, doc, addDoc, setDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "fallback", authDomain: "fallback", projectId: "fallback" };
+        const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -190,18 +207,17 @@
             const toast = document.getElementById('toast-alert');
             if(!toast) return;
             toast.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
-            toast.innerText = msg; toast.style.display = 'block'; 
-            setTimeout(() => toast.style.display = 'none', 3000);
+            toast.innerText = msg; toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3000);
         };
+
+        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
         const removeSplash = () => {
             const splash = document.getElementById('splash-screen');
             if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
         };
 
-        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
-
-        // --- GEMINI API ---
+        // --- GEMINI API CON REINTENTOS ---
         const callGemini = async (payload, retries = 5, delay = 1000) => {
             for (let i = 0; i < retries; i++) {
                 try {
@@ -215,6 +231,7 @@
             throw new Error("IA no disponible");
         };
 
+        // --- CÁMARA ---
         const camContainer = document.getElementById('cam-container');
         const camPreview = document.getElementById('cam-preview');
         const camCanvas = document.getElementById('cam-canvas');
@@ -225,17 +242,17 @@
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 } } });
                 camPreview.srcObject = stream;
                 camContainer.style.display = 'block';
-            } catch (e) { showToast("Error de cámara", "danger"); }
+            } catch (e) { showToast("Cámara no disponible", "danger"); }
         };
 
         document.getElementById('btn-scan').onclick = startCamera;
         document.getElementById('btn-cam-cancel').onclick = () => { if(stream) stream.getTracks().forEach(t => t.stop()); camContainer.style.display = 'none'; };
 
         document.getElementById('btn-do-capture').onclick = () => {
-            showToast("Procesando...");
+            showToast("Procesando imagen...", "success");
             const ctx = camCanvas.getContext('2d');
-            camCanvas.width = 800; camCanvas.height = 1000; 
-            ctx.drawImage(camPreview, 0, 0, 800, 1000);
+            camCanvas.width = 640; camCanvas.height = 480; 
+            ctx.drawImage(camPreview, 0, 0, 640, 480);
             camCanvas.toBlob((blob) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -245,20 +262,25 @@
                     processIA(base64);
                 };
                 reader.readAsDataURL(blob);
-            }, 'image/jpeg', 0.85);
+            }, 'image/jpeg', 0.8);
         };
 
         async function processIA(base64) {
             try {
                 const payload = {
-                    contents: [{ parts: [{ text: "Dime nombre y presentación del producto. Responde SOLO JSON: {'nombre': 'valor'}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
+                    contents: [{ parts: [{ text: "Analiza la etiqueta de precio o el producto. Extrae 'productName' y 'unitCost' (si aparece). Responde solo JSON: {'productName': string, 'unitCost': number}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
                     generationConfig: { responseMimeType: "application/json" }
                 };
                 const data = await callGemini(payload);
                 const result = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim());
-                document.getElementById('in-producto').value = (result.nombre || "").toUpperCase();
-                showToast("¡Listo!");
-            } catch (e) { showToast("IA: Reintente", "danger"); }
+                
+                document.getElementById('in-producto').value = (result.productName || "").toUpperCase();
+                if (result.unitCost) {
+                    document.getElementById('in-costo').value = result.unitCost;
+                    if(document.getElementById('in-cliente').value.toUpperCase() === "CRISTO") document.getElementById('in-precio').value = result.unitCost;
+                }
+                showToast("¡Lectura IA completada!");
+            } catch (e) { showToast("Error IA, reintente", "danger"); }
         }
 
         // --- AUTH & SYNC ---
@@ -277,20 +299,23 @@
         onAuthStateChanged(auth, (u) => {
             user = u;
             if (u) {
-                document.getElementById('status-dot').className = 'status-indicator bg-success';
+                const statusDot = document.getElementById('status-dot');
+                if (statusDot) statusDot.className = 'status-indicator bg-success shadow-sm';
+                
                 document.getElementById('entregas-date').value = getISODate();
                 startSync();
-                switchSubTab('clientes', document.getElementById('btn-sub-clients'));
+                switchSubTab('clientes', document.querySelector('.sub-btn'));
                 setTimeout(removeSplash, 1000);
             }
         });
 
         const startSync = () => {
             if(!user) return;
-            ['sales', 'clients', 'stores', 'products'].forEach(n => {
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', n), (s) => {
-                    state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    if(n === 'sales') renderEntregas();
+            const colNames = ['sales', 'clients', 'stores', 'products'];
+            colNames.forEach(name => {
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (snap) => {
+                    state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if(name === 'sales') renderEntregas();
                     renderCatalogList();
                 }, (err) => console.error(err));
             });
@@ -299,13 +324,13 @@
 
         const setupAuto = (id, boxId, key) => {
             const inp = document.getElementById(id); const box = document.getElementById(boxId);
-            if(!inp || !box) return;
+            if (!inp || !box) return;
             inp.oninput = () => {
                 const val = inp.value.toUpperCase();
                 if(!val) { box.classList.add('d-none'); return; }
-                const ms = (state[key] || []).filter(x => (x.nombre || '').toUpperCase().includes(val)).slice(0, 5);
-                box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre}</div>`).join('');
-                box.classList.toggle('d-none', ms.length === 0);
+                const matches = state[key].filter(x => (x.nombre||'').toUpperCase().includes(val)).slice(0, 5);
+                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${x.nombre}">${x.nombre}</div>`).join('');
+                box.classList.toggle('d-none', matches.length === 0);
             };
             box.onclick = (e) => {
                 const item = e.target.closest('.sug-item'); if(!item) return;
@@ -328,60 +353,51 @@
             activeSubTab = id;
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
-            const fw = document.getElementById('filter-wrapper');
-            const today = getISODate();
-            if(id === 'clientes' || id === 'productos') fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
-            else if(id === 'sales') fw.innerHTML = `<div class="row g-2"><div class="col-12 mb-2"><input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><select id="filter-store" class="form-select" onchange="window.renderCatalogList()"></select></div><div class="col-6"><select id="filter-client" class="form-select" onchange="window.renderCatalogList()"></select></div></div>`;
-            else if(id === 'diezmo') fw.innerHTML = `<div class="d-flex gap-2"><input type="date" id="d-start" class="form-control" value="${today}" onchange="window.renderCatalogList()"><input type="date" id="d-end" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div>`;
-            
-            setTimeout(() => {
-                const sOpt = `<option value="">TIENDAS</option>` + [...new Set(state.stores.map(s => s.nombre))].sort().map(s => `<option value="${s}">${s}</option>`).join('');
-                const cOpt = `<option value="">CLIENTES</option>` + [...new Set(state.clients.map(c => c.nombre))].sort().map(c => `<option value="${c}">${c}</option>`).join('');
-                if(document.getElementById('filter-store')) document.getElementById('filter-store').innerHTML = sOpt;
-                if(document.getElementById('filter-client')) document.getElementById('filter-client').innerHTML = cOpt;
-                renderCatalogList();
-            }, 50);
+            renderCatalogList();
         };
 
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); if(!list) return;
-            const targetDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
-            const filtered = state.sales.filter(s => s.fechaStr === targetDate);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos</p>'; return; }
+            const selDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const filtered = state.sales.filter(s => s.fechaStr === selDate);
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos hoy</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { if(!acc[v.cliente]) acc[v.cliente] = {t:0, items:[]}; acc[v.cliente].t += v.total; acc[v.cliente].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
                     <div class="d-flex justify-content-between mb-2"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3" onclick="window.shareTicket('${cli}')"><i class="fab fa-whatsapp"></i></button></div>
-                    <div class="small">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <div class="check-group">
+                        <label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.entregado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'entregado', this.checked)"> ENTREGA</label>
+                        <label class="check-item"><input type="checkbox" ${grouped[cli].items.every(i => i.pagado) ? 'checked' : ''} onchange="window.toggleStatus('${cli}', 'pagado', this.checked)"> PAGO</label>
+                    </div>
+                    <div class="small bg-light p-2 rounded">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div></div>`).join('');
+        };
+
+        window.toggleStatus = async (cli, field, val) => {
+            const selDate = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === selDate);
+            for (const item of items) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id), { [field]: val });
         };
 
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
-            const q = document.getElementById('search-cat') ? document.getElementById('search-cat').value.toUpperCase() : "";
             if(activeSubTab === 'clientes') {
-                list.innerHTML = state.clients.filter(c => (c.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `<div class="card-custom d-flex justify-content-between"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clientes', '${c.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
+                list.innerHTML = state.clients.sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(c => `
+                    <div class="card-custom py-2 d-flex justify-content-between align-items-center"><b>${c.nombre}</b><button class="btn btn-sm text-danger" onclick="window.deleteItem('clients','${c.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = state.products.filter(p => (p.nombre||'').includes(q)).sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `<div class="card-custom py-2"><b>${p.nombre}</b><br><small class="opacity-50">C: $${p.pCosto} | V: $${p.pVenta}</small></div>`).join('');
-            } else if(activeSubTab === 'sales') {
-                const fd = new Date(document.getElementById('hist-date').value + "T12:00:00").toLocaleDateString('es-MX');
-                let dv = state.sales.filter(s => s.fechaStr === fd);
-                if(document.getElementById('filter-store').value) dv = dv.filter(s => s.tienda === document.getElementById('filter-store').value);
-                if(document.getElementById('filter-client').value) dv = dv.filter(s => s.cliente === document.getElementById('filter-client').value);
-                list.innerHTML = dv.map(v => `<div class="card-custom d-flex justify-content-between"><div><b>${v.cantidad}x ${v.producto}</b><br><small>${v.tienda}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
+                list.innerHTML = state.products.sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p => `
+                    <div class="card-custom py-2 d-flex justify-content-between align-items-center"><div><b>${p.nombre}</b><br><small class="opacity-50">C: $${p.pCosto} | V: $${p.pVenta}</small></div><button class="btn btn-sm text-danger" onclick="window.deleteItem('products','${p.id}')"><i class="fas fa-trash"></i></button></div>`).join('');
+            } else if(activeSubTab === 'ventas') {
+                const today = new Date().toLocaleDateString('es-MX');
+                const dv = state.sales.filter(s => s.fechaStr === today);
+                list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between"><div>${v.producto}<br><small>${v.cliente}</small></div><b>$${v.total.toFixed(2)}</b></div>`).join('') + `<div class="card-custom bg-primary text-white">TOTAL VENTAS HOY: $${dv.reduce((a,v)=>a+v.total,0).toFixed(2)}</div>`;
             } else {
-                const sD = new Date(document.getElementById('d-start').value + "T00:00:00");
-                const eD = new Date(document.getElementById('d-end').value + "T23:59:59");
-                const pr = state.sales.filter(v => { const d = v.fecha ? v.fecha.toDate() : new Date(); return d >= sD && d <= eD; }).reduce((a,v) => a + (v.total - (v.costo * v.cantidad)), 0);
-                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${(pr * 0.1).toFixed(2)}</h3><div class="small opacity-80">Diezmo acumulado (10%)</div></div>`;
+                const totalProfit = state.sales.reduce((a,v)=> a + ((v.precio - v.costo) * v.cantidad), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h4>DIEZMO TOTAL (10%)</h4><h2 class="fw-black">$${(totalProfit * 0.1).toFixed(2)}</h2></div>`;
             }
         };
 
-        window.deleteItem = (col, id) => {
-            if(!user) return;
-            const collectionName = col === 'clientes' ? 'clients' : 'products';
-            deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id));
-        };
+        window.deleteItem = async (col, id) => { if(confirm("¿Eliminar del catálogo?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); };
 
         document.getElementById('btn-save').onclick = async () => {
             if(!user) return;
@@ -399,34 +415,29 @@
             if(!data.tienda || !data.producto || !data.cliente) return showToast("Faltan datos", "danger");
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...data, fecha: serverTimestamp() });
-                if(!state.clients.some(x => x.nombre === data.cliente)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: data.cliente });
-                if(!state.stores.some(x => x.nombre === data.tienda)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: data.tienda });
-                const ex = state.products.find(p => p.nombre === data.producto);
-                if(ex) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', ex.id), { pCosto: data.costo, pVenta: data.precio });
-                else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: data.producto, pCosto: data.costo, pVenta: data.precio });
-                document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
+                const ck = async (col, val, ext = {}) => { if(!state[col].some(x => (x.nombre||'').toUpperCase() === val)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', col), { nombre: val, ...ext }); };
+                await ck('stores', data.tienda); await ck('clients', data.cliente); await ck('products', data.producto, { pCosto: data.costo, pVenta: data.precio });
                 showToast("¡Venta guardada!");
+                document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { showToast("Error de guardado", "danger"); }
         };
 
         window.shareTicket = async (name) => {
-            const fdIn = document.getElementById('entregas-date').value;
-            const fd = new Date(fdIn + "T12:00:00").toLocaleDateString('es-MX');
-            const filtered = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
-            if (!filtered.length) return;
-            const formatName = name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-            document.getElementById('t-cliente-name').innerText = name;
-            document.getElementById('t-date-val').innerText = fd;
+            const fd = new Date(document.getElementById('entregas-date').value + "T12:00:00").toLocaleDateString('es-MX');
+            const items = state.sales.filter(s => s.cliente === name && s.fechaStr === fd);
+            if (!items.length) return;
+            document.getElementById('t-cliente').innerText = name;
+            document.getElementById('t-date').innerText = fd;
             let total = 0;
-            document.getElementById('t-body-items').innerHTML = filtered.map(i => { total += i.total; return `<tr><td style="width:40px">${i.cantidad}x</td><td style="text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
+            document.getElementById('t-body-items').innerHTML = items.map(i => { total += i.total; return `<tr><td>${i.cantidad}x</td><td style="padding-left:10px">${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-grand-total').innerText = total.toFixed(2);
             try {
-                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
                 canvas.toBlob(async b => {
                     const f = new File([b], `Ticket_${name}.png`, { type: 'image/png' });
-                    if (navigator.share) await navigator.share({ files: [f], title: 'Ticket', text: `Hola ${formatName}, te envio tu cuenta` });
+                    if (navigator.share) await navigator.share({ files: [f], title: 'Ticket', text: `Nota para ${name}` });
                 }, 'image/png');
-            } catch (err) { showToast("Error compartiendo", "danger"); }
+            } catch (err) { showToast("Error al generar ticket", "danger"); }
         };
     </script>
 </body>
