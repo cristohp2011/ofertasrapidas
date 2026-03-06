@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v17.1</title>
+    <title>Ofertas Rápidas Yaute v17.3</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -25,7 +25,7 @@
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
         main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 110px; }
 
-        /* --- SPLASH SCREEN (CONTROL ABSOLUTO) --- */
+        /* --- SPLASH SCREEN --- */
         #splash-screen { 
             position: fixed; inset: 0; background: #ffffff; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -79,6 +79,8 @@
         .table-finance { font-size: 0.85rem; width: 100%; }
         .table-finance th { color: #94a3b8; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; border-bottom: 2px solid #f1f5f9; padding: 10px 5px; }
         .table-finance td { padding: 12px 5px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+
+        #entregas-date { cursor: pointer; -webkit-appearance: none; }
     </style>
 </head>
 <body>
@@ -87,16 +89,22 @@
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Cargando v17.1...</div>
+        <div id="splash-status" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Iniciando v17.3...</div>
     </div>
 
+    <!-- NAVEGACIÓN INDEPENDIENTE -->
     <script>
-        // Lógica de apertura inmediata: No depende de eventos complejos
+        const todayStr = new Intl.DateTimeFormat('en-CA').format(new Date());
+        
         setTimeout(function() {
             var splash = document.getElementById('splash-screen');
             if (splash) {
                 splash.style.opacity = '0';
-                setTimeout(function() { splash.style.display = 'none'; }, 600);
+                setTimeout(function() { 
+                    splash.style.display = 'none';
+                    const ed = document.getElementById('entregas-date');
+                    if (ed) ed.value = todayStr;
+                }, 600);
             }
         }, 5000);
 
@@ -114,6 +122,9 @@
 
             if (tabId === 'control' && typeof window.renderCatalogList === 'function') {
                 window.renderCatalogList();
+            }
+            if (tabId === 'entregas' && typeof window.renderEntregas === 'function') {
+                window.renderEntregas();
             }
         };
 
@@ -149,7 +160,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v17.1</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v17.3</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -198,7 +209,7 @@
             </div>
 
             <div id="quick-delete-list" class="mt-4">
-                <span class="list-title">Recientes (Corrección)</span>
+                <span class="list-title">Ventas de Hoy (Corrección)</span>
                 <div id="lista-ventas-hoy"></div>
             </div>
         </div>
@@ -226,9 +237,12 @@
         </div>
     </main>
 
-    <!-- TICKET RENDER (RESTABLECIDO EXACTO v16.2) -->
-    <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black;">
-        <div style="text-align: center; font-size: 1.5rem; font-weight: 900; margin-bottom: 5px;">OFERTAS RÁPIDAS YAUTE</div>
+    <!-- TICKET RENDER (CON LOGO v17.3) -->
+    <div id="ticket-render" style="position: absolute; top: -2000px; width: 400px; background: white; padding: 40px; font-family: monospace; color: black; border: 1px solid #eee;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
+            <div style="font-size: 1.5rem; font-weight: 900; margin-top: 10px;">OFERTAS RÁPIDAS YAUTE</div>
+        </div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px;"></div>
         <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
         <div style="margin-bottom: 20px;"><b>CLIENTE:</b> <span id="t-cliente" style="text-transform: uppercase;"></span></div>
@@ -243,7 +257,7 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v17.1 (ULTRA-RESILIENTE) -->
+    <!-- MOTOR FIREBASE v17.3 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -348,7 +362,7 @@
             const [y, m, d] = selDate.split('-');
             const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
             const filtered = window.state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Vacío</p>'; return; }
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin pedidos registrados.</p>'; return; }
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; 
                 acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; 
@@ -405,7 +419,7 @@
             const today = new Intl.DateTimeFormat('en-CA').format(new Date());
             let html = `<div class="finance-sub-nav"><button class="fin-btn ${subTab === 'ventas' ? 'active' : ''}" onclick="window.switchFinanceTab('ventas', this)">DETALLE VENTAS</button><button class="fin-btn ${subTab === 'ganancias' ? 'active' : ''}" onclick="window.switchFinanceTab('ganancias', this)">GANANCIAS</button></div>`;
             if (subTab === 'ventas') {
-                html += `<div class="card-custom p-3 mb-3"><div class="row g-2"><div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}">${c}</option>`).join('')}</select></div></div></div><div class="card-custom"><table class="table-finance"><thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Total</th></tr></thead><tbody id="fin-sales-body"></tbody></table></div>`;
+                html += `<div class="card-custom p-3 mb-3"><div class="row g-2"><div class="col-12"><label class="text-uppercase">Por Fecha</label><input type="date" id="f-date" class="form-control" value="${today}" onchange="window.renderCatalogList()"></div><div class="col-6"><label class="text-uppercase">Tienda</label><select id="f-store" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}">${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select id="f-client" class="form-select" onchange="window.renderCatalogList()"><option value="ALL">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}">${c}</option>`).join('')}</select></div></div></div><div class="card-custom"><table class="table-finance"><thead><tr><th>Cant.</th><th>Producto</th><th class="text-end">Costo Anaquel</th></tr></thead><tbody id="fin-sales-body"></tbody></table></div>`;
                 container.innerHTML = html;
                 const fDate = document.getElementById('f-date')?.value;
                 const fStore = document.getElementById('f-store')?.value;
@@ -463,14 +477,14 @@
             } catch(e) { toast("Error", "danger"); }
         };
 
-        // --- MOTOR TICKET v16.2 (RESTAURADO) ---
+        // --- MOTOR TICKET v16.2 (RESTAURADO + LOGO + MENSAJE) ---
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             if(!dateInput || !dateInput.value) return;
             const [y, m, d] = dateInput.value.split('-');
             const f = `${d}/${m}/${y}`, fZ = `${parseInt(d)}/${parseInt(m)}/${y}`;
             const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === fZ));
-            if(!items.length) { toast("Vacío", "warning"); return; }
+            if(!items.length) { toast("Sin datos", "warning"); return; }
             
             document.getElementById('t-cliente').innerText = n;
             document.getElementById('t-fecha').innerText = f;
@@ -479,15 +493,31 @@
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
             
             try {
-                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
+                // Renderizado escala 2 (v16.2 estable)
+                const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff', useCORS: true });
                 canvas.toBlob(async b => {
                     const fileName = `Ticket_${n.replace(/\s+/g, '_')}.png`;
                     const file = new File([b], fileName, { type: 'image/png' });
+                    
+                    const shareData = {
+                        files: [file],
+                        title: 'Nota de Venta Yaute',
+                        text: `Hola ${n}, aquí tienes tu nota de venta de Ofertas Rápidas Yaute. ¡Gracias por tu compra!`
+                    };
+
                     if(navigator.share) {
-                        try { await navigator.share({ files: [file], title: 'Nota de Venta' }); } catch(err) { console.warn("Share Cancelado"); }
-                    } else { toast("Navegador no compatible", "danger"); }
+                        try { 
+                            await navigator.share(shareData); 
+                        } catch(err) { 
+                            console.warn("Cancelado"); 
+                        }
+                    } else { 
+                        toast("Navegador no compatible", "danger"); 
+                    }
                 }, 'image/png');
-            } catch(e) { toast("Error ticket", "danger"); }
+            } catch(e) { 
+                toast("Error ticket", "danger"); 
+            }
         };
     </script>
 </body>
