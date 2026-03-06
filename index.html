@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v10.95</title>
+    <title>Ofertas Rápidas Yaute v11.0</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -29,18 +29,18 @@
         #splash-screen { 
             position: fixed; inset: 0; background: #ffffff; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s;
+            z-index: 9999; transition: opacity 0.4s ease;
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        #splash-status { margin-top: 15px; font-size: 0.7rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- UI --- */
+        /* --- UI CABECERA --- */
         header { background: var(--primary); color: white; padding: 0.8rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
-        .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 2px 8px; border-radius: 6px; font-weight: 900; margin-left: 8px; vertical-align: middle; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 2px 8px; border-radius: 6px; font-weight: 900; margin-left: 8px; vertical-align: middle; }
         
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         
@@ -79,13 +79,14 @@
 </head>
 <body>
 
-    <!-- Splash Screen con Paracaídas mejorado -->
+    <!-- Splash Screen con Desbloqueo Garantizado -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status">CONECTANDO A LA NUBE...</div>
+        <div id="splash-status">CONECTANDO AL SERVIDOR...</div>
     </div>
 
+    <!-- Script de Desbloqueo (Paracaídas) -->
     <script>
         window.removeSplash = function() {
             const splash = document.getElementById('splash-screen');
@@ -102,7 +103,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center gap-1">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v10.95</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v11.0</span></h6>
             <div id="status-dot" class="bg-warning" style="width:10px; height:10px; border-radius:50%; transition: 0.3s; margin-left: 5px;"></div>
         </div>
     </header>
@@ -155,7 +156,7 @@
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                <button id="btn-save-action" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
+                <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
             </div>
         </div>
 
@@ -199,29 +200,20 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <script>
-        // Funciones de navegación (siempre disponibles)
-        window.showTab = function(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            const target = document.getElementById('tab-' + id);
-            if (target) target.classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-        };
-    </script>
-
-    <!-- MOTOR DE DATOS -->
+    <!-- MOTOR DE FIREBASE v11.0 (REGLAS ESTRICTAS) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DINÁMICA DEL ENTORNO
+        // CONFIGURACIÓN DINÁMICA
         const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        
+        // REGLA FUNDAMENTAL: Forzar Long Polling para evitar bloqueos en el entorno
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
         let activeSubTab = 'clientes';
@@ -231,7 +223,7 @@
             const dot = document.getElementById('status-dot');
             if (!dot) return;
             dot.className = s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : 'bg-warning');
-            if(s === 'ok') dot.style.boxShadow = '0 0 10px #10b981';
+            if(s === 'ok') dot.style.boxShadow = '0 0 12px #10b981';
         };
 
         const toast = (m, type = 'success') => {
@@ -239,13 +231,13 @@
             if(!el) return;
             el.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)';
             el.innerText = m; el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 3000);
+            setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
-        // --- AUTH ---
-        const init = async () => {
+        // --- AUTH (REGLA 3) ---
+        const startSession = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
@@ -254,7 +246,7 @@
                 }
             } catch (e) { await signInAnonymously(auth); }
         };
-        init();
+        startSession();
 
         onAuthStateChanged(auth, (u) => {
             if (u) {
@@ -267,7 +259,7 @@
             }
         });
 
-        // REGLA 1: Estructura de rutas obligatoria
+        // REGLA 1: Estructura de rutas obligatoria para acceso a datos
         const startSync = () => {
             if(!user) return;
             const cols = ['sales', 'clients', 'stores', 'products'];
@@ -275,11 +267,16 @@
                 const ref = collection(db, 'artifacts', appId, 'public', 'data', n);
                 onSnapshot(ref, (s) => {
                     state[n] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-                    setIndicator('ok');
+                    
+                    // Solo pasar a VERDE si realmente recibimos datos de catálogos
+                    if (state.clients.length > 0 || state.products.length > 0) {
+                        setIndicator('ok');
+                    }
+                    
                     if(n === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
-                    console.error("Permisos insuficientes en:", n);
+                    console.error("Firebase Permission Error en " + n, err);
                     setIndicator('err');
                 });
             });
@@ -294,7 +291,11 @@
             inp.oninput = () => {
                 const val = inp.value.toUpperCase();
                 if(!val) { box.classList.add('d-none'); return; }
-                const ms = state[key].filter(x => (x.nombre || x.name || '').toUpperCase().includes(val)).slice(0, 5);
+                // Filtrado dinámico compatible con cualquier nombre de campo
+                const ms = (state[key] || []).filter(x => {
+                    const name = (x.nombre || x.name || x.productName || '').toUpperCase();
+                    return name.includes(val);
+                }).slice(0, 5);
                 box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${x.nombre || x.name}">${x.nombre || x.name}</div>`).join('');
                 box.classList.toggle('d-none', ms.length === 0);
             };
@@ -316,7 +317,7 @@
             if(!fw) return;
             const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Escriba para buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -371,7 +372,7 @@
 
         window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
 
-        document.getElementById('btn-save-action').onclick = async () => {
+        document.getElementById('btn-save-record').onclick = async () => {
             if(!user) return toast("No hay conexión", "danger");
             const d = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
@@ -393,7 +394,7 @@
                     }
                 };
                 await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                toast("¡Guardado!");
+                toast("¡Venta guardada!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
             } catch(e) { toast("Error al guardar", "danger"); }
         };
@@ -441,7 +442,7 @@
 
         async function processIA(base64) {
             toast("Analizando...");
-            const apiKey = ""; // API Key de Gemini
+            const apiKey = ""; // API Key dinámica proporcionada por el entorno
             try {
                 const payload = {
                     contents: [{ parts: [{ text: "Dime qué producto es este. Responde solo JSON: {'nombre': string}" }, { inlineData: { mimeType: "image/jpeg", data: base64 } }] }],
