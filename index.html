@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v12.2</title>
+    <title>Ofertas Rápidas Yaute v13.0</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,14 +17,13 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --info: #8b5cf6; /* Color para indicar error de configuración */
             --bg: #f8fafc;
-            --card-radius: 14px;
+            --card-radius: 16px;
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: var(--bg); }
         body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; color: #1e293b; }
-        main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 95px; }
+        main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
 
         /* --- SPLASH SCREEN --- */
         #splash-screen { 
@@ -32,54 +31,56 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             z-index: 9999; transition: opacity 0.4s ease;
         }
-        .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
-        .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 85%; }
+        .splash-logo { width: 130px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
+        .splash-loader { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        #splash-status { margin-top: 20px; font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; text-align: center; padding: 0 20px; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- UI CABECERA --- */
-        header { background: var(--primary); color: white; padding: 0.8rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; text-align: center; }
-        .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 2px 8px; border-radius: 6px; font-weight: 900; margin-left: 8px; vertical-align: middle; }
+        header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .version-badge { font-size: 0.65rem; background: var(--accent); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 900; margin-left: 10px; vertical-align: middle; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border-left: 5px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 24px; border-radius: 50px; font-weight: 700; display: none; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; font-size: 0.8rem; }
+        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.25); transition: all 0.3s; font-size: 0.85rem; }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .form-control { padding: 0.7rem 0.8rem; font-size: 0.95rem; border-radius: 10px; border: 1.5px solid #e2e8f0; }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; letter-spacing: 0.5px; }
+        .form-control { padding: 0.75rem 1rem; font-size: 1rem; border-radius: 12px; border: 2px solid #f1f5f9; transition: border-color 0.2s; }
+        .form-control:focus { border-color: var(--accent); box-shadow: none; }
+        label.text-uppercase { font-size: 0.65rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1px; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
-        .tab-btn.active { color: var(--accent); font-weight: 800; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 12px 0 30px; border-top: 1px solid #f1f5f9; z-index: 2000; box-shadow: 0 -5px 20px rgba(0,0,0,0.03); }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; transition: 0.3s; font-weight: 600; }
+        .tab-btn i { font-size: 1.6rem; margin-bottom: 5px; }
+        .tab-btn.active { color: var(--accent); }
 
-        .sub-nav { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
-        .sub-btn { background: white; border: 1px solid #e2e8f0; border-radius: 15px; padding: 8px 16px; font-size: 0.7rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; }
-        .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .sub-nav { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
+        .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 8px 18px; font-size: 0.75rem; white-space: nowrap; color: #64748b; font-weight: 700; transition: 0.2s; }
+        .sub-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
 
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; }
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-top: 5px; }
+        .sug-item { padding: 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; color: #1e293b; }
+        .sug-item:last-child { border-bottom: none; }
 
-        .status-dot { width:12px; height:12px; border-radius:50%; transition: 0.3s; margin-left: 10px; border: 2px solid rgba(255,255,255,0.2); }
-        .bg-info { background-color: var(--info) !important; }
+        .status-dot { width:12px; height:12px; border-radius:50%; transition: 0.4s; margin-left: 12px; border: 2.5px solid rgba(255,255,255,0.25); box-shadow: 0 0 0 2px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen Dinámico -->
     <div id="splash-screen">
-        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
+        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/130?text=Yaute'">
         <div class="splash-loader"></div>
-        <div id="splash-status">CARGANDO LLAVE DE SEGURIDAD...</div>
+        <div id="splash-status">CONECTANDO A GOOGLE...</div>
     </div>
 
     <script>
+        // Paracaídas de emergencia: Liberar interfaz tras 6 segundos pase lo que pase
         window.removeSplash = function() {
             const splash = document.getElementById('splash-screen');
             if (splash && splash.style.display !== 'none') {
@@ -87,15 +88,14 @@
                 setTimeout(() => { if(splash) splash.style.display = 'none'; }, 400);
             }
         };
-        // Paracaídas de seguridad 5 seg
-        setTimeout(window.removeSplash, 5000);
+        setTimeout(window.removeSplash, 6000);
     </script>
 
     <div id="toast-alert"></div>
 
     <header>
-        <div class="d-flex align-items-center justify-content-center gap-1">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v12.2</span></h6>
+        <div class="d-flex align-items-center justify-content-center">
+            <h6 class="m-0 fw-bold text-uppercase" style="letter-spacing: 0.5px;">Ofertas Rápidas Yaute <span class="version-badge">v13.0</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -103,8 +103,8 @@
     <main>
         <!-- VENTA -->
         <div id="tab-operaciones" class="tab-content active">
-            <div class="card-custom" style="border-left-color: var(--accent);">
-                <div class="row g-2 mb-3">
+            <div class="card-custom">
+                <div class="row g-3 mb-3">
                     <div class="col-6" style="position:relative">
                         <label class="text-uppercase">Tienda</label>
                         <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="WALMART">
@@ -117,20 +117,20 @@
                     </div>
                 </div>
                 <hr class="my-3 opacity-10">
-                <div class="row g-2 mb-3 align-items-end">
-                    <div class="col-3">
+                <div class="row g-3 mb-3">
+                    <div class="col-4">
                         <label class="text-uppercase">Cant.</label>
-                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1">
+                        <input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1" min="1">
                     </div>
-                    <div class="col" style="position:relative">
+                    <div class="col-8" style="position:relative">
                         <label class="text-uppercase">Producto</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="Escribir...">
+                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="DESCRIBIR...">
                         <div id="sug-producto" class="sug-box d-none"></div>
                     </div>
                 </div>
-                <div class="row g-2 mb-4">
+                <div class="row g-3 mb-4">
                     <div class="col-6">
-                        <label class="text-uppercase">Costo Anaquel</label>
+                        <label class="text-uppercase">Costo (Anaquel)</label>
                         <input type="number" id="in-costo" class="form-control text-danger fw-bold" placeholder="0.00" step="0.01">
                     </div>
                     <div class="col-6">
@@ -138,14 +138,14 @@
                         <input type="number" id="in-precio" class="form-control text-success fw-bold" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
+                <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-lg">GUARDAR VENTA</button>
             </div>
         </div>
 
         <!-- REPARTO -->
         <div id="tab-entregas" class="tab-content">
             <div class="card-custom py-2 mb-3 text-center">
-                <label class="text-uppercase small fw-bold">Repartos del día</label>
+                <label class="text-uppercase small fw-bold">Fecha de Pedidos</label>
                 <input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()">
             </div>
             <div id="lista-entregas"></div>
@@ -170,48 +170,20 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR FIREBASE v12.2 (FIX LLAVE INVÁLIDA) -->
+    <!-- MOTOR DE FIREBASE v13.0 (ARQUITECTURA BLINDADA) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- MANEJO INTELIGENTE DE CONFIGURACIÓN ---
-        let firebaseConfig = null;
-        
-        // 1. Intentar usar la configuración del entorno (Inyectada por Canvas)
-        try {
-            if (typeof __firebase_config !== 'undefined') {
-                firebaseConfig = JSON.parse(__firebase_config);
-                console.log("Configuración de entorno detectada.");
-            }
-        } catch (e) { console.error("Fallo al leer config de entorno."); }
-
-        // 2. Si falla, usar la manual pero VALIDADA (Sin espacios)
-        if (!firebaseConfig || !firebaseConfig.apiKey) {
-            firebaseConfig = {
-                apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA".trim(),
-                authDomain: "prueba-5e215.firebaseapp.com",
-                projectId: "prueba-5e215",
-                storageBucket: "prueba-5e215.firebasestorage.app",
-                messagingSenderId: "898868587449",
-                appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
-            };
-            console.log("Usando configuración de respaldo.");
-        }
-
+        // CONFIGURACIÓN DINÁMICA ABSOLUTA
+        const firebaseConfig = JSON.parse(__firebase_config);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         
-        // Inicializar
-        let app, auth, db;
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = initializeFirestore(app, { experimentalForceLongPolling: true });
-        } catch (initErr) {
-            console.error("Error crítico de inicialización:", initErr);
-            document.getElementById('splash-status').innerText = "ERROR DE CONFIGURACIÓN";
-        }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        // REGLA FUNDAMENTAL: Forzar Long Polling para entornos con firewalls (Móviles)
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
         let activeSubTab = 'clientes';
@@ -220,8 +192,9 @@
         const setIndicator = (s) => {
             const dot = document.getElementById('status-dot');
             if (!dot) return;
-            dot.className = "status-dot " + (s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : (s === 'cfg' ? 'bg-info' : 'bg-warning')));
-            if(s === 'ok') dot.style.boxShadow = '0 0 15px #10b981';
+            dot.className = "status-dot " + (s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : 'bg-warning'));
+            if(s === 'ok') dot.style.boxShadow = '0 0 12px #10b981';
+            if(s === 'err') dot.style.boxShadow = '0 0 12px #ef4444';
         };
 
         const updateStatusText = (m) => {
@@ -237,26 +210,24 @@
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
-        // --- INICIO DE SESIÓN ---
+        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
+
+        // --- INICIO DE SESIÓN SECUENCIAL (REGLA 3) ---
         const startApp = async () => {
-            if (!auth) return;
             try {
-                updateStatusText("AUTENTICANDO LLAVE...");
+                updateStatusText("CONECTANDO AL PROYECTO...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
             } catch (e) { 
-                console.error("Error de Auth:", e.code);
-                if (e.code === 'auth/api-key-not-valid') {
-                    updateStatusText("LLAVE NO VÁLIDA - REVISAR CONSOLA");
-                    setIndicator('cfg'); // Color Morado
-                } else {
-                    updateStatusText("ERROR DE CONEXIÓN");
+                console.error("Auth Error:", e.code);
+                updateStatusText("REINTENTANDO ACCESO...");
+                await signInAnonymously(auth).catch(() => {
+                    updateStatusText("ERROR CRÍTICO: RECARGUE LA APP");
                     setIndicator('err');
-                    await signInAnonymously(auth).catch(() => {});
-                }
+                });
             }
         };
         startApp();
@@ -266,12 +237,13 @@
                 user = u;
                 updateStatusText("ACCESO CONCEDIDO");
                 window.removeSplash(); 
-                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
+                document.getElementById('entregas-date').value = getISODate();
+                // INICIAR ESCUCHAS SOLO DESPUÉS DE AUTENTICAR (REGLA 3)
                 startDataSync();
             }
         });
 
-        // REGLA 1: Rutas estrictas obligatorias
+        // REGLA 1: Estructura de rutas artifacts/{appId}/public/data/...
         const startDataSync = () => {
             if(!user) return;
             const cols = ['sales', 'clients', 'stores', 'products'];
@@ -280,12 +252,15 @@
                 const path = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
                 onSnapshot(path, (snapshot) => {
                     state[collectionName] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    
+                    // Indicador verde al confirmar que hay una vía abierta
                     setIndicator('ok');
+                    
                     if(collectionName === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
-                    console.error(`Firebase Error (${collectionName}):`, err.code);
-                    setIndicator('err');
+                    console.error("Firebase Sync Error:", err.code);
+                    if(err.code === 'permission-denied') setIndicator('err');
                 });
             });
 
@@ -304,8 +279,15 @@
                 const val = inp.value.toUpperCase().trim();
                 if(!val) { box.classList.add('d-none'); return; }
                 const items = state[key] || [];
-                const matches = items.filter(x => (x.nombre || x.name || '').toUpperCase().includes(val)).slice(0, 5);
-                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${x.nombre || x.name}">${x.nombre || x.name}</div>`).join('');
+                const matches = items.filter(x => {
+                    const n = (x.nombre || x.name || x.cliente || x.producto || '').toUpperCase();
+                    return n.includes(val);
+                }).slice(0, 5);
+                
+                box.innerHTML = matches.map(x => {
+                    const label = x.nombre || x.name || x.cliente || x.producto || '';
+                    return `<div class="sug-item" data-val="${label}">${label}</div>`;
+                }).join('');
                 box.classList.toggle('d-none', matches.length === 0);
             };
 
@@ -313,7 +295,7 @@
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
-                    const prod = state.products.find(p => (p.nombre || p.name) === item.dataset.val);
+                    const prod = state.products.find(p => (p.nombre || p.name || p.producto) === item.dataset.val);
                     if (prod) { 
                         document.getElementById('in-costo').value = prod.pCosto || prod.costo || ""; 
                         document.getElementById('in-precio').value = prod.pVenta || prod.precio || ""; 
@@ -322,7 +304,7 @@
             };
         };
 
-        // --- FUNCIONES GLOBALES ---
+        // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             const target = document.getElementById('tab-' + id);
@@ -337,9 +319,9 @@
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             if(!fw) return;
-            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+            const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Escribe para buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -353,11 +335,11 @@
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
             const [y, m, d] = selDate.split('-');
-            const target = `${d}/${m}/${y}`;
-            const targetNoZero = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const fd1 = `${d}/${m}/${y}`;
+            const fd2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
             
-            const filtered = state.sales.filter(s => s.fechaStr === target || s.fechaStr === targetNoZero);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos registrados</p>'; return; }
+            const filtered = state.sales.filter(s => s.fechaStr === fd1 || s.fechaStr === fd2);
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">No hay pedidos registrados</p>'; return; }
             
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; 
@@ -378,13 +360,13 @@
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
-            const g = (x) => x.nombre || x.name || "S/N";
+            const f = (x) => (x.nombre || x.name || x.cliente || x.producto || "S/N");
             if(activeSubTab === 'clientes') {
-                const filtered = state.clients.filter(c => g(c).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>g(a).localeCompare(g(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${g(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+                const filtered = state.clients.filter(c => f(c).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>f(a).localeCompare(f(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${f(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                const filtered = state.products.filter(p => g(p).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>g(a).localeCompare(g(b))).map(p => `<div class="card-custom py-2"><b>${g(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+                const filtered = state.products.filter(p => f(p).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>f(a).localeCompare(f(b))).map(p => `<div class="card-custom py-2"><b>${f(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
                 const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
                 const [y, m, d] = dateEl.value.split('-');
@@ -395,10 +377,10 @@
             }
         };
 
-        window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
+        window.delItem = async (c, id) => { if(confirm("¿Eliminar del catálogo?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
 
         document.getElementById('btn-save-record').onclick = async () => {
-            if(!user) return toast("No hay conexión", "danger");
+            if(!user) return toast("Conexión en progreso...", "danger");
             const d = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -408,7 +390,8 @@
                 precio: parseFloat(document.getElementById('in-precio').value) || 0,
                 fechaStr: new Date().toLocaleDateString('es-MX'),
                 total: (parseInt(document.getElementById('in-cantidad').value) || 1) * (parseFloat(document.getElementById('in-precio').value) || 0),
-                entregado: false, pagado: false
+                entregado: false, pagado: false,
+                userId: user.uid
             };
             if(!d.tienda || !d.producto || !d.cliente) return toast("Faltan datos", "danger");
             try {
@@ -416,16 +399,16 @@
                 await addDoc(salesRef, { ...d, fecha: serverTimestamp() });
                 
                 const ck = async (c, v, ex = {}) => { 
-                    const exists = state[c].some(x => (x.nombre || x.name || '').toUpperCase() === v);
+                    const exists = state[c].some(x => (x.nombre || x.name || x.cliente || x.producto || '').toUpperCase() === v);
                     if(!exists) {
                         const colRef = collection(db, 'artifacts', appId, 'public', 'data', c);
                         await addDoc(colRef, { nombre: v, ...ex }); 
                     }
                 };
                 await ck('stores', d.tienda); await ck('clients', d.cliente); await ck('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
-                toast("¡Guardado!");
+                toast("¡Venta guardada!");
                 document.getElementById('in-producto').value = ""; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = "";
-            } catch(e) { toast("Error al guardar", "danger"); }
+            } catch(e) { toast("Error al guardar en la nube", "danger"); }
         };
     </script>
 </body>
