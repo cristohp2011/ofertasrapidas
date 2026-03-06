@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v12.1</title>
+    <title>Ofertas Rápidas Yaute v12.2</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,6 +17,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #8b5cf6; /* Color para indicar error de configuración */
             --bg: #f8fafc;
             --card-radius: 14px;
         }
@@ -54,7 +55,7 @@
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #64748b; display: block; letter-spacing: 0.5px; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #e2e8f0; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; transition: 0.2s; }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); font-weight: 800; }
 
@@ -64,23 +65,21 @@
 
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; }
-        
-        .check-group { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 10px 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .check-item { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 800; color: #475569; }
-        .check-item input { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
+
+        .status-dot { width:12px; height:12px; border-radius:50%; transition: 0.3s; margin-left: 10px; border: 2px solid rgba(255,255,255,0.2); }
+        .bg-info { background-color: var(--info) !important; }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen con Diagnóstico de Errores -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
-        <div class="splash-loader" id="main-loader"></div>
-        <div id="splash-status">AUTENTICANDO ACCESO...</div>
+        <div class="splash-loader"></div>
+        <div id="splash-status">CARGANDO LLAVE DE SEGURIDAD...</div>
     </div>
 
     <script>
-        // Paracaídas de emergencia
         window.removeSplash = function() {
             const splash = document.getElementById('splash-screen');
             if (splash && splash.style.display !== 'none') {
@@ -88,7 +87,7 @@
                 setTimeout(() => { if(splash) splash.style.display = 'none'; }, 400);
             }
         };
-        // DESBLOQUEO GARANTIZADO A LOS 5 SEGUNDOS
+        // Paracaídas de seguridad 5 seg
         setTimeout(window.removeSplash, 5000);
     </script>
 
@@ -96,8 +95,8 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center gap-1">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v12.1</span></h6>
-            <div id="status-dot" class="bg-warning" style="width:12px; height:12px; border-radius:50%; transition: 0.3s; margin-left: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v12.2</span></h6>
+            <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
@@ -171,28 +170,48 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR DE FIREBASE v12.1 (CON AUDITORÍA) -->
+    <!-- MOTOR FIREBASE v12.2 (FIX LLAVE INVÁLIDA) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE RESPALDO PARA CELULARES
-        const backupConfig = {
-            apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA",
-            authDomain: "prueba-5e215.firebaseapp.com",
-            projectId: "prueba-5e215",
-            storageBucket: "prueba-5e215.firebasestorage.app",
-            messagingSenderId: "898868587449",
-            appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
-        };
+        // --- MANEJO INTELIGENTE DE CONFIGURACIÓN ---
+        let firebaseConfig = null;
+        
+        // 1. Intentar usar la configuración del entorno (Inyectada por Canvas)
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config);
+                console.log("Configuración de entorno detectada.");
+            }
+        } catch (e) { console.error("Fallo al leer config de entorno."); }
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : backupConfig;
+        // 2. Si falla, usar la manual pero VALIDADA (Sin espacios)
+        if (!firebaseConfig || !firebaseConfig.apiKey) {
+            firebaseConfig = {
+                apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA".trim(),
+                authDomain: "prueba-5e215.firebaseapp.com",
+                projectId: "prueba-5e215",
+                storageBucket: "prueba-5e215.firebasestorage.app",
+                messagingSenderId: "898868587449",
+                appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
+            };
+            console.log("Usando configuración de respaldo.");
+        }
+
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+        // Inicializar
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = initializeFirestore(app, { experimentalForceLongPolling: true });
+        } catch (initErr) {
+            console.error("Error crítico de inicialización:", initErr);
+            document.getElementById('splash-status').innerText = "ERROR DE CONFIGURACIÓN";
+        }
 
         let state = { sales: [], clients: [], stores: [], products: [] };
         let activeSubTab = 'clientes';
@@ -201,9 +220,8 @@
         const setIndicator = (s) => {
             const dot = document.getElementById('status-dot');
             if (!dot) return;
-            dot.className = s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : 'bg-warning');
+            dot.className = "status-dot " + (s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : (s === 'cfg' ? 'bg-info' : 'bg-warning')));
             if(s === 'ok') dot.style.boxShadow = '0 0 15px #10b981';
-            if(s === 'err') dot.style.boxShadow = '0 0 15px #ef4444';
         };
 
         const updateStatusText = (m) => {
@@ -219,24 +237,26 @@
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
-        const getName = (obj) => obj.nombre || obj.name || obj.cliente || obj.producto || "S/N";
-        const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
-
         // --- INICIO DE SESIÓN ---
         const startApp = async () => {
+            if (!auth) return;
             try {
-                updateStatusText("AUTENTICANDO...");
+                updateStatusText("AUTENTICANDO LLAVE...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
             } catch (e) { 
-                console.error("Auth Fail", e);
-                updateStatusText("ERROR: " + (e.code || "CONEXIÓN"));
-                setIndicator('err');
-                // Intentar anónimo de todos modos
-                await signInAnonymously(auth).catch(() => {});
+                console.error("Error de Auth:", e.code);
+                if (e.code === 'auth/api-key-not-valid') {
+                    updateStatusText("LLAVE NO VÁLIDA - REVISAR CONSOLA");
+                    setIndicator('cfg'); // Color Morado
+                } else {
+                    updateStatusText("ERROR DE CONEXIÓN");
+                    setIndicator('err');
+                    await signInAnonymously(auth).catch(() => {});
+                }
             }
         };
         startApp();
@@ -246,7 +266,7 @@
                 user = u;
                 updateStatusText("ACCESO CONCEDIDO");
                 window.removeSplash(); 
-                document.getElementById('entregas-date').value = getISODate();
+                document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date());
                 startDataSync();
             }
         });
@@ -258,27 +278,20 @@
             
             cols.forEach(collectionName => {
                 const path = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
-                
                 onSnapshot(path, (snapshot) => {
                     state[collectionName] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    setIndicator('ok'); // VERDE al recibir datos
-                    
+                    setIndicator('ok');
                     if(collectionName === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
                     console.error(`Firebase Error (${collectionName}):`, err.code);
-                    updateStatusText("ERROR: " + err.code);
                     setIndicator('err');
-                    if(err.code === 'permission-denied') {
-                        toast("ERROR DE PERMISOS", "danger");
-                    }
                 });
             });
 
             setupAutoComplete('in-tienda', 'sug-tienda', 'stores');
             setupAutoComplete('in-cliente', 'sug-cliente', 'clients');
             setupAutoComplete('in-producto', 'sug-producto', 'products');
-            
             window.switchSubTab('clientes', document.getElementById('sub-clients'));
         };
 
@@ -290,8 +303,9 @@
             inp.oninput = () => {
                 const val = inp.value.toUpperCase().trim();
                 if(!val) { box.classList.add('d-none'); return; }
-                const matches = (state[key] || []).filter(x => getName(x).toUpperCase().includes(val)).slice(0, 5);
-                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${getName(x)}">${getName(x)}</div>`).join('');
+                const items = state[key] || [];
+                const matches = items.filter(x => (x.nombre || x.name || '').toUpperCase().includes(val)).slice(0, 5);
+                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${x.nombre || x.name}">${x.nombre || x.name}</div>`).join('');
                 box.classList.toggle('d-none', matches.length === 0);
             };
 
@@ -299,7 +313,7 @@
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
-                    const prod = state.products.find(p => getName(p) === item.dataset.val);
+                    const prod = state.products.find(p => (p.nombre || p.name) === item.dataset.val);
                     if (prod) { 
                         document.getElementById('in-costo').value = prod.pCosto || prod.costo || ""; 
                         document.getElementById('in-precio').value = prod.pVenta || prod.precio || ""; 
@@ -323,7 +337,7 @@
             if(btn) btn.classList.add('active');
             const fw = document.getElementById('filter-wrapper');
             if(!fw) return;
-            const today = getISODate();
+            const today = new Intl.DateTimeFormat('en-CA').format(new Date());
             if(id === 'clientes' || id === 'productos') {
                 fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
@@ -339,11 +353,11 @@
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
             const [y, m, d] = selDate.split('-');
-            const t1 = `${d}/${m}/${y}`;
-            const t2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const target = `${d}/${m}/${y}`;
+            const targetNoZero = `${parseInt(d)}/${parseInt(m)}/${y}`;
             
-            const filtered = state.sales.filter(s => s.fechaStr === t1 || s.fechaStr === t2);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos</p>'; return; }
+            const filtered = state.sales.filter(s => s.fechaStr === target || s.fechaStr === targetNoZero);
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos registrados</p>'; return; }
             
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; 
@@ -364,12 +378,13 @@
         window.renderCatalogList = () => {
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
+            const g = (x) => x.nombre || x.name || "S/N";
             if(activeSubTab === 'clientes') {
-                const filtered = state.clients.filter(c => getName(c).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${getName(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
+                const filtered = state.clients.filter(c => g(c).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>g(a).localeCompare(g(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${g(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                const filtered = state.products.filter(p => getName(p).toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(p => `<div class="card-custom py-2"><b>${getName(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
+                const filtered = state.products.filter(p => g(p).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>g(a).localeCompare(g(b))).map(p => `<div class="card-custom py-2"><b>${g(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
                 const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
                 const [y, m, d] = dateEl.value.split('-');
@@ -383,7 +398,7 @@
         window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
 
         document.getElementById('btn-save-record').onclick = async () => {
-            if(!user) return toast("Fallo de red", "danger");
+            if(!user) return toast("No hay conexión", "danger");
             const d = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -401,7 +416,7 @@
                 await addDoc(salesRef, { ...d, fecha: serverTimestamp() });
                 
                 const ck = async (c, v, ex = {}) => { 
-                    const exists = state[c].some(x => getName(x).toUpperCase() === v);
+                    const exists = state[c].some(x => (x.nombre || x.name || '').toUpperCase() === v);
                     if(!exists) {
                         const colRef = collection(db, 'artifacts', appId, 'public', 'data', c);
                         await addDoc(colRef, { nombre: v, ...ex }); 
