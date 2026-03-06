@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v12.0</title>
+    <title>Ofertas Rápidas Yaute v12.1</title>
     
     <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
         }
         .splash-logo { width: 120px; height: auto; margin-bottom: 20px; animation: pulse 2s infinite ease-in-out; }
         .splash-loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        #splash-status { margin-top: 15px; font-size: 0.75rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 85%; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -65,38 +65,38 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 10px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; }
         
-        .check-group { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 8px 12px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .check-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 800; color: #475569; }
-        .check-item input { width: 18px; height: 18px; accent-color: var(--success); }
+        .check-group { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 10px 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+        .check-item { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 800; color: #475569; }
+        .check-item input { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen con Desbloqueo Seguro -->
+    <!-- Splash Screen con Diagnóstico de Errores -->
     <div id="splash-screen">
         <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
-        <div class="splash-loader"></div>
-        <div id="splash-status">CONECTANDO AL SERVIDOR...</div>
+        <div class="splash-loader" id="main-loader"></div>
+        <div id="splash-status">AUTENTICANDO ACCESO...</div>
     </div>
 
     <script>
-        // Paracaídas de emergencia mejorado
+        // Paracaídas de emergencia
         window.removeSplash = function() {
             const splash = document.getElementById('splash-screen');
-            if (splash) {
+            if (splash && splash.style.display !== 'none') {
                 splash.style.opacity = '0';
                 setTimeout(() => { if(splash) splash.style.display = 'none'; }, 400);
             }
         };
-        // DESBLOQUEO GARANTIZADO A LOS 4 SEGUNDOS
-        setTimeout(window.removeSplash, 4000);
+        // DESBLOQUEO GARANTIZADO A LOS 5 SEGUNDOS
+        setTimeout(window.removeSplash, 5000);
     </script>
 
     <div id="toast-alert"></div>
 
     <header>
         <div class="d-flex align-items-center justify-content-center gap-1">
-            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v12.0</span></h6>
+            <h6 class="m-0 fw-bold text-uppercase">Ofertas Rápidas Yaute <span class="version-badge">v12.1</span></h6>
             <div id="status-dot" class="bg-warning" style="width:12px; height:12px; border-radius:50%; transition: 0.3s; margin-left: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
         </div>
     </header>
@@ -171,13 +171,13 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- MOTOR DE FIREBASE v12.0 (RECONSTRUIDO) -->
+    <!-- MOTOR DE FIREBASE v12.1 (CON AUDITORÍA) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE SEGURIDAD (RESPALDO PARA EXTERNOS)
+        // CONFIGURACIÓN DE RESPALDO PARA CELULARES
         const backupConfig = {
             apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA",
             authDomain: "prueba-5e215.firebaseapp.com",
@@ -192,7 +192,6 @@
         
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        // REGLA FUNDAMENTAL: Forzar Long Polling para saltar firewalls en móviles y Chrome
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         let state = { sales: [], clients: [], stores: [], products: [] };
@@ -204,6 +203,12 @@
             if (!dot) return;
             dot.className = s === 'ok' ? 'bg-success' : (s === 'err' ? 'bg-danger' : 'bg-warning');
             if(s === 'ok') dot.style.boxShadow = '0 0 15px #10b981';
+            if(s === 'err') dot.style.boxShadow = '0 0 15px #ef4444';
+        };
+
+        const updateStatusText = (m) => {
+            const el = document.getElementById('splash-status');
+            if(el) el.innerText = m;
         };
 
         const toast = (m, type = 'success') => {
@@ -214,19 +219,24 @@
             setTimeout(() => { if(el) el.style.display = 'none'; }, 3000);
         };
 
+        const getName = (obj) => obj.nombre || obj.name || obj.cliente || obj.producto || "S/N";
         const getISODate = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
         // --- INICIO DE SESIÓN ---
         const startApp = async () => {
             try {
+                updateStatusText("AUTENTICANDO...");
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
             } catch (e) { 
-                console.warn("Auth retry...");
-                await signInAnonymously(auth).catch(() => setIndicator('err'));
+                console.error("Auth Fail", e);
+                updateStatusText("ERROR: " + (e.code || "CONEXIÓN"));
+                setIndicator('err');
+                // Intentar anónimo de todos modos
+                await signInAnonymously(auth).catch(() => {});
             }
         };
         startApp();
@@ -234,37 +244,34 @@
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
+                updateStatusText("ACCESO CONCEDIDO");
                 window.removeSplash(); 
                 document.getElementById('entregas-date').value = getISODate();
                 startDataSync();
             }
         });
 
-        // REGLA 1: Rutas estrictas obligatorias artifacts/{appId}/public/data/...
+        // REGLA 1: Rutas estrictas obligatorias
         const startDataSync = () => {
             if(!user) return;
             const cols = ['sales', 'clients', 'stores', 'products'];
             
-            // EL PUNTO PASA A VERDE AL ABRIR LA PRIMERA ESCUCHA EXITOSA
-            let firstConnectionDone = false;
-
             cols.forEach(collectionName => {
                 const path = collection(db, 'artifacts', appId, 'public', 'data', collectionName);
                 
                 onSnapshot(path, (snapshot) => {
                     state[collectionName] = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    
-                    // Activación inmediata del indicador verde
-                    if (!firstConnectionDone) {
-                        setIndicator('ok');
-                        firstConnectionDone = true;
-                    }
+                    setIndicator('ok'); // VERDE al recibir datos
                     
                     if(collectionName === 'sales') window.renderEntregas();
                     window.renderCatalogList();
                 }, (err) => {
-                    console.error("Firestore Permission Error:", err.code);
+                    console.error(`Firebase Error (${collectionName}):`, err.code);
+                    updateStatusText("ERROR: " + err.code);
                     setIndicator('err');
+                    if(err.code === 'permission-denied') {
+                        toast("ERROR DE PERMISOS", "danger");
+                    }
                 });
             });
 
@@ -283,17 +290,8 @@
             inp.oninput = () => {
                 const val = inp.value.toUpperCase().trim();
                 if(!val) { box.classList.add('d-none'); return; }
-                
-                // Mapeo flexible de nombres (nombre, name, o producto)
-                const matches = (state[key] || []).filter(x => {
-                    const n = (x.nombre || x.name || x.cliente || x.producto || '').toUpperCase();
-                    return n.includes(val);
-                }).slice(0, 5);
-                
-                box.innerHTML = matches.map(x => {
-                    const label = x.nombre || x.name || x.cliente || x.producto || '';
-                    return `<div class="sug-item" data-val="${label}">${label}</div>`;
-                }).join('');
+                const matches = (state[key] || []).filter(x => getName(x).toUpperCase().includes(val)).slice(0, 5);
+                box.innerHTML = matches.map(x => `<div class="sug-item" data-val="${getName(x)}">${getName(x)}</div>`).join('');
                 box.classList.toggle('d-none', matches.length === 0);
             };
 
@@ -301,7 +299,7 @@
                 const item = e.target.closest('.sug-item'); if(!item) return;
                 inp.value = item.dataset.val; box.classList.add('d-none');
                 if (key === 'products') {
-                    const prod = state.products.find(p => (p.nombre || p.name || p.producto) === item.dataset.val);
+                    const prod = state.products.find(p => getName(p) === item.dataset.val);
                     if (prod) { 
                         document.getElementById('in-costo').value = prod.pCosto || prod.costo || ""; 
                         document.getElementById('in-precio').value = prod.pVenta || prod.precio || ""; 
@@ -327,7 +325,7 @@
             if(!fw) return;
             const today = getISODate();
             if(id === 'clientes' || id === 'productos') {
-                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Escriba para buscar..." oninput="window.renderCatalogList()">`;
+                fw.innerHTML = `<input type="text" id="search-cat" class="form-control" placeholder="Buscar..." oninput="window.renderCatalogList()">`;
             } else if(id === 'sales') {
                 fw.innerHTML = `<input type="date" id="hist-date" class="form-control" value="${today}" onchange="window.renderCatalogList()">`;
             } else if(id === 'diezmo') {
@@ -340,13 +338,12 @@
             const list = document.getElementById('lista-entregas'); if(!list) return;
             const selDate = document.getElementById('entregas-date')?.value;
             if(!selDate) return;
-            
             const [y, m, d] = selDate.split('-');
-            const targetWithZeros = `${d}/${m}/${y}`;
-            const targetNoZeros = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const t1 = `${d}/${m}/${y}`;
+            const t2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
             
-            const filtered = state.sales.filter(s => s.fechaStr === targetWithZeros || s.fechaStr === targetNoZeros);
-            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos hoy</p>'; return; }
+            const filtered = state.sales.filter(s => s.fechaStr === t1 || s.fechaStr === t2);
+            if(!filtered.length) { list.innerHTML = '<p class="text-center py-5 opacity-40">Sin repartos</p>'; return; }
             
             const grouped = filtered.reduce((acc, v) => { 
                 const c = v.cliente || "S/N"; 
@@ -358,8 +355,8 @@
 
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom">
-                    <div class="d-flex justify-content-between mb-2"><b class="text-uppercase">${cli}</b></div>
-                    <div class="small opacity-75">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
+                    <b class="text-uppercase">${cli}</b>
+                    <div class="small opacity-75 mt-1">${grouped[cli].items.map(i => `<div>⚡ ${i.cantidad}x ${i.producto}</div>`).join('')}</div>
                     <div class="text-end fw-bold text-primary mt-2 border-top pt-1">$${grouped[cli].t.toFixed(2)}</div>
                 </div>`).join('');
         };
@@ -368,19 +365,11 @@
             const list = document.getElementById('lista-catalogos'); if(!list) return;
             const q = document.getElementById('search-cat')?.value.toUpperCase() || "";
             if(activeSubTab === 'clientes') {
-                const filtered = state.clients.filter(c => (c.nombre || c.name || c.cliente || '').toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(c => `
-                    <div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
-                        <b>${c.nombre || c.name || c.cliente}</b>
-                        <button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button>
-                    </div>`).join('');
+                const filtered = state.clients.filter(c => getName(c).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1"><b>${getName(c)}</b><button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
             } else if(activeSubTab === 'productos') {
-                const filtered = state.products.filter(p => (p.nombre || p.name || p.producto || '').toUpperCase().includes(q));
-                list.innerHTML = filtered.sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || '')).map(p => `
-                    <div class="card-custom py-2">
-                        <b>${p.nombre || p.name || p.producto}</b><br>
-                        <small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small>
-                    </div>`).join('');
+                const filtered = state.products.filter(p => getName(p).toUpperCase().includes(q));
+                list.innerHTML = filtered.sort((a,b)=>getName(a).localeCompare(getName(b))).map(p => `<div class="card-custom py-2"><b>${getName(p)}</b><br><small class="opacity-50">C: $${(p.pCosto||0).toFixed(2)} | V: $${(p.pVenta||0).toFixed(2)}</small></div>`).join('');
             } else if(activeSubTab === 'sales') {
                 const dateEl = document.getElementById('hist-date'); if(!dateEl) return;
                 const [y, m, d] = dateEl.value.split('-');
@@ -394,7 +383,7 @@
         window.delItem = async (c, id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, id)); };
 
         document.getElementById('btn-save-record').onclick = async () => {
-            if(!user) return toast("Sin conexión", "danger");
+            if(!user) return toast("Fallo de red", "danger");
             const d = {
                 tienda: document.getElementById('in-tienda').value.trim().toUpperCase(),
                 cliente: document.getElementById('in-cliente').value.trim().toUpperCase(),
@@ -412,7 +401,7 @@
                 await addDoc(salesRef, { ...d, fecha: serverTimestamp() });
                 
                 const ck = async (c, v, ex = {}) => { 
-                    const exists = state[c].some(x => (x.nombre || x.name || x.cliente || x.producto || '').toUpperCase() === v);
+                    const exists = state[c].some(x => getName(x).toUpperCase() === v);
                     if(!exists) {
                         const colRef = collection(db, 'artifacts', appId, 'public', 'data', c);
                         await addDoc(colRef, { nombre: v, ...ex }); 
