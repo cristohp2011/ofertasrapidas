@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v19.6 - Fix Autenticación</title>
+    <title>Ofertas Rápidas Yaute v20.2 - IA Producción</title>
     
-    <!-- Librerías -->
+    <!-- Librerías de confianza -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -56,10 +56,12 @@
 
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; text-align: center; box-shadow: 0 12px 35px rgba(0,0,0,0.2); }
 
+        .sub-nav { display: flex; gap: 10px; border-bottom: 1px solid #f1f5f9; margin-bottom: 15px; }
+        .sub-btn { background: white; border: 1.5px solid #f1f5f9; border-radius: 12px; padding: 10px 20px; font-size: 0.8rem; color: #64748b; font-weight: 800; flex: 1; margin-bottom: 10px;}
+        .sub-btn.active { background: var(--accent); color: white; }
+
         /* --- ESTILOS SCANNER IA MODAL --- */
-        #ia-scanner-modal {
-            position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column;
-        }
+        #ia-scanner-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-container { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #cam-video { width: 100%; height: 100%; object-fit: cover; }
         .scan-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
@@ -67,15 +69,19 @@
         #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent); cursor: pointer; z-index: 10; }
         #ia-results-panel { background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 25px; min-height: 420px; overflow-y: auto; color: var(--primary); }
         .flash { position: fixed; inset: 0; background: white; opacity: 0; pointer-events: none; z-index: 11000; }
+
+        /* --- MODALES --- */
+        #delete-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 15000; backdrop-filter: blur(4px); }
+        .modal-content-custom { background: white; width: 90%; max-width: 400px; border-radius: 24px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalIn 0.3s; }
+        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
     <!-- Splash Screen -->
     <div id="splash-screen">
-        <img src="logo.png" alt="Yaute Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/120?text=Yaute'">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Iniciando v19.6...</div>
+        <div style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase;">Iniciando v20.2...</div>
     </div>
 
     <!-- MÓDULO SCANNER IA -->
@@ -102,11 +108,11 @@
                 <div class="row g-2 mb-3">
                     <div class="col-8">
                         <label class="text-uppercase small fw-bold text-muted">Producto (IA)</label>
-                        <input type="text" id="ia-res-name" class="form-control text-uppercase fw-bold border-0 bg-light" placeholder="---">
+                        <input type="text" id="ia-res-name" class="form-control text-uppercase fw-bold border-0 bg-light">
                     </div>
                     <div class="col-4">
                         <label class="text-uppercase small fw-bold text-muted">Pres.</label>
-                        <input type="text" id="ia-res-size" class="form-control text-uppercase fw-bold border-0 bg-light" placeholder="---">
+                        <input type="text" id="ia-res-size" class="form-control text-uppercase fw-bold border-0 bg-light">
                     </div>
                 </div>
                 <div class="row g-2 mb-3">
@@ -127,9 +133,22 @@
         <div class="flash" id="cam-flash"></div>
     </div>
 
+    <!-- MODAL BORRAR -->
+    <div id="delete-modal">
+        <div class="modal-content-custom text-center">
+            <div class="text-danger mb-3" style="font-size: 3rem;"><i class="fas fa-exclamation-circle"></i></div>
+            <h5 class="fw-bold">¿Eliminar registro?</h5>
+            <p class="text-muted small mb-4">Esta acción no se puede deshacer.</p>
+            <div class="d-flex gap-2">
+                <button class="btn btn-light flex-fill fw-bold" onclick="window.closeDeleteModal()">No</button>
+                <button class="btn btn-danger flex-fill fw-bold" id="btn-confirm-delete">Sí, borrar</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Yaute <span class="version-badge">v19.6</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v20.2</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -137,6 +156,7 @@
     <div id="toast-alert"></div>
 
     <main>
+        <!-- PESTAÑA VENTAS -->
         <div id="tab-operaciones" class="tab-content" style="display: block;">
             <div class="card-custom">
                 <div class="row g-3 mb-3">
@@ -178,18 +198,25 @@
             <div id="lista-ventas-hoy"></div>
         </div>
 
+        <!-- PESTAÑA REPARTO -->
         <div id="tab-entregas" class="tab-content" style="display: none;">
             <div class="card-custom py-2 mb-3 text-center"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
-        <div id="tab-control" class="tab-content" style="display: none;"><div id="lista-catalogos"></div></div>
+        <!-- PESTAÑA CONTROL -->
+        <div id="tab-control" class="tab-content" style="display: none;">
+            <div class="sub-nav">
+                <button class="sub-btn active" onclick="window.switchSubTab('catalogo', this)">CATÁLOGO</button>
+                <button class="sub-btn" onclick="window.switchSubTab('finanzas', this)">FINANZAS</button>
+            </div>
+            <div id="lista-catalogos"></div>
+        </div>
     </main>
 
     <!-- TICKET RENDER -->
     <div id="ticket-render" style="position: absolute; top: -3000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; border: 1px solid #eee;">
         <div style="text-align: center; margin-bottom: 25px;">
-            <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.src='https://via.placeholder.com/130?text=Yaute'">
             <div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div>
         </div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 25px; font-size: 1.1rem; font-weight: bold;"></div>
@@ -214,7 +241,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeFirestore, collection, doc, addDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
@@ -225,8 +252,8 @@
             appId: "1:81339635207:web:26d180f92224d9a036fca2"
         };
 
-        // --- IMPORTANTE: Pon tu API Key aquí para usar en GitHub ---
-        const apiKeyGemini = ""; 
+        // LLAVE API GEMINI
+        const apiKeyGemini = "AIzaSyDJicNgq309eja6V0IAZI8w0j6NBYMBmjU"; 
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
@@ -237,6 +264,7 @@
         let currentUser = null;
         let iaAbortController = null;
         let splashHidden = false;
+        let deleteRef = { col: '', id: '' };
 
         const toast = (m, type = 'success') => {
             const el = document.getElementById('toast-alert');
@@ -280,10 +308,20 @@
                 box.innerHTML = ms.map(x => `<div class="sug-item" data-val="${getVal(x)}">${getVal(x)}</div>`).join('');
                 box.classList.toggle('d-none', ms.length === 0);
             };
-            box.onclick = (e) => { const it = e.target.closest('.sug-item'); if(!it) return; inp.value = it.dataset.val; box.classList.add('d-none'); };
+            box.onclick = (e) => { 
+                const it = e.target.closest('.sug-item'); if(!it) return; 
+                inp.value = it.dataset.val; box.classList.add('d-none');
+                if(key === 'products') {
+                    const p = window.state.products.find(x => getVal(x) === it.dataset.val);
+                    if(p) {
+                        document.getElementById('in-costo').value = p.pCosto || "";
+                        document.getElementById('in-precio').value = p.pVenta || "";
+                    }
+                }
+            };
         };
 
-        // --- SCANNER IA ---
+        // --- MOTOR SCANNER IA ---
         const video = document.getElementById('cam-video');
         const vSelect = document.getElementById('video-source-select');
         let currentStream = null;
@@ -331,16 +369,13 @@
             flash.style.opacity = '1'; setTimeout(() => flash.style.opacity = '0', 100);
             document.getElementById('ia-loading').style.display = 'block';
             document.getElementById('ia-data-fields').style.display = 'none';
-            
             const fullCanvas = document.getElementById('hidden-canvas');
             const cropCanvas = document.getElementById('crop-canvas');
             fullCanvas.width = video.videoWidth; fullCanvas.height = video.videoHeight;
             fullCanvas.getContext('2d').drawImage(video, 0, 0);
-
             const cropW = fullCanvas.width * 0.70; const cropH = fullCanvas.height * 0.45;
             cropCanvas.width = cropW; cropCanvas.height = cropH;
             cropCanvas.getContext('2d').drawImage(fullCanvas, (fullCanvas.width-cropW)/2, (fullCanvas.height-cropH)/2, cropW, cropH, 0, 0, cropW, cropH);
-
             const dataURL = cropCanvas.toDataURL('image/jpeg', 0.9);
             document.getElementById('ia-capture-preview').src = dataURL;
             document.getElementById('ia-capture-preview').style.display = 'block';
@@ -348,12 +383,7 @@
         };
 
         async function analyzeIA(b64) {
-            if (!apiKeyGemini) {
-                toast("Falta API Key de Gemini en el código", "danger");
-                window.resetIA();
-                return;
-            }
-
+            if (!apiKeyGemini) { toast("Falta API Key", "danger"); return window.resetIA(); }
             iaAbortController = new AbortController();
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`;
             const payload = {
@@ -363,28 +393,20 @@
                 ]}],
                 generationConfig: { responseMimeType: "application/json" }
             };
-
             try {
                 const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: iaAbortController.signal });
-                
-                if (response.status === 401 || response.status === 403) {
-                    throw new Error("Llave API inválida o bloqueada.");
-                }
-
                 const result = await response.json();
                 if(result.error) throw new Error(result.error.message);
-                
                 let rawText = result.candidates[0].content.parts[0].text;
                 const cleanJson = rawText.replace(/```json|```/g, "").trim();
                 const data = JSON.parse(cleanJson);
-                
                 document.getElementById('ia-res-name').value = data.nombre.toUpperCase();
                 document.getElementById('ia-res-size').value = data.presentacion.toUpperCase();
                 document.getElementById('ia-status-badge').innerText = "DETECCIÓN EXITOSA";
                 document.getElementById('ia-loading').style.display = 'none';
                 document.getElementById('ia-data-fields').style.display = 'block';
                 document.getElementById('ia-res-cost').focus();
-            } catch (e) { if(e.name !== 'AbortError') toast("Fallo IA: " + e.message, "danger"); window.resetIA(); }
+            } catch (e) { if(e.name !== 'AbortError') toast("Fallo IA", "danger"); window.resetIA(); }
         }
 
         window.processIASave = async () => {
@@ -393,16 +415,13 @@
             const costo = parseFloat(document.getElementById('ia-res-cost').value) || 0;
             const venta = parseFloat(document.getElementById('ia-res-price').value) || 0;
             if(!nombre || !venta) return toast("Faltan datos", "danger");
-
             const fullProdName = `${nombre} - ${pres}`;
             const existing = window.state.products.find(p => getVal(p).toUpperCase() === fullProdName);
             if(existing) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existing.id), { pCosto: costo, pVenta: venta });
             else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: fullProdName, pCosto: costo, pVenta: venta });
-
             document.getElementById('in-producto').value = fullProdName;
             document.getElementById('in-costo').value = costo;
             document.getElementById('in-precio').value = venta;
-
             const msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${fullProdName}\n💰 *Precio:* $${venta}`;
             document.getElementById('crop-canvas').toBlob(async (blob) => {
                 const file = new File([blob], "oferta.jpg", { type: "image/jpeg" });
@@ -412,21 +431,39 @@
             }, 'image/jpeg', 0.9);
         };
 
+        // --- LÓGICA OPERATIVA ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.getElementById('tab-' + id).style.display = 'block';
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            if(id === 'control') window.renderControlList('catalogo');
         };
 
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
             const today = new Date().toLocaleDateString('es-MX');
             const dv = window.state.sales.filter(s => s.fechaStr === today).reverse();
-            list.innerHTML = `<span class="fw-bold mb-2 d-block">Ventas de Hoy</span>` + dv.slice(0, 5).map(v => `
-                <div class="card-custom py-2 mb-2 d-flex justify-content-between">
-                    <div><b>${v.producto}</b><br><small>${v.cliente} | $${v.total.toFixed(2)}</small></div>
+            list.innerHTML = `<span class="fw-bold mb-2 d-block">Ventas de Hoy</span>` + dv.slice(0, 10).map(v => `
+                <div class="card-custom py-2 mb-2 d-flex justify-content-between align-items-center" style="border-left: 4px solid var(--accent);">
+                    <div style="padding-left:10px;">
+                        <b>${v.producto}</b><br>
+                        <small>${v.cliente} | $${v.total.toFixed(2)}</small>
+                    </div>
+                    <button class="btn btn-sm text-danger" onclick="window.openDeleteModal('sales','${v.id}')">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </div>`).join('');
+        };
+
+        window.openDeleteModal = (col, id) => {
+            deleteRef = { col, id };
+            document.getElementById('delete-modal').style.display = 'flex';
+        };
+        window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
+        document.getElementById('btn-confirm-delete').onclick = async () => {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id));
+            toast("Registro eliminado"); window.closeDeleteModal();
         };
 
         window.renderEntregas = () => {
@@ -444,34 +481,55 @@
                 </div>`).join('');
         };
 
+        window.switchSubTab = (id, btn) => {
+            document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            window.renderControlList(id);
+        };
+
+        window.renderControlList = (mode = 'catalogo') => {
+            const list = document.getElementById('lista-catalogos');
+            if(mode === 'catalogo') {
+                list.innerHTML = `<div class="card-custom p-0" style="overflow:hidden">` + window.state.products.slice(0,30).map(p => `
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                        <div><b>${p.nombre}</b><br><small>$${p.pCosto} / $${p.pVenta}</small></div>
+                        <button class="btn btn-sm text-danger" onclick="window.openDeleteModal('products','${p.id}')"><i class="fas fa-trash-alt"></i></button>
+                    </div>`).join('') + `</div>`;
+            } else {
+                const totalInversion = window.state.sales.reduce((a,v) => a + (v.costo * v.cantidad), 0);
+                list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4"><h3>$${totalInversion.toFixed(2)}</h3><small>Inversión en Ventas</small></div>`;
+            }
+        };
+
         document.getElementById('btn-save-record').onclick = async () => {
-            const t = document.getElementById('in-tienda').value.toUpperCase();
-            const c = document.getElementById('in-cliente').value.toUpperCase();
-            const p = document.getElementById('in-producto').value.toUpperCase();
+            const t = document.getElementById('in-tienda').value.trim().toUpperCase();
+            const c = document.getElementById('in-cliente').value.trim().toUpperCase();
+            const p = document.getElementById('in-producto').value.trim().toUpperCase();
             const q = parseInt(document.getElementById('in-cantidad').value) || 1;
             const co = parseFloat(document.getElementById('in-costo').value) || 0;
             const pr = parseFloat(document.getElementById('in-precio').value) || 0;
             if(!t || !c || !p) return toast("Faltan datos", "danger");
             const d = { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, fechaStr: new Date().toLocaleDateString('es-MX'), total: q*pr, uid: currentUser.uid };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { ...d, fecha: serverTimestamp() });
-            toast("¡Guardado!"); document.getElementById('in-producto').value = ""; document.getElementById('in-precio').value = "";
+            toast("Venta guardada");
+            // LIMPIEZA EXCEPTO TIENDA
+            document.getElementById('in-cliente').value = "";
+            document.getElementById('in-producto').value = "";
+            document.getElementById('in-cantidad').value = "1";
+            document.getElementById('in-costo').value = "";
+            document.getElementById('in-precio').value = "";
+            document.getElementById('in-cliente').focus();
         };
 
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
-            if(!dateInput.value) return toast("Seleccione una fecha", "danger");
             const [y, m, d] = dateInput.value.split('-');
-            const f1 = `${d}/${m}/${y}`;
-            const f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-            const items = window.state.sales.filter(s => s.cliente.trim().toUpperCase() === n.trim().toUpperCase() && (s.fechaStr === f1 || s.fechaStr === f2));
-            if (items.length === 0) return toast("No hay ventas", "danger");
-
-            document.getElementById('t-cliente').innerText = n;
-            document.getElementById('t-fecha').innerText = f1;
+            const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+            const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f1 || s.fechaStr === f2));
+            document.getElementById('t-cliente').innerText = n; document.getElementById('t-fecha').innerText = f1;
             let tot = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { tot += i.total; return `<tr><td>${i.cantidad}x</td><td>${i.producto}</td><td style="text-align:right">$${i.total.toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
-            
             setTimeout(async () => {
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2 });
                 canvas.toBlob(async b => {
