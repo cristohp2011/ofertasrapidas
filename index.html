@@ -86,9 +86,8 @@
         <div id="splash-status">INICIANDO SISTEMA...</div>
     </div>
 
-    <!-- Script de Paracaídas MEJORADO (Se ejecuta primero y fuera de cualquier módulo) -->
+    <!-- Script de Paracaídas MEJORADO -->
     <script>
-        // Función mejorada para eliminar splash
         window.removeSplash = function() {
             console.log("Intentando remover splash...");
             const splash = document.getElementById('splash-screen');
@@ -104,12 +103,9 @@
             }
         };
         
-        // DESBLOQUEO FORZADO ABSOLUTO - Múltiples tiempos de respaldo
-        setTimeout(window.removeSplash, 1500);  // Intento rápido
-        setTimeout(window.removeSplash, 3000);  // Respaldo
-        setTimeout(window.removeSplash, 5000);  // Respaldo final
-        
-        // Si todo falla, este es el as bajo la manga
+        // Múltiples intentos de remover splash
+        setTimeout(window.removeSplash, 2000);
+        setTimeout(window.removeSplash, 4000);
         window.addEventListener('load', function() {
             setTimeout(window.removeSplash, 500);
         });
@@ -216,26 +212,23 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-history"></i>Control</button>
     </nav>
 
-    <!-- CONFIGURACIÓN DE FIREBASE (¡IMPORTANTE! Debes reemplazar con tus datos) -->
+    <!-- CONFIGURACIÓN DE FIREBASE (¡DEBES REEMPLAZAR CON TUS DATOS!) -->
     <script>
         // ===== CONFIGURACIÓN REQUERIDA =====
         // Reemplaza estos valores con los de tu proyecto Firebase
         window.__firebase_config = {
-            apiKey: "AIzaSyXXXXXXXXXXXXXXX",  // <-- REEMPLAZA CON TU API KEY
-            authDomain: "tu-proyecto.firebaseapp.com",  // <-- REEMPLAZA
-            projectId: "tu-proyecto",  // <-- REEMPLAZA
-            storageBucket: "tu-proyecto.appspot.com",  // <-- REEMPLAZA
-            messagingSenderId: "000000000000",  // <-- REEMPLAZA
-            appId: "1:000000000000:web:xxxxxxxxxx"  // <-- REEMPLAZA
+            apiKey: "AIzaSyBGY8qfR_fD0PQ6HGWyAMrB1gshyKyn5cA",
+            authDomain: "prueba-5e215.firebaseapp.com",
+            projectId: "prueba-5e215",
+            storageBucket: "prueba-5e215.firebasestorage.app",
+            messagingSenderId: "898868587449",
+            appId: "1:898868587449:web:c2d4b719da6e85ec35f170"
         };
         
         window.__app_id = 'yaute-v1-shared';
         window.__initial_auth_token = null;  // Déjalo así si usas auth anónima
         
-        // API Key de Gemini (opcional, para la cámara)
-        window.__gemini_api_key = ""; // <-- OPCIONAL: Tu API key de Gemini
-        
-        // Función para cambiar pestañas
+        // Función para cambiar pestañas (definida globalmente)
         window.showTab = function(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
@@ -248,8 +241,8 @@
     <script type="module">
         // Importaciones de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, deleteDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Verificar configuración
         if (!window.__firebase_config || !window.__firebase_config.apiKey) {
@@ -260,10 +253,10 @@
         }
 
         // Inicializar Firebase
+        console.log("Inicializando Firebase con:", window.__firebase_config.projectId);
         const firebaseConfig = window.__firebase_config;
         const appId = window.__app_id || 'yaute-v1-shared';
         
-        console.log("Inicializando Firebase...");
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -296,20 +289,13 @@
                 setIndicator('warn');
                 document.getElementById('splash-status').innerText = "CONECTANDO...";
                 
-                if (window.__initial_auth_token) {
-                    await signInWithCustomToken(auth, window.__initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                // Autenticación anónima directamente
+                await signInAnonymously(auth);
+                
             } catch (e) {
-                console.warn("Error en auth, intentando anónimo:", e);
-                try {
-                    await signInAnonymously(auth);
-                } catch(e2) {
-                    console.error("Error fatal de auth:", e2);
-                    document.getElementById('splash-status').innerText = "ERROR DE RED";
-                    setTimeout(() => window.removeSplash(), 2000);
-                }
+                console.error("Error fatal de auth:", e);
+                document.getElementById('splash-status').innerText = "ERROR DE RED";
+                setTimeout(() => window.removeSplash(), 2000);
             }
         };
         
@@ -335,18 +321,27 @@
             }
         });
 
+        // Función para obtener la referencia correcta a la colección
+        const getCollectionRef = (collectionName) => {
+            // Estructura: artifacts/{appId}/public/data/{collectionName}
+            return collection(db, 'artifacts', appId, 'public', 'data', collectionName);
+        };
+
         const startSync = () => {
             if(!user) return;
             
-            console.log("Iniciando sincronización...");
+            console.log("Iniciando sincronización con estructura: artifacts/.../public/data/...");
+            
             const collections = ['sales', 'clients', 'stores', 'products'];
             
             collections.forEach(collectionName => {
-                // Usar una estructura más simple para las colecciones
-                const collectionRef = collection(db, 'apps', appId, collectionName);
+                const collectionRef = getCollectionRef(collectionName);
+                
+                console.log(`Escuchando cambios en: artifacts/${appId}/public/data/${collectionName}`);
                 
                 onSnapshot(collectionRef, (snapshot) => {
-                    console.log(`Datos recibidos de ${collectionName}:`, snapshot.size);
+                    console.log(`✓ Datos recibidos de ${collectionName}:`, snapshot.size, "documentos");
+                    
                     state[collectionName] = snapshot.docs.map(d => ({ 
                         id: d.id, 
                         ...d.data() 
@@ -361,7 +356,7 @@
                     if(typeof window.renderCatalogList === 'function') window.renderCatalogList();
                     
                 }, (err) => {
-                    console.error(`Error en ${collectionName}:`, err);
+                    console.error(`✗ Error en ${collectionName}:`, err.code, err.message);
                     setIndicator('err');
                 });
             });
@@ -473,7 +468,7 @@
             const [year, month, day] = selDate.split('-');
             const target = `${day}/${month}/${year}`;
             
-            const filtered = state.sales.filter(s => s.fechaStr === target);
+            const filtered = (state.sales || []).filter(s => s.fechaStr === target);
             
             if(!filtered.length) { 
                 list.innerHTML = '<p class="text-center py-5 opacity-40">No hay pedidos para esta fecha</p>'; 
@@ -517,10 +512,13 @@
 
         window.toggleS = async (cli, date, f, v) => {
             if(!user) return;
-            const items = state.sales.filter(s => s.cliente === cli && s.fechaStr === date);
+            const items = (state.sales || []).filter(s => s.cliente === cli && s.fechaStr === date);
+            
             for (const i of items) {
                 try {
-                    await updateDoc(doc(db, 'apps', appId, 'sales', i.id), { [f]: v });
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id);
+                    await updateDoc(docRef, { [f]: v });
+                    toast("Actualizado correctamente");
                 } catch(e) {
                     console.error("Error actualizando:", e);
                     toast("Error al actualizar", "danger");
@@ -536,10 +534,16 @@
             const q = searchInput ? searchInput.value.toUpperCase() : "";
             
             if(activeSubTab === 'clientes') {
-                list.innerHTML = (state.clients || [])
+                const items = (state.clients || [])
                     .filter(c => (c.nombre || c.name || '').toUpperCase().includes(q))
-                    .sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || ''))
-                    .map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
+                    .sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || ''));
+                
+                if(items.length === 0) {
+                    list.innerHTML = '<p class="text-center py-4 opacity-50">No hay clientes</p>';
+                    return;
+                }
+                
+                list.innerHTML = items.map(c => `<div class="card-custom d-flex justify-content-between align-items-center py-2 mb-1">
                         <b>${c.nombre || c.name || ''}</b>
                         <button class="btn btn-sm text-danger" onclick="window.delItem('clients','${c.id}')">
                             <i class="fas fa-trash-alt"></i>
@@ -547,10 +551,16 @@
                     </div>`).join('');
                     
             } else if(activeSubTab === 'productos') {
-                list.innerHTML = (state.products || [])
+                const items = (state.products || [])
                     .filter(p => (p.nombre || p.name || '').toUpperCase().includes(q))
-                    .sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || ''))
-                    .map(p => `<div class="card-custom py-2">
+                    .sort((a,b)=>(a.nombre || a.name || '').localeCompare(b.nombre || b.name || ''));
+                
+                if(items.length === 0) {
+                    list.innerHTML = '<p class="text-center py-4 opacity-50">No hay productos</p>';
+                    return;
+                }
+                
+                list.innerHTML = items.map(p => `<div class="card-custom py-2">
                         <b>${p.nombre || p.name || ''}</b><br>
                         <small class="opacity-50">Costo: $${(p.pCosto||p.costo||0).toFixed(2)} | Venta: $${(p.pVenta||p.precio||0).toFixed(2)}</small>
                     </div>`).join('');
@@ -564,11 +574,16 @@
                 const dv = (state.sales || []).filter(s => s.fechaStr === fd);
                 const total = dv.reduce((a,v) => a + (v.total || 0), 0);
                 
+                if(dv.length === 0) {
+                    list.innerHTML = '<p class="text-center py-4 opacity-50">No hay ventas en esta fecha</p>';
+                    return;
+                }
+                
                 list.innerHTML = dv.map(v => `<div class="card-custom py-2 d-flex justify-content-between">
                     <div>${v.producto || ''}<br><small>${v.cliente || ''}</small></div>
                     <b>$${(v.total || 0).toFixed(2)}</b>
                 </div>`).join('') + 
-                `<div class="card-custom bg-primary text-white">
+                `<div class="card-custom bg-primary text-white fw-bold">
                     TOTAL DÍA: $${total.toFixed(2)}
                 </div>`;
                 
@@ -590,6 +605,7 @@
                 list.innerHTML = `<div class="card-custom bg-primary text-white text-center py-4">
                     <h3>$${(profit * 0.1).toFixed(2)}</h3>
                     <div class="small opacity-80">10% de ganancia acumulada</div>
+                    <div class="mt-2 small">Ganancia total: $${profit.toFixed(2)}</div>
                 </div>`;
             }
         };
@@ -598,7 +614,8 @@
             if(!user) return;
             if(confirm("¿Eliminar?")) {
                 try {
-                    await deleteDoc(doc(db, 'apps', appId, collectionName, id));
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', collectionName, id);
+                    await deleteDoc(docRef);
                     toast("Eliminado correctamente");
                 } catch(e) {
                     console.error("Error eliminando:", e);
@@ -618,9 +635,9 @@
             const precio = parseFloat(document.getElementById('in-precio').value) || 0;
             
             const d = {
-                tienda: (document.getElementById('in-tienda').value || '').trim().toUpperCase(),
-                cliente: (document.getElementById('in-cliente').value || '').trim().toUpperCase(),
-                producto: (document.getElementById('in-producto').value || '').trim().toUpperCase(),
+                tienda: (document.getElementById('in-tienda').value || '').trim().toUpperCase() || "TIENDA",
+                cliente: (document.getElementById('in-cliente').value || '').trim().toUpperCase() || "CLIENTE",
+                producto: (document.getElementById('in-producto').value || '').trim().toUpperCase() || "PRODUCTO",
                 cantidad: cantidad,
                 costo: parseFloat(document.getElementById('in-costo').value) || 0,
                 precio: precio,
@@ -637,30 +654,34 @@
             }
             
             try {
-                // Guardar venta
-                await addDoc(collection(db, 'apps', appId, 'sales'), { 
+                // Guardar venta en la estructura correcta
+                const salesRef = collection(db, 'artifacts', appId, 'public', 'data', 'sales');
+                await addDoc(salesRef, { 
                     ...d, 
                     fecha: serverTimestamp() 
                 });
                 
-                // Guardar/actualizar catálogos
-                const upsert = async (col, valor, extra = {}) => { 
-                    if(!valor) return;
+                // Función para guardar en catálogos si no existe
+                const upsertCatalog = async (col, valor, extra = {}) => { 
+                    if(!valor || valor === "TIENDA" || valor === "CLIENTE" || valor === "PRODUCTO") return;
+                    
                     const exists = (state[col] || []).some(x => 
                         (x.nombre || x.name || '').toUpperCase() === valor
                     );
                     
                     if(!exists) {
-                        await addDoc(collection(db, 'apps', appId, col), { 
+                        const catalogRef = collection(db, 'artifacts', appId, 'public', 'data', col);
+                        await addDoc(catalogRef, { 
                             nombre: valor, 
                             ...extra 
-                        }); 
+                        });
+                        console.log(`Nuevo ${col} guardado:`, valor);
                     }
                 };
                 
-                await upsert('stores', d.tienda);
-                await upsert('clients', d.cliente);
-                await upsert('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
+                await upsertCatalog('stores', d.tienda);
+                await upsertCatalog('clients', d.cliente);
+                await upsertCatalog('products', d.producto, { pCosto: d.costo, pVenta: d.precio });
                 
                 toast("¡Venta guardada!");
                 
@@ -671,7 +692,7 @@
                 
             } catch(e) { 
                 console.error("Error guardando:", e);
-                toast("Error al guardar", "danger"); 
+                toast("Error al guardar: " + e.message, "danger"); 
             }
         };
 
@@ -709,7 +730,9 @@
                 const canvas = await html2canvas(document.getElementById('ticket-render'), { 
                     scale: 2, 
                     backgroundColor: '#ffffff',
-                    logging: false
+                    logging: false,
+                    allowTaint: false,
+                    useCORS: true
                 });
                 
                 canvas.toBlob(async blob => {
@@ -778,47 +801,9 @@
             
             window.closeCam();
             
-            if(window.__gemini_api_key) {
-                processIA(b64);
-            } else {
-                toast("API Key de Gemini no configurada", "warning");
-            }
+            // Aquí puedes implementar la IA si tienes API key
+            toast("Función de cámara disponible");
         };
-
-        async function processIA(base64) {
-            if(!window.__gemini_api_key) return;
-            
-            toast("Analizando producto...");
-            
-            try {
-                const payload = {
-                    contents: [{ 
-                        parts: [
-                            { text: "Dime nombre del producto comercial. Responde SOLO con el nombre, sin explicaciones." }, 
-                            { inlineData: { mimeType: "image/jpeg", data: base64 } }
-                        ] 
-                    }]
-                };
-                
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.__gemini_api_key}`, {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify(payload)
-                });
-                
-                const data = await res.json();
-                const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                
-                if(textResult) {
-                    document.getElementById('in-producto').value = textResult.trim().toUpperCase();
-                    toast("¡Detectado!");
-                }
-                
-            } catch (e) { 
-                console.error("Error IA:", e);
-                toast("Error IA", "danger"); 
-            }
-        }
     </script>
 </body>
 </html>
