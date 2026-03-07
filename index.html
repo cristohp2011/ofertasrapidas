@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v21.1</title>
+    <title>Ofertas Rápidas Yaute v21.3 - Finanzas Simplificadas</title>
     
     <!-- Librerías -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -63,7 +63,7 @@
         .inner-btn { flex: 1; border: none; background: none; padding: 6px; font-size: 0.6rem; font-weight: 900; border-radius: 8px; color: #64748b; text-transform: uppercase; }
         .inner-btn.active { background: white; color: var(--accent); }
 
-        /* --- AUTOCOMPLETE --- */
+        /* --- SUGGESTIONS --- */
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; }
 
@@ -79,13 +79,11 @@
 </head>
 <body>
 
-    <!-- Pantalla de Carga -->
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Sincronizando v21.1...</div>
+        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Sincronizando v21.3...</div>
     </div>
 
-    <!-- Modal de Confirmación -->
     <div id="delete-modal">
         <div class="modal-content-custom">
             <i class="fas fa-trash-alt text-danger mb-3" style="font-size: 2.5rem;"></i>
@@ -100,7 +98,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v21.1</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v21.3</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -132,7 +130,7 @@
                     </div>
                 </div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><label class="text-uppercase">Costo</label><input type="number" id="in-costo" class="form-control fw-bold border-danger" step="0.01"></div>
+                    <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="in-costo" class="form-control fw-bold border-danger" step="0.01"></div>
                     <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="in-precio" class="form-control fw-bold border-success" step="0.01"></div>
                 </div>
                 <button id="btn-save-record" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow">GUARDAR REGISTRO</button>
@@ -205,9 +203,19 @@
         let activeCatFilter = 'productos';
         let activeFinanceView = 'ventas';
 
+        // --- MANEJO DE ZONA HORARIA MÉXICO (-6) ---
+        const getMXDate = () => {
+            return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Mexico_City"}));
+        };
+
+        const formatMXDateStr = (dateObj) => {
+            return dateObj.toLocaleDateString('es-MX');
+        };
+
         // Variables de Filtro de Finanzas
-        let finDateFrom = new Date().toISOString().split('T')[0];
-        let finDateTo = new Date().toISOString().split('T')[0];
+        let finDate = getMXDate().toISOString().split('T')[0];
+        let finDateFrom = getMXDate().toISOString().split('T')[0]; // Solo para Diezmo
+        let finDateTo = getMXDate().toISOString().split('T')[0];   // Solo para Diezmo
         let finStore = "";
         let finClient = "";
 
@@ -271,12 +279,29 @@
             const q = parseInt(document.getElementById('in-cantidad').value) || 1;
             const co = parseFloat(document.getElementById('in-costo').value) || 0;
             const pr = parseFloat(document.getElementById('in-precio').value) || 0;
+            
             if(!t || !c || !p) return toast("Faltan datos obligatorios", "danger");
-            const sale = { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: new Date().toLocaleDateString('es-MX'), timestamp: Date.now(), uid: currentUser.uid };
+            
+            const mxNow = getMXDate();
+            const sale = { 
+                tienda: t, 
+                cliente: c, 
+                producto: p, 
+                cantidad: q, 
+                costo: co, 
+                precio: pr, 
+                total: q*pr, 
+                fechaStr: formatMXDateStr(mxNow), 
+                timestamp: mxNow.getTime(), 
+                uid: currentUser.uid 
+            };
+
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), sale);
+            
             if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
             if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
             if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
+            
             toast("¡Venta guardada!");
             document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = "";
             document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = "";
@@ -285,13 +310,20 @@
 
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
-            const today = new Date().toLocaleDateString('es-MX');
+            const today = formatMXDateStr(getMXDate());
             const dv = window.state.sales.filter(s => s.fechaStr === today);
+            
             if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
+            
             dv.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
             let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block">HOY (${dv.length})</span>`;
+            
             dv.forEach(v => {
-                let h = "--:--"; if(v.timestamp) { const d = new Date(v.timestamp); if(!isNaN(d.getTime())) h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }); }
+                let h = "--:--"; 
+                if(v.timestamp) { 
+                    const d = new Date(v.timestamp); 
+                    if(!isNaN(d.getTime())) h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }); 
+                }
                 html += `
                     <div class="card-custom d-flex justify-content-between align-items-center" style="border-left: 5px solid var(--accent); padding: 10px 15px;">
                         <div style="line-height:1.2; flex: 1;">
@@ -347,7 +379,7 @@
 
         window.setCatFilter = (f) => { activeCatFilter = f; window.renderControlList(); };
 
-        // --- MÓDULO FINANZAS AVANZADO v21.1 ---
+        // --- MÓDULO FINANZAS AVANZADO v21.3 (FECHA ÚNICA PARA VENTAS/GANANCIAS) ---
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
             container.innerHTML = `
@@ -357,10 +389,17 @@
                     <button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">DIEZMO</button>
                 </div>
                 <div class="card-custom mb-3 p-3 bg-light">
-                    <div class="row g-2 mb-2">
-                        <div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div>
-                        <div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div>
-                    </div>
+                    ${activeFinanceView === 'diezmo' ? `
+                        <div class="row g-2 mb-2">
+                            <div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div>
+                            <div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div>
+                        </div>
+                    ` : `
+                        <div class="mb-2 text-center">
+                            <label class="text-uppercase">Fecha de Consulta</label>
+                            <input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm mx-auto w-75">
+                        </div>
+                    `}
                     <div class="row g-2">
                         <div class="col-6">
                             <label class="text-uppercase">Tienda</label>
@@ -384,6 +423,7 @@
         };
 
         window.updateFinFilter = (key, val) => {
+            if(key === 'single') finDate = val;
             if(key === 'from') finDateFrom = val;
             if(key === 'to') finDateTo = val;
             if(key === 'store') finStore = val;
@@ -393,16 +433,28 @@
 
         window.renderFinanceResults = () => {
             const results = document.getElementById('finance-results');
-            const start = new Date(finDateFrom + "T00:00:00");
-            const end = new Date(finDateTo + "T23:59:59");
             
-            const filtered = window.state.sales.filter(s => {
-                const [d, m, y] = s.fechaStr.split('/');
-                const sDate = new Date(y, m-1, d);
-                const dateOk = sDate >= start && sDate <= end;
+            // Lógica de filtrado por fecha única o rango
+            let filtered = [];
+            if (activeFinanceView === 'diezmo') {
+                const start = new Date(finDateFrom + "T00:00:00");
+                const end = new Date(finDateTo + "T23:59:59");
+                filtered = window.state.sales.filter(s => {
+                    const [d, m, y] = s.fechaStr.split('/');
+                    const sDate = new Date(y, m-1, d);
+                    return sDate >= start && sDate <= end;
+                });
+            } else {
+                const dateObj = new Date(finDate + "T00:00:00");
+                const targetStr = formatMXDateStr(dateObj);
+                filtered = window.state.sales.filter(s => s.fechaStr === targetStr);
+            }
+
+            // Filtros adicionales de tienda y cliente
+            filtered = filtered.filter(s => {
                 const storeOk = finStore === "" || s.tienda === finStore;
                 const clientOk = finClient === "" || s.cliente === finClient;
-                return dateOk && storeOk && clientOk;
+                return storeOk && clientOk;
             });
 
             if(activeFinanceView === 'ventas') {
@@ -411,7 +463,7 @@
                 results.innerHTML = `
                     <div class="card-custom bg-primary text-white text-center py-3 mb-2">
                         <div class="row">
-                            <div class="col-6 border-end"><h3>$${totalV.toFixed(2)}</h3><small>TOTAL VENTAS</small></div>
+                            <div class="col-6 border-end"><h3>$${totalV.toFixed(2)}</h3><small>VENTA TOTAL</small></div>
                             <div class="col-6"><h3>${totalQ}</h3><small>PRODUCTOS</small></div>
                         </div>
                     </div>
@@ -427,14 +479,14 @@
                 const profit = totalV - totalC;
                 results.innerHTML = `
                     <div class="card-custom bg-success text-white text-center py-3 mb-3"><h3>$${profit.toFixed(2)}</h3><small>GANANCIA NETA</small></div>
-                    <div class="card-custom py-2 mb-1 d-flex justify-content-between"><span>Venta Bruta</span><span class="fw-bold">$${totalV.toFixed(2)}</span></div>
-                    <div class="card-custom py-2 mb-1 d-flex justify-content-between"><span>Costo / Inversión</span><span class="fw-bold">$${totalC.toFixed(2)}</span></div>
-                    <div class="mt-3 small fw-bold text-muted text-uppercase">Desglose por Tienda</div>
+                    <div class="card-custom py-2 mb-1 d-flex justify-content-between"><span>Total Ventas</span><span class="fw-bold">$${totalV.toFixed(2)}</span></div>
+                    <div class="card-custom py-2 mb-1 d-flex justify-content-between"><span>Total Compras (Inversión)</span><span class="fw-bold">$${totalC.toFixed(2)}</span></div>
+                    <div class="mt-3 small fw-bold text-muted text-uppercase">Rendimiento por Tienda</div>
                     ${[...new Set(filtered.map(s => s.tienda))].map(t => {
                         const items = filtered.filter(f => f.tienda === t);
                         const v = items.reduce((a,b) => a + b.total, 0);
                         const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0);
-                        return `<div class="card-custom py-2 mb-1 d-flex justify-content-between small"><span>${t}</span><b>$${v.toFixed(2)} v / $${c.toFixed(2)} i</b></div>`;
+                        return `<div class="card-custom py-2 mb-1 d-flex justify-content-between small"><span>${t}</span><b>$${v.toFixed(2)} v / $${c.toFixed(2)} c</b></div>`;
                     }).join('')}
                 `;
             } else if(activeFinanceView === 'diezmo') {
@@ -445,7 +497,7 @@
                 results.innerHTML = `
                     <div class="card-custom bg-warning text-dark text-center py-4">
                         <h2 class="fw-black mb-0">$${dz.toFixed(2)}</h2>
-                        <small class="fw-bold text-uppercase opacity-75">10% SOBRE $${profit.toFixed(2)} GANADOS</small>
+                        <small class="fw-bold text-uppercase opacity-75">10% SOBRE $${profit.toFixed(2)} DE GANANCIA</small>
                     </div>`;
             }
         };
@@ -464,7 +516,7 @@
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom mb-2">
                     <div class="d-flex justify-content-between align-items-center">
-                        <b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WHATSAPP</button>
+                        <b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button>
                     </div>
                     <div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div>
                 </div>`).join('');
@@ -495,7 +547,11 @@
             toast("Eliminado correctamente"); window.closeDeleteModal();
         };
 
-        window.onload = () => { document.getElementById('entregas-date').value = new Intl.DateTimeFormat('en-CA').format(new Date()); };
+        window.openScanner = () => toast("Escáner en mantenimiento", "warning");
+
+        window.onload = () => { 
+            document.getElementById('entregas-date').value = getMXDate().toISOString().split('T')[0];
+        };
     </script>
 </body>
 </html>
