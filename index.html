@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v22.3 - Ticket Personalizado</title>
+    <title>Ofertas Rápidas Yaute v23.0 - Gestión de Compras</title>
     
     <!-- Librerías -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,6 +34,7 @@
         .splash-loader { width: 45px; height: 45px; border: 5px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* --- CABECERA --- */
         header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .version-badge { font-size: 0.6rem; background: var(--accent); color: white; padding: 2px 8px; border-radius: 50px; font-weight: 900; margin-left: 8px; vertical-align: middle; }
         .status-dot { width:12px; height:12px; border-radius:50%; margin-left: 10px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
@@ -43,6 +44,9 @@
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
         .form-control, .form-select { padding: 0.65rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1px; }
+
+        .sale-store-label { font-size: 0.65rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+        .sale-time { font-size: 0.65rem; color: #94a3b8; font-weight: 600; }
 
         /* --- NAVEGACIÓN --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #f1f5f9; z-index: 2000; }
@@ -81,7 +85,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Sincronizando v22.3...</div>
+        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Yaute Market v23.0</div>
     </div>
 
     <div id="delete-modal">
@@ -98,7 +102,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v22.3</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v23.0</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -106,7 +110,7 @@
     <div id="toast-alert"></div>
 
     <main>
-        <!-- SECCIÓN: VENTAS -->
+        <!-- SECCIÓN: OPERACIONES -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-3">
@@ -201,7 +205,7 @@
         let deleteRef = { col: '', id: '' };
         let activeSubTab = 'catalogo';
         let activeCatFilter = 'productos';
-        let activeFinanceView = 'ventas';
+        let activeFinanceView = 'compras'; // Cambiado de ventas a compras
 
         // --- MANEJO DE ZONA HORARIA MÉXICO (-6) ---
         const getMXTimeParts = () => {
@@ -229,7 +233,6 @@
             return `${p.year}-${p.month}-${p.day}`;
         };
 
-        // Formato Nombre Propio: JUAN PEREZ -> Juan Perez
         const formatProperName = (str) => {
             if(!str) return "";
             return str.trim().toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -311,8 +314,7 @@
                 fechaStr: getMXDateStr(), 
                 timestamp: Date.now(), 
                 uid: currentUser.uid,
-                entregado: false,
-                pagado: false
+                entregado: false, pagado: false
             };
 
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), sale);
@@ -331,7 +333,7 @@
             const list = document.getElementById('lista-ventas-hoy');
             const todayNorm = normalizeDateStr(getMXDateStr());
             const dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === todayNorm);
-            if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
+            if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN REGISTROS HOY</div>`; return; }
             dv.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
             let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block">HOY (${dv.length})</span>`;
             dv.forEach(v => {
@@ -380,9 +382,46 @@
 
         window.setCatFilter = (f) => { activeCatFilter = f; window.renderControlList(); };
 
+        // --- MÓDULO FINANZAS AVANZADO v23.0 ---
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
-            container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeFinanceView === 'ventas' ? 'active' : ''}" onclick="window.setFinView('ventas')">VENTAS</button><button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">GANANCIAS</button><button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">DIEZMO</button></div><div class="card-custom mb-3 p-3 bg-light">${activeFinanceView === 'diezmo' ? `<div class="row g-2 mb-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="mb-2 text-center"><label class="text-uppercase">Fecha de Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm mx-auto w-75"></div>`}<div class="row g-2"><div class="col-6"><label class="text-uppercase">Tienda</label><select onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div></div><div id="finance-results"></div>`;
+            container.innerHTML = `
+                <div class="inner-sub-nav">
+                    <button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">COMPRAS</button>
+                    <button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">GANANCIAS</button>
+                    <button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">DIEZMO</button>
+                </div>
+                <div class="card-custom mb-3 p-3 bg-light">
+                    ${activeFinanceView === 'diezmo' ? `
+                        <div class="row g-2 mb-2">
+                            <div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div>
+                            <div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div>
+                        </div>
+                    ` : `
+                        <div class="mb-2 text-center">
+                            <label class="text-uppercase">Fecha de Consulta</label>
+                            <input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm mx-auto w-75">
+                        </div>
+                    `}
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="text-uppercase">Tienda</label>
+                            <select onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm">
+                                <option value="">TODAS</option>
+                                ${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="text-uppercase">Cliente</label>
+                            <select onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm">
+                                <option value="">TODOS</option>
+                                ${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="finance-results"></div>
+            `;
             window.renderFinanceResults();
         };
 
@@ -403,16 +442,64 @@
             }
             filtered = filtered.filter(s => { const storeOk = finStore === "" || s.tienda === finStore; const clientOk = finClient === "" || s.cliente === finClient; return storeOk && clientOk; });
 
-            if(activeFinanceView === 'ventas') {
-                const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalQ = filtered.reduce((a,b) => a + (b.cantidad || 0), 0);
-                results.innerHTML = `<div class="card-custom bg-primary text-white text-center py-3 mb-2"><div class="row"><div class="col-6 border-end"><h3>$${totalV.toFixed(2)}</h3><small>VENTA TOTAL</small></div><div class="col-6"><h3>${totalQ}</h3><small>PRODUCTOS</small></div></div></div>${filtered.map(s => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center small shadow-none border"><div><b>${s.producto}</b><br><span class="text-muted">${s.cliente}</span></div><div class="text-end"><b>$${(s.total || 0).toFixed(2)}</b></div></div>`).join('')}`;
+            if(activeFinanceView === 'compras') {
+                // --- LÓGICA DE AGRUPACIÓN PARA COMPRAS ---
+                const grouped = filtered.reduce((acc, s) => {
+                    const key = `${s.producto}_${s.costo}`;
+                    if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0 };
+                    acc[key].cantidad += (s.cantidad || 0);
+                    acc[key].total += ((s.costo || 0) * (s.cantidad || 0));
+                    return acc;
+                }, {});
+
+                const totalPagar = Object.values(grouped).reduce((a,b) => a + b.total, 0);
+                const totalCant = Object.values(grouped).reduce((a,b) => a + b.cantidad, 0);
+
+                results.innerHTML = `
+                    <div class="card-custom bg-primary text-white text-center py-3 mb-2 shadow">
+                        <div class="row">
+                            <div class="col-6 border-end"><h3>$${totalPagar.toFixed(2)}</h3><small>TOTAL A PAGAR</small></div>
+                            <div class="col-6"><h3>${totalCant}</h3><small>PRODUCTOS</small></div>
+                        </div>
+                    </div>
+                    ${Object.values(grouped).map(g => `
+                        <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center small shadow-none border">
+                            <div>
+                                <b class="text-uppercase">${g.producto}</b><br>
+                                <span class="text-muted">Anaquel: $${(g.costo || 0).toFixed(2)}</span>
+                            </div>
+                            <div class="text-end">
+                                <b class="text-primary">$${g.total.toFixed(2)}</b><br>
+                                <small class="fw-bold">${g.cantidad} pzs</small>
+                            </div>
+                        </div>`).join('')}
+                `;
             } else if(activeFinanceView === 'ganancias') {
-                const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
+                const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0);
+                const totalC = filtered.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
                 const profit = totalV - totalC;
-                results.innerHTML = `<div class="card-custom bg-success text-white text-center py-3 mb-3"><h3>$${profit.toFixed(2)}</h3><small>GANANCIA NETA</small></div><div class="mt-3 mb-2 small fw-bold text-muted text-uppercase">Rendimiento por Tienda</div>${[...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); const p = v - c; return `<div class="card-custom py-2 mb-2 flex-column small shadow-none border"><div class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1"><b>${t}</b><span class="fw-bold text-success">+$${p.toFixed(2)}</span></div></div>`; }).join('')}`;
+                results.innerHTML = `
+                    <div class="card-custom bg-success text-white text-center py-3 mb-3"><h3>$${profit.toFixed(2)}</h3><small>GANANCIA NETA PERIODO</small></div>
+                    <div class="mt-3 mb-2 small fw-bold text-muted text-uppercase">Rendimiento por Tienda</div>
+                    ${[...new Set(filtered.map(s => s.tienda))].map(t => {
+                        const items = filtered.filter(f => f.tienda === t);
+                        const v = items.reduce((a,b) => a + b.total, 0);
+                        const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0);
+                        const p = v - c;
+                        return `
+                        <div class="card-custom py-2 mb-2 flex-column small shadow-none border">
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1">
+                                <b>${t}</b><span class="fw-bold text-success">+$${p.toFixed(2)}</span>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
+                                <span>Venta: $${v.toFixed(2)}</span><span>Costo: $${c.toFixed(2)}</span>
+                            </div>
+                        </div>`;
+                    }).join('')}
+                `;
             } else if(activeFinanceView === 'diezmo') {
                 const profit = filtered.reduce((a,b) => a + ((b.total || 0) - ((b.costo || 0) * (b.cantidad || 0))), 0);
-                results.innerHTML = `<div class="card-custom bg-warning text-dark text-center py-4"><h2 class="fw-black mb-0">$${(profit * 0.10).toFixed(2)}</h2><small class="fw-bold">10% DE GANANCIA</small></div>`;
+                results.innerHTML = `<div class="card-custom bg-warning text-dark text-center py-4"><h2 class="fw-black mb-0">$${(profit * 0.10).toFixed(2)}</h2><small class="fw-bold">DIEZMO (10% de $${profit.toFixed(2)})</small></div>`;
             }
         };
 
@@ -432,15 +519,10 @@
                 const items = grouped[cli].items;
                 const isEntregado = items.every(i => i.entregado === true);
                 const isPagado = items.every(i => i.pagado === true);
-
                 return `
                 <div class="card-custom mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <b>${cli}</b>
-                        <button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button>
-                    </div>
+                    <div class="d-flex justify-content-between align-items-center"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button></div>
                     <div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div>
-                    
                     <div class="check-group">
                         <label class="check-item"><input type="checkbox" ${isEntregado ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'entregado', this.checked)"> Entregado</label>
                         <label class="check-item"><input type="checkbox" ${isPagado ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'pagado', this.checked)"> Pagado</label>
@@ -451,10 +533,8 @@
 
         window.updateStatus = async (cli, date, field, val) => {
             const itemsToUpdate = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date);
-            for (const item of itemsToUpdate) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id), { [field]: val });
-            }
-            toast(`Estatus de ${cli} actualizado`);
+            for (const item of itemsToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id), { [field]: val }); }
+            toast(`Estatus actualizado`);
         };
 
         window.shareTicket = async (n) => {
@@ -463,14 +543,11 @@
             const f = `${d}/${m}/${y}`;
             const targetNorm = normalizeDateStr(f);
             const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === targetNorm);
-            
             const properName = formatProperName(n);
-            document.getElementById('t-cliente').innerText = properName; 
-            document.getElementById('t-fecha').innerText = f;
+            document.getElementById('t-cliente').innerText = properName; document.getElementById('t-fecha').innerText = f;
             let tot = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:8px 0">${i.cantidad}x</td><td style="padding:8px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
-            
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
             canvas.toBlob(async b => {
                 const file = new File([b], "Ticket.png", { type: 'image/png' });
@@ -482,10 +559,7 @@
 
         window.openDeleteModal = (col, id) => { deleteRef = { col, id }; document.getElementById('delete-modal').style.display = 'flex'; };
         window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
-        document.getElementById('btn-confirm-delete').onclick = async () => {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id));
-            toast("Eliminado"); window.closeDeleteModal();
-        };
+        document.getElementById('btn-confirm-delete').onclick = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id)); toast("Eliminado"); window.closeDeleteModal(); };
 
         window.onload = () => { document.getElementById('entregas-date').value = getMXISODate(); };
     </script>
