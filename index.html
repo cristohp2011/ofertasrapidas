@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v23.0 - Gestión de Compras</title>
+    <title>Ofertas Rápidas Yaute v24.2 - Editor en Cascada</title>
     
-    <!-- Librerías -->
+    <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -42,11 +42,8 @@
 
         /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
-        .form-control, .form-select { padding: 0.65rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; }
+        .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1px; }
-
-        .sale-store-label { font-size: 0.65rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-        .sale-time { font-size: 0.65rem; color: #94a3b8; font-weight: 600; }
 
         /* --- NAVEGACIÓN --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #f1f5f9; z-index: 2000; }
@@ -54,55 +51,88 @@
         .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        .sub-nav { display: flex; gap: 8px; margin-bottom: 15px; background: #f1f5f9; padding: 5px; border-radius: 14px; }
-        .sub-btn { border: none; background: none; padding: 8px; font-size: 0.7rem; color: #64748b; font-weight: 800; flex: 1; border-radius: 10px; text-transform: uppercase; }
-        .sub-btn.active { background: white; color: var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-        .inner-sub-nav { display: flex; gap: 5px; background: #e2e8f0; padding: 5px; border-radius: 10px; margin-bottom: 15px; }
-        .inner-btn { flex: 1; border: none; background: none; padding: 6px; font-size: 0.6rem; font-weight: 900; border-radius: 8px; color: #64748b; text-transform: uppercase; }
-        .inner-btn.active { background: white; color: var(--accent); }
-
-        /* --- REPARTO --- */
-        .check-group { display: flex; gap: 15px; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 10px; }
-        .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
-        .check-item input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
-
-        /* --- AUTOCOMPLETE --- */
-        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; }
-
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 25px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-
         /* --- MODALES --- */
-        #delete-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); display: none; align-items: center; justify-content: center; z-index: 15000; backdrop-filter: blur(4px); }
-        .modal-content-custom { background: white; width: 85%; max-width: 350px; border-radius: 20px; padding: 25px; text-align: center; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 15000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content-custom { background: white; width: 90%; max-width: 400px; border-radius: 24px; padding: 25px; animation: modalIn 0.3s; }
+        @keyframes modalIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* --- TICKET RENDER --- */
+        /* --- SCANNER IA --- */
+        #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
+        #cam-container { flex: 1; position: relative; overflow: hidden; background: #000; }
+        #cam-preview { width: 100%; height: 100%; object-fit: cover; }
+        .scan-frame { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 20px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); }
+
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.3; }
     </style>
 </head>
 <body>
 
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Yaute Market v23.0</div>
+        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Sincronizando v24.2...</div>
     </div>
 
-    <div id="delete-modal">
+    <!-- MODAL EDITAR (NUEVO) -->
+    <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold m-0 text-primary">Editar Registro</h5>
+                <i class="fas fa-times text-muted" onclick="window.closeEditModal()"></i>
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-6"><label class="text-uppercase">Tienda</label><input type="text" id="ed-tienda" class="form-control text-uppercase"></div>
+                <div class="col-6"><label class="text-uppercase">Cliente</label><input type="text" id="ed-cliente" class="form-control text-uppercase"></div>
+            </div>
+            <label class="text-uppercase">Producto</label>
+            <input type="text" id="ed-producto" class="form-control text-uppercase mb-3">
+            <div class="row g-2 mb-4">
+                <div class="col-4"><label class="text-uppercase">Cant.</label><input type="number" id="ed-cantidad" class="form-control fw-bold text-center"></div>
+                <div class="col-4"><label class="text-uppercase">Costo</label><input type="number" id="ed-costo" class="form-control fw-bold border-danger"></div>
+                <div class="col-4"><label class="text-uppercase">Venta</label><input type="number" id="ed-precio" class="form-control fw-bold border-success"></div>
+            </div>
+            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" onclick="window.confirmUpdate()">GUARDAR CAMBIOS</button>
+        </div>
+    </div>
+
+    <!-- MODAL BORRAR -->
+    <div id="delete-modal" class="modal-overlay">
+        <div class="modal-content-custom text-center">
             <i class="fas fa-trash-alt text-danger mb-3" style="font-size: 2.5rem;"></i>
-            <h5 class="fw-bold">¿Eliminar registro?</h5>
-            <p class="text-muted small mb-4">Esta acción no se puede deshacer.</p>
-            <div class="d-flex gap-2">
-                <button class="btn btn-light flex-fill fw-bold" onclick="window.closeDeleteModal()">CANCELAR</button>
-                <button class="btn btn-danger flex-fill fw-bold" id="btn-confirm-delete">BORRAR</button>
+            <h5 class="fw-bold">¿Borrar registro?</h5>
+            <p class="text-muted small">Esta acción no se puede deshacer.</p>
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-light flex-fill fw-bold" onclick="window.closeDeleteModal()">NO</button>
+                <button class="btn btn-danger flex-fill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL IA -->
+    <div id="ia-modal">
+        <div id="cam-container">
+            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 20px; left: 20px; z-index: 1100;" onclick="window.closeScanner()">✕ CERRAR</button>
+            <video id="cam-preview" autoplay playsinline muted></video>
+            <div class="scan-frame"></div>
+            <div id="btn-capture" style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; background: white; border-radius: 50%; border: 6px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent); cursor: pointer;"><i class="fas fa-camera"></i></div>
+        </div>
+        <div id="ia-result-panel">
+            <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary"></div><p class="small fw-bold mt-2">Gemini analizando...</p></div>
+            <div id="ia-form">
+                <label class="text-uppercase small fw-bold text-muted">Producto</label>
+                <input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase mb-3 bg-light">
+                <div class="row g-2 mb-4">
+                    <div class="col-6"><label class="text-uppercase">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
+                    <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold border-success text-success"></div>
+                </div>
+                <button class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow" onclick="window.processIASave()"><i class="fab fa-whatsapp me-2"></i>REGISTRAR Y COMPARTIR</button>
             </div>
         </div>
     </div>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v23.0</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v24.2</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -110,28 +140,16 @@
     <div id="toast-alert"></div>
 
     <main>
-        <!-- SECCIÓN: OPERACIONES -->
+        <!-- TABS -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-3">
-                    <div class="col-6" style="position:relative">
-                        <label class="text-uppercase">Tienda</label>
-                        <input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary" placeholder="...">
-                        <div id="sug-tienda" class="sug-box d-none"></div>
-                    </div>
-                    <div class="col-6" style="position:relative">
-                        <label class="text-uppercase">Cliente</label>
-                        <input type="text" id="in-cliente" class="form-control text-uppercase" placeholder="...">
-                        <div id="sug-cliente" class="sug-box d-none"></div>
-                    </div>
+                    <div class="col-6" style="position:relative"><label class="text-uppercase">Tienda</label><input type="text" id="in-tienda" class="form-control text-uppercase fw-bold text-primary"><div id="sug-tienda" class="sug-box d-none"></div></div>
+                    <div class="col-6" style="position:relative"><label class="text-uppercase">Cliente</label><input type="text" id="in-cliente" class="form-control text-uppercase"><div id="sug-cliente" class="sug-box d-none"></div></div>
                 </div>
                 <div class="row g-2 mb-3 align-items-end">
                     <div class="col-3"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
-                    <div class="col" style="position:relative">
-                        <label class="text-uppercase">Producto</label>
-                        <input type="text" id="in-producto" class="form-control text-uppercase" placeholder="ARTÍCULO">
-                        <div id="sug-producto" class="sug-box d-none"></div>
-                    </div>
+                    <div class="col" style="position:relative"><label class="text-uppercase d-flex justify-content-between">Producto <i class="fas fa-camera text-primary" onclick="window.openScanner()"></i></label><input type="text" id="in-producto" class="form-control text-uppercase"><div id="sug-producto" class="sug-box d-none"></div></div>
                 </div>
                 <div class="row g-2 mb-4">
                     <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="in-costo" class="form-control fw-bold border-danger" step="0.01"></div>
@@ -142,30 +160,20 @@
             <div id="lista-ventas-hoy"></div>
         </div>
 
-        <!-- SECCIÓN: REPARTO -->
         <div id="tab-entregas" class="tab-content" style="display: none;">
-            <div class="card-custom py-2 mb-3 text-center">
-                <input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()">
-            </div>
+            <div class="card-custom py-2 mb-3 text-center"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- SECCIÓN: CONTROL / FINANZAS -->
         <div id="tab-control" class="tab-content" style="display: none;">
-            <div class="sub-nav">
-                <button class="sub-btn active" id="sub-btn-cat" onclick="window.switchSubTab('catalogo')">CONTROL</button>
-                <button class="sub-btn" id="sub-btn-fin" onclick="window.switchSubTab('finanzas')">FINANZAS</button>
-            </div>
+            <div class="sub-nav"><button class="sub-btn active" id="sub-btn-cat" onclick="window.switchSubTab('catalogo')">CONTROL</button><button class="sub-btn" id="sub-btn-fin" onclick="window.switchSubTab('finanzas')">FINANZAS</button></div>
             <div id="control-content"></div>
         </div>
     </main>
 
-    <!-- TICKET RENDER -->
+    <!-- TICKET -->
     <div id="ticket-render">
-        <div style="text-align: center; margin-bottom: 25px;">
-            <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
-            <div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div>
-        </div>
+        <div style="text-align: center; margin-bottom: 25px;"><img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'"><div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div></div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;"></div>
         <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
         <div style="margin-bottom: 20px; font-size: 1.2rem;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
@@ -181,20 +189,16 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-chart-bar"></i>Control</button>
     </nav>
 
+    <canvas id="hidden-canvas" style="display:none;"></canvas>
+    <canvas id="crop-canvas" style="display:none;"></canvas>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { initializeFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98",
-            authDomain: "ofertas-rapidas-yautepec.firebaseapp.com",
-            projectId: "ofertas-rapidas-yautepec",
-            storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app",
-            messagingSenderId: "81339635207",
-            appId: "1:81339635207:web:26d180f92224d9a036fca2"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98", authDomain: "ofertas-rapidas-yautepec.firebaseapp.com", projectId: "ofertas-rapidas-yautepec", storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app", messagingSenderId: "81339635207", appId: "1:81339635207:web:26d180f92224d9a036fca2" };
+        const apiKeyGemini = "AIzaSyDJicNgq309eja6V0IAZI8w0j6NBYMBmjU"; 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'yaute-v1-shared';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -203,42 +207,21 @@
         window.state = { sales: [], clients: [], stores: [], products: [] };
         let currentUser = null;
         let deleteRef = { col: '', id: '' };
+        let editRef = null;
         let activeSubTab = 'catalogo';
         let activeCatFilter = 'productos';
-        let activeFinanceView = 'compras'; // Cambiado de ventas a compras
+        let activeFinanceView = 'compras';
 
-        // --- MANEJO DE ZONA HORARIA MÉXICO (-6) ---
+        // --- TIEMPO MÉXICO ---
         const getMXTimeParts = () => {
-            const now = new Date();
-            const formatter = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'America/Mexico_City',
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-            });
-            return formatter.formatToParts(now).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
+            const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            return formatter.formatToParts(new Date()).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
         };
+        const getMXDateStr = () => { const p = getMXTimeParts(); return `${parseInt(p.day)}/${parseInt(p.month)}/${p.year}`; };
+        const getMXISODate = () => { const p = getMXTimeParts(); return `${p.year}-${p.month}-${p.day}`; };
+        const normalizeDateStr = (str) => str ? str.split('/').map(p => parseInt(p)).join('/') : "";
+        const formatProperName = (str) => str ? str.trim().toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "";
 
-        const normalizeDateStr = (str) => {
-            if(!str) return "";
-            return str.split('/').map(p => parseInt(p)).join('/');
-        };
-
-        const getMXDateStr = () => {
-            const p = getMXTimeParts();
-            return `${parseInt(p.day)}/${parseInt(p.month)}/${p.year}`;
-        };
-
-        const getMXISODate = () => {
-            const p = getMXTimeParts();
-            return `${p.year}-${p.month}-${p.day}`;
-        };
-
-        const formatProperName = (str) => {
-            if(!str) return "";
-            return str.trim().toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        };
-
-        // Filtros Finanzas
         let finDate = getMXISODate();
         let finDateFrom = getMXISODate(); 
         let finDateTo = getMXISODate();   
@@ -261,13 +244,9 @@
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', name), (snap) => {
                     window.state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     document.getElementById('status-dot').className = "status-dot bg-success";
-                    if(document.getElementById('splash-screen')) {
-                        document.getElementById('splash-screen').style.opacity = '0';
-                        setTimeout(() => document.getElementById('splash-screen')?.remove(), 500);
-                    }
-                    if(name === 'sales') { window.renderVentasHoy(); window.renderEntregas(); }
+                    if(document.getElementById('splash-screen')) { document.getElementById('splash-screen').style.opacity = '0'; setTimeout(() => document.getElementById('splash-screen')?.remove(), 500); }
+                    if(name === 'sales') { window.renderVentasHoy(); window.renderEntregas(); if(activeSubTab === 'finanzas') window.renderFinanceResults(); }
                     if(activeSubTab === 'catalogo') window.renderControlList();
-                    if(activeSubTab === 'finanzas') window.renderFinanceMenu();
                 });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores');
@@ -305,28 +284,46 @@
             const q = parseInt(document.getElementById('in-cantidad').value) || 1;
             const co = parseFloat(document.getElementById('in-costo').value) || 0;
             let pr = parseFloat(document.getElementById('in-precio').value) || 0;
-            
-            if(!t || !c || !p) return toast("Faltan datos obligatorios", "danger");
+            if(!t || !c || !p) return toast("Faltan datos", "danger");
             if (c === "CRISTO") pr = co;
-
-            const sale = { 
-                tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, 
-                fechaStr: getMXDateStr(), 
-                timestamp: Date.now(), 
-                uid: currentUser.uid,
-                entregado: false, pagado: false
-            };
-
+            const sale = { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: getMXDateStr(), timestamp: Date.now(), uid: currentUser.uid, entregado: false, pagado: false };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), sale);
-            
             if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
             if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
             if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
-            
             toast("¡Venta guardada!");
-            document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = "";
-            document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = "";
-            document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
+            document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
+        };
+
+        // --- MODAL EDITOR (FUNCIONALIDAD CASCADA) ---
+        window.openEditModal = (record) => {
+            editRef = record;
+            document.getElementById('ed-tienda').value = record.tienda;
+            document.getElementById('ed-cliente').value = record.cliente;
+            document.getElementById('ed-producto').value = record.producto;
+            document.getElementById('ed-cantidad').value = record.cantidad;
+            document.getElementById('ed-costo').value = record.costo;
+            document.getElementById('ed-precio').value = record.precio;
+            document.getElementById('edit-modal').style.display = 'flex';
+        };
+
+        window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
+
+        window.confirmUpdate = async () => {
+            if(!editRef) return;
+            const t = document.getElementById('ed-tienda').value.trim().toUpperCase();
+            const c = document.getElementById('ed-cliente').value.trim().toUpperCase();
+            const p = document.getElementById('ed-producto').value.trim().toUpperCase();
+            const q = parseInt(document.getElementById('ed-cantidad').value) || 1;
+            const co = parseFloat(document.getElementById('ed-costo').value) || 0;
+            let pr = parseFloat(document.getElementById('ed-precio').value) || 0;
+            if (c === "CRISTO") pr = co;
+
+            const updateData = { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr };
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), updateData);
+            
+            toast("Registro actualizado en cascada");
+            window.closeEditModal();
         };
 
         window.renderVentasHoy = () => {
@@ -338,97 +335,23 @@
             let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block">HOY (${dv.length})</span>`;
             dv.forEach(v => {
                 let h = "--:--"; if(v.timestamp) { const d = new Date(v.timestamp); if(!isNaN(d.getTime())) h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Mexico_City' }); }
-                html += `
-                    <div class="card-custom d-flex justify-content-between align-items-center" style="border-left: 5px solid var(--accent); padding: 10px 15px;">
-                        <div style="line-height:1.2; flex: 1;">
-                            <div class="sale-store-label"><i class="fas fa-store"></i> ${v.tienda}</div>
-                            <b class="text-uppercase" style="font-size:0.8rem">${v.producto}</b><br>
-                            <small class="text-muted">${v.cliente} | ${v.cantidad}x $${v.precio}</small>
-                        </div>
-                        <div class="text-end" style="min-width: 75px;">
-                            <div class="sale-time"><i class="far fa-clock"></i> ${h}</div>
-                            <button class="btn text-danger p-1" onclick="window.openDeleteModal('sales','${v.id}')"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>`;
+                html += `<div class="card-custom d-flex justify-content-between align-items-center" style="border-left: 5px solid var(--accent); padding: 10px 15px;"><div style="line-height:1.2; flex: 1;"><div class="sale-store-label"><i class="fas fa-store"></i> ${v.tienda}</div><b class="text-uppercase" style="font-size:0.8rem">${v.producto}</b><br><small class="text-muted">${v.cliente} | ${v.cantidad}x $${v.precio}</small></div><div class="text-end" style="min-width: 75px;"><div class="sale-time"><i class="far fa-clock"></i> ${h}</div><div class="d-flex gap-2 justify-content-end mt-1"><i class="fas fa-edit text-primary" onclick='window.openEditModal(${JSON.stringify(v)})'></i><i class="fas fa-trash-alt text-danger" onclick="window.openDeleteModal('sales','${v.id}')"></i></div></div></div>`;
             });
             list.innerHTML = html;
         };
 
-        window.showTab = (id, btn) => {
-            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-            document.getElementById('tab-' + id).style.display = 'block';
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            if(id === 'control') window.switchSubTab('catalogo');
-        };
-
-        window.switchSubTab = (id) => {
-            activeSubTab = id;
-            document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo');
-            document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas');
-            if(id === 'catalogo') window.renderControlList();
-            else window.renderFinanceMenu();
-        };
-
-        window.renderControlList = () => {
-            const container = document.getElementById('control-content');
-            container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">PRODUCTOS</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">CLIENTES</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">TIENDAS</button></div><div id="cat-items-list" class="mt-2"></div>`;
-            const list = document.getElementById('cat-items-list');
-            const dataMap = { productos: 'products', clientes: 'clients', tiendas: 'stores' };
-            const items = window.state[dataMap[activeCatFilter]] || [];
-            items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || ""));
-            list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center small"><div class="text-uppercase fw-bold">${it.nombre || "S/N"}</div><button class="btn btn-sm text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join('');
-        };
-
+        window.showTab = (id, btn) => { document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); document.getElementById('tab-' + id).style.display = 'block'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); if(id === 'control') window.switchSubTab('catalogo'); };
+        window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
+        window.renderControlList = () => { const container = document.getElementById('control-content'); container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">PRODUCTOS</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">CLIENTES</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">TIENDAS</button></div><div id="cat-items-list" class="mt-2"></div>`; const list = document.getElementById('cat-items-list'); const dataMap = { productos: 'products', clientes: 'clients', tiendas: 'stores' }; const items = window.state[dataMap[activeCatFilter]] || []; items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center small shadow-none border"><div class="text-uppercase fw-bold">${it.nombre || "S/N"}</div><button class="btn btn-sm text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"><i class="fas fa-trash-alt"></i></button></div>`).join(''); };
         window.setCatFilter = (f) => { activeCatFilter = f; window.renderControlList(); };
 
-        // --- MÓDULO FINANZAS AVANZADO v23.0 ---
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
-            container.innerHTML = `
-                <div class="inner-sub-nav">
-                    <button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">COMPRAS</button>
-                    <button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">GANANCIAS</button>
-                    <button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">DIEZMO</button>
-                </div>
-                <div class="card-custom mb-3 p-3 bg-light">
-                    ${activeFinanceView === 'diezmo' ? `
-                        <div class="row g-2 mb-2">
-                            <div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div>
-                            <div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div>
-                        </div>
-                    ` : `
-                        <div class="mb-2 text-center">
-                            <label class="text-uppercase">Fecha de Consulta</label>
-                            <input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm mx-auto w-75">
-                        </div>
-                    `}
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <label class="text-uppercase">Tienda</label>
-                            <select onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm">
-                                <option value="">TODAS</option>
-                                ${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="text-uppercase">Cliente</label>
-                            <select onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm">
-                                <option value="">TODOS</option>
-                                ${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div id="finance-results"></div>
-            `;
+            container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">COMPRAS</button><button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">GANANCIAS</button><button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">DIEZMO</button></div><div class="card-custom mb-3 p-3 bg-light">${activeFinanceView === 'diezmo' ? `<div class="row g-2 mb-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="mb-2 text-center"><label class="text-uppercase">Fecha de Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm mx-auto w-75"></div>`}<div class="row g-2"><div class="col-6"><label class="text-uppercase">Tienda</label><select onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div></div><div id="finance-results"></div>`;
             window.renderFinanceResults();
         };
 
-        window.updateFinFilter = (key, val) => {
-            if(key === 'single') finDate = val; if(key === 'from') finDateFrom = val; if(key === 'to') finDateTo = val; if(key === 'store') finStore = val; if(key === 'client') finClient = val;
-            window.renderFinanceResults();
-        };
+        window.updateFinFilter = (key, val) => { if(key === 'single') finDate = val; if(key === 'from') finDateFrom = val; if(key === 'to') finDateTo = val; if(key === 'store') finStore = val; if(key === 'client') finClient = val; window.renderFinanceResults(); };
 
         window.renderFinanceResults = () => {
             const results = document.getElementById('finance-results');
@@ -440,122 +363,41 @@
                 const [y, m, d] = finDate.split('-'); const targetStr = `${parseInt(d)}/${parseInt(m)}/${y}`;
                 filtered = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === normalizeDateStr(targetStr));
             }
-            filtered = filtered.filter(s => { const storeOk = finStore === "" || s.tienda === finStore; const clientOk = finClient === "" || s.cliente === finClient; return storeOk && clientOk; });
+            filtered = filtered.filter(s => (finStore === "" || s.tienda === finStore) && (finClient === "" || s.cliente === finClient));
 
             if(activeFinanceView === 'compras') {
-                // --- LÓGICA DE AGRUPACIÓN PARA COMPRAS ---
-                const grouped = filtered.reduce((acc, s) => {
-                    const key = `${s.producto}_${s.costo}`;
-                    if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0 };
-                    acc[key].cantidad += (s.cantidad || 0);
-                    acc[key].total += ((s.costo || 0) * (s.cantidad || 0));
-                    return acc;
-                }, {});
-
-                const totalPagar = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                const totalCant = Object.values(grouped).reduce((a,b) => a + b.cantidad, 0);
-
-                results.innerHTML = `
-                    <div class="card-custom bg-primary text-white text-center py-3 mb-2 shadow">
-                        <div class="row">
-                            <div class="col-6 border-end"><h3>$${totalPagar.toFixed(2)}</h3><small>TOTAL A PAGAR</small></div>
-                            <div class="col-6"><h3>${totalCant}</h3><small>PRODUCTOS</small></div>
-                        </div>
-                    </div>
-                    ${Object.values(grouped).map(g => `
-                        <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center small shadow-none border">
-                            <div>
-                                <b class="text-uppercase">${g.producto}</b><br>
-                                <span class="text-muted">Anaquel: $${(g.costo || 0).toFixed(2)}</span>
-                            </div>
-                            <div class="text-end">
-                                <b class="text-primary">$${g.total.toFixed(2)}</b><br>
-                                <small class="fw-bold">${g.cantidad} pzs</small>
-                            </div>
-                        </div>`).join('')}
-                `;
+                const totalP = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
+                results.innerHTML = `<div class="card-custom bg-primary text-white text-center py-3 mb-2"><h3>$${totalP.toFixed(2)}</h3><small>INVERSIÓN TOTAL</small></div>${filtered.map(g => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center small shadow-none border"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">${g.cliente}</span></div><div class="text-end d-flex align-items-center gap-3"><div><b>$${(g.costo * g.cantidad).toFixed(2)}</b><br><small>${g.cantidad} pzs</small></div><i class="fas fa-edit text-primary" onclick='window.openEditModal(${JSON.stringify(g)})'></i></div></div>`).join('')}`;
             } else if(activeFinanceView === 'ganancias') {
-                const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0);
-                const totalC = filtered.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
-                const profit = totalV - totalC;
-                results.innerHTML = `
-                    <div class="card-custom bg-success text-white text-center py-3 mb-3"><h3>$${profit.toFixed(2)}</h3><small>GANANCIA NETA PERIODO</small></div>
-                    <div class="mt-3 mb-2 small fw-bold text-muted text-uppercase">Rendimiento por Tienda</div>
-                    ${[...new Set(filtered.map(s => s.tienda))].map(t => {
-                        const items = filtered.filter(f => f.tienda === t);
-                        const v = items.reduce((a,b) => a + b.total, 0);
-                        const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0);
-                        const p = v - c;
-                        return `
-                        <div class="card-custom py-2 mb-2 flex-column small shadow-none border">
-                            <div class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1">
-                                <b>${t}</b><span class="fw-bold text-success">+$${p.toFixed(2)}</span>
-                            </div>
-                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
-                                <span>Venta: $${v.toFixed(2)}</span><span>Costo: $${c.toFixed(2)}</span>
-                            </div>
-                        </div>`;
-                    }).join('')}
-                `;
+                const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
+                results.innerHTML = `<div class="card-custom bg-success text-white text-center py-3 mb-3"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA NETA</small></div>${[...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); return `<div class="card-custom py-2 mb-2 small shadow-none border d-flex justify-content-between"><b>${t}</b><span class="fw-bold text-success">+$${(v - c).toFixed(2)}</span></div>`; }).join('')}`;
             } else if(activeFinanceView === 'diezmo') {
-                const profit = filtered.reduce((a,b) => a + ((b.total || 0) - ((b.costo || 0) * (b.cantidad || 0))), 0);
-                results.innerHTML = `<div class="card-custom bg-warning text-dark text-center py-4"><h2 class="fw-black mb-0">$${(profit * 0.10).toFixed(2)}</h2><small class="fw-bold">DIEZMO (10% de $${profit.toFixed(2)})</small></div>`;
+                const profit = filtered.reduce((a,b) => a + ((b.total || 0) - (b.costo * b.cantidad)), 0);
+                results.innerHTML = `<div class="card-custom bg-warning text-dark text-center py-4"><h2 class="fw-black mb-0">$${(profit * 0.10).toFixed(2)}</h2><small class="fw-bold text-uppercase opacity-75">10% DE GANANCIA</small></div>`;
             }
         };
-
         window.setFinView = (v) => { activeFinanceView = v; window.renderFinanceMenu(); };
 
+        // --- SCANNER IA ---
+        const video = document.getElementById('cam-preview');
+        let currentStream = null;
+        window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; try { currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: 1920, height: 1080 } }); video.srcObject = currentStream; } catch (e) { toast("Error Cámara", "danger"); } };
+        window.closeScanner = () => { if (currentStream) currentStream.getTracks().forEach(t => t.stop()); document.getElementById('ia-modal').style.display = 'none'; };
+        document.getElementById('btn-capture').onclick = async () => {
+            const hCanvas = document.getElementById('hidden-canvas'); const cCanvas = document.getElementById('crop-canvas');
+            hCanvas.width = video.videoWidth; hCanvas.height = video.videoHeight; hCanvas.getContext('2d').drawImage(video, 0, 0);
+            const w = hCanvas.width * 0.75; const h = hCanvas.height * 0.45; cCanvas.width = w; cCanvas.height = h; cCanvas.getContext('2d').drawImage(hCanvas, (hCanvas.width-w)/2, (hCanvas.height-h)/2, w, h, 0, 0, w, h);
+            document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none';
+            const b64 = cCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`;
+            try { const resp = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Analiza etiqueta. JSON: {'nombre': 'MARCA PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }) }); const res = await resp.json(); const data = JSON.parse(res.candidates[0].content.parts[0].text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { toast("Fallo IA", "danger"); window.closeScanner(); }
+        };
+        window.processIASave = async () => { const n = document.getElementById('ia-res-name').value; const s = document.getElementById('ia-res-size').value; const p = document.getElementById('ia-res-price').value || 0; const fullName = `${n} - ${s}`; const msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${fullName}\n💰 *Precio:* $${p}\n\n¡Gracias por tu preferencia!`; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: fullName, costo: 0, precio: p }); document.getElementById('crop-canvas').toBlob(async blob => { const file = new File([blob], "oferta.jpg", { type: "image/jpeg" }); if (navigator.share) await navigator.share({ files: [file], title: 'Oferta Yaute', text: msg }); else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank'); toast("Listo ✅"); window.closeScanner(); }, 'image/jpeg', 0.9); };
+
         // --- REPARTO ---
-        window.renderEntregas = () => {
-            const list = document.getElementById('lista-entregas');
-            const selDate = document.getElementById('entregas-date').value;
-            if(!selDate) return;
-            const [y, m, d] = selDate.split('-');
-            const targetNorm = normalizeDateStr(`${d}/${m}/${y}`);
-            const filtered = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === targetNorm);
-            const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; }, {});
-            
-            list.innerHTML = Object.keys(grouped).map(cli => {
-                const items = grouped[cli].items;
-                const isEntregado = items.every(i => i.entregado === true);
-                const isPagado = items.every(i => i.pagado === true);
-                return `
-                <div class="card-custom mb-2">
-                    <div class="d-flex justify-content-between align-items-center"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button></div>
-                    <div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div>
-                    <div class="check-group">
-                        <label class="check-item"><input type="checkbox" ${isEntregado ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'entregado', this.checked)"> Entregado</label>
-                        <label class="check-item"><input type="checkbox" ${isPagado ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'pagado', this.checked)"> Pagado</label>
-                    </div>
-                </div>`;
-            }).join('');
-        };
-
-        window.updateStatus = async (cli, date, field, val) => {
-            const itemsToUpdate = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date);
-            for (const item of itemsToUpdate) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id), { [field]: val }); }
-            toast(`Estatus actualizado`);
-        };
-
-        window.shareTicket = async (n) => {
-            const dateInput = document.getElementById('entregas-date');
-            const [y, m, d] = dateInput.value.split('-');
-            const f = `${d}/${m}/${y}`;
-            const targetNorm = normalizeDateStr(f);
-            const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === targetNorm);
-            const properName = formatProperName(n);
-            document.getElementById('t-cliente').innerText = properName; document.getElementById('t-fecha').innerText = f;
-            let tot = 0;
-            document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:8px 0">${i.cantidad}x</td><td style="padding:8px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join('');
-            document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
-            const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
-            canvas.toBlob(async b => {
-                const file = new File([b], "Ticket.png", { type: 'image/png' });
-                const msg = `hola *${properName}* te envió tu cuenta, gracias por tu preferencia`;
-                if(navigator.share) await navigator.share({ files: [file], title: 'Nota Yaute', text: msg });
-                else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-            }, 'image/png');
-        };
+        window.renderEntregas = () => { const list = document.getElementById('lista-entregas'); const selDate = document.getElementById('entregas-date').value; if(!selDate) return; const [y, m, d] = selDate.split('-'); const targetNorm = normalizeDateStr(`${d}/${m}/${y}`); const filtered = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === targetNorm); const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; }, {}); list.innerHTML = Object.keys(grouped).map(cli => { const items = grouped[cli].items; const isE = items.every(i => i.entregado === true); const isP = items.every(i => i.pagado === true); return `<div class="card-custom mb-2"><div class="d-flex justify-content-between align-items-center"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button></div><div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div><div class="check-group"><label class="check-item"><input type="checkbox" ${isE ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'entregado', this.checked)"> Entregado</label><label class="check-item"><input type="checkbox" ${isP ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'pagado', this.checked)"> Pagado</label></div></div>`; }).join(''); };
+        window.updateStatus = async (cli, date, field, val) => { const items = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const i of items) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val }); } toast(`Actualizado`); };
+        window.shareTicket = async (n) => { const dateInput = document.getElementById('entregas-date'); const [y, m, d] = dateInput.value.split('-'); const f = `${d}/${m}/${y}`; const targetNorm = normalizeDateStr(f); const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === targetNorm); const properName = formatProperName(n); document.getElementById('t-cliente').innerText = properName; document.getElementById('t-fecha').innerText = f; let tot = 0; document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:8px 0">${i.cantidad}x</td><td style="padding:8px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join(''); document.getElementById('t-total').innerText = "$" + tot.toFixed(2); const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' }); canvas.toBlob(async b => { const file = new File([b], "Ticket.png", { type: 'image/png' }); const msg = `hola *${properName}* te envió tu cuenta, gracias por tu preferencia`; if(navigator.share) await navigator.share({ files: [file], title: 'Nota Yaute', text: msg }); else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank'); }, 'image/png'); };
 
         window.openDeleteModal = (col, id) => { deleteRef = { col, id }; document.getElementById('delete-modal').style.display = 'flex'; };
         window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
