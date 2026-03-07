@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v21.4 - Control de Ganancias</title>
+    <title>Ofertas Rápidas Yaute v21.5 - Horario de México Fix</title>
     
     <!-- Librerías -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,13 +34,11 @@
         .splash-loader { width: 45px; height: 45px; border: 5px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- CABECERA --- */
         header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .version-badge { font-size: 0.6rem; background: var(--accent); color: white; padding: 2px 8px; border-radius: 50px; font-weight: 900; margin-left: 8px; vertical-align: middle; }
         .status-dot { width:12px; height:12px; border-radius:50%; margin-left: 10px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
         .bg-success { background-color: var(--success) !important; box-shadow: 0 0 8px var(--success); }
 
-        /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 15px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
         .form-control, .form-select { padding: 0.65rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1px; }
@@ -48,13 +46,11 @@
         .sale-store-label { font-size: 0.65rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
         .sale-time { font-size: 0.65rem; color: #94a3b8; font-weight: 600; }
 
-        /* --- NAVEGACIÓN --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #ffffff; display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #f1f5f9; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; flex: 1; font-weight: 700; text-transform: uppercase; }
         .tab-btn i { font-size: 1.4rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 8px; margin-bottom: 15px; background: #f1f5f9; padding: 5px; border-radius: 14px; }
         .sub-btn { border: none; background: none; padding: 8px; font-size: 0.7rem; color: #64748b; font-weight: 800; flex: 1; border-radius: 10px; text-transform: uppercase; }
         .sub-btn.active { background: white; color: var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -63,17 +59,14 @@
         .inner-btn { flex: 1; border: none; background: none; padding: 6px; font-size: 0.6rem; font-weight: 900; border-radius: 8px; color: #64748b; text-transform: uppercase; }
         .inner-btn.active { background: white; color: var(--accent); }
 
-        /* --- AUTOCOMPLETE --- */
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; max-height: 200px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .sug-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; font-weight: 700; }
 
         #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 12px 25px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 
-        /* --- MODALES --- */
         #delete-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); display: none; align-items: center; justify-content: center; z-index: 15000; backdrop-filter: blur(4px); }
         .modal-content-custom { background: white; width: 85%; max-width: 350px; border-radius: 20px; padding: 25px; text-align: center; }
 
-        /* --- TICKET RENDER --- */
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.3; }
     </style>
 </head>
@@ -81,13 +74,13 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Sincronizando v21.4...</div>
+        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Ajustando Horario CDMX v21.5...</div>
     </div>
 
     <div id="delete-modal">
         <div class="modal-content-custom">
             <i class="fas fa-trash-alt text-danger mb-3" style="font-size: 2.5rem;"></i>
-            <h5 class="fw-bold">¿Eliminar registro?</h5>
+            <h5 class="fw-bold">¿Borrar registro?</h5>
             <p class="text-muted small mb-4">Esta acción no se puede deshacer.</p>
             <div class="d-flex gap-2">
                 <button class="btn btn-light flex-fill fw-bold" onclick="window.closeDeleteModal()">CANCELAR</button>
@@ -98,7 +91,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v21.4</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v21.5</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -204,17 +197,33 @@
         let activeFinanceView = 'ventas';
 
         // --- MANEJO DE ZONA HORARIA MÉXICO (-6) ---
-        const getMXDate = () => {
-            return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Mexico_City"}));
+        // Usamos Intl para asegurar que los componentes de fecha sean siempre de México
+        const getMXTimeParts = () => {
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Mexico_City',
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+            });
+            const parts = formatter.formatToParts(now).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
+            // {month, day, year, hour, minute, second}
+            return parts;
         };
 
-        const formatMXDateStr = (dateObj) => {
-            return dateObj.toLocaleDateString('es-MX');
+        const getMXDateStr = () => {
+            const p = getMXTimeParts();
+            return `${p.day}/${p.month}/${p.year}`;
         };
 
-        let finDate = getMXDate().toISOString().split('T')[0];
-        let finDateFrom = getMXDate().toISOString().split('T')[0]; 
-        let finDateTo = getMXDate().toISOString().split('T')[0];   
+        const getMXISODate = () => {
+            const p = getMXTimeParts();
+            return `${p.year}-${p.month}-${p.day}`;
+        };
+
+        // Variables de Filtro de Finanzas
+        let finDate = getMXISODate();
+        let finDateFrom = getMXISODate(); 
+        let finDateTo = getMXISODate();   
         let finStore = "";
         let finClient = "";
 
@@ -270,7 +279,7 @@
             };
         };
 
-        // --- ACCIONES PRINCIPALES ---
+        // --- ACCIONES ---
         document.getElementById('btn-save-record').onclick = async () => {
             const t = document.getElementById('in-tienda').value.trim().toUpperCase();
             const c = document.getElementById('in-cliente').value.trim().toUpperCase();
@@ -281,22 +290,13 @@
             
             if(!t || !c || !p) return toast("Faltan datos obligatorios", "danger");
             
-            // --- REGLA: CLIENTE CRISTO TIENE GANANCIA CERO ---
-            if (c === "CRISTO") {
-                pr = co; // Precio de venta es igual al costo
-            }
+            // --- REGLA: CRISTO TIENE GANANCIA CERO ---
+            if (c === "CRISTO") pr = co;
 
-            const mxNow = getMXDate();
             const sale = { 
-                tienda: t, 
-                cliente: c, 
-                producto: p, 
-                cantidad: q, 
-                costo: co, 
-                precio: pr, 
-                total: q*pr, 
-                fechaStr: formatMXDateStr(mxNow), 
-                timestamp: mxNow.getTime(), 
+                tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, 
+                fechaStr: getMXDateStr(), 
+                timestamp: Date.now(), 
                 uid: currentUser.uid 
             };
 
@@ -314,16 +314,19 @@
 
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
-            const today = formatMXDateStr(getMXDate());
+            const today = getMXDateStr();
             const dv = window.state.sales.filter(s => s.fechaStr === today);
-            if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
+            
+            if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS REGISTRADAS EL ${today}</div>`; return; }
+            
             dv.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
             let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block">HOY (${dv.length})</span>`;
+            
             dv.forEach(v => {
                 let h = "--:--"; 
                 if(v.timestamp) { 
                     const d = new Date(v.timestamp); 
-                    if(!isNaN(d.getTime())) h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }); 
+                    if(!isNaN(d.getTime())) h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Mexico_City' }); 
                 }
                 html += `
                     <div class="card-custom d-flex justify-content-between align-items-center" style="border-left: 5px solid var(--accent); padding: 10px 15px;">
@@ -341,7 +344,7 @@
             list.innerHTML = html;
         };
 
-        // --- NAVEGACIÓN Y SUB-PANELES ---
+        // --- CONTROL Y FINANZAS ---
         window.showTab = (id, btn) => {
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.getElementById('tab-' + id).style.display = 'block';
@@ -381,7 +384,6 @@
 
         window.setCatFilter = (f) => { activeCatFilter = f; window.renderControlList(); };
 
-        // --- MÓDULO FINANZAS AVANZADO v21.4 ---
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
             container.innerHTML = `
@@ -445,8 +447,8 @@
                     return sDate >= start && sDate <= end;
                 });
             } else {
-                const dateObj = new Date(finDate + "T00:00:00");
-                const targetStr = formatMXDateStr(dateObj);
+                const [y, m, d] = finDate.split('-');
+                const targetStr = `${d}/${m}/${y}`;
                 filtered = window.state.sales.filter(s => s.fechaStr === targetStr);
             }
 
@@ -478,20 +480,17 @@
                 const profit = totalV - totalC;
                 results.innerHTML = `
                     <div class="card-custom bg-success text-white text-center py-3 mb-3"><h3>$${profit.toFixed(2)}</h3><small>GANANCIA NETA</small></div>
-                    <div class="card-custom py-2 mb-1 d-flex justify-content-between small"><span>Total Ventas</span><span class="fw-bold">$${totalV.toFixed(2)}</span></div>
-                    <div class="card-custom py-2 mb-1 d-flex justify-content-between small"><span>Total Compras (Inversión)</span><span class="fw-bold">$${totalC.toFixed(2)}</span></div>
-                    
-                    <div class="mt-3 mb-2 small fw-bold text-muted text-uppercase">Rendimiento por Tienda y Ganancia</div>
+                    <div class="mt-3 mb-2 small fw-bold text-muted text-uppercase">Rendimiento por Tienda</div>
                     ${[...new Set(filtered.map(s => s.tienda))].map(t => {
                         const items = filtered.filter(f => f.tienda === t);
                         const v = items.reduce((a,b) => a + b.total, 0);
                         const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0);
                         const p = v - c;
                         return `
-                        <div class="card-custom py-2 mb-2 flex-column small">
+                        <div class="card-custom py-2 mb-2 flex-column small shadow-none border">
                             <div class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1">
-                                <b><i class="fas fa-store text-accent me-1"></i>${t}</b>
-                                <span class="fw-bold text-success">+$${p.toFixed(2)} g</span>
+                                <b>${t}</b>
+                                <span class="fw-bold text-success">+$${p.toFixed(2)}</span>
                             </div>
                             <div class="d-flex justify-content-between text-muted" style="font-size: 0.65rem;">
                                 <span>Venta: $${v.toFixed(2)}</span>
@@ -521,8 +520,8 @@
             const selDate = document.getElementById('entregas-date').value;
             if(!selDate) return;
             const [y, m, d] = selDate.split('-');
-            const f1 = `${d}/${m}/${y}`, f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
-            const filtered = window.state.sales.filter(s => s.fechaStr === f1 || s.fechaStr === f2);
+            const f1 = `${d}/${m}/${y}`;
+            const filtered = window.state.sales.filter(s => s.fechaStr === f1);
             const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => `
                 <div class="card-custom mb-2">
@@ -537,7 +536,7 @@
             const dateInput = document.getElementById('entregas-date');
             const [y, m, d] = dateInput.value.split('-');
             const f = `${d}/${m}/${y}`;
-            const items = window.state.sales.filter(s => s.cliente === n && (s.fechaStr === f || s.fechaStr === `${parseInt(d)}/${parseInt(m)}/${y}`));
+            const items = window.state.sales.filter(s => s.cliente === n && s.fechaStr === f);
             document.getElementById('t-cliente').innerText = n; document.getElementById('t-fecha').innerText = f;
             let tot = 0;
             document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:8px 0">${i.cantidad}x</td><td style="padding:8px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join('');
@@ -561,7 +560,7 @@
         window.openScanner = () => toast("Escáner en mantenimiento", "warning");
 
         window.onload = () => { 
-            document.getElementById('entregas-date').value = getMXDate().toISOString().split('T')[0];
+            document.getElementById('entregas-date').value = getMXISODate();
         };
     </script>
 </body>
