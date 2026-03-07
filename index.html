@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v25.2 - Control Total</title>
+    <title>Ofertas Rápidas Yaute v25.3 - Blindaje Restaurado</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,7 +32,7 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             z-index: 99999; opacity: 1; transition: opacity 0.5s ease;
         }
-        .splash-loader { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        .splash-loader { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- HEADER --- */
@@ -44,16 +44,15 @@
         /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
         .form-control, .form-select { padding: 0.8rem 1.2rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; transition: 0.3s; }
-        .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 6px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1.2px; }
 
-        /* --- NAVEGACIÓN PRINCIPAL --- */
+        /* --- NAVIGATION --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 0 28px; border-top: 1px solid #f1f5f9; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; font-weight: 700; transition: 0.3s; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- MENÚS DE CONTROL --- */
+        /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; padding: 5px; background: #f1f5f9; border-radius: 18px; }
         .sub-btn { border: none; background: none; padding: 10px; font-size: 0.8rem; color: #64748b; font-weight: 800; flex: 1; border-radius: 14px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .sub-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -79,18 +78,23 @@
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
         .scan-frame { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 40%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.7); }
 
+        /* --- SUGGESTIONS --- */
+        .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 16px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 30px rgba(0,0,0,0.1); margin-top: 5px; }
+        .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; color: var(--primary); }
+
+        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 12000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 15px 40px rgba(0,0,0,0.25); text-align: center; min-width: 250px; }
+
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla de Bienvenida -->
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Yaute Market v25.2</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Cargando v25.3...</div>
     </div>
 
-    <!-- MODAL EDITAR (CASCADA) -->
+    <!-- MODAL EDITAR -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -147,7 +151,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.2</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.3</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -155,7 +159,6 @@
     <div id="toast-alert"></div>
 
     <main>
-        <!-- SECCIÓN DE VENTAS -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-3">
@@ -189,6 +192,17 @@
         </div>
     </main>
 
+    <div id="ticket-render">
+        <div style="text-align: center; margin-bottom: 25px;"><img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'"><div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div></div>
+        <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;"></div>
+        <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
+        <div style="margin-bottom: 20px; font-size: 1.2rem;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 1.1rem;"><tbody id="t-items"></tbody></table>
+        <div style="border-top: 2px dashed #000; margin: 25px 0;"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.8rem; font-weight: 900;"><span>TOTAL:</span><span id="t-total"></span></div>
+        <div style="text-align: center; margin-top: 40px; font-size: 1.1rem; border: 1.5px solid #000; padding: 12px; font-weight: bold;">¡Gracias por su compra!</div>
+    </div>
+
     <nav class="bottom-nav">
         <button class="tab-btn active" onclick="window.showTab('operaciones', this)"><i class="fas fa-cash-register"></i>Ventas</button>
         <button class="tab-btn" onclick="window.showTab('entregas', this)"><i class="fas fa-truck"></i>Reparto</button>
@@ -218,6 +232,7 @@
         let activeCatFilter = 'productos';
         let activeFinanceView = 'compras';
 
+        // --- TIME HELPER CDMX ---
         const getMXTimeParts = () => {
             const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             return formatter.formatToParts(new Date()).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
@@ -295,13 +310,13 @@
             if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
             if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
             if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
-            toast("¡Venta guardada!");
+            toast("¡Guardado!");
             document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
         };
 
         window.openEditModal = (record) => { editRef = record; document.getElementById('ed-tienda').value = record.tienda; document.getElementById('ed-cliente').value = record.cliente; document.getElementById('ed-producto').value = record.producto; document.getElementById('ed-cantidad').value = record.cantidad; document.getElementById('ed-costo').value = record.costo; document.getElementById('ed-precio').value = record.precio; document.getElementById('edit-modal').style.display = 'flex'; };
         window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
-        window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Actualizado correctamente"); window.closeEditModal(); };
+        window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Registro actualizado"); window.closeEditModal(); };
 
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
@@ -376,9 +391,7 @@
                 const grouped = filtered.reduce((acc, s) => { 
                     const key = `${s.producto}_${s.costo}`; 
                     if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; 
-                    acc[key].cantidad += (s.cantidad || 0); 
-                    acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); 
-                    acc[key].items.push(s);
+                    acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); acc[key].items.push(s);
                     return acc; 
                 }, {});
                 const totalP = Object.values(grouped).reduce((a,b) => a + b.total, 0);
@@ -423,13 +436,14 @@
         };
         window.processIASave = async () => { const n = document.getElementById('ia-res-name').value; const s = document.getElementById('ia-res-size').value; const p = document.getElementById('ia-res-price').value || 0; const fullName = `${n} - ${s}`; const properName = formatProperName(n); const msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${fullName}\n💰 *Precio:* $${p}\n\n¡Gracias por tu preferencia!`; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: fullName, costo: 0, precio: p }); document.getElementById('crop-canvas').toBlob(async blob => { const file = new File([blob], "oferta.jpg", { type: "image/jpeg" }); if (navigator.share) await navigator.share({ files: [file], title: 'Oferta Yaute', text: msg }); else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank'); toast("Listo ✅"); window.closeScanner(); }, 'image/jpeg', 0.9); };
 
+        // --- REPARTO ---
         window.renderEntregas = () => { const list = document.getElementById('lista-entregas'); const selDate = document.getElementById('entregas-date').value; if(!selDate) return; const [y, m, d] = selDate.split('-'); const targetNorm = normalizeDateStr(`${d}/${m}/${y}`); const filtered = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === targetNorm); const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; }, {}); list.innerHTML = Object.keys(grouped).map(cli => { const items = grouped[cli].items; const isE = items.every(i => i.entregado === true); const isP = items.every(i => i.pagado === true); return `<div class="card-custom mb-2"><div class="d-flex justify-content-between align-items-center"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button></div><div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div><div class="check-group"><label class="check-item"><input type="checkbox" ${isE ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'entregado', this.checked)"> Entregado</label><label class="check-item"><input type="checkbox" ${isP ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'pagado', this.checked)"> Pagado</label></div></div>`; }).join(''); };
         window.updateStatus = async (cli, date, field, val) => { const items = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const i of items) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val }); } toast(`Actualizado`); };
         window.shareTicket = async (n) => { const dateInput = document.getElementById('entregas-date'); const [y, m, d] = dateInput.value.split('-'); const f = `${d}/${m}/${y}`; const targetNorm = normalizeDateStr(f); const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === targetNorm); const properName = formatProperName(n); document.getElementById('t-cliente').innerText = properName; document.getElementById('t-fecha').innerText = f; let tot = 0; document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:8px 0">${i.cantidad}x</td><td style="padding:8px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join(''); document.getElementById('t-total').innerText = "$" + tot.toFixed(2); const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' }); canvas.toBlob(async b => { const file = new File([b], "Ticket.png", { type: 'image/png' }); const msg = `hola *${properName}* te envió tu cuenta, gracias por tu preferencia`; if(navigator.share) await navigator.share({ files: [file], title: 'Nota Yaute', text: msg }); else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank'); }, 'image/png'); };
 
         window.openDeleteModal = (col, id) => { deleteRef = { col, id }; document.getElementById('delete-modal').style.display = 'flex'; };
         window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
-        document.getElementById('btn-confirm-delete').onclick = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id)); toast("Eliminado"); window.closeDeleteModal(); };
+        document.getElementById('btn-confirm-delete').onclick = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id)); toast("Registro eliminado"); window.closeDeleteModal(); };
 
         window.onload = () => { document.getElementById('entregas-date').value = getMXISODate(); };
     </script>
