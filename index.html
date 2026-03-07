@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v22.0 - Cumpleaños Edition</title>
+    <title>Ofertas Rápidas Yaute v22.1 - Formato Pro</title>
     
     <!-- Librerías -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -81,13 +81,13 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Sincronizando v22.0...</div>
+        <div style="margin-top:15px; font-size:0.7rem; font-weight:800; color:#94a3b8; text-transform: uppercase; letter-spacing: 1px;">Iniciando v22.1...</div>
     </div>
 
     <div id="delete-modal">
         <div class="modal-content-custom">
             <i class="fas fa-trash-alt text-danger mb-3" style="font-size: 2.5rem;"></i>
-            <h5 class="fw-bold">¿Eliminar registro?</h5>
+            <h5 class="fw-bold">¿Borrar registro?</h5>
             <p class="text-muted small mb-4">Esta acción no se puede deshacer.</p>
             <div class="d-flex gap-2">
                 <button class="btn btn-light flex-fill fw-bold" onclick="window.closeDeleteModal()">CANCELAR</button>
@@ -98,7 +98,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v22.0</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v22.1</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -168,7 +168,7 @@
         <table style="width: 100%; border-collapse: collapse; font-size: 1.1rem;"><tbody id="t-items"></tbody></table>
         <div style="border-top: 2px dashed #000; margin: 25px 0;"></div>
         <div style="display: flex; justify-content: space-between; font-size: 1.8rem; font-weight: 900;"><span>TOTAL:</span><span id="t-total"></span></div>
-        <div style="text-align: center; margin-top: 40px; font-size: 1rem; border: 1.5px solid #000; padding: 10px; font-weight: bold;">¡Gracias por su compra!<br>_Yaute Market_</div>
+        <div style="text-align: center; margin-top: 40px; font-size: 1.1rem; border: 1.5px solid #000; padding: 12px; font-weight: bold;">¡Gracias por su compra!</div>
     </div>
 
     <nav class="bottom-nav">
@@ -214,7 +214,6 @@
             return formatter.formatToParts(now).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
         };
 
-        // Normaliza fecha: convierte "06/03/2026" o "6/3/2026" a "6/3/2026"
         const normalizeDateStr = (str) => {
             if(!str) return "";
             return str.split('/').map(p => parseInt(p)).join('/');
@@ -228,6 +227,12 @@
         const getMXISODate = () => {
             const p = getMXTimeParts();
             return `${p.year}-${p.month}-${p.day}`;
+        };
+
+        // Formatea un nombre a Nombre Propio (Ej: CRISTO -> Cristo)
+        const formatProperName = (str) => {
+            if(!str) return "";
+            return str.trim().toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         };
 
         // Variables de Filtro
@@ -299,6 +304,8 @@
             let pr = parseFloat(document.getElementById('in-precio').value) || 0;
             
             if(!t || !c || !p) return toast("Faltan datos obligatorios", "danger");
+            
+            // REGLA CRISTO GANANCIA CERO
             if (c === "CRISTO") pr = co;
 
             const sale = { 
@@ -484,7 +491,7 @@
                 const profit = totalV - totalC;
                 results.innerHTML = `
                     <div class="card-custom bg-success text-white text-center py-3 mb-3"><h3>$${profit.toFixed(2)}</h3><small>GANANCIA NETA</small></div>
-                    <div class="mt-3 mb-2 small fw-bold text-muted text-uppercase">Desglose por Tienda</div>
+                    <div class="mt-3 mb-2 small fw-bold text-muted text-uppercase">Rendimiento por Tienda</div>
                     ${[...new Set(filtered.map(s => s.tienda))].map(t => {
                         const items = filtered.filter(f => f.tienda === t);
                         const v = items.reduce((a,b) => a + b.total, 0);
@@ -492,7 +499,10 @@
                         const p = v - c;
                         return `
                         <div class="card-custom py-2 mb-2 flex-column small shadow-none border">
-                            <div class="d-flex justify-content-between align-items-center"><b>${t}</b><span class="fw-bold text-success">+$${p.toFixed(2)}</span></div>
+                            <div class="d-flex justify-content-between align-items-center border-bottom pb-1 mb-1">
+                                <b>${t}</b>
+                                <span class="fw-bold text-success">+$${p.toFixed(2)}</span>
+                            </div>
                         </div>`;
                     }).join('')}
                 `;
@@ -528,8 +538,8 @@
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date');
             const [y, m, d] = dateInput.value.split('-');
-            const targetNorm = normalizeDateStr(`${d}/${m}/${y}`);
-            const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === targetNorm);
+            const f = `${d}/${m}/${y}`;
+            const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === normalizeDateStr(f));
             
             document.getElementById('t-cliente').innerText = n; 
             document.getElementById('t-fecha').innerText = `${d}/${m}/${y}`;
@@ -540,7 +550,11 @@
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
             canvas.toBlob(async b => {
                 const file = new File([b], "Ticket.png", { type: 'image/png' });
-                const msg = `hola *${n}* te envió tu cuenta, gracias por tu preferencia`;
+                
+                // Formato de nombre propio solicitado (Ej: Cristo)
+                const properName = formatProperName(n);
+                const msg = `hola *${properName}* te envió tu cuenta, gracias por tu preferencia`;
+                
                 if(navigator.share) await navigator.share({ files: [file], title: 'Nota Yaute', text: msg });
                 else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
             }, 'image/png');
