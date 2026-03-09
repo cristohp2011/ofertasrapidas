@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v25.8 - Gestión Completa</title>
+    <title>Ofertas Rápidas Yaute v25.9 - Compras con Precio Venta</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -89,10 +89,10 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Iniciando v25.8...</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Cargando Yaute v25.9</div>
     </div>
 
-    <!-- MODAL AGREGAR PRODUCTO MANUAL (NUEVO) -->
+    <!-- MODAL AGREGAR PRODUCTO MANUAL -->
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -126,7 +126,7 @@
             </div>
             <div id="cat-edit-fields"></div>
             <div class="alert alert-warning small py-2 mt-3">
-                <i class="fas fa-info-circle me-1"></i> Actualización en cascada (5 días).
+                <i class="fas fa-info-circle me-1"></i> Se actualizarán los registros de los últimos 5 días.
             </div>
             <button class="btn btn-accent w-100 py-3 rounded-pill fw-bold text-white shadow" onclick="window.confirmCatUpdate()">CASCADA & GUARDAR</button>
         </div>
@@ -149,7 +149,7 @@
                 <div class="col-4"><label class="text-uppercase">Costo</label><input type="number" id="ed-costo" class="form-control fw-bold text-danger"></div>
                 <div class="col-4"><label class="text-uppercase">Venta</label><input type="number" id="ed-precio" class="form-control fw-bold text-success"></div>
             </div>
-            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" onclick="window.confirmUpdate()">GUARDAR CAMBIOS</button>
+            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow" onclick="window.confirmUpdate()">GUARDAR CAMBIOS</button>
         </div>
     </div>
 
@@ -158,8 +158,9 @@
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-3x"></i></div>
             <h5 class="fw-bold">¿Borrar registro?</h5>
+            <p class="text-muted small">Esta acción es permanente y recalculará tus finanzas.</p>
             <div class="d-flex gap-2 mt-4">
-                <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button>
+                <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">CANCELAR</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button>
             </div>
         </div>
@@ -171,12 +172,12 @@
             <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 25px; left: 20px; z-index: 1100;" onclick="window.closeScanner()">✕ SALIR</button>
             <video id="cam-preview" autoplay playsinline muted></video>
             <div class="scan-frame"></div>
-            <div id="btn-capture" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border-radius: 50%; border: 8px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent); cursor: pointer;"><i class="fas fa-camera"></i></div>
+            <div id="btn-capture" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border-radius: 50%; border: 8px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent); cursor: pointer; box-shadow: 0 0 30px rgba(0,0,0,0.5);"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div id="ia-loading" style="display:none;" class="text-center py-5"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Gemini analizando...</p></div>
+            <div id="ia-loading" style="display:none;" class="text-center py-5"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Gemini analizando producto...</p></div>
             <div id="ia-form">
-                <div class="mb-3"><label class="text-uppercase fw-black">Producto</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
+                <div class="mb-3"><label class="text-uppercase fw-black">Producto Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
                 <div class="row g-3 mb-4">
                     <div class="col-6"><label class="text-uppercase fw-black">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
                     <div class="col-6"><label class="text-uppercase fw-black">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold text-success border-success" step="0.01"></div>
@@ -188,7 +189,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.8</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.9</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -307,7 +308,7 @@
                     if(document.getElementById('splash-screen')) { document.getElementById('splash-screen').style.opacity = '0'; setTimeout(() => document.getElementById('splash-screen')?.remove(), 500); }
                     if(name === 'sales') { window.renderVentasHoy(); window.renderEntregas(); if(activeSubTab === 'finanzas') window.renderFinanceResults(); }
                     if(activeSubTab === 'catalogo') window.renderControlList();
-                });
+                }, (err) => { console.error("Error Sync:", name, err); });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores');
             setupAuto('in-cliente', 'sug-cliente', 'clients');
@@ -336,6 +337,24 @@
             };
         };
 
+        document.getElementById('btn-save-record').onclick = async () => {
+            const t = document.getElementById('in-tienda').value.trim().toUpperCase();
+            const c = document.getElementById('in-cliente').value.trim().toUpperCase();
+            const p = document.getElementById('in-producto').value.trim().toUpperCase();
+            const q = parseInt(document.getElementById('in-cantidad').value) || 1;
+            const co = parseFloat(document.getElementById('in-costo').value) || 0;
+            let pr = parseFloat(document.getElementById('in-precio').value) || 0;
+            if(!t || !c || !p) return toast("Faltan datos", "danger");
+            if (c === "CRISTO") pr = co;
+            const sale = { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: getMXDateStr(), timestamp: Date.now(), uid: currentUser.uid, entregado: false, pagado: false };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), sale);
+            if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
+            if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
+            if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
+            toast("¡Venta guardada!");
+            document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
+        };
+
         // --- FUNCIONES WINDOW ---
         window.showTab = (id, btn) => { 
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
@@ -349,7 +368,6 @@
 
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
 
-        // --- AGREGAR PRODUCTO MANUAL ---
         window.openAddProductModal = () => { document.getElementById('add-prod-name').value = ""; document.getElementById('add-prod-costo').value = ""; document.getElementById('add-prod-precio').value = ""; document.getElementById('add-product-modal').style.display = 'flex'; };
         window.closeAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'none'; };
         window.confirmAddProduct = async () => {
@@ -362,10 +380,9 @@
             toast("Producto agregado"); window.closeAddProductModal();
         };
 
-        // --- EDITORES ---
         window.openEditModal = (record) => { editRef = record; document.getElementById('ed-tienda').value = record.tienda; document.getElementById('ed-cliente').value = record.cliente; document.getElementById('ed-producto').value = record.producto; document.getElementById('ed-cantidad').value = record.cantidad; document.getElementById('ed-costo').value = record.costo; document.getElementById('ed-precio').value = record.precio; document.getElementById('edit-modal').style.display = 'flex'; };
         window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
-        window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Actualizado"); window.closeEditModal(); };
+        window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Registro actualizado"); window.closeEditModal(); };
 
         window.openCatEditModal = (type, item) => {
             catEditRef = { type, item };
@@ -403,10 +420,9 @@
                 }
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), sUpdate);
             }
-            toast(`Actualización completa`); window.closeCatEditModal();
+            toast(`Actualización completada`); window.closeCatEditModal();
         };
 
-        // --- GESTIÓN CONTROL ---
         window.setCatFilter = (f) => { activeCatFilter = f; productSearchTerm = ""; window.renderControlList(); };
         window.handleProductSearch = (val) => { productSearchTerm = val.toUpperCase(); window.renderControlListItems(); };
 
@@ -414,18 +430,8 @@
             const container = document.getElementById('control-content'); 
             let headerHtml = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">Productos</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">Clientes</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">Tiendas</button></div>`;
             let actionHtml = "";
-            
             if (activeCatFilter === 'productos') {
-                actionHtml = `
-                    <div class="d-flex gap-2 mb-3">
-                        <div class="search-container flex-fill mb-0">
-                            <i class="fas fa-search"></i>
-                            <input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)">
-                        </div>
-                        <button class="btn btn-primary rounded-pill px-3" onclick="window.openAddProductModal()">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>`;
+                actionHtml = `<div class="d-flex gap-2 mb-3"><div class="search-container flex-fill mb-0"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)"></div><button class="btn btn-primary rounded-pill px-3" onclick="window.openAddProductModal()"><i class="fas fa-plus"></i></button></div>`;
             }
             container.innerHTML = headerHtml + actionHtml + `<div id="cat-items-list-container"></div>`; 
             window.renderControlListItems();
@@ -451,7 +457,6 @@
                 </div>`).join('');
         };
 
-        // --- RESTO DE RENDERS ---
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
             const todayNorm = normalizeDateStr(getMXDateStr());
@@ -487,11 +492,16 @@
             filtered = filtered.filter(s => (finStore === "" || s.tienda === finStore) && (finClient === "" || s.cliente === finClient));
 
             if(activeFinanceView === 'compras') {
-                const grouped = filtered.reduce((acc, s) => { const key = `${s.producto}_${s.costo}`; if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); acc[key].items.push(s); return acc; }, {});
+                const grouped = filtered.reduce((acc, s) => { 
+                    const key = `${s.producto}_${s.precio}`; 
+                    if(!acc[key]) acc[key] = { producto: s.producto, precio: s.precio, cantidad: 0, total: 0, items: [] }; 
+                    acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.precio || 0) * (s.cantidad || 0)); acc[key].items.push(s);
+                    return acc; 
+                }, {});
                 const totalP = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-primary"><h3>$${totalP.toFixed(2)}</h3><small>TOTAL INVERSIÓN</small></div>` + Object.values(grouped).map(g => `
+                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>TOTAL VENTA AL PÚBLICO</small></div>` + Object.values(grouped).map(g => `
                     <div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3">
-                        <div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">Costo: $${g.costo.toFixed(2)}</small></div>
+                        <div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">P. Venta: $${g.precio.toFixed(2)}</small></div>
                         <div class="text-end d-flex align-items-center gap-3">
                             <div class="pe-2 border-end"><b>$${g.total.toFixed(2)}</b><br><small class="fw-bold text-accent">${g.cantidad} pzs</small></div>
                             <div class="d-flex flex-column gap-2">
@@ -502,7 +512,7 @@
                     </div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-success"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
+                results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
                     const items = filtered.filter(f => f.tienda === t); 
                     const v = items.reduce((a,b) => a + b.total, 0); 
                     const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); 
@@ -511,7 +521,7 @@
                 }).join('');
             } else if(activeFinanceView === 'diezmo') {
                 const profit = filtered.reduce((a,b) => a + ((b.total || 0) - (b.costo * b.cantidad)), 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase text-white">10% PARA EL SEÑOR (SOBRE $${profit.toFixed(2)})</small></div>`;
+                results.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase">10% PARA EL SEÑOR (SOBRE $${profit.toFixed(2)})</small></div>`;
             }
         };
 
