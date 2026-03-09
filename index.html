@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v26.0 - Formato Pro & Blindaje</title>
+    <title>Ofertas Rápidas Yaute v26.1 - Blindaje Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- MENÚS DE CONTROL --- */
+        /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; padding: 5px; background: #f1f5f9; border-radius: 18px; }
         .sub-btn { border: none; background: none; padding: 10px; font-size: 0.8rem; color: #64748b; font-weight: 800; flex: 1; border-radius: 14px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .sub-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -61,7 +61,7 @@
         .inner-btn { white-space: nowrap; border: 2px solid #f1f5f9; background: white; padding: 8px 16px; font-size: 0.7rem; font-weight: 900; border-radius: 50px; color: #64748b; text-transform: uppercase; transition: 0.3s; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- SEARCH BAR --- */
+        /* --- BUSCADOR --- */
         .search-container { position: relative; margin-bottom: 15px; }
         .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
         .search-container input { padding-left: 40px !important; }
@@ -99,48 +99,13 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Yaute Market v26.0</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Restaurando Yaute v26.1</div>
     </div>
 
-    <!-- MODAL AGREGAR PRODUCTO MANUAL -->
-    <div id="add-product-modal" class="modal-overlay">
-        <div class="modal-content-custom">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold m-0 text-primary"><i class="fas fa-plus-circle me-2"></i>Nuevo Producto</h5>
-                <button class="btn-close border-0 bg-transparent" onclick="window.closeAddProductModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="mb-3">
-                <label class="text-uppercase small fw-bold">Nombre / Descripción</label>
-                <input type="text" id="add-prod-name" class="form-control text-uppercase" placeholder="PRODUCTO">
-            </div>
-            <div class="row g-2 mb-4">
-                <div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger" placeholder="0.00"></div>
-                <div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success" placeholder="0.00"></div>
-            </div>
-            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" onclick="window.confirmAddProduct()">GUARDAR EN CATÁLOGO</button>
-        </div>
-    </div>
-
-    <!-- MODAL EDITAR CATÁLOGO -->
-    <div id="cat-edit-modal" class="modal-overlay">
-        <div class="modal-content-custom">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold m-0 text-accent"><i class="fas fa-edit me-2"></i>Editar Catálogo</h5>
-                <button class="btn-close border-0 bg-transparent" onclick="window.closeCatEditModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div id="cat-edit-fields"></div>
-            <div class="alert alert-warning small py-2 mt-3"><i class="fas fa-info-circle me-1"></i> Actualización en cascada (5 días).</div>
-            <button class="btn btn-accent w-100 py-3 rounded-pill fw-bold text-white shadow" onclick="window.confirmCatUpdate()">CASCADA & GUARDAR</button>
-        </div>
-    </div>
-
-    <!-- MODAL EDITAR REGISTRO -->
+    <!-- MODALES DE EDICIÓN -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold m-0 text-primary"><i class="fas fa-pen-nib me-2"></i>Editar Registro</h5>
-                <button class="btn-close border-0 bg-transparent" onclick="window.closeEditModal()"><i class="fas fa-times"></i></button>
-            </div>
+            <div class="d-flex justify-content-between align-items-center mb-4"><h5 class="fw-bold m-0 text-primary">Editar Registro</h5><button class="btn-close border-0 bg-transparent" onclick="window.closeEditModal()"><i class="fas fa-times"></i></button></div>
             <div class="row g-2 mb-3">
                 <div class="col-6"><label class="text-uppercase">Tienda</label><input type="text" id="ed-tienda" class="form-control text-uppercase"></div>
                 <div class="col-6"><label class="text-uppercase">Cliente</label><input type="text" id="ed-cliente" class="form-control text-uppercase"></div>
@@ -155,42 +120,26 @@
         </div>
     </div>
 
-    <!-- MODAL BORRAR -->
+    <div id="cat-edit-modal" class="modal-overlay">
+        <div class="modal-content-custom">
+            <div class="d-flex justify-content-between align-items-center mb-4"><h5 class="fw-bold m-0 text-accent">Editar Catálogo</h5><button class="btn-close border-0 bg-transparent" onclick="window.closeCatEditModal()"><i class="fas fa-times"></i></button></div>
+            <div id="cat-edit-fields"></div>
+            <div class="alert alert-warning small py-2 mt-3"><i class="fas fa-info-circle me-1"></i> Sincronización automática (5 días).</div>
+            <button class="btn btn-accent w-100 py-3 rounded-pill fw-bold text-white shadow" onclick="window.confirmCatUpdate()">CASCADA & GUARDAR</button>
+        </div>
+    </div>
+
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-3x"></i></div>
             <h5 class="fw-bold">¿Borrar registro?</h5>
-            <div class="d-flex gap-2 mt-4">
-                <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button>
-                <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL IA -->
-    <div id="ia-modal">
-        <div id="cam-container">
-            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 25px; left: 20px; z-index: 1100;" onclick="window.closeScanner()">✕ SALIR</button>
-            <video id="cam-preview" autoplay playsinline muted></video>
-            <div class="scan-frame"></div>
-            <div id="btn-capture" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border-radius: 50%; border: 8px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent); cursor: pointer;"><i class="fas fa-camera"></i></div>
-        </div>
-        <div id="ia-result-panel">
-            <div id="ia-loading" style="display:none;" class="text-center py-5"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Gemini analizando...</p></div>
-            <div id="ia-form">
-                <div class="mb-3"><label class="text-uppercase fw-black">Producto Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
-                <div class="row g-3 mb-4">
-                    <div class="col-6"><label class="text-uppercase fw-black">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
-                    <div class="col-6"><label class="text-uppercase fw-black">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold text-success border-success" step="0.01"></div>
-                </div>
-                <button class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-lg" onclick="window.processIASave()"><i class="fab fa-whatsapp me-2"></i>GUARDAR Y COMPARTIR</button>
-            </div>
+            <div class="d-flex gap-2 mt-4"><button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button><button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button></div>
         </div>
     </div>
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v26.0</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v26.1</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -198,7 +147,6 @@
     <div id="toast-alert"></div>
 
     <main>
-        <!-- TABS -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-3">
@@ -207,7 +155,7 @@
                 </div>
                 <div class="row g-2 mb-3 align-items-end">
                     <div class="col-3"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
-                    <div class="col" style="position:relative"><label class="text-uppercase d-flex justify-content-between">Producto <i class="fas fa-camera-retro text-primary" style="font-size:1.2rem" onclick="window.openScanner()"></i></label><input type="text" id="in-producto" class="form-control text-uppercase"><div id="sug-producto" class="sug-box d-none"></div></div>
+                    <div class="col" style="position:relative"><label class="text-uppercase d-flex justify-content-between">Producto <i class="fas fa-camera text-primary" onclick="window.openScanner()"></i></label><input type="text" id="in-producto" class="form-control text-uppercase"><div id="sug-producto" class="sug-box d-none"></div></div>
                 </div>
                 <div class="row g-2 mb-4">
                     <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="in-costo" class="form-control fw-bold border-danger" step="0.01"></div>
@@ -219,7 +167,7 @@
         </div>
 
         <div id="tab-entregas" class="tab-content" style="display: none;">
-            <div class="card-custom py-2 mb-3 text-center"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" style="background:transparent" onchange="window.renderEntregas()"></div>
+            <div class="card-custom py-2 mb-3 text-center"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
@@ -235,9 +183,6 @@
         <button class="tab-btn" onclick="window.showTab('control', this)"><i class="fas fa-shield-halved"></i>Gestión</button>
     </nav>
 
-    <canvas id="hidden-canvas" style="display:none;"></canvas>
-    <canvas id="crop-canvas" style="display:none;"></canvas>
-
     <div id="ticket-render">
         <div style="text-align: center; margin-bottom: 25px;"><img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'"><div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div></div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;"></div>
@@ -248,6 +193,27 @@
         <div style="display: flex; justify-content: space-between; font-size: 1.8rem; font-weight: 900;"><span>TOTAL:</span><span id="t-total"></span></div>
         <div style="text-align: center; margin-top: 40px; font-size: 1.1rem; border: 1.5px solid #000; padding: 12px; font-weight: bold;">¡Gracias por su compra!</div>
     </div>
+
+    <!-- MODAL IA -->
+    <div id="ia-modal">
+        <div id="cam-container">
+            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 25px; left: 20px; z-index: 1100;" onclick="window.closeScanner()">✕ SALIR</button>
+            <video id="cam-preview" autoplay playsinline muted></video>
+            <div class="scan-frame"></div>
+            <div id="btn-capture" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border-radius: 50%; border: 8px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent); cursor: pointer;"><i class="fas fa-camera"></i></div>
+        </div>
+        <div id="ia-result-panel">
+            <div id="ia-loading" style="display:none;" class="text-center py-5"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">IA analizando...</p></div>
+            <div id="ia-form">
+                <div class="mb-3"><label class="text-uppercase fw-black">Producto</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
+                <div class="row g-3 mb-4"><div class="col-6"><label class="text-uppercase fw-black">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div><div class="col-6"><label class="text-uppercase fw-black">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold text-success" step="0.01"></div></div>
+                <button class="btn btn-success w-100 py-3 rounded-pill fw-bold" onclick="window.processIASave()">GUARDAR Y COMPARTIR</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="hidden-canvas" style="display:none;"></canvas>
+    <canvas id="crop-canvas" style="display:none;"></canvas>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -271,7 +237,7 @@
         let activeFinanceView = 'compras';
         let productSearchTerm = "";
 
-        // --- TIME CDMX HELPER ---
+        // --- CDMX TIME ---
         const getMXTimeParts = () => {
             const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             return formatter.formatToParts(new Date()).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
@@ -306,7 +272,7 @@
                     if(document.getElementById('splash-screen')) { document.getElementById('splash-screen').style.opacity = '0'; setTimeout(() => document.getElementById('splash-screen')?.remove(), 500); }
                     if(name === 'sales') { window.renderVentasHoy(); window.renderEntregas(); if(activeSubTab === 'finanzas') window.renderFinanceResults(); }
                     if(activeSubTab === 'catalogo') window.renderControlList();
-                }, (err) => { console.error("Sync Error:", name, err); });
+                });
             });
             setupAuto('in-tienda', 'sug-tienda', 'stores');
             setupAuto('in-cliente', 'sug-cliente', 'clients');
@@ -315,12 +281,10 @@
 
         const setupAuto = (inpId, boxId, key) => {
             const inp = document.getElementById(inpId); const box = document.getElementById(boxId);
+            if (!inp) return;
             inp.oninput = () => {
                 const val = inp.value.toUpperCase(); if(!val) { box.classList.add('d-none'); return; }
                 let suggestions = window.state[key].map(x => (x.nombre || "").toUpperCase());
-                if(key === 'clients') suggestions = [...new Set([...suggestions, ...window.state.sales.map(s => (s.cliente || "").toUpperCase())])];
-                if(key === 'products') suggestions = [...new Set([...suggestions, ...window.state.sales.map(s => (s.producto || "").toUpperCase())])];
-                if(key === 'stores') suggestions = [...new Set([...suggestions, ...window.state.sales.map(s => (s.tienda || "").toUpperCase())])];
                 const filtered = suggestions.filter(s => s.includes(val)).slice(0, 5);
                 box.innerHTML = filtered.map(s => `<div class="sug-item" data-val="${s}">${s}</div>`).join('');
                 box.classList.toggle('d-none', filtered.length === 0);
@@ -335,8 +299,8 @@
             };
         };
 
-        // --- FUNCIONES WINDOW ---
-        window.showTab = (id, btn) => { 
+        // --- ASIGNACIONES WINDOW ---
+        window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
             const target = document.getElementById('tab-' + id);
@@ -348,21 +312,39 @@
 
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
 
+        document.getElementById('btn-save-record').onclick = async () => {
+            if (!currentUser) return toast("Conectando...", "warning");
+            const t = document.getElementById('in-tienda').value.trim().toUpperCase();
+            const c = document.getElementById('in-cliente').value.trim().toUpperCase();
+            const p = document.getElementById('in-producto').value.trim().toUpperCase();
+            const q = parseInt(document.getElementById('in-cantidad').value) || 1;
+            const co = parseFloat(document.getElementById('in-costo').value) || 0;
+            let pr = parseFloat(document.getElementById('in-precio').value) || 0;
+            if(!t || !c || !p) return toast("Faltan datos", "danger");
+            if (c === "CRISTO") pr = co;
+            const sale = { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: getMXDateStr(), timestamp: Date.now(), uid: currentUser.uid, entregado: false, pagado: false };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), sale);
+            if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
+            if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
+            if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
+            toast("¡Venta guardada! ✅");
+            document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
+        };
+
         window.openAddProductModal = () => { document.getElementById('add-prod-name').value = ""; document.getElementById('add-prod-costo').value = ""; document.getElementById('add-prod-precio').value = ""; document.getElementById('add-product-modal').style.display = 'flex'; };
         window.closeAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'none'; };
         window.confirmAddProduct = async () => {
             const n = document.getElementById('add-prod-name').value.trim().toUpperCase();
             const c = parseFloat(document.getElementById('add-prod-costo').value) || 0;
             const p = parseFloat(document.getElementById('add-prod-precio').value) || 0;
-            if (!n) return toast("Ingresa nombre", "danger");
-            if (window.state.products.some(x => x.nombre.toUpperCase() === n)) return toast("Ya existe", "danger");
+            if (!n) return toast("Faltan datos", "danger");
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: n, costo: c, precio: p });
-            toast("Agregado ✅"); window.closeAddProductModal();
+            toast("Agregado"); window.closeAddProductModal();
         };
 
         window.openEditModal = (record) => { editRef = record; document.getElementById('ed-tienda').value = record.tienda; document.getElementById('ed-cliente').value = record.cliente; document.getElementById('ed-producto').value = record.producto; document.getElementById('ed-cantidad').value = record.cantidad; document.getElementById('ed-costo').value = record.costo; document.getElementById('ed-precio').value = record.precio; document.getElementById('edit-modal').style.display = 'flex'; };
         window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
-        window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Actualizado ✅"); window.closeEditModal(); };
+        window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Actualizado"); window.closeEditModal(); };
 
         window.openCatEditModal = (type, item) => {
             catEditRef = { type, item };
@@ -379,20 +361,18 @@
         window.confirmCatUpdate = async () => {
             const { type, item } = catEditRef;
             const newName = document.getElementById('cat-ed-name').value.trim().toUpperCase();
-            if (!newName) return toast("Error", "danger");
-            const oldName = item.nombre.toUpperCase();
             const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
             const catUpdate = { nombre: newName };
             if (type === 'products') { catUpdate.costo = parseFloat(document.getElementById('cat-ed-costo').value) || 0; catUpdate.precio = parseFloat(document.getElementById('cat-ed-precio').value) || 0; }
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', type, item.id), catUpdate);
-            const fieldToMatch = { products: 'producto', clients: 'cliente', stores: 'tienda' }[type];
-            const salesToUpdate = window.state.sales.filter(s => (s[fieldToMatch] || "").toUpperCase() === oldName && (s.timestamp || 0) > fiveDaysAgo);
-            for (const sale of salesToUpdate) {
-                const sUpdate = { [fieldToMatch]: newName };
-                if (type === 'products') { sUpdate.costo = catUpdate.costo; sUpdate.precio = sale.cliente === "CRISTO" ? catUpdate.costo : catUpdate.precio; sUpdate.total = sale.cantidad * sUpdate.precio; }
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), sUpdate);
+            const field = { products: 'producto', clients: 'cliente', stores: 'tienda' }[type];
+            const matching = window.state.sales.filter(s => (s[field] || "").toUpperCase() === item.nombre.toUpperCase() && (s.timestamp || 0) > fiveDaysAgo);
+            for (const s of matching) {
+                const sU = { [field]: newName };
+                if (type === 'products') { sU.costo = catUpdate.costo; sU.precio = s.cliente === "CRISTO" ? catUpdate.costo : catUpdate.precio; sU.total = s.cantidad * sU.precio; }
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), sU);
             }
-            toast(`Sincronizado ✅`); window.closeCatEditModal();
+            toast("Sincronizado ✅"); window.closeCatEditModal();
         };
 
         window.setCatFilter = (f) => { activeCatFilter = f; productSearchTerm = ""; window.renderControlList(); };
@@ -400,9 +380,9 @@
 
         window.renderControlList = () => { 
             const container = document.getElementById('control-content'); 
-            let headerHtml = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">Productos</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">Clientes</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">Tiendas</button></div>`;
-            let actionHtml = (activeCatFilter === 'productos') ? `<div class="d-flex gap-2 mb-3"><div class="search-container flex-fill mb-0"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)"></div><button class="btn btn-primary rounded-pill px-3 shadow-sm" onclick="window.openAddProductModal()"><i class="fas fa-plus"></i></button></div>` : "";
-            container.innerHTML = headerHtml + actionHtml + `<div id="cat-items-list-container"></div>`; 
+            let html = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">Productos</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">Clientes</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">Tiendas</button></div>`;
+            if (activeCatFilter === 'productos') html += `<div class="d-flex gap-2 mb-3"><div class="search-container flex-fill mb-0"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)"></div><button class="btn btn-primary rounded-pill px-3" onclick="window.openAddProductModal()"><i class="fas fa-plus"></i></button></div>`;
+            container.innerHTML = html + `<div id="cat-items-list-container"></div>`; 
             window.renderControlListItems();
         };
 
@@ -412,27 +392,23 @@
             let items = window.state[dataMap[activeCatFilter]] || []; 
             if (activeCatFilter === 'productos' && productSearchTerm) items = items.filter(it => (it.nombre || "").toUpperCase().includes(productSearchTerm));
             items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); 
-            if (items.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN REGISTROS</div>`; return; }
             list.innerHTML = items.map(it => `
                 <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3">
                     <div>
                         <div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>
-                        ${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem; font-weight: 700;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}
+                        ${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}
                     </div>
-                    <div class="d-flex gap-3">
-                        <i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i>
-                        <i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i>
-                    </div>
+                    <div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div>
                 </div>`).join('');
         };
 
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
-            const todayNorm = normalizeDateStr(getMXDateStr());
-            const dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === todayNorm);
-            if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN REGISTROS HOY</div>`; return; }
+            const today = normalizeDateStr(getMXDateStr());
+            const dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === today);
+            if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
             dv.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block px-2">VENTAS DE HOY</span>`;
+            let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block px-2">RESUMEN DEL DÍA</span>`;
             dv.forEach(v => {
                 let h = "--:--"; if(v.timestamp) { const d = new Date(v.timestamp); if(!isNaN(d.getTime())) h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Mexico_City' }); }
                 html += `<div class="card-custom finance-item d-flex justify-content-between align-items-center" style="padding: 12px 15px;"><div style="line-height:1.2; flex: 1;"><div class="sale-store-label"><i class="fas fa-store text-accent"></i> ${v.tienda}</div><b class="text-uppercase" style="font-size:0.85rem">${v.producto}</b><br><small class="text-muted">${v.cliente} | ${v.cantidad}x $${v.precio}</small></div><div class="text-end" style="min-width: 75px;"><div class="sale-time"><i class="far fa-clock"></i> ${h}</div><div class="d-flex gap-2 justify-content-end mt-1"><i class="fas fa-pen text-accent" onclick='window.openEditModal(${JSON.stringify(v)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${v.id}')"></i></div></div></div>`;
@@ -461,14 +437,9 @@
             filtered = filtered.filter(s => (finStore === "" || s.tienda === finStore) && (finClient === "" || s.cliente === finClient));
 
             if(activeFinanceView === 'compras') {
-                const grouped = filtered.reduce((acc, s) => { 
-                    const key = `${s.producto}_${s.precio}`; 
-                    if(!acc[key]) acc[key] = { producto: s.producto, precio: s.precio, cantidad: 0, total: 0, items: [] }; 
-                    acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.precio || 0) * (s.cantidad || 0)); acc[key].items.push(s);
-                    return acc; 
-                }, {});
+                const grouped = filtered.reduce((acc, s) => { const key = `${s.producto}_${s.precio}`; if(!acc[key]) acc[key] = { producto: s.producto, precio: s.precio, cantidad: 0, total: 0, items: [] }; acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.precio || 0) * (s.cantidad || 0)); acc[key].items.push(s); return acc; }, {});
                 const totalP = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>VALOR VENTA AL PÚBLICO</small></div>` + Object.values(grouped).map(g => `
+                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>TOTAL VALOR VENTA</small></div>` + Object.values(grouped).map(g => `
                     <div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3">
                         <div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">P. Venta: $${g.precio.toFixed(2)}</small></div>
                         <div class="text-end d-flex align-items-center gap-3">
@@ -478,70 +449,63 @@
                     </div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
-                    const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); const p = v - c; 
-                    return `<div class="card-custom py-3 mb-2 small shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; 
-                }).join('');
+                results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); const p = v - c; return `<div class="card-custom py-3 mb-2 shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success">+$${p.toFixed(2)}</span></div>`; }).join('');
             } else if(activeFinanceView === 'diezmo') {
                 const profit = filtered.reduce((a,b) => a + ((b.total || 0) - (b.costo * b.cantidad)), 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase">10% PARA EL SEÑOR (SOBRE $${profit.toFixed(2)})</small></div>`;
+                results.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase">10% PARA EL SEÑOR</small></div>`;
             }
         };
 
         window.setFinView = (v) => { activeFinanceView = v; window.renderFinanceMenu(); };
 
-        // --- SCANNER IA ---
-        const video = document.getElementById('cam-preview'); let currentStream = null;
-        window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; try { currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: 1920, height: 1080 } }); video.srcObject = currentStream; } catch (e) { toast("Error Cámara", "danger"); } };
-        window.closeScanner = () => { if (currentStream) currentStream.getTracks().forEach(t => t.stop()); document.getElementById('ia-modal').style.display = 'none'; };
-        document.getElementById('btn-capture').onclick = async () => {
-            const hCanvas = document.getElementById('hidden-canvas'); const cCanvas = document.getElementById('crop-canvas');
-            hCanvas.width = video.videoWidth; hCanvas.height = video.videoHeight; hCanvas.getContext('2d').drawImage(video, 0, 0);
-            const w = hCanvas.width * 0.8; const h = hCanvas.height * 0.4; cCanvas.width = w; cCanvas.height = h; cCanvas.getContext('2d').drawImage(hCanvas, (hCanvas.width-w)/2, (hCanvas.height-h)/2, w, h, 0, 0, w, h);
-            document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none';
-            const b64 = cCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            try { const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Analiza etiqueta. JSON: {'nombre': 'MARCA PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }) }); const res = await resp.json(); const data = JSON.parse(res.candidates[0].content.parts[0].text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { toast("Fallo IA", "danger"); window.closeScanner(); }
-        };
-        window.processIASave = async () => {
-            const n = document.getElementById('ia-res-name').value; const s = document.getElementById('ia-res-size').value; const p = document.getElementById('ia-res-price').value || 0;
-            const fullName = `${n} - ${s}`; const properName = formatProperName(n);
-            const msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${fullName}\n💰 *Precio:* $${p}\n\n¡Gracias por tu preferencia!`;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: fullName, costo: 0, precio: p });
-            document.getElementById('crop-canvas').toBlob(async blob => {
-                const file = new File([blob], "oferta.jpg", { type: "image/jpeg" });
-                if (navigator.share) await navigator.share({ files: [file], title: 'Oferta Yaute', text: msg });
-                else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-                toast("Listo ✅"); window.closeScanner();
-            }, 'image/jpeg', 0.9);
-        };
-
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'); const selDate = document.getElementById('entregas-date').value; if(!selDate) return;
-            const [y, m, d] = selDate.split('-'); const targetNorm = normalizeDateStr(`${d}/${m}/${y}`);
-            const filtered = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === targetNorm);
-            const grouped = filtered.reduce((acc, v) => { const c = v.cliente || "S/N"; if(!acc[c]) acc[c] = {t:0, items:[]}; acc[c].t += (v.total || 0); acc[c].items.push(v); return acc; }, {});
+            const [y, m, d] = selDate.split('-'); const target = normalizeDateStr(`${d}/${m}/${y}`);
+            const filtered = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === target);
+            const grouped = filtered.reduce((acc, v) => { if(!acc[v.cliente]) acc[v.cliente] = {t:0, items:[]}; acc[v.cliente].t += (v.total || 0); acc[v.cliente].items.push(v); return acc; }, {});
             list.innerHTML = Object.keys(grouped).map(cli => {
-                const items = grouped[cli].items; const isE = items.every(i => i.entregado === true); const isP = items.every(i => i.pagado === true);
-                return `<div class="card-custom mb-2"><div class="d-flex justify-content-between align-items-center"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button></div><div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div><div class="check-group"><label class="check-item"><input type="checkbox" ${isE ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'entregado', this.checked)"> Entregado</label><label class="check-item"><input type="checkbox" ${isP ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${targetNorm}', 'pagado', this.checked)"> Pagado</label></div></div>`;
+                const isE = grouped[cli].items.every(i => i.entregado === true); const isP = grouped[cli].items.every(i => i.pagado === true);
+                return `<div class="card-custom mb-2"><div class="d-flex justify-content-between align-items-center"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button></div><div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div><div class="check-group"><label class="check-item"><input type="checkbox" ${isE ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${target}', 'entregado', this.checked)"> Entregado</label><label class="check-item"><input type="checkbox" ${isP ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${target}', 'pagado', this.checked)"> Pagado</label></div></div>`;
             }).join('');
         };
-        window.updateStatus = async (cli, date, field, val) => { const items = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const i of items) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', i.id), { [field]: val }); } toast(`Actualizado`); };
+
+        window.updateStatus = async (cli, date, field, val) => { const matching = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const s of matching) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [field]: val }); } toast(`Estatus de ${cli} actualizado`); };
         
         window.shareTicket = async (n) => {
-            const dateInput = document.getElementById('entregas-date'); const [y, m, d] = dateInput.value.split('-'); const f = `${d}/${m}/${y}`; const targetNorm = normalizeDateStr(f);
-            const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === targetNorm);
-            const properName = formatProperName(n);
-            document.getElementById('t-cliente').innerText = properName; document.getElementById('t-fecha').innerText = f;
+            const dateInput = document.getElementById('entregas-date'); const [y, m, d] = dateInput.value.split('-'); const f = `${d}/${m}/${y}`;
+            const items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === normalizeDateStr(f));
+            const pName = formatProperName(n);
+            document.getElementById('t-cliente').innerText = pName; document.getElementById('t-fecha').innerText = f;
             let tot = 0; document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:8px 0">${i.cantidad}x</td><td style="padding:8px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
             canvas.toBlob(async b => {
                 const file = new File([b], "Ticket.png", { type: 'image/png' });
-                // RECUPERADO: TEXTO EXACTO SOLICITADO
-                const msg = `hola *${properName}* te envió tu cuenta, gracias por tu preferencia`;
-                if(navigator.share) await navigator.share({ files: [file], title: 'Nota Yaute', text: msg });
-                else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+                const msg = `hola *${pName}* te envió tu cuenta, gracias por tu preferencia`;
+                if(navigator.share) await navigator.share({ files: [file], title: 'Nota Yaute', text: msg }); else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
             }, 'image/png');
+        };
+
+        window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: 1920, height: 1080 } }); document.getElementById('cam-preview').srcObject = stream; } catch (e) { toast("Error Cámara", "danger"); } };
+        window.closeScanner = () => { const stream = document.getElementById('cam-preview').srcObject; if (stream) stream.getTracks().forEach(t => t.stop()); document.getElementById('ia-modal').style.display = 'none'; };
+        document.getElementById('btn-capture').onclick = async () => {
+            const video = document.getElementById('cam-preview'); const hC = document.getElementById('hidden-canvas'); const cC = document.getElementById('crop-canvas');
+            hC.width = video.videoWidth; hC.height = video.videoHeight; hC.getContext('2d').drawImage(video, 0, 0);
+            const w = hC.width * 0.8, h = hC.height * 0.4; cC.width = w; cC.height = h; cC.getContext('2d').drawImage(hC, (hC.width-w)/2, (hC.height-h)/2, w, h, 0, 0, w, h);
+            document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none';
+            const b64 = cC.toDataURL('image/jpeg', 0.8).split(',')[1];
+            try { const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Analiza etiqueta. JSON: {'nombre': 'MARCA PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }) }); const res = await resp.json(); const data = JSON.parse(res.candidates[0].content.parts[0].text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { toast("Fallo IA", "danger"); window.closeScanner(); }
+        };
+        window.processIASave = async () => {
+            const n = document.getElementById('ia-res-name').value, s = document.getElementById('ia-res-size').value, p = document.getElementById('ia-res-price').value || 0;
+            const full = `${n} - ${s}`; const pN = formatProperName(n);
+            const msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${full}\n💰 *Precio:* $${p}\n\n¡Gracias por tu preferencia!`;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: full, costo: 0, precio: p });
+            document.getElementById('crop-canvas').toBlob(async b => {
+                const f = new File([b], "oferta.jpg", { type: "image/jpeg" });
+                if (navigator.share) await navigator.share({ files: [f], title: 'Oferta Yaute', text: msg }); else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+                toast("Listo ✅"); window.closeScanner();
+            }, 'image/jpeg', 0.9);
         };
 
         window.openDeleteModal = (col, id) => { deleteRef = { col, id }; document.getElementById('delete-modal').style.display = 'flex'; };
