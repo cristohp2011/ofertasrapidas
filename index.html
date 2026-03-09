@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v25.4 - Gestión en Cascada</title>
+    <title>Ofertas Rápidas Yaute v25.5 - Control con Precios</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -85,7 +85,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Cargando v25.4...</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Cargando v25.5...</div>
     </div>
 
     <!-- MODAL EDITAR COMPRA/VENTA -->
@@ -109,7 +109,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR CATÁLOGO (NUEVO) -->
+    <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -160,7 +160,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.4</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.5</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -314,12 +314,11 @@
             document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
         };
 
-        // --- EDITOR CASCADA (INDIVIDUAL) ---
+        // --- EDITORES ---
         window.openEditModal = (record) => { editRef = record; document.getElementById('ed-tienda').value = record.tienda; document.getElementById('ed-cliente').value = record.cliente; document.getElementById('ed-producto').value = record.producto; document.getElementById('ed-cantidad').value = record.cantidad; document.getElementById('ed-costo').value = record.costo; document.getElementById('ed-precio').value = record.precio; document.getElementById('edit-modal').style.display = 'flex'; };
         window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
         window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Registro actualizado"); window.closeEditModal(); };
 
-        // --- EDITOR CASCADA CATÁLOGO ---
         window.openCatEditModal = (type, item) => {
             catEditRef = { type, item };
             const container = document.getElementById('cat-edit-fields');
@@ -340,34 +339,23 @@
             }
             document.getElementById('cat-edit-modal').style.display = 'flex';
         };
-
         window.closeCatEditModal = () => { document.getElementById('cat-edit-modal').style.display = 'none'; };
 
         window.confirmCatUpdate = async () => {
             const { type, item } = catEditRef;
             const newName = document.getElementById('cat-ed-name').value.trim().toUpperCase();
             if (!newName) return toast("Nombre inválido", "danger");
-
             const oldName = item.nombre.toUpperCase();
             const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
-            
-            // 1. Actualizar Catálogo
             const catUpdate = { nombre: newName };
             if (type === 'products') {
                 catUpdate.costo = parseFloat(document.getElementById('cat-ed-costo').value) || 0;
                 catUpdate.precio = parseFloat(document.getElementById('cat-ed-precio').value) || 0;
             }
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', type, item.id), catUpdate);
-
-            // 2. Actualizar en Cascada (Solo últimos 5 días)
             const fieldMap = { products: 'producto', clients: 'cliente', stores: 'tienda' };
             const fieldToMatch = fieldMap[type];
-            
-            const salesToUpdate = window.state.sales.filter(s => 
-                (s[fieldToMatch] || "").toUpperCase() === oldName && 
-                (s.timestamp || 0) > fiveDaysAgo
-            );
-
+            const salesToUpdate = window.state.sales.filter(s => (s[fieldToMatch] || "").toUpperCase() === oldName && (s.timestamp || 0) > fiveDaysAgo);
             for (const sale of salesToUpdate) {
                 const sUpdate = { [fieldToMatch]: newName };
                 if (type === 'products') {
@@ -377,18 +365,17 @@
                 }
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', sale.id), sUpdate);
             }
-
-            toast(`Cambio en cascada completado (${salesToUpdate.length} registros afectados)`);
-            window.closeCatEditModal();
+            toast(`Actualizado con éxito`); window.closeCatEditModal();
         };
 
+        // --- RENDERS ---
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
             const todayNorm = normalizeDateStr(getMXDateStr());
             const dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === todayNorm);
             if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN REGISTROS HOY</div>`; return; }
             dv.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block">HISTORIAL DE HOY</span>`;
+            let html = `<span class="fw-black small text-muted text-uppercase mb-2 d-block px-2">RESUMEN DEL DÍA</span>`;
             dv.forEach(v => {
                 let h = "--:--"; if(v.timestamp) { const d = new Date(v.timestamp); if(!isNaN(d.getTime())) h = d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Mexico_City' }); }
                 html += `<div class="card-custom finance-item d-flex justify-content-between align-items-center" style="padding: 12px 15px;"><div style="line-height:1.2; flex: 1;"><div class="sale-store-label"><i class="fas fa-store text-accent"></i> ${v.tienda}</div><b class="text-uppercase" style="font-size:0.85rem">${v.producto}</b><br><small class="text-muted">${v.cliente} | ${v.cantidad}x $${v.precio}</small></div><div class="text-end" style="min-width: 75px;"><div class="sale-time"><i class="far fa-clock"></i> ${h}</div><div class="d-flex gap-2 justify-content-end mt-1"><i class="fas fa-pen text-accent" onclick='window.openEditModal(${JSON.stringify(v)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${v.id}')"></i></div></div></div>`;
@@ -406,41 +393,29 @@
             const dataMap = { productos: 'products', clientes: 'clients', tiendas: 'stores' }; 
             const items = window.state[dataMap[activeCatFilter]] || []; 
             items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); 
-            list.innerHTML = items.map(it => `
+            list.innerHTML = items.map(it => {
+                let priceInfo = '';
+                if (activeCatFilter === 'productos') {
+                    priceInfo = `<div class="text-muted" style="font-size: 0.65rem; font-weight: 700;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>`;
+                }
+                return `
                 <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3">
-                    <div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>
+                    <div>
+                        <div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>
+                        ${priceInfo}
+                    </div>
                     <div class="d-flex gap-3">
                         <i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i>
                         <i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i>
                     </div>
-                </div>`).join(''); 
+                </div>`;
+            }).join(''); 
         };
         window.setCatFilter = (f) => { activeCatFilter = f; window.renderControlList(); };
 
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
-            container.innerHTML = `
-                <div class="inner-sub-nav">
-                    <button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">Compras</button>
-                    <button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">Ganancias</button>
-                    <button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">Diezmo</button>
-                </div>
-                <div class="card-custom mb-3 bg-light shadow-none border px-3">
-                    ${activeFinanceView === 'diezmo' ? `
-                        <div class="row g-2">
-                            <div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div>
-                            <div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div>
-                        </div>
-                    ` : `
-                        <div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>
-                    `}
-                    <div class="row g-2 mt-2">
-                        <div class="col-6"><label class="text-uppercase">Tienda</label><select onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
-                        <div class="col-6"><label class="text-uppercase">Cliente</label><select onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
-                    </div>
-                </div>
-                <div id="finance-results"></div>
-            `;
+            container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">Compras</button><button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">Ganancias</button><button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">Diezmo</button></div><div class="card-custom mb-3 bg-light shadow-none border px-3">${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}<div class="row g-2 mt-2"><div class="col-6"><label class="text-uppercase">Tienda</label><select onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div></div><div id="finance-results"></div>`;
             window.renderFinanceResults();
         };
 
@@ -459,14 +434,9 @@
             filtered = filtered.filter(s => (finStore === "" || s.tienda === finStore) && (finClient === "" || s.cliente === finClient));
 
             if(activeFinanceView === 'compras') {
-                const grouped = filtered.reduce((acc, s) => { 
-                    const key = `${s.producto}_${s.costo}`; 
-                    if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; 
-                    acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); acc[key].items.push(s);
-                    return acc; 
-                }, {});
+                const grouped = filtered.reduce((acc, s) => { const key = `${s.producto}_${s.costo}`; if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); acc[key].items.push(s); return acc; }, {});
                 const totalP = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-primary"><h3>$${totalP.toFixed(2)}</h3><small>TOTAL INVERSIÓN</small></div>` + Object.values(grouped).map(g => `
+                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>INVERSIÓN TOTAL</small></div>` + Object.values(grouped).map(g => `
                     <div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3">
                         <div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">Costo: $${g.costo.toFixed(2)}</small></div>
                         <div class="text-end d-flex align-items-center gap-3">
@@ -479,13 +449,7 @@
                     </div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-success"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
-                    const items = filtered.filter(f => f.tienda === t); 
-                    const v = items.reduce((a,b) => a + b.total, 0); 
-                    const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); 
-                    const p = v - c; 
-                    return `<div class="card-custom py-3 mb-2 small shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; 
-                }).join('');
+                results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); const p = v - c; return `<div class="card-custom py-3 mb-2 small shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
             } else if(activeFinanceView === 'diezmo') {
                 const profit = filtered.reduce((a,b) => a + ((b.total || 0) - (b.costo * b.cantidad)), 0);
                 results.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase">10% PARA EL SEÑOR (SOBRE $${profit.toFixed(2)})</small></div>`;
