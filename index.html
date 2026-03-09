@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v25.5 - Control con Precios</title>
+    <title>Ofertas Rápidas Yaute v25.7 - Gestión Premium + Buscador</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -61,6 +61,11 @@
         .inner-btn { white-space: nowrap; border: 2px solid #f1f5f9; background: white; padding: 8px 16px; font-size: 0.7rem; font-weight: 900; border-radius: 50px; color: #64748b; text-transform: uppercase; transition: 0.3s; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
+        /* --- SEARCH BAR --- */
+        .search-container { position: relative; margin-bottom: 15px; }
+        .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .search-container input { padding-left: 40px !important; }
+
         /* --- FINANZAS ITEMS --- */
         .finance-item { border-left: 5px solid var(--accent); transition: 0.2s; }
         .stat-card { text-align: center; padding: 20px; border-radius: 20px; color: white; margin-bottom: 15px; }
@@ -85,7 +90,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Cargando v25.5...</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Yaute Market v25.7</div>
     </div>
 
     <!-- MODAL EDITAR COMPRA/VENTA -->
@@ -160,7 +165,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.5</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v25.7</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -211,6 +216,17 @@
     <canvas id="hidden-canvas" style="display:none;"></canvas>
     <canvas id="crop-canvas" style="display:none;"></canvas>
 
+    <div id="ticket-render">
+        <div style="text-align: center; margin-bottom: 25px;"><img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'"><div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div></div>
+        <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;"></div>
+        <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
+        <div style="margin-bottom: 20px; font-size: 1.2rem;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 1.1rem;"><tbody id="t-items"></tbody></table>
+        <div style="border-top: 2px dashed #000; margin: 25px 0;"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.8rem; font-weight: 900;"><span>TOTAL:</span><span id="t-total"></span></div>
+        <div style="text-align: center; margin-top: 40px; font-size: 1.1rem; border: 1.5px solid #000; padding: 12px; font-weight: bold;">¡Gracias por su compra!</div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -231,8 +247,9 @@
         let activeSubTab = 'catalogo';
         let activeCatFilter = 'productos';
         let activeFinanceView = 'compras';
+        let productSearchTerm = "";
 
-        // --- TIEMPO MÉXICO ---
+        // --- TIME CDMX ---
         const getMXTimeParts = () => {
             const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             return formatter.formatToParts(new Date()).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
@@ -310,11 +327,23 @@
             if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
             if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
             if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
-            toast("¡Venta guardada!");
+            toast("¡Guardada!");
             document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
         };
 
-        // --- EDITORES ---
+        // --- FUNCIONES ASIGNADAS A WINDOW ---
+        window.showTab = (id, btn) => { 
+            if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
+            const target = document.getElementById('tab-' + id);
+            if (target) target.style.display = 'block'; 
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
+            if (btn) btn.classList.add('active'); 
+            if(id === 'control') window.switchSubTab('catalogo'); 
+        };
+
+        window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
+
         window.openEditModal = (record) => { editRef = record; document.getElementById('ed-tienda').value = record.tienda; document.getElementById('ed-cliente').value = record.cliente; document.getElementById('ed-producto').value = record.producto; document.getElementById('ed-cantidad').value = record.cantidad; document.getElementById('ed-costo').value = record.costo; document.getElementById('ed-precio').value = record.precio; document.getElementById('edit-modal').style.display = 'flex'; };
         window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
         window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Registro actualizado"); window.closeEditModal(); };
@@ -323,19 +352,9 @@
             catEditRef = { type, item };
             const container = document.getElementById('cat-edit-fields');
             if (type === 'products') {
-                container.innerHTML = `
-                    <label class="text-uppercase small fw-bold">Nombre del Producto</label>
-                    <input type="text" id="cat-ed-name" class="form-control mb-3 text-uppercase" value="${item.nombre}">
-                    <div class="row g-2">
-                        <div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="cat-ed-costo" class="form-control" value="${item.costo || 0}"></div>
-                        <div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="cat-ed-precio" class="form-control" value="${item.precio || 0}"></div>
-                    </div>
-                `;
+                container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre del Producto</label><input type="text" id="cat-ed-name" class="form-control mb-3 text-uppercase" value="${item.nombre}"><div class="row g-2"><div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="cat-ed-costo" class="form-control" value="${item.costo || 0}"></div><div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="cat-ed-precio" class="form-control" value="${item.precio || 0}"></div></div>`;
             } else {
-                container.innerHTML = `
-                    <label class="text-uppercase small fw-bold">Nombre del ${type === 'clients' ? 'Cliente' : 'Tienda'}</label>
-                    <input type="text" id="cat-ed-name" class="form-control text-uppercase" value="${item.nombre}">
-                `;
+                container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre del ${type === 'clients' ? 'Cliente' : 'Tienda'}</label><input type="text" id="cat-ed-name" class="form-control text-uppercase" value="${item.nombre}">`;
             }
             document.getElementById('cat-edit-modal').style.display = 'flex';
         };
@@ -368,7 +387,36 @@
             toast(`Actualizado con éxito`); window.closeCatEditModal();
         };
 
-        // --- RENDERS ---
+        window.setCatFilter = (f) => { activeCatFilter = f; productSearchTerm = ""; window.renderControlList(); };
+        window.handleProductSearch = (val) => { productSearchTerm = val.toUpperCase(); window.renderControlListItems(); };
+
+        window.renderControlList = () => { 
+            const container = document.getElementById('control-content'); 
+            let searchBarHtml = (activeCatFilter === 'productos') ? `<div class="search-container"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar producto..." oninput="window.handleProductSearch(this.value)"></div>` : "";
+            container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">Productos</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">Clientes</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">Tiendas</button></div>${searchBarHtml}<div id="cat-items-list-container"></div>`; 
+            window.renderControlListItems();
+        };
+
+        window.renderControlListItems = () => {
+            const list = document.getElementById('cat-items-list-container');
+            const dataMap = { productos: 'products', clientes: 'clients', tiendas: 'stores' }; 
+            let items = window.state[dataMap[activeCatFilter]] || []; 
+            if (activeCatFilter === 'productos' && productSearchTerm) items = items.filter(it => (it.nombre || "").toUpperCase().includes(productSearchTerm));
+            items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); 
+            if (items.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN COINCIDENCIAS</div>`; return; }
+            list.innerHTML = items.map(it => `
+                <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3">
+                    <div>
+                        <div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>
+                        ${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem; font-weight: 700;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}
+                    </div>
+                    <div class="d-flex gap-3">
+                        <i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i>
+                        <i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i>
+                    </div>
+                </div>`).join('');
+        };
+
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy');
             const todayNorm = normalizeDateStr(getMXDateStr());
@@ -382,36 +430,6 @@
             });
             list.innerHTML = html;
         };
-
-        window.showTab = (id, btn) => { document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); document.getElementById('tab-' + id).style.display = 'block'; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); if(id === 'control') window.switchSubTab('catalogo'); };
-        window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
-        
-        window.renderControlList = () => { 
-            const container = document.getElementById('control-content'); 
-            container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">Productos</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">Clientes</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">Tiendas</button></div><div id="cat-items-list" class="mt-2"></div>`; 
-            const list = document.getElementById('cat-items-list'); 
-            const dataMap = { productos: 'products', clientes: 'clients', tiendas: 'stores' }; 
-            const items = window.state[dataMap[activeCatFilter]] || []; 
-            items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); 
-            list.innerHTML = items.map(it => {
-                let priceInfo = '';
-                if (activeCatFilter === 'productos') {
-                    priceInfo = `<div class="text-muted" style="font-size: 0.65rem; font-weight: 700;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>`;
-                }
-                return `
-                <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3">
-                    <div>
-                        <div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>
-                        ${priceInfo}
-                    </div>
-                    <div class="d-flex gap-3">
-                        <i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i>
-                        <i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i>
-                    </div>
-                </div>`;
-            }).join(''); 
-        };
-        window.setCatFilter = (f) => { activeCatFilter = f; window.renderControlList(); };
 
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
@@ -436,7 +454,7 @@
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => { const key = `${s.producto}_${s.costo}`; if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); acc[key].items.push(s); return acc; }, {});
                 const totalP = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>INVERSIÓN TOTAL</small></div>` + Object.values(grouped).map(g => `
+                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>TOTAL INVERSIÓN</small></div>` + Object.values(grouped).map(g => `
                     <div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3">
                         <div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">Costo: $${g.costo.toFixed(2)}</small></div>
                         <div class="text-end d-flex align-items-center gap-3">
@@ -449,12 +467,19 @@
                     </div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); const p = v - c; return `<div class="card-custom py-3 mb-2 small shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
+                results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
+                    const items = filtered.filter(f => f.tienda === t); 
+                    const v = items.reduce((a,b) => a + b.total, 0); 
+                    const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); 
+                    const p = v - c; 
+                    return `<div class="card-custom py-3 mb-2 small shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; 
+                }).join('');
             } else if(activeFinanceView === 'diezmo') {
                 const profit = filtered.reduce((a,b) => a + ((b.total || 0) - (b.costo * b.cantidad)), 0);
                 results.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase">10% PARA EL SEÑOR (SOBRE $${profit.toFixed(2)})</small></div>`;
             }
         };
+
         window.setFinView = (v) => { activeFinanceView = v; window.renderFinanceMenu(); };
 
         // --- SCANNER IA ---
@@ -479,7 +504,10 @@
         window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
         document.getElementById('btn-confirm-delete').onclick = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id)); toast("Registro eliminado"); window.closeDeleteModal(); };
 
-        window.onload = () => { document.getElementById('entregas-date').value = getMXISODate(); };
+        window.onload = () => { 
+            document.getElementById('entregas-date').value = getMXISODate();
+            window.showTab('operaciones', document.querySelector('.tab-btn.active'));
+        };
     </script>
 </body>
 </html>
