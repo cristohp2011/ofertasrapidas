@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v27.0 - Borrón y Cuenta Nueva</title>
+    <title>Ofertas Rápidas Yaute v27.1 - Comparador de Precios</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -98,7 +98,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Yaute Market v27.0</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Yaute Market v27.1</div>
     </div>
 
     <!-- MODAL RESET CATÁLOGO -->
@@ -172,7 +172,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v27.0</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v27.1</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -339,7 +339,6 @@
             };
         };
 
-        // --- FUNCIONES WINDOW ---
         window.showTab = (id, btn) => { 
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -352,14 +351,13 @@
 
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
 
-        // --- REINICIAR CATÁLOGO ---
         window.openResetModal = () => { document.getElementById('reset-modal').style.display = 'flex'; };
         window.closeResetModal = () => { document.getElementById('reset-modal').style.display = 'none'; };
         document.getElementById('btn-confirm-reset-all').onclick = async () => {
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'products');
             const snap = await getDocs(colRef);
             for (const d of snap.docs) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', d.id)); }
-            toast("Catálogo vaciado correctamente"); window.closeResetModal();
+            toast("Catálogo vaciado"); window.closeResetModal();
         };
 
         window.openAddProductModal = () => { document.getElementById('add-prod-name').value = ""; document.getElementById('add-prod-costo').value = ""; document.getElementById('add-prod-precio').value = ""; document.getElementById('add-product-modal').style.display = 'flex'; };
@@ -373,7 +371,6 @@
             toast("Agregado ✅"); window.closeAddProductModal();
         };
 
-        // --- EDITORES ---
         window.openEditModal = (record) => { editRef = record; document.getElementById('ed-tienda').value = record.tienda; document.getElementById('ed-cliente').value = record.cliente; document.getElementById('ed-producto').value = record.producto; document.getElementById('ed-cantidad').value = record.cantidad; document.getElementById('ed-costo').value = record.costo; document.getElementById('ed-precio').value = record.precio; document.getElementById('edit-modal').style.display = 'flex'; };
         window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
         window.confirmUpdate = async () => { if(!editRef) return; const t = document.getElementById('ed-tienda').value.trim().toUpperCase(); const c = document.getElementById('ed-cliente').value.trim().toUpperCase(); const p = document.getElementById('ed-producto').value.trim().toUpperCase(); const q = parseInt(document.getElementById('ed-cantidad').value) || 1; const co = parseFloat(document.getElementById('ed-costo').value) || 0; let pr = parseFloat(document.getElementById('ed-precio').value) || 0; if (c === "CRISTO") pr = co; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); toast("Actualizado ✅"); window.closeEditModal(); };
@@ -407,7 +404,6 @@
             toast("Sincronizado ✅"); window.closeCatEditModal();
         };
 
-        // --- GESTIÓN CONTROL ---
         window.setCatFilter = (f) => { activeCatFilter = f; productSearchTerm = ""; window.renderControlList(); };
         window.handleProductSearch = (val) => { productSearchTerm = val.toUpperCase(); window.renderControlListItems(); };
 
@@ -494,9 +490,27 @@
             filtered = filtered.filter(s => (finStore === "" || s.tienda === finStore) && (finClient === "" || s.cliente === finClient));
 
             if(activeFinanceView === 'compras') {
-                const grouped = filtered.reduce((acc, s) => { const key = `${s.producto}_${s.precio}`; if(!acc[key]) acc[key] = { producto: s.producto, precio: s.precio, cantidad: 0, total: 0, items: [] }; acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.precio || 0) * (s.cantidad || 0)); acc[key].items.push(s); return acc; }, {});
-                const totalP = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>VALOR TOTAL VENTA</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3"><div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">P. Venta: $${g.precio.toFixed(2)}</small></div><div class="text-end d-flex align-items-center gap-3"><div class="pe-2 border-end"><b>$${g.total.toFixed(2)}</b><br><small class="fw-bold text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-2"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                // CORRECCIÓN: Agrupar y priorizar Costo Anaquel para la caja de la tienda
+                const grouped = filtered.reduce((acc, s) => { 
+                    const key = `${s.producto}_${s.costo}`; 
+                    if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; 
+                    acc[key].cantidad += (s.cantidad || 0); 
+                    acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); 
+                    acc[key].items.push(s);
+                    return acc; 
+                }, {});
+                const totalInvest = Object.values(grouped).reduce((a,b) => a + b.total, 0);
+                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalInvest.toFixed(2)}</h3><small>TOTAL A PAGAR EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `
+                    <div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3">
+                        <div>
+                            <b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br>
+                            <small class="text-muted">Costo Anaquel: <b>$${g.costo.toFixed(2)}</b></small>
+                        </div>
+                        <div class="text-end d-flex align-items-center gap-3">
+                            <div class="pe-2 border-end"><b>$${g.total.toFixed(2)}</b><br><small class="fw-bold text-accent">${g.cantidad} pzs</small></div>
+                            <div class="d-flex flex-column gap-2"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div>
+                        </div>
+                    </div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
                 results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); const p = v - c; return `<div class="card-custom py-3 mb-2 shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
