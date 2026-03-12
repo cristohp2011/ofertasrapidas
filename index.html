@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v27.4 - Blindaje & Estabilidad</title>
+    <title>Ofertas Rápidas Yaute v28.0 - IA Reforzada</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,24 +35,20 @@
         .splash-loader { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- HEADER --- */
         header { background: var(--primary); color: white; padding: 1.2rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
         .version-badge { font-size: 0.6rem; background: rgba(255,255,255,0.2); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 800; margin-left: 8px; vertical-align: middle; border: 1px solid rgba(255,255,255,0.3); }
         .status-dot { width:10px; height:10px; border-radius:50%; margin-left: 8px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
         .bg-success { background-color: var(--success) !important; box-shadow: 0 0 10px var(--success); }
 
-        /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
         .form-control, .form-select { padding: 0.8rem 1.2rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; transition: 0.3s; }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 6px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 1.2px; }
 
-        /* --- NAVEGACIÓN PRINCIPAL --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 0 28px; border-top: 1px solid #f1f5f9; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; font-weight: 700; transition: 0.3s; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; padding: 5px; background: #f1f5f9; border-radius: 18px; }
         .sub-btn { border: none; background: none; padding: 10px; font-size: 0.8rem; color: #64748b; font-weight: 800; flex: 1; border-radius: 14px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .sub-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -61,35 +57,28 @@
         .inner-btn { white-space: nowrap; border: 2px solid #f1f5f9; background: white; padding: 8px 16px; font-size: 0.7rem; font-weight: 900; border-radius: 50px; color: #64748b; text-transform: uppercase; transition: 0.3s; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- SEARCH BAR --- */
         .search-container { position: relative; margin-bottom: 15px; }
         .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
         .search-container input { padding-left: 40px !important; }
 
-        /* --- MODALES --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 15000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
         .modal-content-custom { background: white; width: 90%; max-width: 400px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
 
-        /* --- FINANZAS ITEMS --- */
         .stat-card { text-align: center; padding: 20px; border-radius: 20px; color: white; margin-bottom: 15px; }
         .bg-gradient-primary { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
         .bg-gradient-success { background: linear-gradient(135deg, #10b981, #059669); }
         .bg-gradient-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .finance-item { border-left: 5px solid var(--accent); transition: 0.2s; }
 
-        /* --- REPARTO --- */
         .check-group { display: flex; gap: 15px; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 10px; }
         .check-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
         .check-item input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
 
-        /* --- AUTOCOMPLETE --- */
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 16px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 30px rgba(0,0,0,0.1); margin-top: 5px; }
         .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; color: var(--primary); }
 
-        /* --- TICKET RENDER --- */
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; }
 
-        /* --- SCANNER IA --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-container { flex: 1; position: relative; overflow: hidden; background: #000; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; }
@@ -102,15 +91,15 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Restaurando Yaute v27.4</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Yaute Market v28.0</div>
     </div>
 
-    <!-- MODAL RESET CATÁLOGO -->
+    <!-- MODALES -->
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-triangle-exclamation fa-3x"></i></div>
             <h5 class="fw-bold">¿Reiniciar Catálogo?</h5>
-            <p class="text-muted small">Esto eliminará todos los productos guardados. Ideal para empezar de cero con la IA.</p>
+            <p class="text-muted small">Se borrarán todos los productos guardados para empezar de cero con la IA.</p>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeResetModal()">CANCELAR</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">SÍ, BORRAR TODO</button>
@@ -118,26 +107,15 @@
         </div>
     </div>
 
-    <!-- MODAL AGREGAR PRODUCTO MANUAL -->
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold m-0 text-primary">Nuevo Producto</h5>
-                <button class="btn-close border-0 bg-transparent" onclick="window.closeAddProductModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="mb-3">
-                <label class="text-uppercase small fw-bold">Nombre / Descripción</label>
-                <input type="text" id="add-prod-name" class="form-control text-uppercase" placeholder="PRODUCTO">
-            </div>
-            <div class="row g-2 mb-4">
-                <div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger" placeholder="0.00"></div>
-                <div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success" placeholder="0.00"></div>
-            </div>
+            <div class="d-flex justify-content-between align-items-center mb-4"><h5 class="fw-bold m-0 text-primary">Nuevo Producto</h5><button class="btn-close border-0 bg-transparent" onclick="window.closeAddProductModal()"><i class="fas fa-times"></i></button></div>
+            <div class="mb-3"><label class="text-uppercase small fw-bold">Nombre / Descripción</label><input type="text" id="add-prod-name" class="form-control text-uppercase" placeholder="PRODUCTO"></div>
+            <div class="row g-2 mb-4"><div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger" placeholder="0.00"></div><div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success" placeholder="0.00"></div></div>
             <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow" onclick="window.confirmAddProduct()">GUARDAR EN CATÁLOGO</button>
         </div>
     </div>
 
-    <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <div class="d-flex justify-content-between align-items-center mb-4"><h5 class="fw-bold m-0 text-accent">Editar Catálogo</h5><button class="btn-close border-0 bg-transparent" onclick="window.closeCatEditModal()"><i class="fas fa-times"></i></button></div>
@@ -147,7 +125,6 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR REGISTRO INDIVIDUAL -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <div class="d-flex justify-content-between align-items-center mb-4"><h5 class="fw-bold m-0 text-primary">Editar Registro</h5><button class="btn-close border-0 bg-transparent" onclick="window.closeEditModal()"><i class="fas fa-times"></i></button></div>
@@ -165,7 +142,6 @@
         </div>
     </div>
 
-    <!-- MODAL BORRAR -->
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-3x"></i></div>
@@ -176,7 +152,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v27.4</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v28.0</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -214,7 +190,6 @@
         </div>
     </main>
 
-    <!-- MODAL IA -->
     <div id="ia-modal">
         <div id="cam-container">
             <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 25px; left: 20px; z-index: 1100;" onclick="window.closeScanner()">✕ SALIR</button>
@@ -223,7 +198,7 @@
             <div id="btn-capture-ia" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border-radius: 50%; border: 8px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent); cursor: pointer;"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div id="ia-loading" style="display:none;" class="text-center py-5"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Gemini analizando producto...</p></div>
+            <div id="ia-loading" style="display:none;" class="text-center py-5"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted" id="ia-loading-text">Gemini analizando producto...</p></div>
             <div id="ia-form">
                 <div class="mb-3"><label class="text-uppercase fw-black">Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
                 <div class="row g-3 mb-4"><div class="col-6"><label class="text-uppercase fw-black">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div><div class="col-6"><label class="text-uppercase fw-black">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold text-success border-success" step="0.01"></div></div>
@@ -276,8 +251,7 @@
         const normalizeDateStr = (str) => str ? str.split('/').map(p => parseInt(p)).join('/') : "";
         const formatProperName = (str) => str ? str.trim().toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "";
 
-        let finDate = getMXISODate(), finDateFrom = getMXISODate(), finDateTo = getMXISODate(), finStore = "", finClient = "";
-        const toast = (m, type = 'success') => { const el = document.getElementById('toast-alert'); if(!el) return; el.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)'; el.innerText = m; el.style.display = 'block'; setTimeout(() => { el.style.display = 'none'; }, 2000); };
+        const toast = (m, type = 'success') => { const el = document.getElementById('toast-alert'); if(!el) return; el.style.background = type === 'success' ? 'var(--success)' : 'var(--danger)'; el.innerText = m; el.style.display = 'block'; setTimeout(() => { if(el) el.style.display = 'none'; }, 2000); };
 
         signInAnonymously(auth).then(() => { onAuthStateChanged(auth, (user) => { if (user) { currentUser = user; startSync(); } }); });
 
@@ -322,7 +296,7 @@
             };
         };
 
-        // --- ASIGNACIONES GLOBALES ---
+        // --- ASIGNACIONES WINDOW ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -442,7 +416,7 @@
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => { const key = `${s.producto}_${s.costo}`; if(!acc[key]) acc[key] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.costo || 0) * (s.cantidad || 0)); acc[key].items.push(s); return acc; }, {});
                 const totalInvest = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalInvest.toFixed(2)}</h3><small>TOTAL PAGO EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3"><div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">Costo Unitario: <b>$${g.costo.toFixed(2)}</b></small></div><div class="text-end d-flex align-items-center gap-3"><div class="pe-2 border-end"><b>$${g.total.toFixed(2)}</b><br><small class="fw-bold text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-2"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalInvest.toFixed(2)}</h3><small>PAGO EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3"><div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">Costo: <b>$${g.costo.toFixed(2)}</b></small></div><div class="text-end d-flex align-items-center gap-3"><div class="pe-2 border-end"><b>$${g.total.toFixed(2)}</b><br><small class="fw-bold text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-2"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0), totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
                 results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0), c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0), p = v - c; return `<div class="card-custom py-3 mb-2 shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
@@ -463,7 +437,6 @@
                 return `<div class="card-custom mb-2"><div class="d-flex justify-content-between align-items-center"><b>${cli}</b><button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" onclick="window.shareTicket('${cli}')">WhatsApp</button></div><div class="text-end fw-black text-primary mt-1 small">$${grouped[cli].t.toFixed(2)}</div><div class="check-group"><label class="check-item"><input type="checkbox" ${isE ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${target}', 'entregado', this.checked)"> Entregado</label><label class="check-item"><input type="checkbox" ${isP ? 'checked' : ''} onchange="window.updateStatus('${cli}', '${target}', 'pagado', this.checked)"> Pagado</label></div></div>`;
             }).join('');
         };
-
         window.updateStatus = async (cli, date, field, val) => { const matching = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const s of matching) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [field]: val }); } toast(`Actualizado`); };
         
         window.shareTicket = async (n) => {
@@ -491,45 +464,66 @@
             }, 'image/jpeg', 0.9);
         };
 
-        window.openDeleteModal = (col, id) => { deleteRef = { col, id }; document.getElementById('delete-modal').style.display = 'flex'; };
-        window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
+        // --- FUNCIÓN DE IA CON REINTENTOS EXPONENCIALES ---
+        async function fetchGeminiWithRetry(payload, maxRetries = 5) {
+            let delay = 1000; 
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`, {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify(payload)
+                    });
+                    const res = await resp.json();
+                    if (res.candidates && res.candidates[0]) return res;
+                    throw new Error("Respuesta incompleta");
+                } catch (e) {
+                    if (i === maxRetries - 1) throw e;
+                    document.getElementById('ia-loading-text').innerText = `Reintentando (${i+1}/${maxRetries})...`;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2; 
+                }
+            }
+        }
 
         window.onload = () => { 
-            document.getElementById('entregas-date').value = getMXISODate();
+            const entDate = document.getElementById('entregas-date');
+            if(entDate) entDate.value = getMXISODate();
             window.showTab('operaciones', document.querySelector('.tab-btn.active'));
-            
-            // ASIGNACIONES DE EVENTOS TRAS CARGA DE DOM
-            const btnSave = document.getElementById('btn-save-record');
-            if(btnSave) btnSave.onclick = async () => { /* Ya definido arriba */ };
             
             const btnConfirmDelete = document.getElementById('btn-confirm-delete');
             if(btnConfirmDelete) btnConfirmDelete.onclick = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id)); toast("Eliminado"); window.closeDeleteModal(); };
 
-            const btnConfirmReset = document.getElementById('btn-confirm-reset-all');
-            if(btnConfirmReset) btnConfirmReset.onclick = async () => {
-                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'products');
-                const snap = await getDocs(colRef);
-                for (const d of snap.docs) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', d.id)); }
-                toast("Catálogo vaciado"); window.closeResetModal();
-            };
-
             const btnCaptureIA = document.getElementById('btn-capture-ia');
             if(btnCaptureIA) btnCaptureIA.onclick = async () => {
                 const video = document.getElementById('cam-preview'), hC = document.getElementById('hidden-canvas'), cC = document.getElementById('crop-canvas');
-                hC.width = video.videoWidth; hC.height = video.videoHeight; hC.getContext('2d').drawImage(video, 0, 0);
-                const w = hC.width * 0.8, h = hC.height * 0.4; cC.width = w; cC.height = h; cC.getContext('2d').drawImage(hC, (hC.width-w)/2, (hC.height-h)/2, w, h, 0, 0, w, h);
-                document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none';
+                hC.width = video.videoWidth; hC.height = video.videoHeight;
+                hC.getContext('2d').drawImage(video, 0, 0);
+                const w = hC.width * 0.8, h = hC.height * 0.4;
+                cC.width = w; cC.height = h;
+                cC.getContext('2d').drawImage(hC, (hC.width-w)/2, (hC.height-h)/2, w, h, 0, 0, w, h);
+                
+                document.getElementById('ia-loading').style.display = 'block'; 
+                document.getElementById('ia-form').style.display = 'none';
+                document.getElementById('ia-loading-text').innerText = "Gemini analizando producto...";
+
                 const b64 = cC.toDataURL('image/jpeg', 0.8).split(',')[1];
+                const payload = { contents: [{ parts: [{ text: "Identifica Producto y Cantidad (ml, g, etc). Responde JSON puro: {'nombre': 'MARCA PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
+                
                 try { 
-                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: "Identifica Producto y Cantidad (ml, g, etc). Responde JSON: {'nombre': 'MARCA PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }) }); 
-                    const res = await resp.json();
+                    const res = await fetchGeminiWithRetry(payload);
                     let text = res.candidates[0].content.parts[0].text;
                     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
                     const data = JSON.parse(text);
                     document.getElementById('ia-res-name').value = data.nombre.toUpperCase();
                     document.getElementById('ia-res-size').value = data.presentacion.toUpperCase();
-                    document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; 
-                } catch (e) { toast("Fallo IA - Reintenta", "danger"); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; }
+                    document.getElementById('ia-loading').style.display = 'none'; 
+                    document.getElementById('ia-form').style.display = 'block'; 
+                } catch (e) { 
+                    toast("Fallo IA tras varios intentos", "danger"); 
+                    document.getElementById('ia-loading').style.display = 'none'; 
+                    document.getElementById('ia-form').style.display = 'block'; 
+                }
             };
         };
     </script>
