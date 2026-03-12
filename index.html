@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v26.2 - Auto-completado Corregido</title>
+    <title>Ofertas Rápidas Yaute v26.3 - Auto-completado Pro</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -100,10 +100,10 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Restaurando Yaute v26.2</div>
+        <div style="margin-top:18px; font-size:0.8rem; font-weight:900; color:#1e293b; text-transform: uppercase; letter-spacing: 2px;">Yaute Market v26.3</div>
     </div>
 
-    <!-- MODALES DE EDICIÓN -->
+    <!-- MODAL EDITAR COMPRA/VENTA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <div class="d-flex justify-content-between align-items-center mb-4"><h5 class="fw-bold m-0 text-primary">Editar Registro</h5><button class="btn-close border-0 bg-transparent" onclick="window.closeEditModal()"><i class="fas fa-times"></i></button></div>
@@ -138,7 +138,6 @@
         </div>
     </div>
 
-    <!-- MODAL AGREGAR PRODUCTO MANUAL -->
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -159,7 +158,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v26.2</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v26.3</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -175,7 +174,7 @@
                 </div>
                 <div class="row g-2 mb-3 align-items-end">
                     <div class="col-3"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
-                    <div class="col" style="position:relative"><label class="text-uppercase d-flex justify-content-between">Producto <i class="fas fa-camera text-primary" onclick="window.openScanner()"></i></label><input type="text" id="in-producto" class="form-control text-uppercase"><div id="sug-producto" class="sug-box d-none"></div></div>
+                    <div class="col" style="position:relative"><label class="text-uppercase d-flex justify-content-between">Producto <i class="fas fa-camera text-primary" onclick="window.openScanner()"></i></label><input type="text" id="in-producto" class="form-control text-uppercase" placeholder="SELECCIONA ARTÍCULO"><div id="sug-producto" class="sug-box d-none"></div></div>
                 </div>
                 <div class="row g-2 mb-4">
                     <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="in-costo" class="form-control fw-bold border-danger" step="0.01"></div>
@@ -257,7 +256,6 @@
         let activeFinanceView = 'compras';
         let productSearchTerm = "";
 
-        // --- CDMX TIME ---
         const getMXTimeParts = () => {
             const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             return formatter.formatToParts(new Date()).reduce((acc, p) => ({ ...acc, [p.type]: p.value }), {});
@@ -266,12 +264,6 @@
         const getMXISODate = () => { const p = getMXTimeParts(); return `${p.year}-${p.month}-${p.day}`; };
         const normalizeDateStr = (str) => str ? str.split('/').map(p => parseInt(p)).join('/') : "";
         const formatProperName = (str) => str ? str.trim().toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : "";
-
-        let finDate = getMXISODate();
-        let finDateFrom = getMXISODate(); 
-        let finDateTo = getMXISODate();   
-        let finStore = "";
-        let finClient = "";
 
         const toast = (m, type = 'success') => {
             const el = document.getElementById('toast-alert');
@@ -311,24 +303,24 @@
             };
             box.onclick = (e) => { 
                 const it = e.target.closest('.sug-item'); if(!it) return; 
-                const selectedVal = it.dataset.val;
+                const selectedVal = it.dataset.val.trim();
                 inp.value = selectedVal; 
                 box.classList.add('d-none');
                 
-                // CORRECCIÓN: Al seleccionar producto, traer costos y precios guardados
-                if(key === 'products') {
-                    const productData = window.state.products.find(x => (x.nombre || "").toUpperCase() === selectedVal);
+                // --- CORRECCIÓN: Autocompletado de precios ---
+                if(key === 'products' && window.state.products) {
+                    const productData = window.state.products.find(x => (x.nombre || "").trim().toUpperCase() === selectedVal);
                     if(productData) { 
                         const costField = document.getElementById('in-costo');
                         const priceField = document.getElementById('in-precio');
-                        if (costField) costField.value = (productData.costo !== undefined && productData.costo !== null) ? productData.costo : "";
-                        if (priceField) priceField.value = (productData.precio !== undefined && productData.precio !== null) ? productData.precio : "";
+                        if (costField) costField.value = productData.costo || 0;
+                        if (priceField) priceField.value = productData.precio || 0;
+                        toast(`Datos de ${formatProperName(selectedVal)} cargados`);
                     }
                 }
             };
         };
 
-        // --- ASIGNACIONES WINDOW ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -342,7 +334,6 @@
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
 
         document.getElementById('btn-save-record').onclick = async () => {
-            if (!currentUser) return toast("Conectando...", "warning");
             const t = document.getElementById('in-tienda').value.trim().toUpperCase();
             const c = document.getElementById('in-cliente').value.trim().toUpperCase();
             const p = document.getElementById('in-producto').value.trim().toUpperCase();
@@ -356,7 +347,7 @@
             if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
             if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
             if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
-            toast("¡Venta guardada! ✅");
+            toast("¡Guardada! ✅");
             document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
         };
 
@@ -366,7 +357,7 @@
             const n = document.getElementById('add-prod-name').value.trim().toUpperCase();
             const c = parseFloat(document.getElementById('add-prod-costo').value) || 0;
             const p = parseFloat(document.getElementById('add-prod-precio').value) || 0;
-            if (!n) return toast("Faltan datos", "danger");
+            if (!n) return toast("Ingresa nombre", "danger");
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: n, costo: c, precio: p });
             toast("Agregado"); window.closeAddProductModal();
         };
@@ -421,7 +412,6 @@
             let items = window.state[dataMap[activeCatFilter]] || []; 
             if (activeCatFilter === 'productos' && productSearchTerm) items = items.filter(it => (it.nombre || "").toUpperCase().includes(productSearchTerm));
             items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); 
-            if (items.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN REGISTROS</div>`; return; }
             list.innerHTML = items.map(it => `
                 <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3">
                     <div>
@@ -469,14 +459,7 @@
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => { const key = `${s.producto}_${s.precio}`; if(!acc[key]) acc[key] = { producto: s.producto, precio: s.precio, cantidad: 0, total: 0, items: [] }; acc[key].cantidad += (s.cantidad || 0); acc[key].total += ((s.precio || 0) * (s.cantidad || 0)); acc[key].items.push(s); return acc; }, {});
                 const totalP = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>TOTAL VALOR VENTA</small></div>` + Object.values(grouped).map(g => `
-                    <div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3">
-                        <div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">P. Venta: $${g.precio.toFixed(2)}</small></div>
-                        <div class="text-end d-flex align-items-center gap-3">
-                            <div class="pe-2 border-end"><b>$${g.total.toFixed(2)}</b><br><small class="fw-bold text-accent">${g.cantidad} pzs</small></div>
-                            <div class="d-flex flex-column gap-2"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div>
-                        </div>
-                    </div>`).join('');
+                results.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${totalP.toFixed(2)}</h3><small>VALOR VENTA AL PÚBLICO</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-3 px-3"><div><b class="text-uppercase" style="font-size:0.85rem">${g.producto}</b><br><small class="text-muted">P. Venta: $${g.precio.toFixed(2)}</small></div><div class="text-end d-flex align-items-center gap-3"><div class="pe-2 border-end"><b>$${g.total.toFixed(2)}</b><br><small class="fw-bold text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-2"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0); const totalC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
                 results.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t); const v = items.reduce((a,b) => a + b.total, 0); const c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0); const p = v - c; return `<div class="card-custom py-3 mb-2 shadow-none border d-flex justify-content-between align-items-center px-3"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
@@ -499,7 +482,7 @@
             }).join('');
         };
 
-        window.updateStatus = async (cli, date, field, val) => { const matching = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const s of matching) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [field]: val }); } toast(`Estatus de ${cli} actualizado`); };
+        window.updateStatus = async (cli, date, field, val) => { const matching = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const s of matching) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [field]: val }); } toast(`Actualizado`); };
         
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date'); const [y, m, d] = dateInput.value.split('-'); const f = `${d}/${m}/${y}`;
@@ -528,11 +511,11 @@
         };
         window.processIASave = async () => {
             const n = document.getElementById('ia-res-name').value, s = document.getElementById('ia-res-size').value, p = document.getElementById('ia-res-price').value || 0;
-            const full = `${n} - ${s}`; const pN = formatProperName(n);
-            const msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${full}\n💰 *Precio:* $${p}\n\n¡Gracias por tu preferencia!`;
+            const full = `${n} - ${s}`;
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: full, costo: 0, precio: p });
             document.getElementById('crop-canvas').toBlob(async b => {
                 const f = new File([b], "oferta.jpg", { type: "image/jpeg" });
+                const msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${full}\n💰 *Precio:* $${p}\n\n¡Gracias por tu preferencia!`;
                 if (navigator.share) await navigator.share({ files: [f], title: 'Oferta Yaute', text: msg }); else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
                 toast("Listo ✅"); window.closeScanner();
             }, 'image/jpeg', 0.9);
