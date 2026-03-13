@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Market v29.4 - Scanner v3.5 Integrado</title>
+    <title>Yaute Market v30.0 - Scanner v3.5 Integrado</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,16 +42,16 @@
         .bg-success { background-color: var(--success) !important; box-shadow: 0 0 10px var(--success); }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #f1f5f9; z-index: 2000; }
-        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; font-weight: 700; }
+        .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; font-weight: 700; transition: 0.2s; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- UI ELEMENTS --- */
+        /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
         .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.5px; }
 
-        /* --- MODALES BLINDADOS (Z-INDEX FIJO) --- */
+        /* --- MODALES BLINDADOS --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 400px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
@@ -89,12 +89,12 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 29.4</div>
+        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 30.0</div>
     </div>
 
     <div id="toast-alert" style="position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 12px 24px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); font-size: 0.8rem; text-align: center; min-width: 250px;"></div>
 
-    <!-- MODAL RESET -->
+    <!-- MODALES BLINDADOS -->
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-3x"></i></div>
@@ -107,7 +107,6 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR REGISTRO -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h6 class="fw-bold mb-3 text-primary">Editar Registro de Venta</h6>
@@ -118,16 +117,14 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h6 class="fw-bold mb-3 text-accent">Editar Catálogo Maestro</h6>
+            <h6 class="fw-bold mb-3 text-accent">Editar Catálogo</h6>
             <div id="cat-edit-fields"></div>
-            <div class="d-flex gap-2 mt-3"><button class="btn btn-light flex-fill rounded-pill" onclick="window.closeCatEditModal()">CERRAR</button><button class="btn btn-accent flex-fill text-white rounded-pill fw-bold shadow-sm" onclick="window.confirmCatUpdate()">SINCRONIZAR</button></div>
+            <div class="d-flex gap-2 mt-3"><button class="btn btn-light flex-fill rounded-pill" onclick="window.closeCatEditModal()">CERRAR</button><button class="btn btn-accent flex-fill text-white rounded-pill fw-bold shadow-sm" onclick="window.confirmCatUpdate()">GUARDAR</button></div>
         </div>
     </div>
 
-    <!-- MODAL BORRAR -->
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
@@ -138,13 +135,12 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v29.4</span></h6>
+            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v30.0</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
     <main>
-        <!-- TABS PRINCIPALES -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -175,7 +171,7 @@
         </div>
     </main>
 
-    <!-- SUPER SCANNER IA MODAL (MOTOR v3.5 INTEGRADO) -->
+    <!-- SUPER SCANNER IA MODAL (TRANSPLANTE v3.5 INTEGRADO) -->
     <div id="ia-modal">
         <div id="cam-section">
             <div style="position: absolute; top: 20px; right: 20px; z-index: 15000; max-width: 140px;">
@@ -300,7 +296,7 @@
             };
         };
 
-        // --- ASIGNACIONES WINDOW ---
+        // --- FUNCIONES WINDOW ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -364,14 +360,7 @@
             if (activeCatFilter === 'productos' && productSearchTerm) items = items.filter(it => (it.nombre || "").toUpperCase().includes(productSearchTerm));
             items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); 
             if (items.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN REGISTROS</div>`; return; }
-            list.innerHTML = items.map(it => `
-                <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3">
-                    <div>
-                        <div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>
-                        ${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}
-                    </div>
-                    <div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div>
-                </div>`).join('');
+            list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
         window.renderVentasHoy = () => {
@@ -435,7 +424,7 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (BASADO EN v3.5 INTEGRADO) ---
+        // --- MOTOR SCANNER IA (TRANSPLANTE EXACTO v3.5) ---
         function setIAStatus(text, isError = false) {
             const badge = document.getElementById('ia-status-badge');
             if(!badge) return;
@@ -510,7 +499,7 @@
             try { 
                 abortControllerIA = new AbortController();
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`;
-                const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
+                const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
                 const resp = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal });
                 const res = await resp.json();
                 let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim();
