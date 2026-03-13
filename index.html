@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Market v29.3 - Scanner Directo</title>
+    <title>Yaute Market v29.4 - Scanner v3.5 Integrado</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -55,14 +55,15 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 400px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
-        /* --- SUPER SCANNER IA UI (SIMPLIFICADO) --- */
+        /* --- SUPER SCANNER IA UI (TRANSPLANTE v3.5) --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-section { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; transition: filter 0.1s ease; }
         .flash-effect { filter: brightness(3) contrast(0.5); }
-        .scan-frame { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 20px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.7); pointer-events: none; }
-        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
-        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 400px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.5); overflow-y: auto; }
+        .cam-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 10; }
+        .scan-frame { width: 70%; height: 50%; border: 3px solid rgba(59, 130, 246, 0.7); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: relative; }
+        #btn-snap-ia { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 9999; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); overflow-y: auto; }
         
         /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 8px; margin-bottom: 15px; padding: 4px; background: #f1f5f9; border-radius: 14px; }
@@ -73,6 +74,7 @@
         .inner-btn { white-space: nowrap; border: 1px solid #e2e8f0; background: white; padding: 6px 14px; font-size: 0.65rem; font-weight: 800; border-radius: 50px; color: #64748b; text-transform: uppercase; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
+        /* --- FINANZAS --- */
         .stat-card { text-align: center; padding: 18px; border-radius: 20px; color: white; margin-bottom: 12px; }
         .finance-item { border-left: 4px solid var(--accent); transition: 0.2s; }
 
@@ -87,7 +89,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 29.3</div>
+        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 29.4</div>
     </div>
 
     <div id="toast-alert" style="position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 12px 24px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); font-size: 0.8rem; text-align: center; min-width: 250px;"></div>
@@ -97,10 +99,10 @@
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-3x"></i></div>
             <h5 class="fw-bold">¿Limpiar Catálogo?</h5>
-            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero con la IA.</p>
+            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero con la IA. No afecta tus ventas.</p>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeResetModal()">CANCELAR</button>
-                <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">SÍ, BORRAR TODO</button>
+                <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">BORRAR TODO</button>
             </div>
         </div>
     </div>
@@ -119,9 +121,9 @@
     <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h6 class="fw-bold mb-3 text-accent">Editar Catálogo</h6>
+            <h6 class="fw-bold mb-3 text-accent">Editar Catálogo Maestro</h6>
             <div id="cat-edit-fields"></div>
-            <div class="d-flex gap-2 mt-3"><button class="btn btn-light flex-fill rounded-pill" onclick="window.closeCatEditModal()">CERRAR</button><button class="btn btn-accent flex-fill text-white rounded-pill fw-bold shadow-sm" onclick="window.confirmCatUpdate()">GUARDAR</button></div>
+            <div class="d-flex gap-2 mt-3"><button class="btn btn-light flex-fill rounded-pill" onclick="window.closeCatEditModal()">CERRAR</button><button class="btn btn-accent flex-fill text-white rounded-pill fw-bold shadow-sm" onclick="window.confirmCatUpdate()">SINCRONIZAR</button></div>
         </div>
     </div>
 
@@ -136,12 +138,13 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v29.3</span></h6>
+            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v29.4</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
     <main>
+        <!-- TABS PRINCIPALES -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -172,12 +175,15 @@
         </div>
     </main>
 
-    <!-- SCANNER IA MODAL (REDISEÑO SIMPLIFICADO) -->
+    <!-- SUPER SCANNER IA MODAL (MOTOR v3.5 INTEGRADO) -->
     <div id="ia-modal">
         <div id="cam-section">
-            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 25px; left: 20px; z-index: 15000; font-weight:800;" onclick="window.closeScanner()">✕ SALIR</button>
+            <div style="position: absolute; top: 20px; right: 20px; z-index: 15000; max-width: 140px;">
+                <select id="video-source-select" class="form-select form-select-sm" onchange="window.changeCamera()" style="background:rgba(0,0,0,0.6); color:white; border-color:var(--accent); font-size:0.65rem;"></select>
+            </div>
+            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 20px; left: 20px; z-index: 15000; font-weight:800;" onclick="window.closeScanner()">✕ SALIR</button>
             <video id="cam-preview" autoplay playsinline muted></video>
-            <div class="scan-frame"></div>
+            <div class="cam-overlay"><div class="scan-frame"></div></div>
             <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
@@ -294,6 +300,7 @@
             };
         };
 
+        // --- ASIGNACIONES WINDOW ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -396,7 +403,7 @@
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => { const k = `${s.producto}_${s.costo}`; if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[k].cantidad += (s.cantidad || 0); acc[k].total += ((s.costo || 0) * (s.cantidad || 0)); acc[k].items.push(s); return acc; }, {});
                 const total = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase" style="font-size:0.8rem;">${g.producto}</b><br><span class="text-muted">Costo: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase" style="font-size:0.8rem;">${g.producto}</b><br><span class="text-muted">Costo: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const tV = filtered.reduce((a,b) => a + (b.total || 0), 0), tC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
                 res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(tV - tC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t), v = items.reduce((a,b) => a + b.total, 0), c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0), p = v - c; return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
@@ -428,7 +435,7 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (BASADO EN v3.5 - REGLAS FIJAS) ---
+        // --- MOTOR SCANNER IA (BASADO EN v3.5 INTEGRADO) ---
         function setIAStatus(text, isError = false) {
             const badge = document.getElementById('ia-status-badge');
             if(!badge) return;
@@ -440,17 +447,12 @@
             document.getElementById('ia-modal').style.display = 'flex';
             setIAStatus("CONECTANDO...");
             try {
-                // Primero pedimos permiso genérico para cámaras
                 await navigator.mediaDevices.getUserMedia({ video: true });
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(d => d.kind === 'videoinput');
                 const select = document.getElementById('video-source-select');
-                
-                // Llenamos el selector por si acaso, pero intentamos ir directo a la trasera
                 select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join('');
-                
-                // Intentamos activar la trasera por defecto (environment)
-                window.startCameraIA(null); 
+                if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId);
             } catch (e) { setIAStatus("ERROR CÁMARA", true); }
         };
 
@@ -460,23 +462,16 @@
                 currentIAStream = null;
                 await new Promise(r => setTimeout(r, 200)); 
             }
-            
-            // Si deviceId es null, usamos facingMode. Si no, usamos el ID específico.
-            const constraints = deviceId 
-                ? { video: { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 } } }
-                : { video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } };
-
+            const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } };
             try {
                 currentIAStream = await navigator.mediaDevices.getUserMedia(constraints);
                 document.getElementById('cam-preview').srcObject = currentIAStream;
                 setIAStatus("LISTO");
             } catch (e) { 
                 try {
-                    // Reintento sin resolución fija (Básico)
-                    const fallbackConstraints = deviceId ? { video: { deviceId: { exact: deviceId } } } : { video: { facingMode: "environment" } };
-                    currentIAStream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+                    currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
                     document.getElementById('cam-preview').srcObject = currentIAStream;
-                    setIAStatus("CONECTADO (LQ)");
+                    setIAStatus("LISTO (LQ)");
                 } catch (e2) { setIAStatus("ERROR CÁMARA", true); }
             }
         };
@@ -515,7 +510,7 @@
             try { 
                 abortControllerIA = new AbortController();
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`;
-                const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
+                const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
                 const resp = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal });
                 const res = await resp.json();
                 let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim();
@@ -538,7 +533,7 @@
             else if (p > 0) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existing.id), { precio: p });
             document.getElementById('crop-canvas').toBlob(async b => {
                 const f = new File([b], "oferta.jpg", { type: "image/jpeg" }), msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${full}\n📦 *Contenido:* ${s}\n💰 *Precio Venta:* $${p}\n\n_Yaute Market IA_`;
-                if (navigator.share) try{ await navigator.share({ files: [f], title: 'Oferta Yaute', text: msg }); }catch(e){} else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+                if (navigator.share) try { await navigator.share({ files: [f], title: 'Oferta Yaute', text: msg }); } catch(e){} else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
                 toast("Enviada ✅"); window.closeScanner();
             }, 'image/jpeg', 0.9);
         };
@@ -569,7 +564,6 @@
         window.updateStatus = async (cli, date, field, val) => { const matching = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const s of matching) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [field]: val }); } toast(`Actualizado`); };
         window.openDeleteModal = (col, id) => { deleteRef = { col, id }; document.getElementById('delete-modal').style.display = 'flex'; };
         window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
-        window.closeAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'none'; };
         window.closeCatEditModal = () => { document.getElementById('cat-edit-modal').style.display = 'none'; };
     </script>
 </body>
