@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Market v31.0 - Estabilidad Total</title>
+    <title>Yaute Market v31.1 - Estabilidad & Ticket</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,23 +46,15 @@
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- UI CARDS --- */
+        /* --- UI ELEMENTS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
         .form-control, .form-select { padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; transition: 0.3s; background: #fff; }
         .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); outline: none; }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.8px; }
 
         /* --- MODALES BLINDADOS --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 8000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 420px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
-
-        /* --- SCANNER MODAL --- */
-        #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
-        #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
-        .scan-frame { width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; box-shadow: 0 0 40px rgba(0,0,0,0.5); z-index: 100; }
-        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
 
         /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 8px; margin-bottom: 20px; padding: 5px; background: #f1f5f9; border-radius: 16px; }
@@ -73,7 +65,15 @@
         .inner-btn { white-space: nowrap; border: 1px solid #e2e8f0; background: white; padding: 8px 16px; font-size: 0.7rem; font-weight: 800; border-radius: 50px; color: #64748b; text-transform: uppercase; transition: 0.2s; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- ELEMENTOS DE LISTA --- */
+        /* --- SCANNER --- */
+        #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
+        #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
+        .scan-frame { width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; }
+        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
+
+        /* --- LISTAS & FINANZAS --- */
         .finance-item { border-left: 5px solid var(--accent); transition: 0.2s; }
         .stat-card { text-align: center; padding: 20px; border-radius: 22px; color: white; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .bg-gradient-primary { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
@@ -87,9 +87,9 @@
         .check-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; color: #64748b; }
         .check-item input { width: 20px; height: 20px; accent-color: var(--accent); }
 
+        /* --- TICKET RENDER (FORMATO ORIGINAL) --- */
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; }
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 15px 40px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
-        
         #capture-preview-ia { width: 100%; height: 120px; object-fit: contain; border-radius: 14px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
     </style>
 </head>
@@ -97,17 +97,17 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 31.0 - Morelos</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">MODO ESTABILIZADO v31.1</div>
     </div>
 
     <div id="toast-alert"></div>
 
-    <!-- MODAL REINICIAR CATÁLOGO -->
+    <!-- MODALES -->
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-4x"></i></div>
-            <h5 class="fw-bold">¿Reiniciar Catálogo?</h5>
-            <p class="text-muted small">Esto eliminará todos tus productos guardados para empezar de cero con la IA. Las ventas guardadas no se perderán.</p>
+            <h5 class="fw-bold">¿Limpiar Catálogo?</h5>
+            <p class="text-muted small">Esto borrará tus productos para capturarlos de nuevo. Las ventas no se borran.</p>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeResetModal()">CANCELAR</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">BORRAR TODO</button>
@@ -115,7 +115,6 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR VENTA INDIVIDUAL -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Editar Registro</h5>
@@ -136,10 +135,9 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR CATÁLOGO (CASCADA) -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h5 class="fw-bold mb-4 text-accent">Editar Maestro</h5>
+            <h5 class="fw-bold mb-4 text-accent">Editar Catálogo</h5>
             <div id="cat-edit-fields"></div>
             <p class="text-center text-muted" style="font-size:0.65rem; margin:15px 0;">* Sincroniza automáticamente registros de los últimos 5 días.</p>
             <div class="d-flex gap-2">
@@ -149,23 +147,18 @@
         </div>
     </div>
 
-    <!-- MODAL BORRAR (CONFIRMACIÓN) -->
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
             <h5 class="fw-bold">¿Eliminar registro?</h5>
-            <div class="d-flex gap-2 mt-4">
-                <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button>
-                <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button>
-            </div>
+            <div class="d-flex gap-2 mt-4"><button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button><button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button></div>
         </div>
     </div>
 
-    <!-- MODAL AGREGAR PRODUCTO MANUAL -->
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h5 class="fw-bold mb-4 text-primary">Captura Manual</h5>
-            <div class="mb-3"><label class="text-uppercase">Descripción del Producto</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
+            <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
+            <div class="mb-3"><label class="text-uppercase">Descripción</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
             <div class="row g-2 mb-4">
                 <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger"></div>
                 <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success"></div>
@@ -179,13 +172,12 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v31.0</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v31.1</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
     <main>
-        <!-- PESTAÑA VENTAS -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -208,13 +200,11 @@
             <div id="lista-ventas-hoy"></div>
         </div>
 
-        <!-- PESTAÑA REPARTO -->
         <div id="tab-entregas" class="tab-content" style="display: none;">
             <div class="card-custom py-2 mb-3 text-center border-0" style="background: #f1f5f9;"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0 bg-transparent" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- PESTAÑA GESTIÓN -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
                 <button class="sub-btn active" id="sub-btn-cat" onclick="window.switchSubTab('catalogo')"><i class="fas fa-boxes"></i>CONTROL</button>
@@ -224,7 +214,7 @@
         </div>
     </main>
 
-    <!-- SCANNER IA MODAL (REDISEÑADO PARA NO INTERFERIR) -->
+    <!-- SCANNER MODAL (SIMPLIFICADO) -->
     <div id="ia-modal">
         <div id="cam-section-ia">
             <div style="position: absolute; top: 20px; right: 20px; z-index: 15000; max-width: 140px;">
@@ -237,7 +227,7 @@
         </div>
         <div id="ia-result-panel">
             <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
-            <img id="capture-preview-ia" alt="Vista previa captura">
+            <img id="capture-preview-ia" alt="Vista previa">
             
             <div id="ia-loading" style="display:none;" class="text-center py-4">
                 <div class="spinner-border text-primary mb-3"></div>
@@ -248,7 +238,7 @@
             <div id="ia-form">
                 <div class="mb-3"><label class="text-uppercase fw-black small text-muted">Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><label class="text-uppercase fw-black small text-muted">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
+                    <div class="col-6"><label class="text-uppercase fw-black small text-muted">Contenido</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
                     <div class="col-6"><label class="text-uppercase fw-black small text-muted">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold text-success border-success" step="0.01"></div>
                 </div>
                 <div class="d-flex gap-2">
@@ -268,14 +258,17 @@
     <canvas id="hidden-canvas" style="display:none;"></canvas>
     <canvas id="crop-canvas" style="display:none;"></canvas>
 
-    <!-- TICKET RENDER -->
+    <!-- TICKET RENDER (RECUPERADO CON LOGO) -->
     <div id="ticket-render">
-        <div style="text-align: center; margin-bottom: 25px;"><div style="font-size: 1.6rem; font-weight: 900;">OFERTAS RÁPIDAS YAUTE</div></div>
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
+            <div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div>
+        </div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;"></div>
         <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
         <div style="margin-bottom: 20px; font-size: 1.2rem;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
         <table style="width: 100%; border-collapse: collapse; font-size: 1.1rem;"><tbody id="t-items"></tbody></table>
-        <div style="border-top: 1px dashed #000; margin: 25px 0;"></div>
+        <div style="border-top: 2px dashed #000; margin: 25px 0;"></div>
         <div style="display: flex; justify-content: space-between; font-size: 1.8rem; font-weight: 900;"><span>TOTAL:</span><span id="t-total"></span></div>
         <div style="text-align: center; margin-top: 40px; font-size: 1.1rem; border: 1.5px solid #000; padding: 12px; font-weight: bold;">¡Gracias por su compra!</div>
     </div>
@@ -350,7 +343,6 @@
             };
         };
 
-        // --- FUNCIONES NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -363,16 +355,6 @@
 
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
 
-        // --- GESTIÓN DE PRODUCTOS ---
-        window.openAddProductModal = () => { document.getElementById('add-prod-name').value = ""; document.getElementById('add-prod-costo').value = ""; document.getElementById('add-prod-precio').value = ""; document.getElementById('add-product-modal').style.display = 'flex'; };
-        window.closeAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'none'; };
-        window.confirmAddProduct = async () => {
-            const n = document.getElementById('add-prod-name').value.trim().toUpperCase(), c = parseFloat(document.getElementById('add-prod-costo').value) || 0, p = parseFloat(document.getElementById('add-prod-precio').value) || 0;
-            if (!n) return toast("Ingresa nombre", "danger");
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: n, costo: c, precio: p });
-            toast("Agregado ✅"); window.closeAddProductModal();
-        };
-
         window.openResetModal = () => { document.getElementById('reset-modal').style.display = 'flex'; };
         window.closeResetModal = () => { document.getElementById('reset-modal').style.display = 'none'; };
 
@@ -384,15 +366,14 @@
             let prInput = parseFloat(document.getElementById('ed-precio').value) || 0;
             let pr = (c === "CRISTO") ? co : prInput;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); 
-            toast("Actualizado ✅"); 
-            window.closeEditModal(); 
+            toast("Actualizado ✅"); window.closeEditModal(); 
         };
 
         window.openCatEditModal = (type, item) => {
             catEditRef = { type, item };
             const container = document.getElementById('cat-edit-fields');
             if (type === 'products') {
-                container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre</label><input type="text" id="cat-ed-name" class="form-control mb-3 text-uppercase" value="${item.nombre}"><div class="row g-2"><div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="cat-ed-costo" class="form-control" value="${item.costo || 0}"></div><div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="cat-ed-precio" class="form-control" value="${item.precio || 0}"></div></div>`;
+                container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre</label><input type="text" id="cat-ed-name" class="form-control mb-2 text-uppercase" value="${item.nombre}"><div class="row g-2"><div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="cat-ed-costo" class="form-control" value="${item.costo || 0}"></div><div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="cat-ed-precio" class="form-control" value="${item.precio || 0}"></div></div>`;
             } else {
                 container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre</label><input type="text" id="cat-ed-name" class="form-control text-uppercase" value="${item.nombre}">`;
             }
@@ -401,7 +382,7 @@
         window.closeCatEditModal = () => { document.getElementById('cat-edit-modal').style.display = 'none'; };
         window.confirmCatUpdate = async () => {
             const { type, item } = catEditRef, newName = document.getElementById('cat-ed-name').value.trim().toUpperCase();
-            if (!newName) return toast("Nombre inválido", "danger");
+            if (!newName) return toast("Error", "danger");
             const costVal = parseFloat(document.getElementById('cat-ed-costo')?.value) || 0, priceVal = parseFloat(document.getElementById('cat-ed-precio')?.value) || 0, fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', type, item.id), { nombre: newName, costo: costVal, precio: priceVal });
             const field = { products: 'producto', clients: 'cliente', stores: 'tienda' }[type];
@@ -420,7 +401,7 @@
         window.renderControlList = () => { 
             const container = document.getElementById('control-content'); 
             let html = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">Productos</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">Clientes</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">Tiendas</button></div>`;
-            if (activeCatFilter === 'productos') html += `<div class="d-flex gap-2 mb-2"><div class="search-container flex-fill mb-0"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)"></div><button class="btn btn-primary rounded-pill px-3 shadow-sm" onclick="window.openAddProductModal()"><i class="fas fa-plus"></i></button><button class="btn btn-outline-danger rounded-pill px-3 shadow-sm" onclick="window.openResetModal()"><i class="fas fa-trash-can"></i></button></div>`;
+            if (activeCatFilter === 'productos') html += `<div class="d-flex gap-2 mb-2"><div class="search-container flex-fill mb-0"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)"></div><button class="btn btn-outline-danger rounded-pill px-3 shadow-sm" onclick="window.openResetModal()"><i class="fas fa-trash-can"></i></button></div>`;
             container.innerHTML = html + `<div id="cat-items-list-container"></div>`; 
             window.renderControlListItems();
         };
@@ -435,7 +416,6 @@
             list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
-        // --- FINANZAS & TICKETS ---
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy'), today = normalizeDateStr(getMXDateStr()), dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === today);
             if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
@@ -448,6 +428,8 @@
             container.innerHTML = `<div class="inner-sub-nav"><button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">Compras</button><button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">Ganancias</button><button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">Diezmo</button></div><div class="card-custom mb-2 bg-light shadow-none border px-3">${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}<div class="row g-2 mt-2"><div class="col-6"><label class="text-uppercase">Tienda</label><select onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option>${[...new Set(window.state.sales.map(s => s.tienda))].map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div><div class="col-6"><label class="text-uppercase">Cliente</label><select onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option>${[...new Set(window.state.sales.map(s => s.cliente))].map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div></div><div id="finance-results"></div>`;
             window.renderFinanceResults();
         };
+
+        window.updateFinFilter = (key, val) => { if(key === 'single') finDate = val; if(key === 'from') finDateFrom = val; if(key === 'to') finDateTo = val; if(key === 'store') finStore = val; if(key === 'client') finClient = val; window.renderFinanceResults(); };
 
         window.renderFinanceResults = () => {
             const res = document.getElementById('finance-results'); let filtered = [];
@@ -495,7 +477,7 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (IDÉNTICO v3.5 INTEGRADO) ---
+        // --- MOTOR SCANNER IA (TRASPLANTE FIEL v3.5 INTEGRADO) ---
         function setIAStatus(text, isError = false) {
             const badge = document.getElementById('ia-status-badge');
             if(!badge) return;
@@ -511,7 +493,7 @@
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(d => d.kind === 'videoinput');
                 const select = document.getElementById('video-source-select');
-                select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join('');
+                select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Lente ' + d.deviceId.slice(0,4)}</option>`).join('');
                 if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId);
             } catch (e) { setIAStatus("ERROR CÁMARA", true); }
         };
@@ -531,7 +513,7 @@
                 try {
                     currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
                     document.getElementById('cam-preview-ia').srcObject = currentIAStream;
-                    setIAStatus("CONECTADO (LQ)");
+                    setIAStatus("LISTO (LQ)");
                 } catch (e2) { setIAStatus("ERROR CÁMARA", true); }
             }
         };
@@ -570,7 +552,7 @@
             try { 
                 abortControllerIA = new AbortController();
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`;
-                const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
+                const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
                 const resp = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal });
                 const res = await resp.json();
                 let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim();
@@ -580,14 +562,14 @@
                 setIAStatus("IDENTIFICADO");
                 document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; 
             } catch (e) { 
-                if (e.name !== 'AbortError') { setIAStatus("ERROR LECTURA", true); toast("IA no pudo leer el producto", "danger"); }
+                if (e.name !== 'AbortError') { setIAStatus("ERROR LECTURA", true); toast("IA no pudo leer", "danger"); }
                 window.resetIAUI();
             }
         };
 
         window.processIASave = async () => {
             const n = document.getElementById('ia-res-name').value, s = document.getElementById('ia-res-size').value, p = parseFloat(document.getElementById('ia-res-price').value) || 0;
-            if(!n) return toast("Falta producto", "danger");
+            if(!n) return toast("Error", "danger");
             const full = `${n} - ${s}`, existing = window.state.products.find(x => x.nombre.toUpperCase() === full.toUpperCase());
             if (!existing) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: full, costo: 0, precio: p });
             else if (p > 0) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existing.id), { precio: p });
