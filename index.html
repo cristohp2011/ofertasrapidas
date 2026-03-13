@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Market v31.1 - Estabilidad & Ticket</title>
+    <title>Yaute Market v31.2 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,25 +35,26 @@
         .splash-loader { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- HEADER & NAV --- */
+        /* --- HEADER --- */
         header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .version-badge { font-size: 0.6rem; background: rgba(255,255,255,0.2); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 800; margin-left: 8px; vertical-align: middle; }
+        .version-badge { font-size: 0.6rem; background: rgba(255,255,255,0.2); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 800; margin-left: 8px; vertical-align: middle; border: 1px solid rgba(255,255,255,0.2); }
         .status-dot { width:10px; height:10px; border-radius:50%; margin-left: 8px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
         .bg-success { background-color: var(--success) !important; box-shadow: 0 0 10px var(--success); }
 
+        /* --- NAVEGACIÓN --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #f1f5f9; z-index: 2000; }
         .tab-btn { background: none; border: none; color: #94a3b8; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; flex: 1; font-weight: 700; transition: 0.2s; }
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- UI ELEMENTS --- */
+        /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
-        .form-control, .form-select { padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; transition: 0.3s; background: #fff; }
+        .form-control, .form-select { padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; transition: 0.3s; background: #fff; color: var(--primary); }
         .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); outline: none; }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.8px; }
 
         /* --- MODALES BLINDADOS --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 8000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 420px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
         /* --- SUB NAVS --- */
@@ -65,15 +66,7 @@
         .inner-btn { white-space: nowrap; border: 1px solid #e2e8f0; background: white; padding: 8px 16px; font-size: 0.7rem; font-weight: 800; border-radius: 50px; color: #64748b; text-transform: uppercase; transition: 0.2s; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- SCANNER --- */
-        #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
-        #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
-        .scan-frame { width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; }
-        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
-
-        /* --- LISTAS & FINANZAS --- */
+        /* --- LISTAS --- */
         .finance-item { border-left: 5px solid var(--accent); transition: 0.2s; }
         .stat-card { text-align: center; padding: 20px; border-radius: 22px; color: white; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .bg-gradient-primary { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
@@ -87,9 +80,16 @@
         .check-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; color: #64748b; }
         .check-item input { width: 20px; height: 20px; accent-color: var(--accent); }
 
-        /* --- TICKET RENDER (FORMATO ORIGINAL) --- */
-        #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; }
-        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 15px 40px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
+        /* --- SCANNER --- */
+        #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
+        #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
+        .scan-frame { width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2rem; cursor: pointer; z-index: 100; border: 8px solid rgba(59, 130, 246, 0.2); }
+        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
+
+        /* --- TICKET RENDER --- */
+        #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; border: 1px solid #eee; }
         #capture-preview-ia { width: 100%; height: 120px; object-fit: contain; border-radius: 14px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
     </style>
 </head>
@@ -97,12 +97,12 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">MODO ESTABILIZADO v31.1</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 31.2 - MORELOS</div>
     </div>
 
     <div id="toast-alert"></div>
 
-    <!-- MODALES -->
+    <!-- MODAL RESET -->
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-4x"></i></div>
@@ -115,6 +115,7 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR VENTA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Editar Registro</h5>
@@ -135,6 +136,7 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-accent">Editar Catálogo</h5>
@@ -147,6 +149,7 @@
         </div>
     </div>
 
+    <!-- MODAL BORRAR -->
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
@@ -155,13 +158,14 @@
         </div>
     </div>
 
+    <!-- MODAL AGREGAR PRODUCTO -->
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
             <div class="mb-3"><label class="text-uppercase">Descripción</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
             <div class="row g-2 mb-4">
-                <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger"></div>
-                <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success"></div>
+                <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger" placeholder="0.00"></div>
+                <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success" placeholder="0.00"></div>
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-light flex-fill rounded-pill" onclick="window.closeAddProductModal()">CERRAR</button>
@@ -172,12 +176,13 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v31.1</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v31.2</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
     <main>
+        <!-- TAB VENTAS -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -200,11 +205,13 @@
             <div id="lista-ventas-hoy"></div>
         </div>
 
+        <!-- TAB REPARTO -->
         <div id="tab-entregas" class="tab-content" style="display: none;">
             <div class="card-custom py-2 mb-3 text-center border-0" style="background: #f1f5f9;"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0 bg-transparent" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
+        <!-- TAB CONTROL -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
                 <button class="sub-btn active" id="sub-btn-cat" onclick="window.switchSubTab('catalogo')"><i class="fas fa-boxes"></i>CONTROL</button>
@@ -214,7 +221,7 @@
         </div>
     </main>
 
-    <!-- SCANNER MODAL (SIMPLIFICADO) -->
+    <!-- MODAL SCANNER -->
     <div id="ia-modal">
         <div id="cam-section-ia">
             <div style="position: absolute; top: 20px; right: 20px; z-index: 15000; max-width: 140px;">
@@ -226,7 +233,7 @@
             <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
+            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span></div>
             <img id="capture-preview-ia" alt="Vista previa">
             
             <div id="ia-loading" style="display:none;" class="text-center py-4">
@@ -258,19 +265,28 @@
     <canvas id="hidden-canvas" style="display:none;"></canvas>
     <canvas id="crop-canvas" style="display:none;"></canvas>
 
-    <!-- TICKET RENDER (RECUPERADO CON LOGO) -->
+    <!-- TICKET RENDER (FORMATO ORIGINAL CON LOGO) -->
     <div id="ticket-render">
         <div style="text-align: center; margin-bottom: 25px;">
-            <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
-            <div style="font-size: 1.6rem; font-weight: 900; margin-top: 15px;">OFERTAS RÁPIDAS YAUTE</div>
+            <img src="logo.png" alt="Logo" style="width: 140px; height: auto;" onerror="this.style.display='none'">
+            <div style="font-size: 1.8rem; font-weight: 900; margin-top: 15px; color: black;">OFERTAS RÁPIDAS YAUTE</div>
         </div>
-        <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;"></div>
+        <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem; color: black;"></div>
         <div style="border-top: 3px solid #000; margin: 15px 0;"></div>
-        <div style="margin-bottom: 20px; font-size: 1.2rem;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 1.1rem;"><tbody id="t-items"></tbody></table>
+        <div style="margin-bottom: 25px; font-size: 1.2rem; color: black;"><b>CLIENTE:</b> <span id="t-cliente"></span></div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 1.1rem; color: black;">
+            <thead>
+                <tr style="border-bottom: 1.5px solid black;">
+                    <th style="text-align: left; padding-bottom: 8px;">CANT</th>
+                    <th style="text-align: left; padding-bottom: 8px;">PRODUCTO</th>
+                    <th style="text-align: right; padding-bottom: 8px;">SUBTOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="t-items"></tbody>
+        </table>
         <div style="border-top: 2px dashed #000; margin: 25px 0;"></div>
-        <div style="display: flex; justify-content: space-between; font-size: 1.8rem; font-weight: 900;"><span>TOTAL:</span><span id="t-total"></span></div>
-        <div style="text-align: center; margin-top: 40px; font-size: 1.1rem; border: 1.5px solid #000; padding: 12px; font-weight: bold;">¡Gracias por su compra!</div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.9rem; font-weight: 900; color: black;"><span>TOTAL:</span><span id="t-total"></span></div>
+        <div style="text-align: center; margin-top: 45px; font-size: 1.1rem; border: 1.5px solid #000; padding: 12px; font-weight: bold; color: black;">¡Gracias por su compra!</div>
     </div>
 
     <script type="module">
@@ -343,6 +359,7 @@
             };
         };
 
+        // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -354,6 +371,16 @@
         };
 
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
+
+        // --- GESTIÓN CATÁLOGO ---
+        window.openAddProductModal = () => { document.getElementById('add-prod-name').value = ""; document.getElementById('add-prod-costo').value = ""; document.getElementById('add-prod-precio').value = ""; document.getElementById('add-product-modal').style.display = 'flex'; };
+        window.closeAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'none'; };
+        window.confirmAddProduct = async () => {
+            const n = document.getElementById('add-prod-name').value.trim().toUpperCase(), c = parseFloat(document.getElementById('add-prod-costo').value) || 0, p = parseFloat(document.getElementById('add-prod-precio').value) || 0;
+            if (!n) return toast("Ingresa nombre", "danger");
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: n, costo: c, precio: p });
+            toast("Agregado ✅"); window.closeAddProductModal();
+        };
 
         window.openResetModal = () => { document.getElementById('reset-modal').style.display = 'flex'; };
         window.closeResetModal = () => { document.getElementById('reset-modal').style.display = 'none'; };
@@ -373,7 +400,7 @@
             catEditRef = { type, item };
             const container = document.getElementById('cat-edit-fields');
             if (type === 'products') {
-                container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre</label><input type="text" id="cat-ed-name" class="form-control mb-2 text-uppercase" value="${item.nombre}"><div class="row g-2"><div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="cat-ed-costo" class="form-control" value="${item.costo || 0}"></div><div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="cat-ed-precio" class="form-control" value="${item.precio || 0}"></div></div>`;
+                container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre</label><input type="text" id="cat-ed-name" class="form-control mb-3 text-uppercase" value="${item.nombre}"><div class="row g-2"><div class="col-6"><label class="text-uppercase small fw-bold">Costo</label><input type="number" id="cat-ed-costo" class="form-control" value="${item.costo || 0}"></div><div class="col-6"><label class="text-uppercase small fw-bold">Venta</label><input type="number" id="cat-ed-precio" class="form-control" value="${item.precio || 0}"></div></div>`;
             } else {
                 container.innerHTML = `<label class="text-uppercase small fw-bold">Nombre</label><input type="text" id="cat-ed-name" class="form-control text-uppercase" value="${item.nombre}">`;
             }
@@ -416,6 +443,7 @@
             list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
+        // --- FINANZAS & TICKETS ---
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy'), today = normalizeDateStr(getMXDateStr()), dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === today);
             if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
@@ -468,7 +496,7 @@
         window.shareTicket = async (n) => {
             const dateInput = document.getElementById('entregas-date'), f = dateInput.value.split('-').reverse().join('/'), items = window.state.sales.filter(s => s.cliente === n && normalizeDateStr(s.fechaStr) === normalizeDateStr(f)), pName = formatProperName(n);
             document.getElementById('t-cliente').innerText = pName; document.getElementById('t-fecha').innerText = f;
-            let tot = 0; document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:8px 0">${i.cantidad}x</td><td style="padding:8px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join('');
+            let tot = 0; document.getElementById('t-items').innerHTML = items.map(i => { tot += (i.total || 0); return `<tr><td style="padding:10px 0">${i.cantidad}x</td><td style="padding:10px 0; text-transform:uppercase">${i.producto}</td><td style="text-align:right; padding:10px 0;">$${(i.total || 0).toFixed(2)}</td></tr>`; }).join('');
             document.getElementById('t-total').innerText = "$" + tot.toFixed(2);
             const canvas = await html2canvas(document.getElementById('ticket-render'), { scale: 2, backgroundColor: '#ffffff' });
             canvas.toBlob(async b => {
@@ -477,7 +505,7 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (TRASPLANTE FIEL v3.5 INTEGRADO) ---
+        // --- MOTOR SCANNER IA (TRASPLANTE EXACTO v3.5 INTEGRADO) ---
         function setIAStatus(text, isError = false) {
             const badge = document.getElementById('ia-status-badge');
             if(!badge) return;
@@ -493,7 +521,7 @@
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(d => d.kind === 'videoinput');
                 const select = document.getElementById('video-source-select');
-                select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Lente ' + d.deviceId.slice(0,4)}</option>`).join('');
+                select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join('');
                 if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId);
             } catch (e) { setIAStatus("ERROR CÁMARA", true); }
         };
@@ -562,7 +590,7 @@
                 setIAStatus("IDENTIFICADO");
                 document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; 
             } catch (e) { 
-                if (e.name !== 'AbortError') { setIAStatus("ERROR LECTURA", true); toast("IA no pudo leer", "danger"); }
+                if (e.name !== 'AbortError') { setIAStatus("ERROR LECTURA", true); toast("IA no pudo leer el producto", "danger"); }
                 window.resetIAUI();
             }
         };
@@ -581,7 +609,7 @@
         };
 
         window.onload = () => { 
-            const ed = document.getElementById('entregas-date'); if(ed) ed.value = getMXISODate();
+            const edInput = document.getElementById('entregas-date'); if(edInput) edInput.value = getMXISODate();
             window.showTab('operaciones', document.querySelector('.tab-btn.active'));
             
             document.getElementById('btn-save-record').onclick = async () => {
