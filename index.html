@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Market v29.2 - Scanner Fix Total</title>
+    <title>Yaute Market v29.3 - Scanner Directo</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,23 +46,22 @@
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- UI CARDS --- */
+        /* --- UI ELEMENTS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
-        .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; transition: 0.3s; }
+        .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.5px; }
 
-        /* --- MODALES BLINDADOS (Z-INDEX FIJO PARA EVITAR AMONTONAMIENTO) --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        /* --- MODALES BLINDADOS (Z-INDEX FIJO) --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 400px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
-        /* --- SUPER SCANNER IA UI (TRANSPLANTE v3.5) --- */
+        /* --- SUPER SCANNER IA UI (SIMPLIFICADO) --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-section { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; transition: filter 0.1s ease; }
         .flash-effect { filter: brightness(3) contrast(0.5); }
-        .cam-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .scan-frame { width: 75%; height: 45%; border: 3px solid rgba(59, 130, 246, 0.7); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: relative; }
-        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 9999; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        .scan-frame { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 20px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.7); pointer-events: none; }
+        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
         #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 400px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.5); overflow-y: auto; }
         
         /* --- SUB NAVS --- */
@@ -74,7 +73,6 @@
         .inner-btn { white-space: nowrap; border: 1px solid #e2e8f0; background: white; padding: 6px 14px; font-size: 0.65rem; font-weight: 800; border-radius: 50px; color: #64748b; text-transform: uppercase; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- FINANZAS --- */
         .stat-card { text-align: center; padding: 18px; border-radius: 20px; color: white; margin-bottom: 12px; }
         .finance-item { border-left: 4px solid var(--accent); transition: 0.2s; }
 
@@ -82,14 +80,14 @@
         .sug-item { padding: 12px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; font-weight: 700; color: var(--primary); }
 
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; }
-        #capture-preview-ia { width: 100%; height: 120px; object-fit: contain; border-radius: 12px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
+        #capture-preview-ia { width: 100%; height: 110px; object-fit: contain; border-radius: 12px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 29.2</div>
+        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 29.3</div>
     </div>
 
     <div id="toast-alert" style="position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 12px 24px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); font-size: 0.8rem; text-align: center; min-width: 250px;"></div>
@@ -99,10 +97,10 @@
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-3x"></i></div>
             <h5 class="fw-bold">¿Limpiar Catálogo?</h5>
-            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero con la IA. No afecta tus ventas.</p>
+            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero con la IA.</p>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeResetModal()">CANCELAR</button>
-                <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">BORRAR TODO</button>
+                <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">SÍ, BORRAR TODO</button>
             </div>
         </div>
     </div>
@@ -110,7 +108,7 @@
     <!-- MODAL EDITAR REGISTRO -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h6 class="fw-bold mb-3 text-primary">Editar Registro</h6>
+            <h6 class="fw-bold mb-3 text-primary">Editar Registro de Venta</h6>
             <div class="row g-2 mb-2"><div class="col-6"><label class="text-uppercase">Tienda</label><input type="text" id="ed-tienda" class="form-control text-uppercase"></div><div class="col-6"><label class="text-uppercase">Cliente</label><input type="text" id="ed-cliente" class="form-control text-uppercase"></div></div>
             <div class="mb-2"><label class="text-uppercase">Producto</label><input type="text" id="ed-producto" class="form-control text-uppercase"></div>
             <div class="row g-2 mb-4"><div class="col-4"><label class="text-uppercase">Cant.</label><input type="number" id="ed-cantidad" class="form-control text-center fw-bold"></div><div class="col-4"><label class="text-uppercase">Costo</label><input type="number" id="ed-costo" class="form-control text-danger fw-bold"></div><div class="col-4"><label class="text-uppercase">Venta</label><input type="number" id="ed-precio" class="form-control text-success fw-bold"></div></div>
@@ -138,13 +136,12 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v29.2</span></h6>
+            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v29.3</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
     <main>
-        <!-- TABS PRINCIPALES -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -175,16 +172,13 @@
         </div>
     </main>
 
-    <!-- SUPER SCANNER IA MODAL (CORRECCIÓN ID BOTÓN) -->
+    <!-- SCANNER IA MODAL (REDISEÑO SIMPLIFICADO) -->
     <div id="ia-modal">
         <div id="cam-section">
-            <div style="position: absolute; top: 20px; right: 20px; z-index: 15000; max-width: 140px;">
-                <select id="video-source-select" class="form-select form-select-sm" onchange="window.changeCamera()" style="background:rgba(0,0,0,0.6); color:white; border-color:var(--accent); font-size:0.65rem;"></select>
-            </div>
-            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 20px; left: 20px; z-index: 15000; font-weight:800;" onclick="window.closeScanner()">✕ SALIR</button>
+            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 25px; left: 20px; z-index: 15000; font-weight:800;" onclick="window.closeScanner()">✕ SALIR</button>
             <video id="cam-preview" autoplay playsinline muted></video>
-            <div class="cam-overlay"><div class="scan-frame"></div></div>
-            <div id="btn-snap-ia"><i class="fas fa-camera"></i></div>
+            <div class="scan-frame"></div>
+            <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
             <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
@@ -300,7 +294,6 @@
             };
         };
 
-        // --- ASIGNACIONES WINDOW ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -403,7 +396,7 @@
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => { const k = `${s.producto}_${s.costo}`; if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[k].cantidad += (s.cantidad || 0); acc[k].total += ((s.costo || 0) * (s.cantidad || 0)); acc[k].items.push(s); return acc; }, {});
                 const total = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase" style="font-size:0.8rem;">${g.producto}</b><br><span class="text-muted">Costo: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase" style="font-size:0.8rem;">${g.producto}</b><br><span class="text-muted">Costo: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const tV = filtered.reduce((a,b) => a + (b.total || 0), 0), tC = filtered.reduce((a,b) => a + (b.costo * b.cantidad), 0);
                 res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(tV - tC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t), v = items.reduce((a,b) => a + b.total, 0), c = items.reduce((a,b) => a + (b.costo * b.cantidad), 0), p = v - c; return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
@@ -447,13 +440,18 @@
             document.getElementById('ia-modal').style.display = 'flex';
             setIAStatus("CONECTANDO...");
             try {
+                // Primero pedimos permiso genérico para cámaras
                 await navigator.mediaDevices.getUserMedia({ video: true });
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(d => d.kind === 'videoinput');
                 const select = document.getElementById('video-source-select');
+                
+                // Llenamos el selector por si acaso, pero intentamos ir directo a la trasera
                 select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join('');
-                if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId);
-            } catch (e) { setIAStatus("ERROR ACCESO", true); }
+                
+                // Intentamos activar la trasera por defecto (environment)
+                window.startCameraIA(null); 
+            } catch (e) { setIAStatus("ERROR CÁMARA", true); }
         };
 
         window.startCameraIA = async (deviceId) => {
@@ -462,17 +460,24 @@
                 currentIAStream = null;
                 await new Promise(r => setTimeout(r, 200)); 
             }
-            const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } };
+            
+            // Si deviceId es null, usamos facingMode. Si no, usamos el ID específico.
+            const constraints = deviceId 
+                ? { video: { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 } } }
+                : { video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } } };
+
             try {
                 currentIAStream = await navigator.mediaDevices.getUserMedia(constraints);
                 document.getElementById('cam-preview').srcObject = currentIAStream;
                 setIAStatus("LISTO");
             } catch (e) { 
                 try {
-                    currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
+                    // Reintento sin resolución fija (Básico)
+                    const fallbackConstraints = deviceId ? { video: { deviceId: { exact: deviceId } } } : { video: { facingMode: "environment" } };
+                    currentIAStream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
                     document.getElementById('cam-preview').srcObject = currentIAStream;
-                    setIAStatus("LISTO (LQ)");
-                } catch (e2) { setIAStatus("FALLO FUENTE", true); }
+                    setIAStatus("CONECTADO (LQ)");
+                } catch (e2) { setIAStatus("ERROR CÁMARA", true); }
             }
         };
 
@@ -520,7 +525,7 @@
                 setIAStatus("IDENTIFICADO");
                 document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; 
             } catch (e) { 
-                if (e.name !== 'AbortError') { setIAStatus("FALLO LECTURA", true); toast("IA no pudo leer", "danger"); }
+                if (e.name !== 'AbortError') { setIAStatus("ERROR LECTURA", true); toast("IA no pudo leer", "danger"); }
                 window.resetIAUI();
             }
         };
@@ -550,7 +555,7 @@
                 if(!window.state.stores.some(s => s.nombre.toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
                 if(!window.state.clients.some(s => s.nombre.toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
                 if(!window.state.products.some(s => s.nombre.toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
-                toast("Venta guardada!");
+                toast("¡Venta guardada!");
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
             };
             document.getElementById('btn-confirm-delete').onclick = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', deleteRef.col, deleteRef.id)); toast("Eliminado"); window.closeDeleteModal(); };
