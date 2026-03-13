@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Market v28.5 - Cámara Fix & Blindaje</title>
+    <title>Yaute Market v28.6 - Fix Cámara & Blindaje</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,7 +35,7 @@
         .splash-loader { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- HEADER & BOTTOM NAV --- */
+        /* --- HEADER & NAV --- */
         header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; text-align: center; }
         .version-badge { font-size: 0.6rem; background: rgba(255,255,255,0.2); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 800; margin-left: 8px; vertical-align: middle; }
         .status-dot { width:10px; height:10px; border-radius:50%; margin-left: 8px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
@@ -46,17 +46,16 @@
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- UI ELEMENTS --- */
+        /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
         .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; transition: 0.3s; }
-        .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         label.text-uppercase { font-size: 0.6rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.5px; }
 
         /* --- MODALES --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-        .modal-content-custom { background: white; width: 100%; max-width: 400px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-content-custom { background: white; width: 100%; max-width: 400px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
-        /* --- SUPER SCANNER IA MODAL --- */
+        /* --- SCANNER IA --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-container { flex: 1; position: relative; overflow: hidden; background: #000; }
         #cam-preview { width: 100%; height: 100%; object-fit: cover; transition: filter 0.1s ease; }
@@ -64,9 +63,8 @@
         .scan-frame { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 20px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.7); pointer-events: none; }
         #ia-result-panel { background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 20px; min-height: 420px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.6); overflow-y: auto; }
         #btn-capture-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; box-shadow: 0 0 40px rgba(0,0,0,0.5); border: 8px solid rgba(59,130,246,0.3); z-index: 100; cursor: pointer; transition: 0.2s; }
-        #btn-capture-ia:active { transform: translateX(-50%) scale(0.9); }
-        
-        /* --- SUB MENÚS --- */
+
+        /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 8px; margin-bottom: 15px; padding: 4px; background: #f1f5f9; border-radius: 14px; }
         .sub-btn { border: none; background: none; padding: 8px; font-size: 0.75rem; color: #64748b; font-weight: 800; flex: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .sub-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -75,7 +73,7 @@
         .inner-btn { white-space: nowrap; border: 1px solid #e2e8f0; background: white; padding: 6px 14px; font-size: 0.65rem; font-weight: 800; border-radius: 50px; color: #64748b; text-transform: uppercase; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- FINANZAS & TICKETS --- */
+        /* --- FINANZAS --- */
         .stat-card { text-align: center; padding: 18px; border-radius: 20px; color: white; margin-bottom: 12px; }
         .finance-item { border-left: 4px solid var(--accent); transition: 0.2s; }
 
@@ -90,7 +88,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">ESTABILIZANDO v28.5</div>
+        <div style="margin-top:15px; font-size:0.75rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">MODO BLINDADO v28.6</div>
     </div>
 
     <div id="toast-alert"></div>
@@ -100,7 +98,7 @@
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-3x"></i></div>
             <h5 class="fw-bold">¿Limpiar Catálogo?</h5>
-            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero con la IA. No afecta tus ventas.</p>
+            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero con la IA.</p>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeResetModal()">CANCELAR</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">BORRAR TODO</button>
@@ -156,7 +154,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v28.5</span></h6>
+            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v28.6</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -170,7 +168,7 @@
                 </div>
                 <div class="row g-2 mb-2 align-items-end">
                     <div class="col-3"><label class="text-uppercase">Cant.</label><input type="number" id="in-cantidad" class="form-control text-center fw-bold" value="1"></div>
-                    <div class="col" style="position:relative"><label class="text-uppercase d-flex justify-content-between">Producto <i class="fas fa-camera text-primary" style="font-size:1.1rem; cursor:pointer;" onclick="window.openScanner()"></i></label><input type="text" id="in-producto" class="form-control text-uppercase" placeholder="BUSCAR ARTÍCULO..."><div id="sug-producto" class="sug-box d-none"></div></div>
+                    <div class="col" style="position:relative"><label class="text-uppercase d-flex justify-content-between">Producto <i class="fas fa-camera text-primary" style="font-size:1.1rem; cursor:pointer;" onclick="window.openScanner()"></i></label><input type="text" id="in-producto" class="form-control text-uppercase" placeholder="BUSCAR..."><div id="sug-producto" class="sug-box d-none"></div></div>
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="in-costo" class="form-control fw-bold border-danger" step="0.01"></div>
@@ -192,30 +190,30 @@
         </div>
     </main>
 
-    <!-- SUPER SCANNER IA MODAL (TRANSPLANTE MOTOR v3.5 + FIX COMPATIBILIDAD) -->
+    <!-- SUPER SCANNER IA MODAL (REDISEÑO DE CONEXIÓN) -->
     <div id="ia-modal">
         <div id="cam-container">
-            <div style="position: absolute; top: 20px; right: 20px; z-index: 11000; max-width: 150px;">
-                <select id="video-source-select" class="form-select form-select-sm" onchange="window.changeCamera()" style="background:rgba(0,0,0,0.6); color:white; border-color:var(--accent); font-size:0.65rem;"></select>
+            <div style="position: absolute; top: 20px; right: 20px; z-index: 21000; max-width: 140px;">
+                <select id="video-source-select" class="form-select form-select-sm" onchange="window.changeCamera()" style="background:rgba(0,0,0,0.7); color:white; border-color:var(--accent); font-size:0.65rem;"></select>
             </div>
-            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 20px; left: 20px; z-index: 11000; font-weight:800;" onclick="window.closeScanner()">✕ SALIR</button>
+            <button class="btn btn-dark btn-sm rounded-pill" style="position: absolute; top: 20px; left: 20px; z-index: 21000; font-weight:800;" onclick="window.closeScanner()">✕ SALIR</button>
             <video id="cam-preview" autoplay playsinline muted></video>
             <div class="scan-frame"></div>
             <div id="btn-capture-ia"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO PARA CAPTURAR</span></div>
-            
+            <div class="text-center mb-3">
+                <span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span>
+            </div>
             <div id="ia-loading" style="display:none;" class="text-center py-4">
                 <div class="spinner-border text-primary mb-3"></div>
-                <p class="h6 fw-bold text-muted">Gemini analizando etiqueta...</p>
+                <p class="h6 fw-bold text-muted">Gemini analizando producto...</p>
                 <button class="btn btn-outline-danger rounded-pill btn-sm mt-2 fw-bold" onclick="window.stopAnalysis()">CANCELAR</button>
             </div>
-
             <div id="ia-form">
-                <div class="mb-3"><label class="text-uppercase fw-black small text-muted">Producto</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
+                <div class="mb-3"><label class="text-uppercase fw-black small text-muted">Producto Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><label class="text-uppercase fw-black small text-muted">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
+                    <div class="col-6"><label class="text-uppercase fw-black small text-muted">Contenido</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
                     <div class="col-6"><label class="text-uppercase fw-black small text-muted">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold text-success border-success" step="0.01"></div>
                 </div>
                 <div class="d-flex gap-2">
@@ -235,6 +233,7 @@
     <canvas id="hidden-canvas" style="display:none;"></canvas>
     <canvas id="crop-canvas" style="display:none;"></canvas>
 
+    <!-- TICKET RENDER -->
     <div id="ticket-render">
         <div style="text-align: center; margin-bottom: 20px;"><div style="font-size: 1.5rem; font-weight: 900;">OFERTAS RÁPIDAS YAUTE</div></div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 15px; font-size: 1rem;"></div>
@@ -309,10 +308,8 @@
                 if(key === 'products' && window.state.products) {
                     const productData = window.state.products.find(x => (x.nombre || "").trim().toUpperCase() === selectedVal);
                     if(productData) { 
-                        const costField = document.getElementById('in-costo');
-                        const priceField = document.getElementById('in-precio');
-                        if (costField) costField.value = productData.costo || 0;
-                        if (priceField) priceField.value = productData.precio || 0;
+                        if (document.getElementById('in-costo')) document.getElementById('in-costo').value = productData.costo || 0;
+                        if (document.getElementById('in-precio')) document.getElementById('in-precio').value = productData.precio || 0;
                     }
                 }
             };
@@ -351,7 +348,7 @@
         window.closeCatEditModal = () => { document.getElementById('cat-edit-modal').style.display = 'none'; };
         window.confirmCatUpdate = async () => {
             const { type, item } = catEditRef, newName = document.getElementById('cat-ed-name').value.trim().toUpperCase();
-            if (!newName) return toast("Error", "danger");
+            if (!newName) return toast("Nombre inválido", "danger");
             const costVal = parseFloat(document.getElementById('cat-ed-costo')?.value) || 0, priceVal = parseFloat(document.getElementById('cat-ed-precio')?.value) || 0, fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', type, item.id), { nombre: newName, costo: costVal, precio: priceVal });
             const field = { products: 'producto', clients: 'cliente', stores: 'tienda' }[type];
@@ -382,7 +379,14 @@
             if (activeCatFilter === 'productos' && productSearchTerm) items = items.filter(it => (it.nombre || "").toUpperCase().includes(productSearchTerm));
             items.sort((a,b) => (a.nombre || "").localeCompare(b.nombre || "")); 
             if (items.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN REGISTROS</div>`; return; }
-            list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
+            list.innerHTML = items.map(it => `
+                <div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3">
+                    <div>
+                        <div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>
+                        ${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}
+                    </div>
+                    <div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div>
+                </div>`).join('');
         };
 
         window.renderVentasHoy = () => {
@@ -446,7 +450,7 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (FIX CÁMARA NEGRA v28.5) ---
+        // --- MOTOR SCANNER IA (FIX CÁMARA NEGRA v28.6) ---
         function setIAStatus(text, isError = false) {
             const badge = document.getElementById('ia-status-badge');
             if(!badge) return;
@@ -456,13 +460,13 @@
 
         window.openScanner = async () => {
             document.getElementById('ia-modal').style.display = 'flex';
-            setIAStatus("VISIÓN LISTA");
+            setIAStatus("INICIANDO...");
             try {
                 await navigator.mediaDevices.getUserMedia({ video: true });
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const videoDevices = devices.filter(d => d.kind === 'videoinput');
                 const select = document.getElementById('video-source-select');
-                select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara'}</option>`).join('');
+                select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Lente'}</option>`).join('');
                 if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId);
             } catch (e) { setIAStatus("ERROR ACCESO", true); }
         };
@@ -471,30 +475,31 @@
             if (currentIAStream) {
                 currentIAStream.getTracks().forEach(t => t.stop());
                 currentIAStream = null;
-                await new Promise(r => setTimeout(r, 200)); 
+                await new Promise(r => setTimeout(r, 250)); // Tiempo extra para que el sensor respire
             }
-            const constraints = { 
-                video: { 
-                    deviceId: { exact: deviceId }, 
-                    width: { ideal: 1920 }, 
-                    height: { ideal: 1080 },
-                    facingMode: 'environment'
-                } 
-            };
-            try {
-                currentIAStream = await navigator.mediaDevices.getUserMedia(constraints);
-                document.getElementById('cam-preview').srcObject = currentIAStream;
-            } catch (e) { 
+
+            // --- TRIPLE FALLBACK DE CONEXIÓN ---
+            const attempts = [
+                { video: { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 } } },
+                { video: { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } } },
+                { video: { deviceId: { exact: deviceId } } },
+                { video: true }
+            ];
+
+            for(let opt of attempts) {
                 try {
-                    currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
+                    currentIAStream = await navigator.mediaDevices.getUserMedia(opt);
                     document.getElementById('cam-preview').srcObject = currentIAStream;
-                } catch (e2) { setIAStatus("CÁMARA NO SOPORTADA", true); }
+                    setIAStatus("CONECTADO");
+                    return; // Éxito
+                } catch (e) { console.warn("Fallo intento cámara:", e); }
             }
+            setIAStatus("CÁMARA NO RESPONDE", true);
         };
 
         window.changeCamera = () => window.startCameraIA(document.getElementById('video-source-select').value);
         window.closeScanner = () => { if (currentIAStream) currentIAStream.getTracks().forEach(t => t.stop()); document.getElementById('ia-modal').style.display = 'none'; };
-        window.stopAnalysis = () => { if (abortControllerIA) { abortControllerIA.abort(); setIAStatus("ANÁLISIS CANCELADO", true); window.resetIAUI(); } };
+        window.stopAnalysis = () => { if (abortControllerIA) { abortControllerIA.abort(); setIAStatus("DETENIDO", true); window.resetIAUI(); } };
 
         window.resetIAUI = () => {
             document.getElementById('ia-res-name').value = ""; document.getElementById('ia-res-size').value = ""; document.getElementById('ia-res-price').value = "";
@@ -532,8 +537,8 @@
             else if (p > 0) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existing.id), { precio: p });
             document.getElementById('crop-canvas').toBlob(async b => {
                 const f = new File([b], "oferta.jpg", { type: "image/jpeg" }), msg = `🛍️ *OFERTA YAUTE*\n\n📌 *Producto:* ${full}\n📦 *Contenido:* ${s}\n💰 *Precio Venta:* $${p}\n\n_Yaute Market IA_`;
-                if (navigator.share) try{ await navigator.share({ files: [f], title: 'Oferta Yaute', text: msg }); }catch(e){} else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-                toast("Oferta Enviada ✅"); window.closeScanner();
+                if (navigator.share) try{ await navigator.share({ files: [file], title: 'Oferta Yaute', text: msg }); }catch(e){} else window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+                toast("Enviada ✅"); window.closeScanner();
             }, 'image/jpeg', 0.9);
         };
 
@@ -568,7 +573,7 @@
                 const hC = document.getElementById('hidden-canvas'), cC = document.getElementById('crop-canvas');
                 hC.width = v.videoWidth || 1280; hC.height = v.videoHeight || 720;
                 hC.getContext('2d').drawImage(v, 0, 0);
-                const w = hC.width * 0.75, h = hC.height * 0.5;
+                const w = hC.width * 0.75, h = hC.height * 0.50;
                 cC.width = w; cC.height = h;
                 cC.getContext('2d').drawImage(hC, (hC.width-w)/2, (hC.height-h)/2, w, h, 0, 0, w, h);
                 document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none';
