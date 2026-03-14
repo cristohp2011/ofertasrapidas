@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v32.5 - Estabilidad Total</title>
+    <title>Ofertas Rápidas Yaute v32.6 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -92,7 +92,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.5 - CONTROL TOTAL</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.6</div>
     </div>
 
     <div id="toast-alert"></div>
@@ -109,10 +109,10 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR VENTA (ACTUALIZADO CON FECHA) -->
+    <!-- MODAL EDITAR VENTA (MODIFICADO: CONTROL TOTAL) -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h5 class="fw-bold mb-4 text-primary">Editar Registro</h5>
+            <h5 class="fw-bold mb-4 text-primary">Editar Registro Pro</h5>
             <div class="mb-3"><label class="text-uppercase">Fecha del Registro</label><input type="date" id="ed-fecha" class="form-control fw-bold"></div>
             <div class="row g-2 mb-3">
                 <div class="col-6"><label class="text-uppercase">Tienda</label><input type="text" id="ed-tienda" class="form-control text-uppercase"></div>
@@ -144,6 +144,7 @@
         </div>
     </div>
 
+    <!-- MODAL BORRAR -->
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-alt fa-4x"></i></div>
@@ -155,6 +156,7 @@
         </div>
     </div>
 
+    <!-- MODAL AGREGAR PRODUCTO -->
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
@@ -179,7 +181,7 @@
                 <div id="status-dot" class="status-dot bg-warning"></div>
             </div>
             <div style="margin-top: 6px;">
-                <span class="version-badge">v32.5</span>
+                <span class="version-badge">v32.6</span>
             </div>
         </div>
     </header>
@@ -235,7 +237,7 @@
             <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
+            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span></div>
             <img id="capture-preview-ia" alt="Vista previa">
             <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando producto...</p></div>
             <div id="ia-form">
@@ -279,7 +281,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeFirestore, collection, doc, addDoc, updateDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, collection, doc, addDoc, updateDoc, deleteDoc, getDocs, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCR5V_yg6aLumW_D8oFPEblHZ5ox2gTs98", authDomain: "ofertas-rapidas-yautepec.firebaseapp.com", projectId: "ofertas-rapidas-yautepec", storageBucket: "ofertas-rapidas-yautepec.firebasestorage.app", messagingSenderId: "81339635207", appId: "1:81339635207:web:26d180f92224d9a036fca2" };
         const apiKeyGemini = "AIzaSyDJicNgq309eja6V0IAZI8w0j6NBYMBmjU"; 
@@ -377,7 +379,7 @@
         window.openResetModal = () => { document.getElementById('reset-modal').style.display = 'flex'; };
         window.closeResetModal = () => { document.getElementById('reset-modal').style.display = 'none'; };
 
-        // --- EDITAR REGISTRO (CON CAMBIO DE FECHA) ---
+        // --- EDITAR REGISTRO (CON CAMBIO DE FECHA Y CASCADA) ---
         window.openEditModal = (record) => { 
             editRef = record; 
             document.getElementById('ed-tienda').value = record.tienda; 
@@ -387,7 +389,6 @@
             document.getElementById('ed-costo').value = record.costo; 
             document.getElementById('ed-precio').value = record.precio; 
             
-            // Convertir D/M/YYYY a YYYY-MM-DD para el input
             if (record.fechaStr) {
                 const parts = record.fechaStr.split('/');
                 if (parts.length === 3) {
@@ -411,23 +412,27 @@
             let prInput = parseFloat(document.getElementById('ed-precio').value) || 0;
             let pr = (c === "CRISTO") ? co : prInput;
 
-            // Procesar nueva fecha
             const dateParts = fVal.split('-');
             const newFechaStr = `${parseInt(dateParts[2])}/${parseInt(dateParts[1])}/${dateParts[0]}`;
             const newTimestamp = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 12, 0, 0).getTime();
 
+            // ACTUALIZACIÓN DEL REGISTRO
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { 
-                tienda: t, 
-                cliente: c, 
-                producto: p, 
-                cantidad: q, 
-                costo: co, 
-                precio: pr, 
-                total: q*pr,
-                fechaStr: newFechaStr,
-                timestamp: newTimestamp
+                tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: newFechaStr, timestamp: newTimestamp
             }); 
-            toast("Actualizado ✅"); window.closeEditModal(); 
+
+            // LÓGICA DE CASCADA: ASEGURAR QUE LOS NOMBRES EXISTAN EN EL CATÁLOGO
+            if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
+            if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
+            if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
+            } else {
+                // Si el producto existe pero cambió el precio o costo maestro, podrías actualizarlo aquí opcionalmente
+                const existingProd = window.state.products.find(s => (s.nombre || "").toUpperCase() === p);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { costo: co, precio: pr });
+            }
+
+            toast("Sincronizado ✅"); window.closeEditModal(); 
         };
 
         window.openCatEditModal = (type, item) => {
@@ -507,16 +512,10 @@
             const res = document.getElementById('finance-results'); if(!res) return;
             let filtered = [];
             if (activeFinanceView === 'diezmo') {
-                const s = new Date(finDateFrom + "T00:00:00");
-                const e = new Date(finDateTo + "T23:59:59");
-                filtered = window.state.sales.filter(x => {
-                    const [d,m,y] = x.fechaStr.split('/');
-                    const dx = new Date(y, m-1, d);
-                    return dx >= s && dx <= e;
-                });
+                const s = new Date(finDateFrom + "T00:00:00"), e = new Date(finDateTo + "T23:59:59");
+                filtered = window.state.sales.filter(x => { const [d,m,y] = x.fechaStr.split('/'); const dx = new Date(y, m-1, d); return dx >= s && dx <= e; });
             } else {
-                const [y,m,d] = finDate.split('-');
-                const target = normalizeDateStr(`${parseInt(d)}/${parseInt(m)}/${y}`);
+                const [y,m,d] = finDate.split('-'); const target = normalizeDateStr(`${parseInt(d)}/${parseInt(m)}/${y}`);
                 filtered = window.state.sales.filter(x => normalizeDateStr(x.fechaStr) === target);
             }
             
@@ -536,7 +535,7 @@
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => {
                     const k = `${s.producto}_${s.costo}`;
-                    if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, id: s.id, raw: s };
+                    if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, raw: s };
                     acc[k].cantidad += (s.cantidad || 0);
                     acc[k].total += ((s.costo || 0) * (s.cantidad || 0));
                     return acc;
@@ -546,7 +545,7 @@
                     <h3>$${totalCosto.toFixed(2)}</h3>
                     <small>PAGO TOTAL EN CAJA (COSTO ANAQUEL)</small>
                     <div class="mt-2"><span class="badge bg-white text-primary rounded-pill fw-bold" style="font-size:0.75rem">${totalQty} PIEZAS TOTALES</span></div>
-                </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.raw)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.id}')"></i></div></div></div>`).join('');
+                </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.raw)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.raw.id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${totalUtilidad.toFixed(2)}</h3><small>UTILIDAD TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
                     const items = filtered.filter(f => (f.tienda || "").trim().toUpperCase() === t.trim().toUpperCase());
