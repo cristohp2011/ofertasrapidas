@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v31.9 - Estabilidad Total</title>
+    <title>Ofertas Rápidas Yaute v32.0 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -47,13 +47,12 @@
         .tab-btn.active { color: var(--accent); }
 
         /* --- UI ELEMENTS --- */
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
-        .form-control, .form-select { padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; background: #fff; color: var(--primary); }
-        .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); outline: none; }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 5px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.8px; }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
+        .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; background: #fff; color: var(--primary); }
+        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.5px; }
 
         /* --- MODALES BLINDADOS --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 8000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 420px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
         /* --- SUB NAVS --- */
@@ -75,10 +74,6 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 14px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 30px rgba(0,0,0,0.15); margin-top: 5px; }
         .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.95rem; text-transform: uppercase; font-weight: 700; color: var(--primary); }
 
-        .check-group { display: flex; gap: 15px; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
-        .check-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; color: #64748b; }
-        .check-item input { width: 20px; height: 20px; accent-color: var(--accent); }
-
         /* --- SCANNER --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -87,7 +82,7 @@
         #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; }
         #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
 
-        /* --- TICKET RENDER (ORIGINAL) --- */
+        /* --- TICKET RENDER --- */
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; border: 1px solid #eee; }
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
         #capture-preview-ia { width: 100%; height: 120px; object-fit: contain; border-radius: 14px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
@@ -97,7 +92,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 31.9 - Morelos</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">EDICIÓN MAESTRA v32.0</div>
     </div>
 
     <div id="toast-alert"></div>
@@ -106,8 +101,7 @@
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-4x"></i></div>
-            <h5 class="fw-bold">¿Reiniciar Catálogo?</h5>
-            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero con la IA. No afecta tus ventas guardadas.</p>
+            <h5 class="fw-bold">¿Limpiar Catálogo?</h5>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeResetModal()">CANCELAR</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">BORRAR TODO</button>
@@ -137,7 +131,7 @@
 
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h5 class="fw-bold mb-4 text-accent">Editar Catálogo Maestro</h5>
+            <h5 class="fw-bold mb-4 text-accent">Editar Maestro</h5>
             <div id="cat-edit-fields"></div>
             <p class="text-center text-muted" style="font-size:0.65rem; margin:15px 0;">* Sincroniza automáticamente registros de los últimos 5 días.</p>
             <div class="d-flex gap-2">
@@ -149,7 +143,7 @@
 
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
-            <div class="mb-3 text-danger"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
+            <div class="mb-3 text-danger"><i class="fas fa-trash-alt fa-4x"></i></div>
             <h5 class="fw-bold">¿Borrar registro?</h5>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button>
@@ -161,7 +155,7 @@
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
-            <div class="mb-3"><label class="text-uppercase">Descripción del Producto</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
+            <div class="mb-3"><label class="text-uppercase">Descripción</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
             <div class="row g-2 mb-4">
                 <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger"></div>
                 <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success"></div>
@@ -175,7 +169,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v31.9</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v32.0</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -236,7 +230,7 @@
             <div id="ia-form">
                 <div class="mb-3"><label class="text-uppercase fw-black small text-muted">Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
                 <div class="row g-2 mb-4">
-                    <div class="col-6"><label class="text-uppercase fw-black small text-muted">Contenido</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
+                    <div class="col-6"><label class="text-uppercase fw-black small text-muted">Presentación</label><input type="text" id="ia-res-size" class="form-control fw-bold"></div>
                     <div class="col-6"><label class="text-uppercase fw-black small text-muted">Precio Venta</label><input type="number" id="ia-res-price" class="form-control fw-bold text-success border-success" step="0.01"></div>
                 </div>
                 <div class="d-flex gap-2">
@@ -250,7 +244,7 @@
     <!-- TICKET RENDER -->
     <div id="ticket-render">
         <div style="text-align: center; margin-bottom: 25px;">
-            <img src="logo.png" alt="Logo" style="width: 130px; height: auto;" onerror="this.style.display='none'">
+            <img src="logo.png" alt="Logo" style="width: 140px; height: auto;" onerror="this.style.display='none'">
             <div style="font-size: 1.8rem; font-weight: 900; margin-top: 15px; color: black;">OFERTAS RÁPIDAS YAUTE</div>
         </div>
         <div id="t-fecha" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem; color: black;"></div>
@@ -425,7 +419,7 @@
             list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
-        // --- FINANZAS ---
+        // --- FINANZAS (REPARADO DEFINITIVO) ---
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy'), today = normalizeDateStr(getMXDateStr()), dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === today);
             if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
@@ -488,7 +482,13 @@
                 </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase" style="font-size:0.8rem;">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0), totalC = filtered.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t), v = items.reduce((a,b) => a + b.total, 0), c = items.reduce((a,b) => a + ((f.costo || 0) * (f.cantidad || 0)), 0), p = v - c; return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
+                res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>UTILIDAD TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
+                    const items = filtered.filter(f => f.tienda === t);
+                    const v = items.reduce((a,b) => a + (b.total || 0), 0);
+                    const c = items.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
+                    const p = v - c; 
+                    return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; 
+                }).join('');
             } else if(activeFinanceView === 'diezmo') {
                 const profit = filtered.reduce((a,b) => a + ((b.total || 0) - ((b.costo || 0) * (b.cantidad || 0))), 0);
                 res.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase text-white">10% PARA EL SEÑOR</small></div>`;
@@ -528,13 +528,12 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (v3.5 INTEGRADO) ---
+        // --- SCANNER IA (v3.5 INTEGRADO) ---
         function setIAStatus(text, isError = false) { const badge = document.getElementById('ia-status-badge'); if(!badge) return; badge.innerText = text.toUpperCase(); badge.className = isError ? 'badge bg-danger text-white' : 'badge bg-light text-muted'; }
         window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; setIAStatus("CONECTANDO..."); try { await navigator.mediaDevices.getUserMedia({ video: true }); const devices = await navigator.mediaDevices.enumerateDevices(); const videoDevices = devices.filter(d => d.kind === 'videoinput'); const select = document.getElementById('video-source-select'); select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join(''); if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId); } catch (e) { setIAStatus("ERROR CÁMARA", true); } };
         window.startCameraIA = async (deviceId) => { if (currentIAStream) { currentIAStream.getTracks().forEach(t => t.stop()); currentIAStream = null; await new Promise(r => setTimeout(r, 200)); } const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } }; try { currentIAStream = await navigator.mediaDevices.getUserMedia(constraints); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO"); } catch (e) { try { currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } }); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("CONECTADO (LQ)"); } catch (e2) { setIAStatus("ERROR CÁMARA", true); } } };
         window.changeCameraIA = () => window.startCameraIA(document.getElementById('video-source-select').value);
         window.closeScanner = () => { if (currentIAStream) currentIAStream.getTracks().forEach(t => t.stop()); document.getElementById('ia-modal').style.display = 'none'; };
-        window.stopAnalysisIA = () => { if (abortControllerIA) { abortControllerIA.abort(); setIAStatus("DETENIDO", true); window.resetIAUI(); } };
         window.resetIAUI = () => { document.getElementById('ia-res-name').value = ""; document.getElementById('ia-res-size').value = ""; document.getElementById('ia-res-price').value = ""; document.getElementById('capture-preview-ia').style.display = 'none'; document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; setIAStatus("LISTO"); };
         window.captureIAImage = async () => {
             const v = document.getElementById('cam-preview-ia'); v.classList.add('flash-effect'); setTimeout(() => v.classList.remove('flash-effect'), 100);
@@ -542,7 +541,7 @@
             const cropW = hC.width * 0.70, cropH = hC.height * 0.50; cC.width = cropW; cC.height = cropH; cC.getContext('2d').drawImage(hC, (hC.width - cropW)/2, (hC.height - cropH)/2, cropW, cropH, 0, 0, cropW, cropH);
             const dataURL = cC.toDataURL('image/jpeg', 0.9); document.getElementById('capture-preview-ia').src = dataURL; document.getElementById('capture-preview-ia').style.display = 'block'; document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none'; setIAStatus("ANALIZANDO...");
             const b64 = dataURL.split(',')[1];
-            try { abortControllerIA = new AbortController(); const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`; const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }; const resp = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal }); const res = await resp.json(); let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim(); const data = JSON.parse(text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); setIAStatus("IDENTIFICADO"); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { setIAStatus("ERROR LECTURA", true); window.resetIAUI(); }
+            try { abortControllerIA = new AbortController(); const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }; const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal }); const res = await resp.json(); let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim(); const data = JSON.parse(text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); setIAStatus("IDENTIFICADO"); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { setIAStatus("ERROR LECTURA", true); window.resetIAUI(); }
         };
         window.processIASave = async () => {
             const n = document.getElementById('ia-res-name').value, s = document.getElementById('ia-res-size').value, p = parseFloat(document.getElementById('ia-res-price').value) || 0;
