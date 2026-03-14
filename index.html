@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v32.6 - Estabilidad Total</title>
+    <title>Ofertas Rápidas Yaute v32.7 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -92,12 +92,12 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.6</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.7</div>
     </div>
 
     <div id="toast-alert"></div>
 
-    <!-- MODALES -->
+    <!-- MODAL REINICIAR CATÁLOGO -->
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-4x"></i></div>
@@ -109,7 +109,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR VENTA (MODIFICADO: CONTROL TOTAL) -->
+    <!-- MODAL EDITAR VENTA (CONTROL TOTAL) -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Editar Registro Pro</h5>
@@ -122,7 +122,7 @@
             <div class="row g-2 mb-4">
                 <div class="col-4"><label class="text-uppercase">Cant.</label><input type="number" id="ed-cantidad" class="form-control text-center fw-bold"></div>
                 <div class="col-4"><label class="text-uppercase">Costo</label><input type="number" id="ed-costo" class="form-control text-danger fw-bold"></div>
-                <div class="col-4"><label class="text-uppercase">Venta</label><input type="number" id="ed-precio" class="form-control text-success fw-bold"></div>
+                <div class="col-4"><label class="text-uppercase">Venta Normal</label><input type="number" id="ed-precio" class="form-control text-success fw-bold"></div>
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-light flex-fill rounded-pill" onclick="window.closeEditModal()">CANCELAR</button>
@@ -160,7 +160,7 @@
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
-            <div class="mb-3"><label class="text-uppercase">Descripción</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
+            <div class="mb-3"><label class="text-uppercase">Descripción del Producto</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
             <div class="row g-2 mb-4">
                 <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger"></div>
                 <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success"></div>
@@ -181,7 +181,7 @@
                 <div id="status-dot" class="status-dot bg-warning"></div>
             </div>
             <div style="margin-top: 6px;">
-                <span class="version-badge">v32.6</span>
+                <span class="version-badge">v32.7</span>
             </div>
         </div>
     </header>
@@ -215,7 +215,7 @@
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- TAB GESTIÓN (FINANZAS A LA IZQUIERDA) -->
+        <!-- TAB GESTIÓN -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
                 <button class="sub-btn active" id="sub-btn-fin" onclick="window.switchSubTab('finanzas')"><i class="fas fa-chart-line"></i>FINANZAS</button>
@@ -237,7 +237,7 @@
             <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span></div>
+            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
             <img id="capture-preview-ia" alt="Vista previa">
             <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando producto...</p></div>
             <div id="ia-form">
@@ -379,7 +379,7 @@
         window.openResetModal = () => { document.getElementById('reset-modal').style.display = 'flex'; };
         window.closeResetModal = () => { document.getElementById('reset-modal').style.display = 'none'; };
 
-        // --- EDITAR REGISTRO (CON CAMBIO DE FECHA Y CASCADA) ---
+        // --- EDITAR REGISTRO PRO (CON CASCADA INTELIGENTE) ---
         window.openEditModal = (record) => { 
             editRef = record; 
             document.getElementById('ed-tienda').value = record.tienda; 
@@ -387,7 +387,10 @@
             document.getElementById('ed-producto').value = record.producto; 
             document.getElementById('ed-cantidad').value = record.cantidad; 
             document.getElementById('ed-costo').value = record.costo; 
-            document.getElementById('ed-precio').value = record.precio; 
+            
+            // Si es CRISTO, el precio del registro es igual al costo, pero mostramos el precio de catálogo para editar el catálogo
+            const prod = window.state.products.find(p => p.nombre.toUpperCase() === record.producto.toUpperCase());
+            document.getElementById('ed-precio').value = prod ? prod.precio : record.precio; 
             
             if (record.fechaStr) {
                 const parts = record.fechaStr.split('/');
@@ -407,29 +410,30 @@
                   p = document.getElementById('ed-producto').value.trim().toUpperCase(), 
                   q = parseInt(document.getElementById('ed-cantidad').value) || 1, 
                   co = parseFloat(document.getElementById('ed-costo').value) || 0,
+                  prI = parseFloat(document.getElementById('ed-precio').value) || 0, // Precio con ganancia
                   fVal = document.getElementById('ed-fecha').value; 
             
-            let prInput = parseFloat(document.getElementById('ed-precio').value) || 0;
-            let pr = (c === "CRISTO") ? co : prInput;
+            // Lógica CRISTO: El registro de nota usa costo, pero el catálogo usa el precio normal
+            let salePrice = (c === "CRISTO") ? co : prI;
 
             const dateParts = fVal.split('-');
             const newFechaStr = `${parseInt(dateParts[2])}/${parseInt(dateParts[1])}/${dateParts[0]}`;
             const newTimestamp = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 12, 0, 0).getTime();
 
-            // ACTUALIZACIÓN DEL REGISTRO
+            // 1. ACTUALIZACIÓN DEL REGISTRO DE VENTA
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { 
-                tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: newFechaStr, timestamp: newTimestamp
+                tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: salePrice, total: q*salePrice, fechaStr: newFechaStr, timestamp: newTimestamp
             }); 
 
-            // LÓGICA DE CASCADA: ASEGURAR QUE LOS NOMBRES EXISTAN EN EL CATÁLOGO
+            // 2. LÓGICA DE CASCADA: SINCRONIZAR CATÁLOGO MAESTRO (SIEMPRE PRECIO CON GANANCIA)
             if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
             if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
-            if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
+            
+            const existingProd = window.state.products.find(s => (s.nombre || "").toUpperCase() === p);
+            if(!existingProd) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: prI });
             } else {
-                // Si el producto existe pero cambió el precio o costo maestro, podrías actualizarlo aquí opcionalmente
-                const existingProd = window.state.products.find(s => (s.nombre || "").toUpperCase() === p);
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { costo: co, precio: pr });
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingProd.id), { costo: co, precio: prI });
             }
 
             toast("Sincronizado ✅"); window.closeEditModal(); 
@@ -455,7 +459,11 @@
             const matching = window.state.sales.filter(s => (s[field] || "").toUpperCase() === item.nombre.toUpperCase() && (s.timestamp || 0) > fiveDaysAgo);
             for (const s of matching) {
                 const sU = { [field]: newName };
-                if (type === 'products') { sU.costo = costVal; sU.precio = s.cliente === "CRISTO" ? costVal : priceVal; sU.total = s.cantidad * sU.precio; }
+                if (type === 'products') { 
+                    sU.costo = costVal; 
+                    sU.precio = s.cliente === "CRISTO" ? costVal : priceVal; 
+                    sU.total = s.cantidad * sU.precio; 
+                }
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), sU);
             }
             toast("Sincronizado ✅"); window.closeCatEditModal();
@@ -621,12 +629,24 @@
             const bSave = document.getElementById('btn-save-record');
             if(bSave) bSave.onclick = async () => {
                 const t = document.getElementById('in-tienda').value.trim().toUpperCase(), c = document.getElementById('in-cliente').value.trim().toUpperCase(), p = document.getElementById('in-producto').value.trim().toUpperCase(), q = parseInt(document.getElementById('in-cantidad').value) || 1, co = parseFloat(document.getElementById('in-costo').value) || 0, prI = parseFloat(document.getElementById('in-precio').value) || 0;
-                let pr = (c === "CRISTO") ? co : prI;
+                
+                // Lógica CRISTO en Guardado Inicial
+                let salePrice = (c === "CRISTO") ? co : prI;
+
                 if(!t || !c || !p) return toast("Faltan datos", "danger");
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: getMXDateStr(), timestamp: Date.now(), uid: currentUser.uid, entregado: false, pagado: false });
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: salePrice, total: q*salePrice, fechaStr: getMXDateStr(), timestamp: Date.now(), uid: currentUser.uid, entregado: false, pagado: false });
+                
                 if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
                 if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
-                if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
+                
+                // El catálogo siempre guarda el precio prI (con ganancia)
+                if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: prI });
+                } else {
+                    const existingP = window.state.products.find(s => (s.nombre || "").toUpperCase() === p);
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existingP.id), { costo: co, precio: prI });
+                }
+
                 toast("¡Venta guardada!");
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
             };
