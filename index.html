@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v32.0 - Estabilidad Total</title>
+    <title>Ofertas Rápidas Yaute v32.1 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -47,7 +47,7 @@
         .tab-btn.active { color: var(--accent); }
 
         /* --- UI ELEMENTS --- */
-        .card-custom { background: white; border-radius: var(--card-radius); padding: 18px; margin-bottom: 12px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
+        .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
         .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; background: #fff; color: var(--primary); }
         label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.5px; }
 
@@ -92,7 +92,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">EDICIÓN MAESTRA v32.0</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.1 - Morelos</div>
     </div>
 
     <div id="toast-alert"></div>
@@ -169,7 +169,7 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v32.0</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v32.1</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -195,7 +195,7 @@
                 </div>
                 <button id="btn-save-record" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">GUARDAR REGISTRO</button>
             </div>
-            <div id="lista-ventas-hoy"></div>
+            <!-- LISTA REMOVIDA POR SER DUPLICADO DE FINANZAS -->
         </div>
 
         <div id="tab-entregas" class="tab-content" style="display: none;">
@@ -302,7 +302,7 @@
                     document.getElementById('status-dot').className = "status-dot bg-success";
                     const splash = document.getElementById('splash-screen');
                     if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 500); }
-                    if(name === 'sales') { window.renderVentasHoy(); window.renderEntregas(); if(activeSubTab === 'finanzas') window.renderFinanceMenu(); }
+                    if(name === 'sales') { window.renderEntregas(); if(activeSubTab === 'finanzas') window.renderFinanceMenu(); }
                     if(activeSubTab === 'catalogo') window.renderControlList();
                 });
             });
@@ -335,7 +335,6 @@
             };
         };
 
-        // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -348,7 +347,6 @@
 
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
 
-        // --- GESTIÓN CATÁLOGO ---
         window.openAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'flex'; };
         window.closeAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'none'; };
         window.confirmAddProduct = async () => {
@@ -404,7 +402,7 @@
         window.renderControlList = () => { 
             const container = document.getElementById('control-content'); 
             let html = `<div class="inner-sub-nav"><button class="inner-btn ${activeCatFilter === 'productos' ? 'active' : ''}" onclick="window.setCatFilter('productos')">Productos</button><button class="inner-btn ${activeCatFilter === 'clientes' ? 'active' : ''}" onclick="window.setCatFilter('clientes')">Clientes</button><button class="inner-btn ${activeCatFilter === 'tiendas' ? 'active' : ''}" onclick="window.setCatFilter('tiendas')">Tiendas</button></div>`;
-            if (activeCatFilter === 'productos') html += `<div class="d-flex gap-2 mb-2"><div class="search-container flex-fill mb-0"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)"></div><button class="btn btn-outline-danger rounded-pill px-3 shadow-sm" onclick="window.openResetModal()"><i class="fas fa-trash-can"></i></button></div>`;
+            if (activeCatFilter === 'productos') html += `<div class="d-flex gap-2 mb-2"><div class="search-container flex-fill mb-0"><i class="fas fa-search"></i><input type="text" class="form-control" placeholder="Buscar..." oninput="window.handleProductSearch(this.value)"></div><button class="btn btn-primary rounded-pill px-3 shadow-sm" onclick="window.openAddProductModal()"><i class="fas fa-plus"></i></button><button class="btn btn-outline-danger rounded-pill px-3 shadow-sm" onclick="window.openResetModal()"><i class="fas fa-trash-can"></i></button></div>`;
             container.innerHTML = html + `<div id="cat-items-list-container"></div>`; 
             window.renderControlListItems();
         };
@@ -419,21 +417,14 @@
             list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
-        // --- FINANZAS (REPARADO DEFINITIVO) ---
-        window.renderVentasHoy = () => {
-            const list = document.getElementById('lista-ventas-hoy'), today = normalizeDateStr(getMXDateStr()), dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === today);
-            if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
-            dv.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            list.innerHTML = `<span class="fw-black small text-muted text-uppercase mb-2 d-block px-2">VENTAS DE HOY</span>` + dv.map(v => `<div class="card-custom finance-item d-flex justify-content-between align-items-center" style="padding: 10px 15px;"><div style="line-height:1.1; flex: 1;"><div style="font-size:0.6rem; color:var(--accent); font-weight:800;"><i class="fas fa-store"></i> ${v.tienda}</div><b class="text-uppercase" style="font-size:0.85rem">${v.producto}</b><br><small class="text-muted">${v.cliente} | ${v.cantidad}x $${v.precio}</small></div><div class="text-end" style="min-width: 70px;"><div style="font-size:0.7rem; font-weight:bold;"><i class="far fa-clock"></i> ${v.timestamp ? new Date(v.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Mexico_City' }) : "--:--"}</div><div class="d-flex gap-2 justify-content-end mt-1"><i class="fas fa-pen text-accent" onclick='window.openEditModal(${JSON.stringify(v)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${v.id}')"></i></div></div></div>`).join('');
-        };
-
+        // --- FINANZAS (FILTRACIÓN MEJORADA) ---
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
             if(!container) return;
             container.innerHTML = `
                 <div class="inner-sub-nav"><button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">Compras</button><button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">Ganancias</button><button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">Diezmo</button></div>
                 <div class="card-custom mb-2 bg-light shadow-none border px-3">
-                    ${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}
+                    ${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" id="fin-date-from" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" id="fin-date-to" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" id="fin-date-single" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}
                     <div class="row g-2 mt-2">
                         <div class="col-6"><label class="text-uppercase">Tienda</label><select id="fin-store-sel" onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option></select></div>
                         <div class="col-6"><label class="text-uppercase">Cliente</label><select id="fin-client-sel" onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option></select></div>
@@ -471,21 +462,18 @@
 
             const totalQty = filtered.reduce((a, b) => a + (b.cantidad || 0), 0);
 
+            if(filtered.length === 0) { res.innerHTML = `<div class="text-center py-5 text-muted small fw-bold">SIN DATOS</div>`; return; }
+
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => { const k = `${s.producto}_${s.costo}`; if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[k].cantidad += (s.cantidad || 0); acc[k].total += ((s.costo || 0) * (s.cantidad || 0)); acc[k].items.push(s); return acc; }, {});
                 const total = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                res.innerHTML = `
-                <div class="stat-card bg-gradient-primary shadow">
-                    <h3>$${total.toFixed(2)}</h3>
-                    <small>PAGO TOTAL EN CAJA (COSTO ANAQUEL)</small>
-                    <div class="mt-2"><span class="badge bg-white text-primary rounded-pill fw-bold" style="font-size:0.75rem">${totalQty} PIEZAS TOTALES</span></div>
-                </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase" style="font-size:0.8rem;">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO TOTAL EN CAJA (COSTO ANAQUEL)</small><div class="mt-2"><span class="badge bg-white text-primary rounded-pill fw-bold" style="font-size:0.75rem">${totalQty} PIEZAS TOTALES</span></div></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0), totalC = filtered.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
                 res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>UTILIDAD TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
                     const items = filtered.filter(f => f.tienda === t);
-                    const v = items.reduce((a,b) => a + (b.total || 0), 0);
-                    const c = items.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
+                    const v = items.reduce((a,b) => a + b.total, 0);
+                    const c = items.reduce((a,b) => a + ((f.costo || 0) * (f.cantidad || 0)), 0);
                     const p = v - c; 
                     return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; 
                 }).join('');
@@ -528,7 +516,7 @@
             }, 'image/png');
         };
 
-        // --- SCANNER IA (v3.5 INTEGRADO) ---
+        // --- MOTOR SCANNER IA ---
         function setIAStatus(text, isError = false) { const badge = document.getElementById('ia-status-badge'); if(!badge) return; badge.innerText = text.toUpperCase(); badge.className = isError ? 'badge bg-danger text-white' : 'badge bg-light text-muted'; }
         window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; setIAStatus("CONECTANDO..."); try { await navigator.mediaDevices.getUserMedia({ video: true }); const devices = await navigator.mediaDevices.enumerateDevices(); const videoDevices = devices.filter(d => d.kind === 'videoinput'); const select = document.getElementById('video-source-select'); select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join(''); if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId); } catch (e) { setIAStatus("ERROR CÁMARA", true); } };
         window.startCameraIA = async (deviceId) => { if (currentIAStream) { currentIAStream.getTracks().forEach(t => t.stop()); currentIAStream = null; await new Promise(r => setTimeout(r, 200)); } const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } }; try { currentIAStream = await navigator.mediaDevices.getUserMedia(constraints); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO"); } catch (e) { try { currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } }); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("CONECTADO (LQ)"); } catch (e2) { setIAStatus("ERROR CÁMARA", true); } } };
@@ -547,7 +535,7 @@
             const n = document.getElementById('ia-res-name').value, s = document.getElementById('ia-res-size').value, p = parseFloat(document.getElementById('ia-res-price').value) || 0;
             if(!n) return toast("Falta producto", "danger"); const full = `${n} - ${s}`, existing = window.state.products.find(x => x.nombre.toUpperCase() === full.toUpperCase());
             if (!existing) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: full, costo: 0, precio: p }); else if (p > 0) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existing.id), { precio: p });
-            toast("Guardado en Catálogo ✅"); window.closeScanner();
+            toast("Guardado ✅"); window.closeScanner();
         };
 
         window.onload = () => { 
