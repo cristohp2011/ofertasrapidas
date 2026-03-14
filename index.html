@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v32.1 - Estabilidad Total</title>
+    <title>Ofertas Rápidas Yaute v32.2 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,10 +46,11 @@
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- UI ELEMENTS --- */
+        /* --- UI CARDS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
-        .form-control, .form-select { padding: 0.75rem 1rem; font-size: 0.95rem; border-radius: 12px; border: 2px solid #f1f5f9; background: #fff; color: var(--primary); }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.5px; }
+        .form-control, .form-select { padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; background: #fff; color: var(--primary); }
+        .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); outline: none; }
+        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.8px; }
 
         /* --- MODALES BLINDADOS --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
@@ -74,17 +75,16 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 14px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 30px rgba(0,0,0,0.15); margin-top: 5px; }
         .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.95rem; text-transform: uppercase; font-weight: 700; color: var(--primary); }
 
+        /* --- TICKET RENDER --- */
+        #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; border: 1px solid #eee; }
+        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
+
         /* --- SCANNER --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
         .scan-frame { width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
         #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; }
-        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
-
-        /* --- TICKET RENDER --- */
-        #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; border: 1px solid #eee; }
-        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
         #capture-preview-ia { width: 100%; height: 120px; object-fit: contain; border-radius: 14px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
     </style>
 </head>
@@ -92,12 +92,12 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.1 - Morelos</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">ESTABILIZANDO v32.2</div>
     </div>
 
     <div id="toast-alert"></div>
 
-    <!-- MODALES -->
+    <!-- MODAL REINICIAR CATÁLOGO -->
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-4x"></i></div>
@@ -109,6 +109,7 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR VENTA -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Editar Registro</h5>
@@ -129,6 +130,7 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-accent">Editar Maestro</h5>
@@ -141,10 +143,11 @@
         </div>
     </div>
 
+    <!-- MODAL BORRAR -->
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
-            <div class="mb-3 text-danger"><i class="fas fa-trash-alt fa-4x"></i></div>
-            <h5 class="fw-bold">¿Borrar registro?</h5>
+            <div class="mb-3 text-danger"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
+            <h5 class="fw-bold">¿Eliminar registro?</h5>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button>
@@ -152,6 +155,7 @@
         </div>
     </div>
 
+    <!-- MODAL AGREGAR PRODUCTO -->
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
@@ -169,13 +173,13 @@
 
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v32.1</span></h6>
+            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v32.2</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
 
     <main>
-        <!-- TABS -->
+        <!-- TAB VENTAS -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -195,14 +199,15 @@
                 </div>
                 <button id="btn-save-record" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">GUARDAR REGISTRO</button>
             </div>
-            <!-- LISTA REMOVIDA POR SER DUPLICADO DE FINANZAS -->
         </div>
 
+        <!-- TAB REPARTO -->
         <div id="tab-entregas" class="tab-content" style="display: none;">
             <div class="card-custom py-2 mb-3 text-center border-0" style="background: #f1f5f9;"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0 bg-transparent" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
+        <!-- TAB CONTROL -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
                 <button class="sub-btn active" id="sub-btn-cat" onclick="window.switchSubTab('catalogo')"><i class="fas fa-boxes"></i>CONTROL</button>
@@ -224,7 +229,7 @@
             <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
+            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span></div>
             <img id="capture-preview-ia" alt="Vista previa">
             <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando producto...</p></div>
             <div id="ia-form">
@@ -335,6 +340,7 @@
             };
         };
 
+        // --- NAVEGACIÓN ---
         window.showTab = (id, btn) => {
             if (!btn) btn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); 
@@ -347,6 +353,7 @@
 
         window.switchSubTab = (id) => { activeSubTab = id; document.getElementById('sub-btn-cat').classList.toggle('active', id === 'catalogo'); document.getElementById('sub-btn-fin').classList.toggle('active', id === 'finanzas'); if(id === 'catalogo') window.renderControlList(); else window.renderFinanceMenu(); };
 
+        // --- GESTIÓN CATÁLOGO ---
         window.openAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'flex'; };
         window.closeAddProductModal = () => { document.getElementById('add-product-modal').style.display = 'none'; };
         window.confirmAddProduct = async () => {
@@ -417,14 +424,14 @@
             list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
-        // --- FINANZAS (FILTRACIÓN MEJORADA) ---
+        // --- FINANZAS (FILTRACIÓN Y CÁLCULO REPARADO) ---
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
             if(!container) return;
             container.innerHTML = `
                 <div class="inner-sub-nav"><button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">Compras</button><button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">Ganancias</button><button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">Diezmo</button></div>
                 <div class="card-custom mb-2 bg-light shadow-none border px-3">
-                    ${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" id="fin-date-from" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" id="fin-date-to" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" id="fin-date-single" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}
+                    ${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}
                     <div class="row g-2 mt-2">
                         <div class="col-6"><label class="text-uppercase">Tienda</label><select id="fin-store-sel" onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option></select></div>
                         <div class="col-6"><label class="text-uppercase">Cliente</label><select id="fin-client-sel" onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option></select></div>
@@ -447,10 +454,16 @@
             const res = document.getElementById('finance-results'); if(!res) return;
             let filtered = [];
             if (activeFinanceView === 'diezmo') {
-                const s = new Date(finDateFrom + "T00:00:00"), e = new Date(finDateTo + "T23:59:59");
-                filtered = window.state.sales.filter(x => { const [d,m,y] = x.fechaStr.split('/'); const dx = new Date(y, m-1, d); return dx >= s && dx <= e; });
+                const s = new Date(finDateFrom + "T00:00:00");
+                const e = new Date(finDateTo + "T23:59:59");
+                filtered = window.state.sales.filter(x => {
+                    const [d,m,y] = x.fechaStr.split('/');
+                    const dx = new Date(y, m-1, d);
+                    return dx >= s && dx <= e;
+                });
             } else {
-                const [y,m,d] = finDate.split('-'); const target = normalizeDateStr(`${d}/${m}/${y}`);
+                const [y,m,d] = finDate.split('-');
+                const target = normalizeDateStr(`${parseInt(d)}/${parseInt(m)}/${y}`);
                 filtered = window.state.sales.filter(x => normalizeDateStr(x.fechaStr) === target);
             }
             
@@ -461,25 +474,37 @@
             });
 
             const totalQty = filtered.reduce((a, b) => a + (b.cantidad || 0), 0);
+            const totalVenta = filtered.reduce((a, b) => a + (b.total || 0), 0);
+            const totalCosto = filtered.reduce((a, b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
+            const totalUtilidad = totalVenta - totalCosto;
 
             if(filtered.length === 0) { res.innerHTML = `<div class="text-center py-5 text-muted small fw-bold">SIN DATOS</div>`; return; }
 
             if(activeFinanceView === 'compras') {
-                const grouped = filtered.reduce((acc, s) => { const k = `${s.producto}_${s.costo}`; if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[k].cantidad += (s.cantidad || 0); acc[k].total += ((s.costo || 0) * (s.cantidad || 0)); acc[k].items.push(s); return acc; }, {});
-                const total = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO TOTAL EN CAJA (COSTO ANAQUEL)</small><div class="mt-2"><span class="badge bg-white text-primary rounded-pill fw-bold" style="font-size:0.75rem">${totalQty} PIEZAS TOTALES</span></div></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                const grouped = filtered.reduce((acc, s) => {
+                    const k = `${s.producto}_${s.costo}`;
+                    if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] };
+                    acc[k].cantidad += (s.cantidad || 0);
+                    acc[k].total += ((s.costo || 0) * (s.cantidad || 0));
+                    acc[k].items.push(s);
+                    return acc;
+                }, {});
+                res.innerHTML = `
+                <div class="stat-card bg-gradient-primary shadow">
+                    <h3>$${totalCosto.toFixed(2)}</h3>
+                    <small>PAGO TOTAL EN CAJA (COSTO ANAQUEL)</small>
+                    <div class="mt-2"><span class="badge bg-white text-primary rounded-pill fw-bold" style="font-size:0.75rem">${totalQty} PIEZAS TOTALES</span></div>
+                </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
-                const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0), totalC = filtered.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>UTILIDAD TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
+                res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${totalUtilidad.toFixed(2)}</h3><small>UTILIDAD TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
                     const items = filtered.filter(f => f.tienda === t);
-                    const v = items.reduce((a,b) => a + b.total, 0);
-                    const c = items.reduce((a,b) => a + ((f.costo || 0) * (f.cantidad || 0)), 0);
+                    const v = items.reduce((a,b) => a + (b.total || 0), 0);
+                    const c = items.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
                     const p = v - c; 
                     return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; 
                 }).join('');
             } else if(activeFinanceView === 'diezmo') {
-                const profit = filtered.reduce((a,b) => a + ((b.total || 0) - ((b.costo || 0) * (b.cantidad || 0))), 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase text-white">10% PARA EL SEÑOR</small></div>`;
+                res.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(totalUtilidad * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase text-white">10% PARA EL SEÑOR</small><div class="mt-2 text-white small" style="opacity:0.8">Sobre utilidad de $${totalUtilidad.toFixed(2)}</div></div>`;
             }
         };
 
@@ -529,7 +554,7 @@
             const cropW = hC.width * 0.70, cropH = hC.height * 0.50; cC.width = cropW; cC.height = cropH; cC.getContext('2d').drawImage(hC, (hC.width - cropW)/2, (hC.height - cropH)/2, cropW, cropH, 0, 0, cropW, cropH);
             const dataURL = cC.toDataURL('image/jpeg', 0.9); document.getElementById('capture-preview-ia').src = dataURL; document.getElementById('capture-preview-ia').style.display = 'block'; document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none'; setIAStatus("ANALIZANDO...");
             const b64 = dataURL.split(',')[1];
-            try { abortControllerIA = new AbortController(); const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }; const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal }); const res = await resp.json(); let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim(); const data = JSON.parse(text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); setIAStatus("IDENTIFICADO"); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { setIAStatus("ERROR LECTURA", true); window.resetIAUI(); }
+            try { abortControllerIA = new AbortController(); const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`; const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }; const resp = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal }); const res = await resp.json(); let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim(); const data = JSON.parse(text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); setIAStatus("IDENTIFICADO"); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { setIAStatus("ERROR LECTURA", true); window.resetIAUI(); }
         };
         window.processIASave = async () => {
             const n = document.getElementById('ia-res-name').value, s = document.getElementById('ia-res-size').value, p = parseFloat(document.getElementById('ia-res-price').value) || 0;
