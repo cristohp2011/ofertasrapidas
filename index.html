@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yaute Market v31.4 - Estabilidad Total</title>
+    <title>Yaute Market v31.5 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -64,7 +64,7 @@
         .inner-btn { white-space: nowrap; border: 1px solid #e2e8f0; background: white; padding: 8px 16px; font-size: 0.7rem; font-weight: 800; border-radius: 50px; color: #64748b; text-transform: uppercase; transition: 0.2s; }
         .inner-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- FINANZAS --- */
+        /* --- FINANZAS & DROPDOWNS --- */
         .stat-card { text-align: center; padding: 20px; border-radius: 22px; color: white; margin-bottom: 15px; }
         .bg-gradient-primary { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
         .bg-gradient-success { background: linear-gradient(135deg, #10b981, #059669); }
@@ -74,9 +74,9 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 14px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 30px rgba(0,0,0,0.15); margin-top: 5px; }
         .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.95rem; text-transform: uppercase; font-weight: 700; color: var(--primary); }
 
-        /* --- TICKET RENDER (FORMATO ORIGINAL CON LOGO) --- */
+        /* --- TICKET RENDER --- */
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; border: 1px solid #eee; }
-        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
+        #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 15px 40px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
 
         /* --- SCANNER --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
@@ -84,7 +84,6 @@
         #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
         .scan-frame { width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
         #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; }
-        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
         #capture-preview-ia { width: 100%; height: 110px; object-fit: contain; border-radius: 12px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
     </style>
 </head>
@@ -92,12 +91,12 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">MODO ESTABILIZADO v31.4</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">MODO ESTABILIZADO v31.5</div>
     </div>
 
     <div id="toast-alert"></div>
 
-    <!-- MODAL REINICIAR CATÁLOGO -->
+    <!-- MODAL RESET -->
     <div id="reset-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-4x"></i></div>
@@ -131,7 +130,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR CATÁLOGO (CASCADA) -->
+    <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-accent">Editar Catálogo Maestro</h5>
@@ -144,7 +143,7 @@
         </div>
     </div>
 
-    <!-- MODAL BORRAR (CONFIRMACIÓN) -->
+    <!-- MODAL BORRAR -->
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
@@ -156,9 +155,25 @@
         </div>
     </div>
 
+    <!-- MODAL AGREGAR PRODUCTO -->
+    <div id="add-product-modal" class="modal-overlay">
+        <div class="modal-content-custom">
+            <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
+            <div class="mb-3"><label class="text-uppercase">Descripción</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
+            <div class="row g-2 mb-4">
+                <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger"></div>
+                <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success"></div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-light flex-fill rounded-pill" onclick="window.closeAddProductModal()">CERRAR</button>
+                <button class="btn btn-primary flex-fill rounded-pill fw-bold shadow" onclick="window.confirmAddProduct()">GUARDAR</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v31.4</span></h6>
+            <h6 class="m-0 fw-bold">Yaute Market <span class="version-badge">v31.5</span></h6>
             <div id="status-dot" class="status-dot bg-warning"></div>
         </div>
     </header>
@@ -201,7 +216,7 @@
         </div>
     </main>
 
-    <!-- MODALES SCANNER (MODO v3.5 INTEGRADO) -->
+    <!-- SCANNER IA MODAL (MODO v3.5 INTEGRADO) -->
     <div id="ia-modal">
         <div id="cam-section-ia">
             <div style="position: absolute; top: 20px; right: 20px; z-index: 15000; max-width: 140px;">
@@ -213,9 +228,9 @@
             <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span></div>
+            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
             <img id="capture-preview-ia" alt="Vista previa captura">
-            <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando etiqueta...</p></div>
+            <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando producto...</p></div>
             <div id="ia-form">
                 <div class="mb-3"><label class="text-uppercase fw-black small text-muted">Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
                 <div class="row g-2 mb-4">
@@ -224,13 +239,13 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-light rounded-pill px-4 border" onclick="window.resetIAUI()"><i class="fas fa-sync-alt"></i></button>
-                    <button class="btn btn-success flex-grow-1 py-3 rounded-pill fw-bold shadow-lg" onclick="window.processIASave()"><i class="fab fa-whatsapp me-2"></i>GUARDAR Y OFERTAR</button>
+                    <button class="btn btn-success flex-grow-1 py-3 rounded-pill fw-bold shadow-lg" onclick="window.processIASave()"><i class="fab fa-whatsapp me-2"></i>GUARDAR EN CATÁLOGO</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TICKET RENDER -->
+    <!-- TICKET RENDER (FORMATO ORIGINAL CON LOGO) -->
     <div id="ticket-render">
         <div style="text-align: center; margin-bottom: 25px;">
             <img src="logo.png" alt="Logo" style="width: 140px; height: auto;" onerror="this.style.display='none'">
@@ -408,7 +423,7 @@
             list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
-        // --- FINANZAS (FIXED) ---
+        // --- FINANZAS (REPARADO) ---
         window.renderVentasHoy = () => {
             const list = document.getElementById('lista-ventas-hoy'), today = normalizeDateStr(getMXDateStr()), dv = window.state.sales.filter(s => normalizeDateStr(s.fechaStr) === today);
             if(dv.length === 0) { list.innerHTML = `<div class="text-center py-4 text-muted small fw-bold">SIN VENTAS HOY</div>`; return; }
@@ -422,7 +437,7 @@
             container.innerHTML = `
                 <div class="inner-sub-nav"><button class="inner-btn ${activeFinanceView === 'compras' ? 'active' : ''}" onclick="window.setFinView('compras')">Compras</button><button class="inner-btn ${activeFinanceView === 'ganancias' ? 'active' : ''}" onclick="window.setFinView('ganancias')">Ganancias</button><button class="inner-btn ${activeFinanceView === 'diezmo' ? 'active' : ''}" onclick="window.setFinView('diezmo')">Diezmo</button></div>
                 <div class="card-custom mb-2 bg-light shadow-none border px-3">
-                    ${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}
+                    ${activeFinanceView === 'diezmo' ? `<div class="row g-2"><div class="col-6"><label class="text-uppercase">Desde</label><input type="date" id="fin-date-from" value="${finDateFrom}" onchange="window.updateFinFilter('from', this.value)" class="form-control form-control-sm"></div><div class="col-6"><label class="text-uppercase">Hasta</label><input type="date" id="fin-date-to" value="${finDateTo}" onchange="window.updateFinFilter('to', this.value)" class="form-control form-control-sm"></div></div>` : `<div class="text-center py-1"><label class="text-uppercase">Fecha Consulta</label><input type="date" id="fin-date-single" value="${finDate}" onchange="window.updateFinFilter('single', this.value)" class="form-control form-control-sm w-100"></div>`}
                     <div class="row g-2 mt-2">
                         <div class="col-6"><label class="text-uppercase">Tienda</label><select id="fin-store-sel" onchange="window.updateFinFilter('store', this.value)" class="form-select form-select-sm"><option value="">TODAS</option></select></div>
                         <div class="col-6"><label class="text-uppercase">Cliente</label><select id="fin-client-sel" onchange="window.updateFinFilter('client', this.value)" class="form-select form-select-sm"><option value="">TODOS</option></select></div>
@@ -430,14 +445,14 @@
                 </div>
                 <div id="finance-results"></div>`;
             
+            // Poblar dropdowns con datos limpios
             const stores = [...new Set(window.state.sales.map(s => (s.tienda || "").trim().toUpperCase()).filter(t => t))].sort();
             const clients = [...new Set(window.state.sales.map(s => (s.cliente || "").trim().toUpperCase()).filter(c => c))].sort();
             
             const stSel = document.getElementById('fin-store-sel');
             const clSel = document.getElementById('fin-client-sel');
-            
-            if(stSel) stSel.innerHTML += stores.map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('');
-            if(clSel) clSel.innerHTML += clients.map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('');
+            if(stSel) stSel.innerHTML = '<option value="">TODAS</option>' + stores.map(t => `<option value="${t}" ${finStore === t ? 'selected' : ''}>${t}</option>`).join('');
+            if(clSel) clSel.innerHTML = '<option value="">TODOS</option>' + clients.map(c => `<option value="${c}" ${finClient === c ? 'selected' : ''}>${c}</option>`).join('');
             
             window.renderFinanceResults();
         };
@@ -453,25 +468,38 @@
                 filtered = window.state.sales.filter(x => normalizeDateStr(x.fechaStr) === target);
             }
             
-            // FILTRO CORRECTO POR TIENDA Y CLIENTE
+            // FILTRO DE TIENDA Y CLIENTE MEJORADO
             filtered = filtered.filter(x => {
                 const matchStore = !finStore || (x.tienda || "").trim().toUpperCase() === finStore;
                 const matchClient = !finClient || (x.cliente || "").trim().toUpperCase() === finClient;
                 return matchStore && matchClient;
             });
 
+            if(filtered.length === 0) { res.innerHTML = `<div class="text-center py-5 text-muted small fw-bold">SIN DATOS PARA ESTA FILTRACIÓN</div>`; return; }
+
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => { const k = `${s.producto}_${s.costo}`; if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] }; acc[k].cantidad += (s.cantidad || 0); acc[k].total += ((s.costo || 0) * (s.cantidad || 0)); acc[k].items.push(s); return acc; }, {});
                 const total = Object.values(grouped).reduce((a,b) => a + b.total, 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO EN CAJA (COSTO ANAQUEL)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase" style="font-size:0.8rem;">${g.producto}</b><br><span class="text-muted">Costo: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                res.innerHTML = `<div class="stat-card bg-gradient-primary shadow"><h3>$${total.toFixed(2)}</h3><small>PAGO TOTAL EN CAJA (COSTO)</small></div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 const totalV = filtered.reduce((a,b) => a + (b.total || 0), 0), totalC = filtered.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
-                res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t), v = items.reduce((a,b) => a + b.total, 0), c = items.reduce((a,b) => a + ((f.costo || 0) * (f.cantidad || 0)), 0), p = v - c; return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
+                res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${(totalV - totalC).toFixed(2)}</h3><small>GANANCIA TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { const items = filtered.filter(f => f.tienda === t), v = items.reduce((a,b) => a + b.total, 0), c = items.reduce((a,b) => a + ((f.costo || 0) * (f.cantidad || 0)), 0), p = v - c; return `<div class="card-custom py-2 mb-1 shadow-none border d-flex justify-content-between align-items-center px-3 small"><b><i class="fas fa-store me-2 text-primary"></i>${t}</b><span class="fw-bold text-success" style="font-size:1.1rem">+$${p.toFixed(2)}</span></div>`; }).join('');
             } else if(activeFinanceView === 'diezmo') {
                 const profit = filtered.reduce((a,b) => a + ((b.total || 0) - ((b.costo || 0) * (b.cantidad || 0))), 0);
                 res.innerHTML = `<div class="stat-card bg-gradient-warning shadow"><i class="fas fa-landmark-dome fa-2x mb-2"></i><h3>$${(profit * 0.10).toFixed(2)}</h3><small class="fw-bold text-uppercase text-white">10% PARA EL SEÑOR</small></div>`;
             }
         };
+
+        window.updateFinFilter = (key, val) => { 
+            if(key === 'single') finDate = val; 
+            if(key === 'from') finDateFrom = val; 
+            if(key === 'to') finDateTo = val; 
+            if(key === 'store') finStore = val.trim().toUpperCase(); 
+            if(key === 'client') finClient = val.trim().toUpperCase(); 
+            window.renderFinanceResults(); 
+        };
+
+        window.setFinView = (v) => { activeFinanceView = v; window.renderFinanceMenu(); };
 
         window.renderEntregas = () => {
             const list = document.getElementById('lista-entregas'), val = document.getElementById('entregas-date').value; if(!val) return;
@@ -495,72 +523,27 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (TRASPLANTE EXACTO v3.5) ---
-        function setIAStatus(text, isError = false) {
-            const badge = document.getElementById('ia-status-badge');
-            if(!badge) return;
-            badge.innerText = text.toUpperCase();
-            badge.className = isError ? 'badge bg-danger text-white' : 'badge bg-light text-muted';
-        }
-        window.openScanner = async () => {
-            document.getElementById('ia-modal').style.display = 'flex';
-            setIAStatus("CONECTANDO...");
-            try {
-                await navigator.mediaDevices.getUserMedia({ video: true });
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const videoDevices = devices.filter(d => d.kind === 'videoinput');
-                const select = document.getElementById('video-source-select');
-                select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join('');
-                if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId);
-            } catch (e) { setIAStatus("ERROR CÁMARA", true); }
-        };
-        window.startCameraIA = async (deviceId) => {
-            if (currentIAStream) { currentIAStream.getTracks().forEach(t => t.stop()); currentIAStream = null; await new Promise(r => setTimeout(r, 200)); }
-            const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } };
-            try { currentIAStream = await navigator.mediaDevices.getUserMedia(constraints); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO"); } catch (e) { 
-                try { currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } }); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO (LQ)"); } catch (e2) { setIAStatus("ERROR CÁMARA", true); }
-            }
-        };
+        // --- SCANNER (v3.5 INTEGRADO) ---
+        function setIAStatus(text, isError = false) { const badge = document.getElementById('ia-status-badge'); if(!badge) return; badge.innerText = text.toUpperCase(); badge.className = isError ? 'badge bg-danger text-white' : 'badge bg-light text-muted'; }
+        window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; setIAStatus("CONECTANDO..."); try { await navigator.mediaDevices.getUserMedia({ video: true }); const devices = await navigator.mediaDevices.enumerateDevices(); const videoDevices = devices.filter(d => d.kind === 'videoinput'); const select = document.getElementById('video-source-select'); select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join(''); if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId); } catch (e) { setIAStatus("ERROR CÁMARA", true); } };
+        window.startCameraIA = async (deviceId) => { if (currentIAStream) { currentIAStream.getTracks().forEach(t => t.stop()); currentIAStream = null; await new Promise(r => setTimeout(r, 200)); } const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } }; try { currentIAStream = await navigator.mediaDevices.getUserMedia(constraints); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO"); } catch (e) { try { currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } }); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO (LQ)"); } catch (e2) { setIAStatus("ERROR CÁMARA", true); } } };
         window.changeCameraIA = () => window.startCameraIA(document.getElementById('video-source-select').value);
         window.closeScanner = () => { if (currentIAStream) currentIAStream.getTracks().forEach(t => t.stop()); document.getElementById('ia-modal').style.display = 'none'; };
         window.stopAnalysisIA = () => { if (abortControllerIA) { abortControllerIA.abort(); setIAStatus("DETENIDO", true); window.resetIAUI(); } };
         window.resetIAUI = () => { document.getElementById('ia-res-name').value = ""; document.getElementById('ia-res-size').value = ""; document.getElementById('ia-res-price').value = ""; document.getElementById('capture-preview-ia').style.display = 'none'; document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; setIAStatus("LISTO"); };
         window.captureIAImage = async () => {
-            const v = document.getElementById('cam-preview-ia');
-            v.classList.add('flash-effect'); setTimeout(() => v.classList.remove('flash-effect'), 100);
-            const hC = document.getElementById('hidden-canvas'), cC = document.getElementById('crop-canvas');
-            hC.width = v.videoWidth || 1280; hC.height = v.videoHeight || 720;
-            hC.getContext('2d').drawImage(v, 0, 0);
-            const cropW = hC.width * 0.70, cropH = hC.height * 0.50;
-            cC.width = cropW; cC.height = cropH;
-            cC.getContext('2d').drawImage(hC, (hC.width - cropW)/2, (hC.height - cropH)/2, cropW, cropH, 0, 0, cropW, cropH);
-            const dataURL = cC.toDataURL('image/jpeg', 0.9);
-            document.getElementById('capture-preview-ia').src = dataURL; 
-            document.getElementById('capture-preview-ia').style.display = 'block';
-            document.getElementById('ia-loading').style.display = 'block'; 
-            document.getElementById('ia-form').style.display = 'none';
-            setIAStatus("ANALIZANDO...");
+            const v = document.getElementById('cam-preview-ia'); v.classList.add('flash-effect'); setTimeout(() => v.classList.remove('flash-effect'), 100);
+            const hC = document.getElementById('hidden-canvas'), cC = document.getElementById('crop-canvas'); hC.width = v.videoWidth || 1280; hC.height = v.videoHeight || 720; hC.getContext('2d').drawImage(v, 0, 0);
+            const cropW = hC.width * 0.70, cropH = hC.height * 0.50; cC.width = cropW; cC.height = cropH; cC.getContext('2d').drawImage(hC, (hC.width - cropW)/2, (hC.height - cropH)/2, cropW, cropH, 0, 0, cropW, cropH);
+            const dataURL = cC.toDataURL('image/jpeg', 0.9); document.getElementById('capture-preview-ia').src = dataURL; document.getElementById('capture-preview-ia').style.display = 'block'; document.getElementById('ia-loading').style.display = 'block'; document.getElementById('ia-form').style.display = 'none'; setIAStatus("ANALIZANDO...");
             const b64 = dataURL.split(',')[1];
-            try { 
-                abortControllerIA = new AbortController();
-                const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } };
-                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal });
-                const res = await resp.json();
-                let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim();
-                const data = JSON.parse(text);
-                document.getElementById('ia-res-name').value = data.nombre.toUpperCase();
-                document.getElementById('ia-res-size').value = data.presentacion.toUpperCase();
-                setIAStatus("IDENTIFICADO");
-                document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; 
-            } catch (e) { if (e.name !== 'AbortError') { setIAStatus("ERROR LECTURA", true); toast("IA no pudo leer", "danger"); } window.resetIAUI(); }
+            try { abortControllerIA = new AbortController(); const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKeyGemini}`; const payload = { contents: [{ parts: [{ text: "Analiza la etiqueta. Identifica Marca, Producto y Contenido Neto. El texto puede estar rotado. Responde JSON puro: {'nombre': 'MARCA Y PRODUCTO', 'presentacion': 'CANTIDAD'}" }, { inlineData: { mimeType: "image/jpeg", data: b64 } }] }], generationConfig: { responseMimeType: "application/json" } }; const resp = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload), signal: abortControllerIA.signal }); const res = await resp.json(); let text = res.candidates?.[0]?.content?.parts?.[0]?.text.replace(/```json/g, "").replace(/```/g, "").trim(); const data = JSON.parse(text); document.getElementById('ia-res-name').value = data.nombre.toUpperCase(); document.getElementById('ia-res-size').value = data.presentacion.toUpperCase(); setIAStatus("IDENTIFICADO"); document.getElementById('ia-loading').style.display = 'none'; document.getElementById('ia-form').style.display = 'block'; } catch (e) { if (e.name !== 'AbortError') { setIAStatus("ERROR LECTURA", true); toast("IA no pudo leer", "danger"); } window.resetIAUI(); }
         };
         window.processIASave = async () => {
             const n = document.getElementById('ia-res-name').value, s = document.getElementById('ia-res-size').value, p = parseFloat(document.getElementById('ia-res-price').value) || 0;
-            if(!n) return toast("Falta producto", "danger");
-            const full = `${n} - ${s}`, existing = window.state.products.find(x => x.nombre.toUpperCase() === full.toUpperCase());
-            if (!existing) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: full, costo: 0, precio: p });
-            else if (p > 0) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existing.id), { precio: p });
-            toast("Guardado en Catálogo ✅"); window.closeScanner();
+            if(!n) return toast("Error", "danger"); const full = `${n} - ${s}`, existing = window.state.products.find(x => x.nombre.toUpperCase() === full.toUpperCase());
+            if (!existing) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: full, costo: 0, precio: p }); else if (p > 0) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', existing.id), { precio: p });
+            toast("Sugerencia Guardada ✅"); window.closeScanner();
         };
 
         window.onload = () => { 
@@ -573,9 +556,9 @@
                 let pr = (c === "CRISTO") ? co : prI;
                 if(!t || !c || !p) return toast("Faltan datos", "danger");
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr, fechaStr: getMXDateStr(), timestamp: Date.now(), uid: currentUser.uid, entregado: false, pagado: false });
-                if(!window.state.stores.some(s => s.nombre.toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
-                if(!window.state.clients.some(s => s.nombre.toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
-                if(!window.state.products.some(s => s.nombre.toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
+                if(!window.state.stores.some(s => (s.nombre || "").toUpperCase() === t)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), { nombre: t });
+                if(!window.state.clients.some(s => (s.nombre || "").toUpperCase() === c)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'clients'), { nombre: c });
+                if(!window.state.products.some(s => (s.nombre || "").toUpperCase() === p)) await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'products'), { nombre: p, costo: co, precio: pr });
                 toast("¡Venta guardada!");
                 document.getElementById('in-cliente').value = ""; document.getElementById('in-producto').value = ""; document.getElementById('in-cantidad').value = "1"; document.getElementById('in-costo').value = ""; document.getElementById('in-precio').value = ""; document.getElementById('in-cliente').focus();
             };
@@ -591,7 +574,7 @@
             };
         };
 
-        window.updateStatus = async (cli, date, field, val) => { const matching = window.state.sales.filter(s => s.cliente === cli && normalizeDateStr(s.fechaStr) === date); for (const s of matching) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [field]: val }); } toast(`Actualizado`); };
+        window.updateStatus = async (cli, date, field, val) => { const matching = window.state.sales.filter(s => (s.cliente || "").trim().toUpperCase() === cli.trim().toUpperCase() && normalizeDateStr(s.fechaStr) === date); for (const s of matching) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id), { [field]: val }); } toast(`Actualizado`); };
         window.openDeleteModal = (col, id) => { deleteRef = { col, id }; document.getElementById('delete-modal').style.display = 'flex'; };
         window.closeDeleteModal = () => { document.getElementById('delete-modal').style.display = 'none'; };
         window.closeCatEditModal = () => { document.getElementById('cat-edit-modal').style.display = 'none'; };
