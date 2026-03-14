@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v32.2 - Estabilidad Total</title>
+    <title>Ofertas Rápidas Yaute v32.3 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,10 +35,10 @@
         .splash-loader { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- HEADER & NAV --- */
-        header { background: var(--primary); color: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .version-badge { font-size: 0.6rem; background: rgba(255,255,255,0.2); color: white; padding: 3px 10px; border-radius: 50px; font-weight: 800; margin-left: 8px; vertical-align: middle; border: 1px solid rgba(255,255,255,0.2); }
-        .status-dot { width:10px; height:10px; border-radius:50%; margin-left: 8px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
+        /* --- HEADER & NAV (NUEVO DISEÑO) --- */
+        header { background: var(--primary); color: white; padding: 1.2rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .version-badge { font-size: 0.65rem; background: rgba(255,255,255,0.15); color: white; padding: 4px 12px; border-radius: 50px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2); }
+        .status-dot { width:10px; height:10px; border-radius:50%; margin-left: 10px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
         .bg-success { background-color: var(--success) !important; box-shadow: 0 0 10px var(--success); }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 10px 0 25px; border-top: 1px solid #f1f5f9; z-index: 2000; }
@@ -46,14 +46,14 @@
         .tab-btn i { font-size: 1.5rem; margin-bottom: 4px; }
         .tab-btn.active { color: var(--accent); }
 
-        /* --- UI CARDS --- */
+        /* --- UI ELEMENTS --- */
         .card-custom { background: white; border-radius: var(--card-radius); padding: 20px; margin-bottom: 15px; border: 1px solid #f1f5f9; box-shadow: var(--shadow); position: relative; }
         .form-control, .form-select { padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 14px; border: 2px solid #f1f5f9; background: #fff; color: var(--primary); }
         .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); outline: none; }
-        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.8px; }
+        label.text-uppercase { font-size: 0.65rem; margin-bottom: 4px; font-weight: 800; color: #94a3b8; display: block; letter-spacing: 0.5px; }
 
-        /* --- MODALES BLINDADOS --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        /* --- MODALES --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 8000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 420px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
         /* --- SUB NAVS --- */
@@ -75,7 +75,7 @@
         .sug-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 14px; max-height: 220px; overflow-y: auto; z-index: 1500; border: 1px solid #e2e8f0; box-shadow: 0 15px 30px rgba(0,0,0,0.15); margin-top: 5px; }
         .sug-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 0.95rem; text-transform: uppercase; font-weight: 700; color: var(--primary); }
 
-        /* --- TICKET RENDER --- */
+        /* --- TICKET --- */
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; border: 1px solid #eee; }
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
 
@@ -84,7 +84,8 @@
         #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
         .scan-frame { width: 75%; height: 45%; border: 3px solid var(--accent); border-radius: 24px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; }
+        #btn-snap-ia { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85px; height: 85px; background: white; border: 8px solid rgba(59, 130, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 2.2rem; cursor: pointer; z-index: 100; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        #ia-result-panel { background: #ffffff; padding: 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; min-height: 380px; color: var(--primary); z-index: 20; box-shadow: 0 -15px 40px rgba(0,0,0,0.4); overflow-y: auto; }
         #capture-preview-ia { width: 100%; height: 120px; object-fit: contain; border-radius: 14px; background: #000; margin-bottom: 15px; display: none; border: 3px solid var(--accent); }
     </style>
 </head>
@@ -92,7 +93,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">ESTABILIZANDO v32.2</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.3 - Morelos</div>
     </div>
 
     <div id="toast-alert"></div>
@@ -102,6 +103,7 @@
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-trash-can fa-4x"></i></div>
             <h5 class="fw-bold">¿Limpiar Catálogo?</h5>
+            <p class="text-muted small">Esto borrará tus productos guardados para empezar de cero. No afecta tus ventas guardadas.</p>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeResetModal()">CANCELAR</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-reset-all">BORRAR TODO</button>
@@ -130,7 +132,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR CATÁLOGO -->
+    <!-- MODAL EDITAR CATÁLOGO (CASCADA) -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-accent">Editar Maestro</h5>
@@ -147,7 +149,7 @@
     <div id="delete-modal" class="modal-overlay">
         <div class="modal-content-custom text-center">
             <div class="mb-3 text-danger"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
-            <h5 class="fw-bold">¿Eliminar registro?</h5>
+            <h5 class="fw-bold">¿Borrar registro?</h5>
             <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-light flex-fill rounded-pill fw-bold" onclick="window.closeDeleteModal()">NO</button>
                 <button class="btn btn-danger flex-fill rounded-pill fw-bold" id="btn-confirm-delete">SÍ, BORRAR</button>
@@ -159,7 +161,7 @@
     <div id="add-product-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Nuevo Producto</h5>
-            <div class="mb-3"><label class="text-uppercase">Descripción</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
+            <div class="mb-3"><label class="text-uppercase">Descripción del Producto</label><input type="text" id="add-prod-name" class="form-control text-uppercase"></div>
             <div class="row g-2 mb-4">
                 <div class="col-6"><label class="text-uppercase">Costo Anaquel</label><input type="number" id="add-prod-costo" class="form-control fw-bold text-danger"></div>
                 <div class="col-6"><label class="text-uppercase">Precio Venta</label><input type="number" id="add-prod-precio" class="form-control fw-bold text-success"></div>
@@ -171,15 +173,22 @@
         </div>
     </div>
 
+    <!-- CABECERA (LOGO A LA DERECHA, VERSIÓN ABAJO) -->
     <header>
-        <div class="d-flex align-items-center justify-content-center">
-            <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute <span class="version-badge">v32.2</span></h6>
-            <div id="status-dot" class="status-dot bg-warning"></div>
+        <div class="d-flex flex-column align-items-center">
+            <div class="d-flex align-items-center">
+                <h6 class="m-0 fw-bold">Ofertas Rápidas Yaute</h6>
+                <img src="logo.png" alt="Logo" style="height: 25px; width: auto; margin-left: 10px;" onerror="this.style.display='none'">
+                <div id="status-dot" class="status-dot bg-warning"></div>
+            </div>
+            <div style="margin-top: 6px;">
+                <span class="version-badge">v32.3</span>
+            </div>
         </div>
     </header>
 
     <main>
-        <!-- TAB VENTAS -->
+        <!-- TABS -->
         <div id="tab-operaciones" class="tab-content">
             <div class="card-custom">
                 <div class="row g-2 mb-2">
@@ -201,13 +210,11 @@
             </div>
         </div>
 
-        <!-- TAB REPARTO -->
         <div id="tab-entregas" class="tab-content" style="display: none;">
             <div class="card-custom py-2 mb-3 text-center border-0" style="background: #f1f5f9;"><input type="date" id="entregas-date" class="form-control text-center fw-bold border-0 bg-transparent" onchange="window.renderEntregas()"></div>
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- TAB CONTROL -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
                 <button class="sub-btn active" id="sub-btn-cat" onclick="window.switchSubTab('catalogo')"><i class="fas fa-boxes"></i>CONTROL</button>
@@ -231,7 +238,7 @@
         <div id="ia-result-panel">
             <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span></div>
             <img id="capture-preview-ia" alt="Vista previa">
-            <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando producto...</p></div>
+            <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando etiqueta...</p></div>
             <div id="ia-form">
                 <div class="mb-3"><label class="text-uppercase fw-black small text-muted">Identificado</label><input type="text" id="ia-res-name" class="form-control fw-bold text-uppercase bg-light"></div>
                 <div class="row g-2 mb-4">
@@ -424,7 +431,7 @@
             list.innerHTML = items.map(it => `<div class="card-custom py-2 mb-1 d-flex justify-content-between align-items-center shadow-none border small px-3"><div><div class="text-uppercase fw-bold text-dark">${it.nombre || "S/N"}</div>${activeCatFilter === 'productos' ? `<div class="text-muted" style="font-size: 0.65rem;">A: <span class="text-danger">$${(it.costo || 0).toFixed(2)}</span> | V: <span class="text-success">$${(it.precio || 0).toFixed(2)}</span></div>` : ""}</div><div class="d-flex gap-3"><i class="fas fa-pen text-accent" onclick='window.openCatEditModal("${dataMap[activeCatFilter]}", ${JSON.stringify(it)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('${dataMap[activeCatFilter]}','${it.id}')"></i></div></div>`).join('');
         };
 
-        // --- FINANZAS (FILTRACIÓN Y CÁLCULO REPARADO) ---
+        // --- FINANZAS (FIXED) ---
         window.renderFinanceMenu = () => {
             const container = document.getElementById('control-content');
             if(!container) return;
@@ -454,16 +461,10 @@
             const res = document.getElementById('finance-results'); if(!res) return;
             let filtered = [];
             if (activeFinanceView === 'diezmo') {
-                const s = new Date(finDateFrom + "T00:00:00");
-                const e = new Date(finDateTo + "T23:59:59");
-                filtered = window.state.sales.filter(x => {
-                    const [d,m,y] = x.fechaStr.split('/');
-                    const dx = new Date(y, m-1, d);
-                    return dx >= s && dx <= e;
-                });
+                const s = new Date(finDateFrom + "T00:00:00"), e = new Date(finDateTo + "T23:59:59");
+                filtered = window.state.sales.filter(x => { const [d,m,y] = x.fechaStr.split('/'); const dx = new Date(y, m-1, d); return dx >= s && dx <= e; });
             } else {
-                const [y,m,d] = finDate.split('-');
-                const target = normalizeDateStr(`${parseInt(d)}/${parseInt(m)}/${y}`);
+                const [y,m,d] = finDate.split('-'); const target = normalizeDateStr(`${parseInt(d)}/${parseInt(m)}/${y}`);
                 filtered = window.state.sales.filter(x => normalizeDateStr(x.fechaStr) === target);
             }
             
@@ -497,7 +498,7 @@
                 </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${totalUtilidad.toFixed(2)}</h3><small>UTILIDAD TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
-                    const items = filtered.filter(f => f.tienda === t);
+                    const items = filtered.filter(f => (f.tienda || "").trim().toUpperCase() === t.trim().toUpperCase());
                     const v = items.reduce((a,b) => a + (b.total || 0), 0);
                     const c = items.reduce((a,b) => a + ((b.costo || 0) * (b.cantidad || 0)), 0);
                     const p = v - c; 
@@ -541,7 +542,7 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA ---
+        // --- MOTOR SCANNER IA (v3.5 INTEGRADO) ---
         function setIAStatus(text, isError = false) { const badge = document.getElementById('ia-status-badge'); if(!badge) return; badge.innerText = text.toUpperCase(); badge.className = isError ? 'badge bg-danger text-white' : 'badge bg-light text-muted'; }
         window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; setIAStatus("CONECTANDO..."); try { await navigator.mediaDevices.getUserMedia({ video: true }); const devices = await navigator.mediaDevices.enumerateDevices(); const videoDevices = devices.filter(d => d.kind === 'videoinput'); const select = document.getElementById('video-source-select'); select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join(''); if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId); } catch (e) { setIAStatus("ERROR CÁMARA", true); } };
         window.startCameraIA = async (deviceId) => { if (currentIAStream) { currentIAStream.getTracks().forEach(t => t.stop()); currentIAStream = null; await new Promise(r => setTimeout(r, 200)); } const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } }; try { currentIAStream = await navigator.mediaDevices.getUserMedia(constraints); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO"); } catch (e) { try { currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } }); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("CONECTADO (LQ)"); } catch (e2) { setIAStatus("ERROR CÁMARA", true); } } };
