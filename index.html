@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ofertas Rápidas Yaute v32.4 - Estabilidad Total</title>
+    <title>Ofertas Rápidas Yaute v32.5 - Estabilidad Total</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,7 +35,7 @@
         .splash-loader { width: 50px; height: 50px; border: 5px solid #f1f5f9; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- HEADER & NAV (DISEÑO SOLICITADO) --- */
+        /* --- HEADER & NAV --- */
         header { background: var(--primary); color: white; padding: 1.2rem 1rem; position: sticky; top: 0; z-index: 1000; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .version-badge { font-size: 0.65rem; background: rgba(255,255,255,0.15); color: white; padding: 4px 12px; border-radius: 50px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2); }
         .status-dot { width:10px; height:10px; border-radius:50%; margin-left: 10px; border: 2px solid rgba(255,255,255,0.3); display: inline-block; vertical-align: middle; }
@@ -56,7 +56,7 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 8000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content-custom { background: white; width: 100%; max-width: 420px; border-radius: 28px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
 
-        /* --- SUB NAVS (CAMBIO DE ORDEN) --- */
+        /* --- SUB NAVS --- */
         .sub-nav { display: flex; gap: 8px; margin-bottom: 20px; padding: 5px; background: #f1f5f9; border-radius: 16px; }
         .sub-btn { border: none; background: none; padding: 10px; font-size: 0.8rem; color: #64748b; font-weight: 800; flex: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
         .sub-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -79,7 +79,7 @@
         #ticket-render { position: absolute; top: -5000px; width: 450px; background: white; padding: 40px; font-family: monospace; color: black; line-height: 1.4; border: 1px solid #eee; }
         #toast-alert { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 30000; padding: 14px 28px; border-radius: 50px; font-weight: 800; display: none; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.25); text-align: center; min-width: 280px; }
 
-        /* --- SCANNER --- */
+        /* --- SCANNER IA --- */
         #ia-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
         #cam-section-ia { position: relative; flex: 1; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #cam-preview-ia { width: 100%; height: 100%; object-fit: cover; }
@@ -92,7 +92,7 @@
 
     <div id="splash-screen">
         <div class="splash-loader"></div>
-        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.4</div>
+        <div style="margin-top:20px; font-size:0.8rem; font-weight:900; letter-spacing: 2px; color: var(--primary);">VERSION 32.5 - CONTROL TOTAL</div>
     </div>
 
     <div id="toast-alert"></div>
@@ -109,9 +109,11 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR VENTA (ACTUALIZADO CON FECHA) -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
             <h5 class="fw-bold mb-4 text-primary">Editar Registro</h5>
+            <div class="mb-3"><label class="text-uppercase">Fecha del Registro</label><input type="date" id="ed-fecha" class="form-control fw-bold"></div>
             <div class="row g-2 mb-3">
                 <div class="col-6"><label class="text-uppercase">Tienda</label><input type="text" id="ed-tienda" class="form-control text-uppercase"></div>
                 <div class="col-6"><label class="text-uppercase">Cliente</label><input type="text" id="ed-cliente" class="form-control text-uppercase"></div>
@@ -129,9 +131,10 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR CATÁLOGO -->
     <div id="cat-edit-modal" class="modal-overlay">
         <div class="modal-content-custom">
-            <h5 class="fw-bold mb-4 text-accent">Editar Catálogo Maestro</h5>
+            <h5 class="fw-bold mb-4 text-accent">Editar Maestro</h5>
             <div id="cat-edit-fields"></div>
             <p class="text-center text-muted" style="font-size:0.65rem; margin:15px 0;">* Sincroniza automáticamente registros de los últimos 5 días.</p>
             <div class="d-flex gap-2">
@@ -167,7 +170,7 @@
         </div>
     </div>
 
-    <!-- CABECERA (LOGO A LA DERECHA, VERSIÓN ABAJO) -->
+    <!-- CABECERA PROFESIONAL -->
     <header>
         <div class="d-flex flex-column align-items-center">
             <div class="d-flex align-items-center">
@@ -176,7 +179,7 @@
                 <div id="status-dot" class="status-dot bg-warning"></div>
             </div>
             <div style="margin-top: 6px;">
-                <span class="version-badge">v32.4</span>
+                <span class="version-badge">v32.5</span>
             </div>
         </div>
     </header>
@@ -210,7 +213,7 @@
             <div id="lista-entregas"></div>
         </div>
 
-        <!-- TAB GESTIÓN (REORDENADO: FINANZAS PRIMERO) -->
+        <!-- TAB GESTIÓN (FINANZAS A LA IZQUIERDA) -->
         <div id="tab-control" class="tab-content" style="display: none;">
             <div class="sub-nav">
                 <button class="sub-btn active" id="sub-btn-fin" onclick="window.switchSubTab('finanzas')"><i class="fas fa-chart-line"></i>FINANZAS</button>
@@ -232,7 +235,7 @@
             <div id="btn-snap-ia" onclick="window.captureIAImage()"><i class="fas fa-camera"></i></div>
         </div>
         <div id="ia-result-panel">
-            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">ESPERANDO CAPTURA</span></div>
+            <div class="text-center mb-3"><span id="ia-status-badge" class="badge bg-light text-muted" style="font-size:0.6rem; padding: 5px 12px; border-radius:50px;">LISTO</span></div>
             <img id="capture-preview-ia" alt="Vista previa">
             <div id="ia-loading" style="display:none;" class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><p class="h6 fw-bold text-muted">Analizando producto...</p></div>
             <div id="ia-form">
@@ -351,7 +354,7 @@
             if (target) target.style.display = 'block'; 
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
             if (btn) btn.classList.add('active'); 
-            if(id === 'control') window.switchSubTab('finanzas'); // CAMBIO A FINANZAS POR DEFECTO
+            if(id === 'control') window.switchSubTab('finanzas'); 
         };
 
         window.switchSubTab = (id) => { 
@@ -374,14 +377,56 @@
         window.openResetModal = () => { document.getElementById('reset-modal').style.display = 'flex'; };
         window.closeResetModal = () => { document.getElementById('reset-modal').style.display = 'none'; };
 
-        window.openEditModal = (record) => { editRef = record; document.getElementById('ed-tienda').value = record.tienda; document.getElementById('ed-cliente').value = record.cliente; document.getElementById('ed-producto').value = record.producto; document.getElementById('ed-cantidad').value = record.cantidad; document.getElementById('ed-costo').value = record.costo; document.getElementById('ed-precio').value = record.precio; document.getElementById('edit-modal').style.display = 'flex'; };
+        // --- EDITAR REGISTRO (CON CAMBIO DE FECHA) ---
+        window.openEditModal = (record) => { 
+            editRef = record; 
+            document.getElementById('ed-tienda').value = record.tienda; 
+            document.getElementById('ed-cliente').value = record.cliente; 
+            document.getElementById('ed-producto').value = record.producto; 
+            document.getElementById('ed-cantidad').value = record.cantidad; 
+            document.getElementById('ed-costo').value = record.costo; 
+            document.getElementById('ed-precio').value = record.precio; 
+            
+            // Convertir D/M/YYYY a YYYY-MM-DD para el input
+            if (record.fechaStr) {
+                const parts = record.fechaStr.split('/');
+                if (parts.length === 3) {
+                    const iso = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                    document.getElementById('ed-fecha').value = iso;
+                }
+            }
+            document.getElementById('edit-modal').style.display = 'flex'; 
+        };
         window.closeEditModal = () => { document.getElementById('edit-modal').style.display = 'none'; };
+        
         window.confirmUpdate = async () => { 
             if(!editRef) return; 
-            const t = document.getElementById('ed-tienda').value.trim().toUpperCase(), c = document.getElementById('ed-cliente').value.trim().toUpperCase(), p = document.getElementById('ed-producto').value.trim().toUpperCase(), q = parseInt(document.getElementById('ed-cantidad').value) || 1, co = parseFloat(document.getElementById('ed-costo').value) || 0; 
+            const t = document.getElementById('ed-tienda').value.trim().toUpperCase(), 
+                  c = document.getElementById('ed-cliente').value.trim().toUpperCase(), 
+                  p = document.getElementById('ed-producto').value.trim().toUpperCase(), 
+                  q = parseInt(document.getElementById('ed-cantidad').value) || 1, 
+                  co = parseFloat(document.getElementById('ed-costo').value) || 0,
+                  fVal = document.getElementById('ed-fecha').value; 
+            
             let prInput = parseFloat(document.getElementById('ed-precio').value) || 0;
             let pr = (c === "CRISTO") ? co : prInput;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { tienda: t, cliente: c, producto: p, cantidad: q, costo: co, precio: pr, total: q*pr }); 
+
+            // Procesar nueva fecha
+            const dateParts = fVal.split('-');
+            const newFechaStr = `${parseInt(dateParts[2])}/${parseInt(dateParts[1])}/${dateParts[0]}`;
+            const newTimestamp = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], 12, 0, 0).getTime();
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sales', editRef.id), { 
+                tienda: t, 
+                cliente: c, 
+                producto: p, 
+                cantidad: q, 
+                costo: co, 
+                precio: pr, 
+                total: q*pr,
+                fechaStr: newFechaStr,
+                timestamp: newTimestamp
+            }); 
             toast("Actualizado ✅"); window.closeEditModal(); 
         };
 
@@ -491,10 +536,9 @@
             if(activeFinanceView === 'compras') {
                 const grouped = filtered.reduce((acc, s) => {
                     const k = `${s.producto}_${s.costo}`;
-                    if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, items: [] };
+                    if(!acc[k]) acc[k] = { producto: s.producto, costo: s.costo, cantidad: 0, total: 0, id: s.id, raw: s };
                     acc[k].cantidad += (s.cantidad || 0);
                     acc[k].total += ((s.costo || 0) * (s.cantidad || 0));
-                    acc[k].items.push(s);
                     return acc;
                 }, {});
                 res.innerHTML = `
@@ -502,7 +546,7 @@
                     <h3>$${totalCosto.toFixed(2)}</h3>
                     <small>PAGO TOTAL EN CAJA (COSTO ANAQUEL)</small>
                     <div class="mt-2"><span class="badge bg-white text-primary rounded-pill fw-bold" style="font-size:0.75rem">${totalQty} PIEZAS TOTALES</span></div>
-                </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.items[0])})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.items[0].id}')"></i></div></div></div>`).join('');
+                </div>` + Object.values(grouped).map(g => `<div class="card-custom finance-item d-flex justify-content-between align-items-center shadow-none border py-2 px-3 small"><div><b class="text-uppercase">${g.producto}</b><br><span class="text-muted">Costo Unit: $${g.costo.toFixed(2)}</span></div><div class="text-end d-flex align-items-center gap-2"><div><b>$${g.total.toFixed(2)}</b><br><small class="text-accent">${g.cantidad} pzs</small></div><div class="d-flex flex-column gap-1"><i class="fas fa-pen-to-square text-accent" onclick='window.openEditModal(${JSON.stringify(g.raw)})'></i><i class="fas fa-trash-can text-danger" onclick="window.openDeleteModal('sales','${g.id}')"></i></div></div></div>`).join('');
             } else if(activeFinanceView === 'ganancias') {
                 res.innerHTML = `<div class="stat-card bg-gradient-success shadow"><h3>$${totalUtilidad.toFixed(2)}</h3><small>UTILIDAD TOTAL NETA</small></div>` + [...new Set(filtered.map(s => s.tienda))].map(t => { 
                     const items = filtered.filter(f => (f.tienda || "").trim().toUpperCase() === t.trim().toUpperCase());
@@ -549,7 +593,7 @@
             }, 'image/png');
         };
 
-        // --- MOTOR SCANNER IA (v3.5 INTEGRADO) ---
+        // --- MOTOR SCANNER IA ---
         function setIAStatus(text, isError = false) { const badge = document.getElementById('ia-status-badge'); if(!badge) return; badge.innerText = text.toUpperCase(); badge.className = isError ? 'badge bg-danger text-white' : 'badge bg-light text-muted'; }
         window.openScanner = async () => { document.getElementById('ia-modal').style.display = 'flex'; setIAStatus("CONECTANDO..."); try { await navigator.mediaDevices.getUserMedia({ video: true }); const devices = await navigator.mediaDevices.enumerateDevices(); const videoDevices = devices.filter(d => d.kind === 'videoinput'); const select = document.getElementById('video-source-select'); select.innerHTML = videoDevices.map(d => `<option value="${d.deviceId}">${d.label || 'Cámara ' + d.deviceId.slice(0,4)}</option>`).join(''); if (videoDevices.length > 0) window.startCameraIA(videoDevices[0].deviceId); } catch (e) { setIAStatus("ERROR CÁMARA", true); } };
         window.startCameraIA = async (deviceId) => { if (currentIAStream) { currentIAStream.getTracks().forEach(t => t.stop()); currentIAStream = null; await new Promise(r => setTimeout(r, 200)); } const constraints = { video: { deviceId: { exact: deviceId }, width: 1920, height: 1080 } }; try { currentIAStream = await navigator.mediaDevices.getUserMedia(constraints); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("LISTO"); } catch (e) { try { currentIAStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } }); document.getElementById('cam-preview-ia').srcObject = currentIAStream; setIAStatus("CONECTADO (LQ)"); } catch (e2) { setIAStatus("ERROR CÁMARA", true); } } };
